@@ -1,0 +1,42 @@
+# ---------- Gradle / Android (frontend) ----------
+**/build/
+.gradle/
+local.properties
+*.iml
+.idea/
+.cxx/
+captures/
+.externalNativeBuild/
+
+# Firebase - KHÔNG commit file thật (chỉ commit file .TODO)
+google-services.json
+google-services.json.*.json
+
+# ---------- Java ----------
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+hs_err_pid*
+replay_pid*
+
+# ---------- Spring Boot (backend) ----------
+target/
+*.jar.original
+
+# ---------- Secrets ----------
+.env
+.env.*
+!.env.example
+*.keystore
+*.jks
+secrets.properties
+
+# ---------- Node ----------
+node_modules/
+npm-debug.log*
+
+# ---------- OS / Editor ----------
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp

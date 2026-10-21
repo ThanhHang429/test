@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Manifest chính của ứng dụng ETicket (Project 2/2 - Android Native Java).
+     Quy ước bất di bất dịch:
+       - Backend là nguồn dữ liệu chính thức; app chỉ gọi REST API.
+       - App KHÔNG bao giờ kết nối MySQL, không nhúng secret.
+       - Cleartext HTTP chỉ được phép ở build type debug (xem res/debug/res/xml/network_security_config.xml). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <application
+        android:name=".EventApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EventApp"
+        android:usesCleartextTraffic="false">
+
+        <!-- Màn hình khởi động / kiểm tra phiên đăng nhập | FR-U01, FR-U02 -->
+        <activity
+            android:name=".ui.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.EventApp.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Đăng nhập / đăng ký / quên mật khẩu | FR-U01, FR-U02 -->
+        <activity
+            android:name=".ui.AuthActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- 3 vùng chức năng sau khi đăng nhập | FR-U03, FR-O02, FR-A01 -->
+        <activity
+            android:name=".ui.UserHostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.OrganizerHostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.AdminHostActivity"
+            android:exported="false" />
+
+        <!-- Nhận thông báo đẩy FCM | FR-U19, FR-O23, FR-A15 -->
+        <service
+            android:name=".fcm.AppFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+    </application>
+
+</manifest>

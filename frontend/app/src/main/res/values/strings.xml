@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Event App</string>
+
+    <!-- Bottom navigation: User -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_my_tickets">Vé của tôi</string>
+    <string name="nav_my_calendar">Lịch của tôi</string>
+    <string name="nav_notifications">Thông báo</string>
+    <string name="nav_profile">Cá nhân</string>
+
+    <!-- Bottom navigation: Organizer -->
+    <string name="nav_organizer_dashboard">Tổng quan</string>
+    <string name="nav_my_events">Sự kiện</string>
+    <string name="nav_checkin">Check-in</string>
+    <string name="nav_reports">Báo cáo</string>
+    <string name="nav_organizer_profile">Hồ sơ</string>
+
+    <!-- Bottom navigation: Admin -->
+    <string name="nav_admin_dashboard">Tổng quan</string>
+    <string name="nav_review_queue">Duyệt</string>
+    <string name="nav_transactions">Giao dịch</string>
+    <string name="nav_support">Hỗ trợ</string>
+    <string name="nav_audit_log">Nhật ký</string>
+
+    <!-- Dùng chung -->
+    <string name="common_loading">Đang tải…</string>
+    <string name="common_retry">Thử lại</string>
+    <string name="common_empty">Chưa có dữ liệu</string>
+    <string name="common_error">Đã xảy ra lỗi, vui lòng thử lại</string>
+    <string name="common_confirm">Xác nhận</string>
+    <string name="common_cancel">Hủy</string>
+    <string name="common_close">Đóng</string>
+</resources>

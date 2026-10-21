@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Luồng xác thực: đăng nhập, đăng ký, xác thực email, quên và đặt lại mật khẩu | FR-U01,FR-O01,FR-A01 -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_auth"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.eventapp.app.ui.auth.LoginFragment"
+        tools:layout="@layout/fragment_auth_login" />
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.eventapp.app.ui.auth.RegisterFragment"
+        tools:layout="@layout/fragment_auth_register" />
+
+    <fragment
+        android:id="@+id/verify_emailFragment"
+        android:name="com.eventapp.app.ui.auth.VerifyEmailFragment"
+        tools:layout="@layout/fragment_auth_verify_email" />
+
+    <fragment
+        android:id="@+id/forgot_passwordFragment"
+        android:name="com.eventapp.app.ui.auth.ForgotPasswordFragment"
+        tools:layout="@layout/fragment_auth_forgot_password" />
+
+    <fragment
+        android:id="@+id/reset_passwordFragment"
+        android:name="com.eventapp.app.ui.auth.ResetPasswordFragment"
+        tools:layout="@layout/fragment_auth_reset_password" />
+
+</navigation>

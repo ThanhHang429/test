@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.EventApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="android:statusBarColor">@color/brand_primary_dark</item>
+        <item name="android:windowBackground">@color/brand_background</item>
+    </style>
+
+    <!-- Màn hình khởi động | FR-U01 -->
+    <style name="Theme.EventApp.Splash" parent="Theme.EventApp">
+        <item name="android:windowBackground">@color/brand_primary</item>
+        <item name="android:statusBarColor">@color/brand_primary</item>
+    </style>
+
+    <style name="Theme.EventApp.Dialog" parent="Theme.Material3.DayNight.Dialog.Alert" />
+
+    <style name="Widget.EventApp.Toolbar" parent="Widget.Material3.Toolbar.Surface" />
+
+</resources>

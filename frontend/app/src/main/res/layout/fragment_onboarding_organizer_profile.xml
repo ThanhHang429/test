@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Màn hình OrganizerProfile: Hồ sơ nhà tổ chức và thông tin pháp lý | FR-O02 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/brand_background" />

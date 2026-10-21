@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Bottom navigation khu vực người dùng - id của menu phải trùng id đích điều hướng trong nav_user.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="@string/nav_home" />
+    <item
+        android:id="@+id/my_ticketsFragment"
+        android:icon="@drawable/ic_ticket"
+        android:title="@string/nav_my_tickets" />
+    <item
+        android:id="@+id/my_calendarFragment"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/nav_my_calendar" />
+    <item
+        android:id="@+id/notification_listFragment"
+        android:icon="@drawable/ic_notification"
+        android:title="@string/nav_notifications" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/nav_profile" />
+</menu>
