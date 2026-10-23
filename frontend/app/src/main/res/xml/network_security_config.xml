@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cấu hình bảo mật mạng cho build type release.
+     - Chặn hoàn toàn cleartext HTTP.
+     - Chỉ tin cậy chứng thư hệ thống.
+     Bản override cho debug nằm ở src/debug/res/xml/network_security_config.xml -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

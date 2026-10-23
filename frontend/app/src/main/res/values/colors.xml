@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand -->
+    <color name="brand_primary">#FF1D4ED8</color>
+    <color name="brand_primary_dark">#FF1E3A8A</color>
+    <color name="brand_secondary">#FF0EA5E9</color>
+    <color name="brand_surface">#FFFFFFFF</color>
+    <color name="brand_background">#FFF8FAFC</color>
+    <color name="brand_outline">#FFE2E8F0</color>
+    <color name="brand_text_primary">#FF0F172A</color>
+    <color name="brand_text_secondary">#FF64748B</color>
+
+    <!-- Trạng thái (không thay thế trạng thái chính thức từ backend) -->
+    <color name="status_pending">#FFF59E0B</color>
+    <color name="status_approved">#FF16A34A</color>
+    <color name="status_rejected">#FFDC2626</color>
+    <color name="status_suspended">#FF7C3AED</color>
+    <color name="status_cancelled">#FFDC2626</color>
+    <color name="status_completed">#FF0F172A</color>
+
+    <color name="ic_launcher_background">#FF1D4ED8</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

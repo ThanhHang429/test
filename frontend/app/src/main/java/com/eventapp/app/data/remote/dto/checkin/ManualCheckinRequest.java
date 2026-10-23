@@ -1,0 +1,5 @@
+package com.eventapp.app.data.remote.dto.checkin;
+
+// TODO: DTO ManualCheckinRequest của module checkin - tên và trường phải khớp backend
+public class ManualCheckinRequest {
+}

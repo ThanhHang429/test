@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Bottom navigation khu vực nhà tổ chức - id của menu phải trùng id đích điều hướng trong nav_organizer.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/organizer_dashboardFragment"
+        android:icon="@drawable/ic_dashboard"
+        android:title="@string/nav_organizer_dashboard" />
+    <item
+        android:id="@+id/my_eventsFragment"
+        android:icon="@drawable/ic_event"
+        android:title="@string/nav_my_events" />
+    <item
+        android:id="@+id/checkin_monitorFragment"
+        android:icon="@drawable/ic_checkin"
+        android:title="@string/nav_checkin" />
+    <item
+        android:id="@+id/event_reportFragment"
+        android:icon="@drawable/ic_report"
+        android:title="@string/nav_reports" />
+    <item
+        android:id="@+id/organizer_profileFragment"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/nav_organizer_profile" />
+</menu>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Màn hình EventFilter: Bộ lọc sự kiện theo danh mục, thời gian, giá và khoảng cách | FR-U04 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/brand_background" />

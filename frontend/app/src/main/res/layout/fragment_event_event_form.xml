@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Màn hình EventForm: Tạo và cập nhật sự kiện, lịch trình và danh mục | FR-O04,FR-O05,FR-O08,FR-O09 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/brand_background" />

@@ -1,0 +1,103 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Plugin Firebase chỉ được apply khi đã có google-services.json thật.
+// File này KHÔNG được commit — xem frontend/docs/00-overview.md (giả định A08).
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
+}
+
+android {
+    namespace 'com.eventapp.app'
+    compileSdk 37
+
+    defaultConfig {
+        applicationId "com.eventapp.app"
+        minSdk 24
+        targetSdk 37
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            // Cleartext chỉ được phép ở debug: 10.0.2.2 = máy host từ emulator
+            buildConfigField "String", "BASE_URL", "\"http://10.0.2.2:8080/api/v1/\""
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            // TODO: thay bằng URL thật trước khi phát hành | FR-U01
+            buildConfigField "String", "BASE_URL", "\"https://api.example.com/api/v1/\""
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    // AndroidX core
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.core:core:1.19.1'
+    implementation 'androidx.activity:activity:1.13.0'
+    implementation 'androidx.fragment:fragment:1.9.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    implementation 'com.google.android.material:material:1.14.0'
+
+    // Lifecycle / ViewModel
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.11.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.11.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.11.0'
+
+    // Navigation
+    implementation 'androidx.navigation:navigation-fragment:2.10.2'
+    implementation 'androidx.navigation:navigation-ui:2.10.2'
+
+    // Network
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.5.0'
+    implementation 'com.google.code.gson:gson:2.14.0'
+
+    // Room (cache local)
+    implementation 'androidx.room:room-runtime:2.8.5'
+    annotationProcessor 'androidx.room:room-compiler:2.8.5'
+
+    // Token / keystore
+    implementation 'androidx.security:security-crypto:1.1.0'
+
+    // Ảnh
+    implementation 'com.github.bumptech.glide:glide:5.0.9'
+
+    // Firebase (FCM)
+    implementation platform('com.google.firebase:firebase-bom:35.0.2')
+    implementation 'com.google.firebase:firebase-messaging'
+
+    // Camera + quét QR
+    implementation 'androidx.camera:camera-core:1.6.2'
+    implementation 'androidx.camera:camera-camera2:1.6.2'
+    implementation 'androidx.camera:camera-lifecycle:1.6.2'
+    implementation 'androidx.camera:camera-view:1.6.2'
+    implementation 'com.google.mlkit:barcode-scanning:17.3.0'
+
+    testImplementation 'junit:junit:4.13.2'
+}

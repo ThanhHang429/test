@@ -1,0 +1,5 @@
+package com.eventapp.app.data.remote.dto.registration;
+
+// TODO: DTO ManualAdjustRequest của module registration - tên và trường phải khớp backend
+public class ManualAdjustRequest {
+}
