@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chuỗi dùng cho module Hữu Cảnh. Prefix hc_ để tránh trùng strings.xml chung. -->
+<resources>
+    <!-- Trạng thái chung -->
+    <string name="hc_loading">Đang tải…</string>
+    <string name="hc_error_title">Không thể tải dữ liệu</string>
+    <string name="hc_error_default">Đã xảy ra lỗi, vui lòng thử lại</string>
+    <string name="hc_retry">Thử lại</string>
+    <string name="hc_empty_title">Chưa có gì ở đây</string>
+    <string name="hc_empty_default">Chưa có dữ liệu để hiển thị</string>
+    <string name="hc_see_all">Xem tất cả</string>
+    <string name="hc_refresh">Làm mới</string>
+    <string name="hc_close">Đóng</string>
+    <string name="hc_more">Tùy chọn khác</string>
+    <string name="hc_action">Hành động</string>
+    <string name="hc_loading_a11y">Đang tải nội dung</string>
+
+    <!-- Offline -->
+    <string name="hc_offline">Không có kết nối mạng</string>
+    <string name="hc_offline_cached">Đang xem dữ liệu đã lưu lúc %1$s</string>
+    <string name="hc_offline_action">Thử lại</string>
+
+    <!-- AI -->
+    <string name="hc_ai_badge">Gợi ý bởi AI</string>
+    <string name="hc_ai_badge_rule">Phù hợp sở thích</string>
+    <string name="hc_ai_match">Phù hợp %1$d%%</string>
+    <string name="hc_ai_badge_estimate">Độ phù hợp ước tính %1$d%%</string>
+    <string name="hc_ai_disclaimer">Trợ lý AI có thể sai, hãy kiểm tra lại ở trang sự kiện.</string>
+    <string name="hc_coming_soon">Sắp ra mắt</string>
+
+    <!-- Rating -->
+    <string name="hc_star_content_description">%1$d sao</string>
+    <string name="hc_rating_content_description">Đánh giá %1$s trên 5 sao</string>
+    <string name="hc_rating_distribution">%1$d sao</string>
+    <string name="hc_rating_empty">Chưa có đánh giá</string>
+    <string name="hc_free">Miễn phí</string>
+
+    <!-- Chart -->
+    <string name="hc_chart_empty">Chưa có dữ liệu biểu đồ</string>
+    <string name="hc_chart_content_description">Biểu đồ cột</string>
+    <string name="hc_chart_peak">Cao nhất: %1$s %2$s</string>
+    <string name="hc_chart_total">Tổng: %1$s</string>
+
+    <!-- Budget -->
+    <string name="hc_budget_title">Ngân sách tối đa</string>
+    <string name="hc_budget_hint">Nhập số tiền</string>
+    <string name="hc_budget_suffix">đ</string>
+    <string name="hc_budget_value">%1$s đ</string>
+    <string name="hc_budget_invalid">Ngân sách phải từ 0 đến 100.000.000 đ</string>
+    <string name="hc_budget_preset_200">200k</string>
+    <string name="hc_budget_preset_500">500k</string>
+    <string name="hc_budget_preset_1m">1M</string>
+    <string name="hc_budget_preset_2m">2M</string>
+    <string name="hc_budget_preset_5m">5M</string>
+    <string name="hc_budget_a11y">Ngân sách tối đa %1$s đồng</string>
+
+    <!-- ===== Home / U04 ===== -->
+    <string name="hc_home_greeting">Xin chào, %1$s</string>
+    <string name="hc_home_greeting_guest">Xin chào bạn</string>
+    <string name="hc_home_question">Hôm nay bạn muốn đi đâu?</string>
+    <string name="hc_home_search_hint">Tìm sự kiện, nghệ sĩ, địa điểm…</string>
+    <string name="hc_home_quick_all">Tất cả</string>
+    <string name="hc_home_quick_today">Hôm nay</string>
+    <string name="hc_home_quick_weekend">Cuối tuần</string>
+    <string name="hc_home_quick_free">Miễn phí</string>
+    <string name="hc_home_quick_near">Gần bạn</string>
+    <string name="hc_home_quick_near_soon">Gần bạn • Sắp ra mắt</string>
+    <string name="hc_home_ai_title">Gợi ý riêng cho bạn</string>
+    <string name="hc_home_ai_subtitle">Dựa trên sở thích và lịch sử khám phá của bạn</string>
+    <string name="hc_home_ai_action">Xem tất cả</string>
+    <string name="hc_home_ai_count">%1$d sự kiện phù hợp</string>
+    <string name="hc_home_categories_title">Khám phá theo danh mục</string>
+    <string name="hc_home_featured_title">Sự kiện nổi bật</string>
+    <string name="hc_home_upcoming_title">Sắp diễn ra</string>
+    <string name="hc_home_upcoming_subtitle">Đừng bỏ lỡ những sự kiện sắp tới</string>
+    <string name="hc_home_see_all">Xem tất cả</string>
+    <string name="hc_home_notifications">Thông báo</string>
+    <string name="hc_home_favorites">Đã lưu</string>
+    <string name="hc_home_avatar">Ảnh đại diện</string>
+    <string name="hc_home_empty_title">Chưa có sự kiện nào</string>
+    <string name="hc_home_empty_message">Hãy quay lại sau để khám phá thêm sự kiện mới.</string>
+
+    <!-- ===== Danh mục ===== -->
+    <string name="hc_category_all">Tất cả</string>
+    <string name="hc_category_music">Âm nhạc</string>
+    <string name="hc_category_sports">Thể thao</string>
+    <string name="hc_category_art">Nghệ thuật</string>
+    <string name="hc_category_food">Ẩm thực</string>
+    <string name="hc_category_tech">Công nghệ</string>
+    <string name="hc_category_business">Kinh doanh</string>
+    <string name="hc_category_education">Giáo dục</string>
+    <string name="hc_category_health">Sức khỏe</string>
+    <string name="hc_category_other">Khác</string>
+
+    <!-- ===== Thẻ sự kiện ===== -->
+    <string name="hc_event_free">Miễn phí</string>
+    <string name="hc_event_few_left">Sắp hết vé</string>
+    <string name="hc_event_sold_out">Hết vé</string>
+    <string name="hc_event_cancelled">Đã hủy</string>
+    <string name="hc_event_available">Còn vé</string>
+    <string name="hc_event_online">Trực tuyến</string>
+    <string name="hc_event_price_from">Từ %1$s</string>
+    <string name="hc_event_reviews">(%1$d)</string>
+    <string name="hc_event_favorite_add">Lưu sự kiện</string>
+    <string name="hc_event_favorite_remove">Bỏ lưu sự kiện</string>
+    <string name="hc_event_saved">Đã lưu sự kiện</string>
+    <string name="hc_event_unsaved">Đã bỏ lưu sự kiện</string>
+    <string name="hc_event_recommended_for_you">Dành cho bạn</string>
+    <string name="hc_event_today">Hôm nay • %1$s</string>
+    <string name="hc_event_tomorrow">Ngày mai • %1$s</string>
+
+    <!-- ===== Danh sách sự kiện / U04 ===== -->
+    <string name="hc_list_title">Khám phá sự kiện</string>
+    <string name="hc_list_subtitle">Tìm sự kiện phù hợp với bạn</string>
+    <string name="hc_list_back">Quay lại</string>
+    <string name="hc_list_filter">Bộ lọc</string>
+    <string name="hc_list_search_hint">Tìm kiếm sự kiện</string>
+    <string name="hc_list_result_count">%1$d sự kiện</string>
+    <string name="hc_list_sort_prefix">Sắp xếp: %1$s</string>
+    <string name="hc_list_empty_title">Không tìm thấy sự kiện</string>
+    <string name="hc_list_empty_message">Thử từ khóa khác hoặc bỏ bớt bộ lọc.</string>
+    <string name="hc_list_clear_filters">Xóa bộ lọc</string>
+    <string name="hc_list_history_title">Tìm kiếm gần đây</string>
+    <string name="hc_list_history_clear">Xóa lịch sử</string>
+    <string name="hc_list_history_empty">Chưa có tìm kiếm nào. Hãy thử tìm sự kiện bạn thích.</string>
+    <string name="hc_list_loading_more">Đang tải thêm…</string>
+    <string name="hc_list_end">Bạn đã xem hết danh sách</string>
+    <string name="hc_list_error_title">Không thể tải sự kiện</string>
+    <string name="hc_list_error_message">Kiểm tra kết nối và thử lại.</string>
+    <string name="hc_list_search_min">Nhập ít nhất 2 ký tự để tìm kiếm</string>
+    <string name="hc_list_search_open">Mở tìm kiếm</string>
+    <string name="hc_list_sort">Sắp xếp</string>
+
+    <!-- ===== Bộ lọc sự kiện / U04 ===== -->
+    <string name="hc_filter_title">Bộ lọc</string>
+    <string name="hc_filter_subtitle">Chọn tiêu chí phù hợp với bạn</string>
+    <string name="hc_filter_categories">Danh mục</string>
+    <string name="hc_filter_categories_hint">Chọn tối đa 10 danh mục</string>
+    <string name="hc_filter_time">Thời gian</string>
+    <string name="hc_filter_time_any">Tất cả</string>
+    <string name="hc_filter_time_today">Hôm nay</string>
+    <string name="hc_filter_time_week">Tuần này</string>
+    <string name="hc_filter_time_month">Tháng này</string>
+    <string name="hc_filter_time_custom">Tùy chọn</string>
+    <string name="hc_filter_date_from">Từ ngày</string>
+    <string name="hc_filter_date_to">Đến ngày</string>
+    <string name="hc_filter_date_range">%1$s – %2$s</string>
+    <string name="hc_filter_date_max">Khoảng thời gian tối đa 366 ngày</string>
+    <string name="hc_filter_city">Thành phố</string>
+    <string name="hc_filter_city_hint">Chọn tỉnh/thành</string>
+    <string name="hc_filter_format">Hình thức</string>
+    <string name="hc_filter_format_any">Tất cả</string>
+    <string name="hc_filter_format_onsite">Trực tiếp</string>
+    <string name="hc_filter_format_online">Trực tuyến</string>
+    <string name="hc_filter_price">Khoảng giá</string>
+    <string name="hc_filter_price_any">Mọi mức giá</string>
+    <string name="hc_filter_price_free">Miễn phí</string>
+    <string name="hc_filter_price_paid">Có phí</string>
+    <string name="hc_filter_price_summary">%1$s – %2$s</string>
+    <string name="hc_filter_available">Chỉ hiện sự kiện còn vé</string>
+    <string name="hc_filter_sort">Sắp xếp</string>
+    <string name="hc_filter_sort_start">Sắp diễn ra</string>
+    <string name="hc_filter_sort_newest">Mới nhất</string>
+    <string name="hc_filter_sort_price_asc">Giá thấp đến cao</string>
+    <string name="hc_filter_sort_price_desc">Giá cao đến thấp</string>
+    <string name="hc_filter_sort_popular">Phổ biến</string>
+    <string name="hc_filter_reset">Xóa tất cả</string>
+    <string name="hc_filter_apply">Áp dụng</string>
+    <string name="hc_filter_close">Đóng bộ lọc</string>
+    <string name="hc_filter_city_any">Tất cả thành phố</string>
+    <string name="hc_filter_price_unlimited">Không giới hạn</string>
+
+    <!-- ===== O09: Phân loại sự kiện ===== -->
+    <string name="hc_o09_title">Phân loại sự kiện</string>
+    <string name="hc_o09_subtitle">Giúp người dùng tìm thấy sự kiện của bạn</string>
+    <string name="hc_o09_primary">Danh mục chính</string>
+    <string name="hc_o09_primary_hint">Chọn 1 danh mục bắt buộc</string>
+    <string name="hc_o09_secondary">Danh mục phụ</string>
+    <string name="hc_o09_secondary_hint">Tối đa 2 danh mục</string>
+    <string name="hc_o09_tags">Nhãn phụ</string>
+    <string name="hc_o09_tags_hint">Thêm nhãn (2–30 ký tự)</string>
+    <string name="hc_o09_tag_count">%1$d/5</string>
+    <string name="hc_o09_tag_add">Thêm</string>
+    <string name="hc_o09_tag_suggestions">Gợi ý</string>
+    <string name="hc_o09_tag_error_duplicate">Nhãn này đã được thêm</string>
+    <string name="hc_o09_tag_error_length">Nhãn phải từ 2 đến 30 ký tự</string>
+    <string name="hc_o09_tag_error_invalid">Nhãn không được chứa liên kết, số điện thoại hoặc từ khóa cấm</string>
+    <string name="hc_o09_tag_remove">Xóa nhãn %1$s</string>
+    <string name="hc_o09_primary_required">Vui lòng chọn danh mục chính</string>
+    <string name="hc_o09_secondary_limit">Chỉ chọn tối đa 2 danh mục phụ</string>
+    <string name="hc_o09_save">Lưu phân loại</string>
+    <string name="hc_o09_saved">Đã lưu phân loại</string>
+    <string name="hc_o09_loading">Đang tải danh mục…</string>
+    <string name="hc_o09_hidden_category">Danh mục đã ẩn</string>
+    <string name="hc_o09_remove">Bỏ chọn</string>
+    <string name="hc_o09_form_title">Thông tin sự kiện</string>
+    <string name="hc_o09_form_subtitle">Phần thông tin khác do module sự kiện đảm nhận</string>
+    <string name="hc_o09_required">Bắt buộc</string>
+    <string name="hc_o09_optional">Tùy chọn</string>
+    <string name="hc_o09_secondary_count">%1$d/2</string>
+    <string name="hc_o09_tag_empty">Chưa có nhãn nào</string>
+    <string name="hc_o09_tag_max">Chỉ được thêm tối đa 5 nhãn</string>
+    <string name="hc_o09_save_error">Không thể lưu phân loại, vui lòng thử lại</string>
+    <string name="hc_o09_validation_failed">Vui lòng kiểm tra lại thông tin phân loại</string>
+    <string name="hc_o09_saving">Đang lưu…</string>
+    <string name="hc_o09_form_note">Màn hình tạo sự kiện đang được hoàn thiện. Phần phân loại bên dưới đã sẵn sàng để lưu.</string>
+    <string name="hc_o09_create_title">Tạo sự kiện</string>
+    <string name="hc_o09_back">Quay lại</string>
+    <string name="hc_o09_save_hint">Danh mục chính là bắt buộc. Bạn có thể bổ sung tối đa 2 danh mục phụ và 5 nhãn.</string>
+
+    <!-- ===== Hành động chung ===== -->
+    <string name="hc_action_apply">Áp dụng</string>
+    <string name="hc_action_clear">Xóa</string>
+    <string name="hc_action_done">Xong</string>
+    <string name="hc_action_cancel">Hủy</string>
+    <string name="hc_action_search">Tìm kiếm</string>
+
+    <string-array name="hc_cities">
+        <item>@string/hc_filter_city_any</item>
+        <item>Hà Nội</item>
+        <item>TP. Hồ Chí Minh</item>
+        <item>Đà Nẵng</item>
+        <item>Hải Phòng</item>
+        <item>Cần Thơ</item>
+        <item>Huế</item>
+        <item>Nha Trang</item>
+        <item>Đà Lạt</item>
+        <item>Hạ Long</item>
+    </string-array>
+</resources>

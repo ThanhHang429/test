@@ -1,6 +1,461 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Màn hình Home: Trang chủ, gợi ý sự kiện nổi bật và sự kiện sắp diễn ra | FR-U04 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/brand_background" />
+    android:layout_height="match_parent"
+    android:background="@color/ds_bg">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshHome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollHome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/ds_space_24">
+
+                <!-- Greeting + quick actions -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/ds_content_margin"
+                    android:paddingTop="@dimen/ds_space_16"
+                    android:paddingEnd="@dimen/ds_content_margin"
+                    android:paddingBottom="@dimen/ds_space_8">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvHomeGreeting"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_home_greeting_guest"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                            tools:text="Xin chào, Minh Anh" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_2"
+                            android:text="@string/hc_home_question"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.H1" />
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnHomeFavorites"
+                        android:layout_width="@dimen/ds_touch_target"
+                        android:layout_height="@dimen/ds_touch_target"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/hc_home_favorites"
+                        android:padding="@dimen/ds_space_12"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_ds_heart"
+                        app:tint="@color/ds_text" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/ds_touch_target"
+                        android:layout_height="@dimen/ds_touch_target">
+
+                        <ImageButton
+                            android:id="@+id/btnHomeNotifications"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/hc_home_notifications"
+                            android:padding="@dimen/ds_space_12"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_ds_notifications"
+                            app:tint="@color/ds_text" />
+
+                        <View
+                            android:id="@+id/viewHomeNotificationDot"
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="@dimen/ds_space_8"
+                            android:layout_marginEnd="@dimen/ds_space_8"
+                            android:background="@drawable/bg_ds_badge_count" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnHomeProfile"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="@dimen/ds_space_4"
+                        android:background="@drawable/bg_ds_avatar"
+                        android:clickable="true"
+                        android:contentDescription="@string/hc_home_avatar"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_ds_users"
+                            app:tint="@color/ds_primary" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <!-- Search entry -->
+                <LinearLayout
+                    android:id="@+id/layoutHomeSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:layout_marginEnd="@dimen/ds_content_margin"
+                    android:background="@drawable/bg_ds_search"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/ds_space_12"
+                    android:paddingEnd="@dimen/ds_space_4">
+
+                    <ImageView
+                        android:layout_width="@dimen/ds_icon_20"
+                        android:layout_height="@dimen/ds_icon_20"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_ds_search"
+                        app:tint="@color/ds_text_muted" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_8"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/hc_home_search_hint"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.BodyM"
+                        android:textColor="@color/ds_text_muted" />
+
+                    <ImageButton
+                        android:id="@+id/btnHomeFilter"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/hc_list_filter"
+                        android:padding="@dimen/ds_space_12"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_ds_filter"
+                        app:tint="@color/ds_primary" />
+                </LinearLayout>
+
+                <!-- Quick filters required by U04 -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_12"
+                    android:clipToPadding="false"
+                    android:paddingStart="@dimen/ds_content_margin"
+                    android:paddingEnd="@dimen/ds_content_margin"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupHomeQuick"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="@dimen/ds_space_8"
+                        app:selectionRequired="false"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipHomeQuickAll"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkable="true"
+                            android:checked="true"
+                            android:text="@string/hc_home_quick_all" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipHomeQuickToday"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkable="true"
+                            android:text="@string/hc_home_quick_today" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipHomeQuickWeekend"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkable="true"
+                            android:text="@string/hc_home_quick_weekend" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipHomeQuickFree"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkable="true"
+                            android:text="@string/hc_home_quick_free" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipHomeQuickNear"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checkable="true"
+                            android:text="@string/hc_home_quick_near" />
+                    </com.google.android.material.chip.ChipGroup>
+                </HorizontalScrollView>
+
+                <!-- AI hero -->
+                <LinearLayout
+                    android:id="@+id/cardHomeAi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_16"
+                    android:layout_marginEnd="@dimen/ds_content_margin"
+                    android:background="@drawable/bg_ds_ai_hero"
+                    android:orientation="vertical"
+                    android:padding="@dimen/ds_space_16">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/ds_icon_20"
+                            android:layout_height="@dimen/ds_icon_20"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_ds_ai_sparkle"
+                            app:tint="@color/ds_white" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/ds_space_6"
+                            android:layout_weight="1"
+                            android:text="@string/hc_ai_badge"
+                            android:textColor="@color/ds_white"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_ds_chip"
+                            android:paddingStart="@dimen/ds_space_8"
+                            android:paddingTop="@dimen/ds_space_2"
+                            android:paddingEnd="@dimen/ds_space_8"
+                            android:paddingBottom="@dimen/ds_space_2"
+                            android:text="AI"
+                            android:textColor="@color/ds_primary"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:text="@string/hc_home_ai_title"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.H2"
+                        android:textColor="@color/ds_white" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_2"
+                        android:alpha="0.85"
+                        android:text="@string/hc_home_ai_subtitle"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        android:textColor="@color/ds_white" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvHomeAiCount"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/ds_white"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="5 sự kiện phù hợp" />
+
+                        <TextView
+                            android:id="@+id/btnHomeAiSeeAll"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/ds_touch_target"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:gravity="center_vertical"
+                            android:paddingStart="@dimen/ds_space_8"
+                            android:paddingEnd="@dimen/ds_space_8"
+                            android:text="@string/hc_home_ai_action"
+                            android:textColor="@color/ds_white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvHomeAi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never" />
+                </LinearLayout>
+
+                <!-- Categories -->
+                <com.eventapp.app.ui.common.view.SectionHeaderView
+                    android:id="@+id/headerHomeCategories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_24"
+                    android:layout_marginEnd="@dimen/ds_content_margin" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_4"
+                    android:clipToPadding="false"
+                    android:paddingStart="@dimen/ds_content_margin"
+                    android:paddingEnd="@dimen/ds_content_margin"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupHomeCategories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="@dimen/ds_space_8"
+                        app:selectionRequired="false"
+                        app:singleLine="true"
+                        app:singleSelection="true" />
+                </HorizontalScrollView>
+
+                <!-- Featured -->
+                <com.eventapp.app.ui.common.view.SectionHeaderView
+                    android:id="@+id/headerHomeFeatured"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_24"
+                    android:layout_marginEnd="@dimen/ds_content_margin" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHomeFeatured"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingStart="@dimen/ds_content_margin"
+                    android:paddingEnd="@dimen/ds_content_margin" />
+
+                <!-- Upcoming -->
+                <com.eventapp.app.ui.common.view.SectionHeaderView
+                    android:id="@+id/headerHomeUpcoming"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_24"
+                    android:layout_marginEnd="@dimen/ds_content_margin" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHomeUpcoming"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:paddingStart="@dimen/ds_content_margin"
+                    android:paddingEnd="@dimen/ds_content_margin" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.eventapp.app.ui.common.view.SkeletonLayout
+        android:id="@+id/skeletonHome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/ds_bg"
+        android:orientation="vertical"
+        android:padding="@dimen/ds_content_margin"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <View
+            android:layout_width="140dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="@dimen/ds_space_12"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginBottom="@dimen/ds_space_16"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginBottom="@dimen/ds_space_24"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="180dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="@dimen/ds_space_12"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:layout_marginBottom="@dimen/ds_space_12"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:background="@drawable/bg_ds_skeleton" />
+    </com.eventapp.app.ui.common.view.SkeletonLayout>
+
+    <com.eventapp.app.ui.common.view.EmptyStateView
+        android:id="@+id/emptyHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <com.eventapp.app.ui.common.view.ErrorStateView
+        android:id="@+id/errorHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="gone" />
+</FrameLayout>

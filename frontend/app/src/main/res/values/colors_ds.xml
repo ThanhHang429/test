@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Design tokens cho các màn hình do Hữu Cảnh phụ trách.
+     Không thay thế brand_* để tránh ảnh hưởng màn hình của thành viên khác. -->
+<resources>
+    <!-- Brand / action -->
+    <color name="ds_primary">#FF4F46E5</color>
+    <color name="ds_primary_dark">#FF3525CD</color>
+    <color name="ds_primary_soft">#FFEEF2FF</color>
+    <color name="ds_secondary">#FF7C3AED</color>
+    <color name="ds_secondary_soft">#FFF5F3FF</color>
+    <color name="ds_cta">#FFFF5722</color>
+    <color name="ds_cta_dark">#FFE64A19</color>
+
+    <!-- Surface / text -->
+    <color name="ds_bg">#FFF8FAFC</color>
+    <color name="ds_surface">#FFFFFFFF</color>
+    <color name="ds_surface_alt">#FFF2F3FF</color>
+    <color name="ds_text">#FF0F172A</color>
+    <color name="ds_text_muted">#FF64748B</color>
+    <color name="ds_outline">#FFE2E8F0</color>
+    <color name="ds_outline_strong">#FFCBD5E1</color>
+    <color name="ds_white">#FFFFFFFF</color>
+    <color name="ds_black">#FF000000</color>
+    <color name="ds_transparent">#00000000</color>
+    <color name="ds_scrim">#66000000</color>
+
+    <!-- Semantic -->
+    <color name="ds_success">#FF10B981</color>
+    <color name="ds_success_dark">#FF047857</color>
+    <color name="ds_success_soft">#FFECFDF5</color>
+    <color name="ds_warning">#FFF59E0B</color>
+    <color name="ds_warning_dark">#FFB45309</color>
+    <color name="ds_warning_soft">#FFFFFBEB</color>
+    <color name="ds_danger">#FFE11D48</color>
+    <color name="ds_danger_dark">#FFBE123C</color>
+    <color name="ds_danger_soft">#FFFFF1F2</color>
+    <color name="ds_info">#FF0EA5E9</color>
+    <color name="ds_info_dark">#FF0369A1</color>
+    <color name="ds_info_soft">#FFF0F9FF</color>
+
+    <!-- Role accents -->
+    <color name="ds_organizer">#FF0F766E</color>
+    <color name="ds_organizer_soft">#FFF0FDFA</color>
+    <color name="ds_organizer_bright">#FF14B8A6</color>
+    <color name="ds_admin_risk">#FFE11D48</color>
+    <color name="ds_admin_medium">#FFF59E0B</color>
+    <color name="ds_admin_low">#FF10B981</color>
+
+    <!-- AI -->
+    <color name="ds_ai_gradient_start">#FF4F46E5</color>
+    <color name="ds_ai_gradient_end">#FF7C3AED</color>
+
+    <!-- Rating / chart / skeleton -->
+    <color name="ds_star">#FFF59E0B</color>
+    <color name="ds_star_empty">#FFCBD5E1</color>
+    <color name="ds_chart_bar">#FF4F46E5</color>
+    <color name="ds_chart_bar_alt">#FFA5B4FC</color>
+    <color name="ds_chart_error">#FFE11D48</color>
+    <color name="ds_chart_grid">#FFE2E8F0</color>
+    <color name="ds_skeleton">#FFE2E8F0</color>
+    <color name="ds_skeleton_highlight">#FFF1F5F9</color>
+</resources>

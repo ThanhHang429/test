@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tvDsBudgetLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hc_budget_title"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.Label" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupDsBudgetPreset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_8"
+        app:chipSpacingHorizontal="@dimen/ds_space_8"
+        app:selectionRequired="false"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDsBudget200"
+            style="@style/Widget.EventApp.Ds.Chip.Preset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/hc_budget_preset_200" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDsBudget500"
+            style="@style/Widget.EventApp.Ds.Chip.Preset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/hc_budget_preset_500" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDsBudget1m"
+            style="@style/Widget.EventApp.Ds.Chip.Preset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/hc_budget_preset_1m" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDsBudget2m"
+            style="@style/Widget.EventApp.Ds.Chip.Preset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/hc_budget_preset_2m" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipDsBudget5m"
+            style="@style/Widget.EventApp.Ds.Chip.Preset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/hc_budget_preset_5m" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderDsBudget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_4"
+        android:stepSize="500000"
+        android:value="0"
+        android:valueFrom="0"
+        android:valueTo="100000000"
+        app:haloColor="@color/ds_primary_soft"
+        app:labelBehavior="gone"
+        app:thumbColor="@color/ds_primary"
+        app:trackColorActive="@color/ds_primary"
+        app:trackColorInactive="@color/ds_outline" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_4"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDsBudget"
+            style="@style/Widget.EventApp.Ds.TextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/hc_budget_hint"
+            app:suffixText="@string/hc_budget_suffix"
+            app:suffixTextColor="@color/ds_text_muted">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDsBudget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLength="9"
+                android:singleLine="true"
+                android:textColor="@color/ds_text"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvDsBudgetValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_12"
+            android:gravity="end"
+            android:minWidth="96dp"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+            android:textColor="@color/ds_primary" />
+    </LinearLayout>
+</merge>

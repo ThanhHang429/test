@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/ivDsOfflineIcon"
+        android:layout_width="@dimen/ds_icon_20"
+        android:layout_height="@dimen/ds_icon_20"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_ds_warning"
+        app:tint="@color/ds_warning_dark"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+    <TextView
+        android:id="@+id/tvDsOfflineMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_space_8"
+        android:layout_marginEnd="@dimen/ds_space_8"
+        android:layout_weight="1"
+        android:text="@string/hc_offline"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+        android:textColor="@color/ds_warning_dark" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDsOfflineRetry"
+        style="@style/Widget.EventApp.Ds.Button.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:minHeight="40dp"
+        android:text="@string/hc_offline_action" />
+</merge>

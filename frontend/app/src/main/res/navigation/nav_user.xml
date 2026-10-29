@@ -14,17 +14,55 @@
     <fragment
         android:id="@+id/event_listFragment"
         android:name="com.eventapp.app.ui.user.home.EventListFragment"
-        tools:layout="@layout/fragment_home_event_list" />
+        tools:layout="@layout/fragment_home_event_list">
 
-    <fragment
+        <argument
+            android:name="arg_query"
+            android:defaultValue="@null"
+            app:argType="string" />
+        <argument
+            android:name="arg_category_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="arg_criteria"
+            android:defaultValue="@null"
+            app:argType="com.eventapp.app.ui.user.home.EventFilterCriteria" />
+        <argument
+            android:name="arg_open_search"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="arg_sort"
+            android:defaultValue="@null"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
         android:id="@+id/event_filterFragment"
         android:name="com.eventapp.app.ui.user.home.EventFilterFragment"
-        tools:layout="@layout/fragment_home_event_filter" />
+        tools:layout="@layout/fragment_home_event_filter">
+
+        <argument
+            android:name="arg_filter_criteria"
+            android:defaultValue="@null"
+            app:argType="com.eventapp.app.ui.user.home.EventFilterCriteria" />
+    </dialog>
 
     <fragment
         android:id="@+id/event_detailFragment"
         android:name="com.eventapp.app.ui.user.home.EventDetailFragment"
-        tools:layout="@layout/fragment_home_event_detail" />
+        tools:layout="@layout/fragment_home_event_detail">
+
+        <argument
+            android:name="arg_event_id"
+            android:defaultValue="-1L"
+            app:argType="long" />
+        <argument
+            android:name="arg_event_title"
+            android:defaultValue="@null"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/recommendFragment"

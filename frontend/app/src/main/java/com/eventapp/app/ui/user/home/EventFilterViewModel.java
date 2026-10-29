@@ -2,6 +2,26 @@ package com.eventapp.app.ui.user.home;
 
 import androidx.lifecycle.ViewModel;
 
-// TODO: ViewModel của màn hình EventFilter - nạp dữ liệu qua Repository | FR-U04
-public class EventFilterViewModel extends androidx.lifecycle.ViewModel {
+/** Draft filter state shared across EventFilterFragment configuration changes. */
+public class EventFilterViewModel extends ViewModel {
+
+    private EventFilterCriteria criteria;
+
+    public EventFilterCriteria getCriteria() {
+        return criteria;
+    }
+
+    public void setCriteria(EventFilterCriteria criteria) {
+        this.criteria = criteria == null ? null : criteria.copy();
+    }
+
+    public void reset() {
+        if (criteria != null) {
+            criteria.reset();
+        }
+    }
+
+    public boolean hasCriteria() {
+        return criteria != null;
+    }
 }

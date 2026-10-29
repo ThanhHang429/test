@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing: 8pt grid, có bổ sung 2/6 cho chi tiết nhỏ -->
+    <dimen name="ds_space_2">2dp</dimen>
+    <dimen name="ds_space_4">4dp</dimen>
+    <dimen name="ds_space_6">6dp</dimen>
+    <dimen name="ds_space_8">8dp</dimen>
+    <dimen name="ds_space_12">12dp</dimen>
+    <dimen name="ds_space_16">16dp</dimen>
+    <dimen name="ds_space_20">20dp</dimen>
+    <dimen name="ds_space_24">24dp</dimen>
+    <dimen name="ds_space_32">32dp</dimen>
+    <dimen name="ds_space_40">40dp</dimen>
+    <dimen name="ds_space_48">48dp</dimen>
+
+    <!-- Shape -->
+    <dimen name="ds_radius_8">8dp</dimen>
+    <dimen name="ds_radius_12">12dp</dimen>
+    <dimen name="ds_radius_16">16dp</dimen>
+    <dimen name="ds_radius_20">20dp</dimen>
+    <dimen name="ds_radius_24">24dp</dimen>
+    <dimen name="ds_radius_pill">999dp</dimen>
+
+    <!-- Elevation / stroke -->
+    <dimen name="ds_elevation_card">4dp</dimen>
+    <dimen name="ds_elevation_sheet">16dp</dimen>
+    <dimen name="ds_stroke">1dp</dimen>
+    <dimen name="ds_stroke_emphasis">2dp</dimen>
+
+    <!-- Layout -->
+    <dimen name="ds_content_margin">16dp</dimen>
+    <dimen name="ds_card_gap">12dp</dimen>
+    <dimen name="ds_section_gap">24dp</dimen>
+    <dimen name="ds_top_bar_height">56dp</dimen>
+    <dimen name="ds_bottom_bar_height">72dp</dimen>
+    <dimen name="ds_touch_target">48dp</dimen>
+    <dimen name="ds_chip_height">36dp</dimen>
+    <dimen name="ds_chip_height_small">28dp</dimen>
+
+    <!-- Icon / avatar -->
+    <dimen name="ds_icon_16">16dp</dimen>
+    <dimen name="ds_icon_20">20dp</dimen>
+    <dimen name="ds_icon_24">24dp</dimen>
+    <dimen name="ds_icon_32">32dp</dimen>
+    <dimen name="ds_icon_40">40dp</dimen>
+    <dimen name="ds_avatar_sm">32dp</dimen>
+    <dimen name="ds_avatar_md">40dp</dimen>
+    <dimen name="ds_avatar_lg">56dp</dimen>
+
+    <!-- Component-specific -->
+    <dimen name="ds_chart_height">180dp</dimen>
+    <dimen name="ds_skeleton_height">16dp</dimen>
+    <dimen name="ds_progress_height">8dp</dimen>
+    <dimen name="ds_star_size">32dp</dimen>
+    <dimen name="ds_star_size_small">20dp</dimen>
+    <dimen name="ds_event_thumb">96dp</dimen>
+    <dimen name="ds_featured_card_width">260dp</dimen>
+    <dimen name="ds_cover_height">132dp</dimen>
+    <dimen name="ds_sheet_handle_width">40dp</dimen>
+    <dimen name="ds_sheet_handle_height">4dp</dimen>
+    <dimen name="ds_filter_button">48dp</dimen>
+</resources>
