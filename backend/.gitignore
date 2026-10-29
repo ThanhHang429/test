@@ -1,0 +1,9 @@
+﻿# .gitignore
+target/
+*.log
+.env
+*.jar
+.idea/
+*.iml
+local.properties
+google-services.json
