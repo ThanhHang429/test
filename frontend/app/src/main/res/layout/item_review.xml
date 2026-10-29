@@ -1,6 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Item danh sách đánh giá trong danh sách | FR-U20 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.EventApp.Ds.Card.Outlined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" />
+    android:layout_marginBottom="@dimen/ds_card_gap"
+    app:cardCornerRadius="@dimen/ds_radius_16">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/ds_space_16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvReviewAvatar"
+                android:layout_width="@dimen/ds_avatar_md"
+                android:layout_height="@dimen/ds_avatar_md"
+                android:background="@drawable/bg_ds_avatar"
+                android:gravity="center"
+                android:textColor="@color/ds_primary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="MA" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_space_12"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvReviewAuthor"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+                        tools:text="Minh Anh" />
+
+                    <com.eventapp.app.ui.common.view.StatusChip
+                        android:id="@+id/chipReviewStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_4"
+                        android:visibility="gone"
+                        tools:text="Chờ duyệt"
+                        tools:visibility="visible" />
+
+                    <com.eventapp.app.ui.common.view.StatusChip
+                        android:id="@+id/chipReviewSource"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_4"
+                        android:visibility="gone"
+                        tools:text="Bị báo cáo"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_4"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.eventapp.app.ui.common.view.StarRatingView
+                        android:id="@+id/ratingReviewStars"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tvReviewDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_8"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        tools:text="20/10/2026" />
+
+                    <TextView
+                        android:id="@+id/tvReviewEdited"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_4"
+                        android:text="@string/hc_review_edited"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvReviewAuthorCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_2"
+                    android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                    android:visibility="gone"
+                    tools:text="Mã tài khoản: USR-4821"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvReviewEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_8"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+            android:textColor="@color/ds_primary"
+            android:visibility="gone"
+            tools:text="Đêm nhạc Indie Sài Gòn 2026"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvReviewComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_8"
+            android:lineSpacingExtra="2dp"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.BodyM"
+            tools:text="Không gian đẹp, ban nhạc chơi rất máu. Ban tổ chức hỗ trợ nhanh." />
+
+        <LinearLayout
+            android:id="@+id/layoutReviewFlag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_12"
+            android:background="@drawable/bg_ds_error_soft"
+            android:orientation="vertical"
+            android:padding="@dimen/ds_space_12"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvReviewFlagTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+                android:textColor="@color/ds_danger_dark"
+                tools:text="Cờ AI: SPAM • Mức HIGH" />
+
+            <TextView
+                android:id="@+id/tvReviewFlagReason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_4"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.BodyM"
+                tools:text="Nội dung chứa số điện thoại và liên kết lạ." />
+
+            <TextView
+                android:id="@+id/tvReviewEvidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_4"
+                android:fontFamily="monospace"
+                android:textSize="12sp"
+                android:textColor="@color/ds_text_muted"
+                android:visibility="gone"
+                tools:text="“...liên hệ 0909...”"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvReviewScores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_4"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                android:visibility="gone"
+                tools:text="Spam 0.91 • Toxicity 0.22"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutReviewActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_8"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReviewReport"
+                style="@style/Widget.EventApp.Ds.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hc_review_report"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReviewEdit"
+                style="@style/Widget.EventApp.Ds.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hc_review_edit"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReviewModerate"
+                style="@style/Widget.EventApp.Ds.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hc_review_moderate"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

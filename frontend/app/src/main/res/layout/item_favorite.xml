@@ -1,6 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Item danh sách sự kiện yêu thích trong danh sách | FR-U06 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- U06: một sự kiện trong tab Đã lưu. Trạng thái không còn khả dụng dùng nhóm riêng, không lộ tên/ảnh. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.EventApp.Ds.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" />
+    android:layout_marginBottom="@dimen/ds_card_gap"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardPreventCornerOverlap="true"
+    app:rippleColor="@color/ds_primary_soft">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/layoutFavContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ds_cover_height"
+                android:background="@drawable/bg_ds_card_soft">
+
+                <ImageView
+                    android:id="@+id/ivFavCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_ds_event"
+                    app:tint="@color/ds_white" />
+
+                <com.eventapp.app.ui.common.view.StatusChip
+                    android:id="@+id/chipFavStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="@dimen/ds_space_12"
+                    android:visibility="gone"
+                    tools:text="Sắp hết vé"
+                    tools:visibility="visible" />
+
+                <ImageButton
+                    android:id="@+id/btnFavHeart"
+                    android:layout_width="@dimen/ds_touch_target"
+                    android:layout_height="@dimen/ds_touch_target"
+                    android:layout_gravity="top|end"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/hc_event_favorite_remove"
+                    android:padding="@dimen/ds_space_12"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_ds_heart_filled"
+                    app:tint="@color/ds_cta" />
+
+                <TextView
+                    android:id="@+id/tvFavTimePill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_margin="@dimen/ds_space_12"
+                    android:background="@drawable/bg_ds_time_pill"
+                    android:paddingStart="@dimen/ds_space_8"
+                    android:paddingTop="@dimen/ds_space_4"
+                    android:paddingEnd="@dimen/ds_space_8"
+                    android:paddingBottom="@dimen/ds_space_4"
+                    android:textColor="@color/ds_white"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="25/10/2026 • 19:30" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/ds_space_12">
+
+                <TextView
+                    android:id="@+id/tvFavTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAppearance="@style/TextAppearance.EventApp.Ds.H3"
+                    tools:text="Đêm nhạc Indie Sài Gòn 2026" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_4"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_ds_location"
+                        app:tint="@color/ds_text_muted" />
+
+                    <TextView
+                        android:id="@+id/tvFavLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_4"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        tools:text="Nhà hát Hòa Bình, TP. Hồ Chí Minh" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.eventapp.app.ui.common.view.PriceTextView
+                        android:id="@+id/tvFavPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="Từ 350.000 đ" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFavAction"
+                        style="@style/Widget.EventApp.Ds.Button.Outlined"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="40dp"
+                        android:text="@string/hc_fav_cta_detail"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutFavUnavailable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/ds_space_16"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="@dimen/ds_icon_24"
+                android:layout_height="@dimen/ds_icon_24"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_ds_lock"
+                app:tint="@color/ds_text_muted" />
+
+            <TextView
+                android:id="@+id/tvFavUnavailable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/ds_space_8"
+                android:gravity="center"
+                android:text="@string/hc_fav_unavailable"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.BodyM"
+                android:textColor="@color/ds_text_muted" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFavRemove"
+                style="@style/Widget.EventApp.Ds.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hc_fav_remove" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

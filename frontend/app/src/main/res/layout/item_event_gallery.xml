@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.EventApp.Ds.Card.Outlined"
+    android:layout_width="220dp"
+    android:layout_height="140dp"
+    android:layout_marginEnd="@dimen/ds_card_gap"
+    app:cardCornerRadius="@dimen/ds_radius_16">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivDetailGallery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_ds_image"
+            app:tint="@color/ds_white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_ds_scrim_bottom" />
+
+        <TextView
+            android:id="@+id/tvDetailGalleryLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="@dimen/ds_space_12"
+            android:textColor="@color/ds_white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="Sân khấu chính" />
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>
