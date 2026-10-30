@@ -1,5 +1,9 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.data.local.prefs.SearchHistoryStore;
+import com.eventapp.app.data.model.EventFilterCriteria;
+import com.eventapp.app.ui.model.EventUiModel;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,7 +90,7 @@ public class EventListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_event_list, container, false);
+        return inflater.inflate(R.layout.fragment_user_home_event_list, container, false);
     }
 
     @Override

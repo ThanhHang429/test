@@ -120,7 +120,7 @@ public class ClassificationSectionView extends LinearLayout {
 
     private void init(Context context) {
         setOrientation(VERTICAL);
-        LayoutInflater.from(context).inflate(R.layout.view_o09_classification, this, true);
+        LayoutInflater.from(context).inflate(R.layout.view_ds_classification, this, true);
 
         primaryGroup = findViewById(R.id.chipGroupO09Primary);
         secondaryGroup = findViewById(R.id.chipGroupO09Secondary);

@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.ui.model.EventCategoryUi;
+import com.eventapp.app.ui.model.RecommendationUiModel;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -61,7 +64,7 @@ public class RecommendFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_recommend, container, false);
+        return inflater.inflate(R.layout.fragment_user_home_recommend, container, false);
     }
 
     @Override

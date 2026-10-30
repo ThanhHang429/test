@@ -1,5 +1,9 @@
 package com.eventapp.app.ui.admin.event;
 
+
+import com.eventapp.app.ui.model.ModerationUiModel;
+import com.eventapp.app.ui.admin.event.dialog.ModerationReasonDialog;
+import com.eventapp.app.ui.admin.event.dialog.ModerationReviewSheet;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +21,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.eventapp.app.R;
-import com.eventapp.app.ui.common.adapter.ModerationFlagAdapter;
+import com.eventapp.app.ui.admin.event.adapter.ModerationFlagAdapter;
 import com.eventapp.app.ui.common.adapter.ReviewAdapter;
 import com.eventapp.app.ui.common.view.EmptyStateView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
 import com.eventapp.app.ui.common.view.KpiTileView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
-import com.eventapp.app.ui.user.review.ReviewUiModel;
+import com.eventapp.app.ui.model.ReviewUiModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
@@ -65,7 +69,7 @@ public class ContentModerationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_event_content_moderation, container, false);
+        return inflater.inflate(R.layout.fragment_admin_event_content_moderation, container, false);
     }
 
     @Override

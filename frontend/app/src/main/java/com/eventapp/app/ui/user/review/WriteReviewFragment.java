@@ -63,7 +63,7 @@ public class WriteReviewFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_review_write_review, container, false);
+        return inflater.inflate(R.layout.fragment_user_review_write_review, container, false);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.eventapp.app.ui.organizer.report;
 
+
+import com.eventapp.app.ui.model.AiInsightUiModel;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.eventapp.app.R;
-import com.eventapp.app.ui.common.adapter.AiInsightAdapter;
+import com.eventapp.app.ui.organizer.report.adapter.AiInsightAdapter;
 import com.eventapp.app.ui.common.view.AiBadge;
 import com.eventapp.app.ui.common.view.ErrorStateView;
 import com.eventapp.app.ui.common.view.KpiTileView;
@@ -90,7 +92,7 @@ public class AiInsightFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_report_ai_insight, container, false);
+        return inflater.inflate(R.layout.fragment_organizer_report_ai_insight, container, false);
     }
 
     @Override

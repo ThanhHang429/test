@@ -1,5 +1,7 @@
 package com.eventapp.app.ui.organizer.event;
 
+
+import com.eventapp.app.ui.fake.SampleAiDescriptionData;
 import android.os.Handler;
 import android.os.Looper;
 

@@ -1,5 +1,9 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.data.model.EventFilterCriteria;
+import com.eventapp.app.ui.fake.SampleEventData;
+import com.eventapp.app.ui.model.EventUiModel;
 import android.os.Handler;
 import android.os.Looper;
 

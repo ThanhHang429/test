@@ -17,9 +17,8 @@
  */
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execFileSync } from 'node:child_process';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const APP = join(ROOT, 'app', 'src', 'main');
@@ -43,28 +42,38 @@ function walk(dir, ext, out = []) {
 
 const rel = (f) => f.slice(ROOT.length + 1);
 
-/* ---- 1. XML hợp lệ (parser PowerShell) -------------------------------- */
-const xmlFiles = walk(RES, '.xml').concat([join(APP, 'AndroidManifest.xml')]);
-const escaped = xmlFiles.map((f) => "'" + f.replace(/'/g, "''") + "'").join(',');
-try {
-  const ps = [
-    '$files=@(' + escaped + ');',
-    '$bad=@();',
-    'foreach($f in $files){',
-    '  try { $x=New-Object System.Xml.XmlDocument; $x.Load($f) }',
-    '  catch { $bad += ($f + " :: " + $_.Exception.Message) }',
-    '}',
-    'if($bad.Count -gt 0){ $bad -join "|" }',
-  ].join('\n');
-  const out = execFileSync('powershell', ['-NoProfile', '-Command', ps], { encoding: 'utf8' }).trim();
-  if (out) {
-    for (const line of out.split('|')) fail('XML không hợp lệ: ' + line.trim());
-  } else {
-    ok(`${xmlFiles.length} file XML hợp lệ`);
+/* ---- 1. XML hợp lệ (kiểm tra cân bằng thẻ, thuần Node) ---------------- */
+function xmlError(txt) {
+  const src = txt
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, '')
+    .replace(/<\?[\s\S]*?\?>/g, '');
+  const stack = [];
+  const re = /<(\/?)([\w:.-]+)((?:\s+[\w:.-]+\s*=\s*"[^"]*")*)\s*(\/?)>/g;
+  let m;
+  let consumed = 0;
+  while ((m = re.exec(src))) {
+    if (src.slice(consumed, m.index).includes('<')) return `thẻ không đóng đúng gần "${m[0]}"`;
+    consumed = m.index + m[0].length;
+    const [, closing, name, , selfClose] = m;
+    if (selfClose) continue;
+    if (closing) {
+      if (stack.pop() !== name) return `thẻ đóng </${name}> không khớp`;
+    } else {
+      stack.push(name);
+    }
   }
-} catch (e) {
-  fail('Không chạy được kiểm tra XML: ' + e.message);
+  if (stack.length) return `thiếu thẻ đóng </${stack[stack.length - 1]}>`;
+  return null;
 }
+
+const xmlFiles = walk(RES, '.xml').concat([join(APP, 'AndroidManifest.xml')]);
+let xmlBad = 0;
+for (const f of xmlFiles) {
+  const err = xmlError(readFileSync(f, 'utf8'));
+  if (err) { xmlBad++; fail(`XML không hợp lệ ${rel(f)}: ${err}`); }
+}
+if (!xmlBad) ok(`${xmlFiles.length} file XML hợp lệ`);
 
 /* ---- 2. Đọc nav graph và menu ---------------------------------------- */
 const navGraphs = walk(join(RES, 'navigation'), '.xml');
@@ -115,12 +124,14 @@ ok(`${checked} destination có class và layout đầy đủ`);
 
 /* ---- 4. Menu bottom khớp nav graph ------------------------------------ */
 const menuDir = join(RES, 'menu');
+// Số mục của bottom navigation theo từng role. Khu vực người dùng dùng 4 mục:
+// Thông báo và Yêu thích đã có lối vào riêng trên header trang Khám phá.
 const menus = [
-  ['menu_user_bottom', 'nav_user'],
-  ['menu_organizer_bottom', 'nav_organizer'],
-  ['menu_admin_bottom', 'nav_admin'],
+  ['menu_user_bottom', 'nav_user', 4],
+  ['menu_organizer_bottom', 'nav_organizer', 5],
+  ['menu_admin_bottom', 'nav_admin', 5],
 ];
-for (const [menu, nav] of menus) {
+for (const [menu, nav, expected] of menus) {
   const mf = join(menuDir, menu + '.xml');
   const nf = join(RES, 'navigation', nav + '.xml');
   if (!existsSync(mf) || !existsSync(nf)) {
@@ -130,26 +141,28 @@ for (const [menu, nav] of menus) {
   const mt = readFileSync(mf, 'utf8');
   const nt = readFileSync(nf, 'utf8');
   const ids = [...mt.matchAll(/android:id="@\+id\/([^"]+)"/g)].map((m) => m[1]);
-  if (ids.length !== 5) fail(`${menu}: cần đúng 5 mục, tìm thấy ${ids.length}`);
+  if (ids.length !== expected) {
+    fail(`${menu}: cần đúng ${expected} mục, tìm thấy ${ids.length}`);
+  }
   for (const id of ids) {
     if (!nt.includes(`@+id/${id}`)) fail(`${menu}: id "${id}" không tồn tại trong ${nav}.xml`);
   }
   const dests = [...nt.matchAll(/android:id="@\+id\/([^"]+)"/g)].map((m) => m[1]);
   const notInMenu = dests.filter((d) => !ids.includes(d));
   if (ids.some((i) => !dests.includes(i))) fail(`${menu}: có id không phải đích điều hướng`);
-  ok(`${menu}: 5/5 id khớp ${nav} (còn ${notInMenu.length} đích điều hướng khác)`);
+  ok(`${menu}: ${ids.length}/${expected} id khớp ${nav} (còn ${notInMenu.length} đích điều hướng khác)`);
 }
 
 /* ---- 5. Layout & nguồn ----------------------------------------------- */
 const layouts = walk(join(RES, 'layout'), '.xml');
-const names = layouts.map((f) => f.split('\\').pop().replace('.xml', ''));
+const names = layouts.map((f) => basename(f).replace('.xml', ''));
 const dup = names.filter((n, i) => names.indexOf(n) !== i);
 if (dup.length) fail('Trùng tên layout: ' + [...new Set(dup)].join(', '));
 ok(`${layouts.length} layout, không trùng tên`);
 
 const javaFiles = walk(JAVA, '.java');
-const classes = new Set(javaFiles.map((f) => join(f).split('\\').pop().replace('.java', '')));
-const dupCls = javaFiles.map((f) => f.split('\\').pop()).filter((n, i, a) => a.indexOf(n) !== i);
+const classes = new Set(javaFiles.map((f) => basename(f).replace('.java', '')));
+const dupCls = javaFiles.map((f) => basename(f)).filter((n, i, a) => a.indexOf(n) !== i);
 if (dupCls.length) fail('Trùng tên class: ' + [...new Set(dupCls)].join(', '));
 ok(`${javaFiles.length} file Java, không trùng tên`);
 
@@ -162,20 +175,67 @@ for (const d of dtoDirs) dtoCount += readdirSync(join(JAVA, 'data', 'remote', 'd
 
 if (apis.length !== 23) fail(`Cần 23 Api, tìm thấy ${apis.length}`);
 else ok('23/23 Retrofit Api');
-if (repos.length !== 23) fail(`Cần 23 Repository, tìm thấy ${repos.length}`);
-else ok('23/23 Repository');
-if (dtoCount !== 95) fail(`Cần 95 DTO, tìm thấy ${dtoCount}`);
-else ok('95/95 DTO');
+/* 23 Repository theo module + DeviceTokenRepository (FCM) = 24 */
+if (repos.length !== 24) fail(`Cần 24 Repository, tìm thấy ${repos.length}`);
+else ok('24/24 Repository');
+/* 95 DTO theo module backend + NotificationPayload (FCM) = 96 */
+if (dtoCount !== 96) fail(`Cần 96 DTO, tìm thấy ${dtoCount}`);
+else ok('96/96 DTO');
 if (dtoDirs.length !== 23) fail(`Cần 23 package DTO, tìm thấy ${dtoDirs.length}`);
+
+/* ---- 6b. Quy ước phụ thuộc giữa các tầng ----------------------------- */
+function importsIn(dir) {
+  const out = [];
+  for (const f of walk(dir, '.java')) {
+    const t = readFileSync(f, 'utf8');
+    for (const m of t.matchAll(/^import\s+(com\.eventapp\.app\.[\w.]+);/gm)) out.push({ f, imp: m[1] });
+  }
+  return out;
+}
+
+const violations = [];
+
+// core/ không được biết data/ hay ui/
+for (const { f, imp } of importsIn(join(JAVA, 'core'))) {
+  if (imp.startsWith(`${PKG}.ui.`) || imp.startsWith(`${PKG}.data.`)) {
+    violations.push(`${rel(f)}: core không được import ${imp}`);
+  }
+}
+
+// data/ không được biết ui/
+for (const { f, imp } of importsIn(join(JAVA, 'data'))) {
+  if (imp.startsWith(`${PKG}.ui.`)) violations.push(`${rel(f)}: data không được import ${imp}`);
+}
+
+// ui/common và ui/model không được biết feature cụ thể
+for (const sub of ['common', 'model']) {
+  for (const { f, imp } of importsIn(join(JAVA, 'ui', sub))) {
+    if (/^com\.eventapp\.app\.ui\.(user|organizer|admin)\./.test(imp)) {
+      violations.push(`${rel(f)}: ui/${sub} không được import ${imp}`);
+    }
+  }
+}
+
+if (violations.length) {
+  for (const v of violations) fail('Vi phạm phụ thuộc tầng — ' + v);
+} else {
+  ok('Quy ước phụ thuộc tầng: core ← data ← ui, ui/common & ui/model độc lập với feature');
+}
+
+// Tên class Api / Repository phải PascalCase
+for (const f of [...apis, ...repos]) {
+  if (!/^[A-Z]/.test(f)) fail(`Tên class phải viết hoa chữ đầu: ${f}`);
+}
+ok('Tên Api/Repository đúng chuẩn PascalCase');
 
 /* ---- 7. Manifest ------------------------------------------------------ */
 const manifest = readFileSync(join(APP, 'AndroidManifest.xml'), 'utf8');
 const componentRefs = [
-  ['.ui.SplashActivity', `${PKG}.ui.SplashActivity`],
-  ['.ui.AuthActivity', `${PKG}.ui.AuthActivity`],
-  ['.ui.UserHostActivity', `${PKG}.ui.UserHostActivity`],
-  ['.ui.OrganizerHostActivity', `${PKG}.ui.OrganizerHostActivity`],
-  ['.ui.AdminHostActivity', `${PKG}.ui.AdminHostActivity`],
+  ['.ui.host.SplashActivity', `${PKG}.ui.host.SplashActivity`],
+  ['.ui.auth.AuthActivity', `${PKG}.ui.auth.AuthActivity`],
+  ['.ui.host.UserHostActivity', `${PKG}.ui.host.UserHostActivity`],
+  ['.ui.host.OrganizerHostActivity', `${PKG}.ui.host.OrganizerHostActivity`],
+  ['.ui.host.AdminHostActivity', `${PKG}.ui.host.AdminHostActivity`],
   ['.fcm.AppFirebaseMessagingService', `${PKG}.fcm.AppFirebaseMessagingService`],
   ['.EventApp', `${PKG}.EventApp`],
 ];
@@ -221,10 +281,10 @@ const javas = walk(join(APP, 'java'), '.java');
 let noTodo = 0;
 for (const f of javas) {
   const t = readFileSync(f, 'utf8');
-  if (!/\/\/\s*TODO:/.test(t)) { noTodo++; fail('Thiếu TODO trong ' + rel(f)); }
-  if (!/public (class|interface|enum) \w+/.test(t)) fail('Class không public: ' + rel(f));
+  if (!/\/\/\s*TODO:/.test(t)) noTodo++;
+  if (!/^public\s+(?:final\s+|abstract\s+)?(?:class|interface|enum)\s+\w+/m.test(t)) fail('Class không public: ' + rel(f));
 }
-ok(`${javas.length} file Java có TODO và class public`);
+ok(`${javas.length} file Java đều public (${noTodo} file đã có implementation, không còn TODO)`);
 
 if (warns.length) {
   console.log('\nCẢNH BÁO:');

@@ -12,7 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.eventapp.app.R;
 import com.eventapp.app.core.enums.EventCategory;
 import com.eventapp.app.ui.common.view.ClassificationSectionView;
-import com.eventapp.app.ui.user.home.EventCategoryUi;
+import com.eventapp.app.ui.model.EventCategoryUi;
 
 import java.util.ArrayList;
 import java.util.Arrays;

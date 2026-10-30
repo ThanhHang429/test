@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Event App</string>
+    <string name="app_name">ETicket</string>
 
     <!-- Bottom navigation: User -->
-    <string name="nav_home">Trang chủ</string>
+    <string name="nav_home">Khám phá</string>
     <string name="nav_my_tickets">Vé của tôi</string>
+    <string name="nav_favorites">Yêu thích</string>
     <string name="nav_my_calendar">Lịch của tôi</string>
     <string name="nav_notifications">Thông báo</string>
     <string name="nav_profile">Cá nhân</string>

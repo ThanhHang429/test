@@ -71,7 +71,7 @@ public class EventFormFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_event_event_form, container, false);
+        return inflater.inflate(R.layout.fragment_organizer_event_form, container, false);
     }
 
     @Override

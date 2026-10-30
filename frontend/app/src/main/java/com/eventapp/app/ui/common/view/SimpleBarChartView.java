@@ -12,6 +12,7 @@ import android.view.View;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.eventapp.app.R;
 
@@ -76,12 +77,16 @@ public class SimpleBarChartView extends View {
         labelPaint.setColor(ContextCompat.getColor(context, R.color.ds_text_muted));
         labelPaint.setTextSize(sp(10));
         labelPaint.setTextAlign(Paint.Align.CENTER);
-        labelPaint.setTypeface(android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL));
+        labelPaint.setTypeface(android.graphics.Typeface.create(
+                ResourcesCompat.getFont(getContext(), R.font.be_vietnam_pro),
+                android.graphics.Typeface.NORMAL));
 
         valuePaint.setColor(ContextCompat.getColor(context, R.color.ds_text));
         valuePaint.setTextSize(sp(10));
         valuePaint.setTextAlign(Paint.Align.CENTER);
-        valuePaint.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.BOLD));
+        valuePaint.setTypeface(android.graphics.Typeface.create(
+                ResourcesCompat.getFont(getContext(), R.font.plus_jakarta_sans),
+                android.graphics.Typeface.BOLD));
 
         emptyPaint.setColor(ContextCompat.getColor(context, R.color.ds_text_muted));
         emptyPaint.setTextSize(sp(12));

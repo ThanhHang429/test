@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.ui.fake.SampleRecommendationData;
+import com.eventapp.app.ui.model.RecommendationUiModel;
 import android.os.Handler;
 import android.os.Looper;
 

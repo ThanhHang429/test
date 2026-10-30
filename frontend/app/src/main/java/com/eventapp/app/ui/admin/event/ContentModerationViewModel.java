@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.admin.event;
 
+
+import com.eventapp.app.ui.fake.SampleModerationData;
+import com.eventapp.app.ui.model.ModerationUiModel;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -7,8 +10,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eventapp.app.ui.user.review.ReviewUiModel;
-import com.eventapp.app.ui.user.review.SampleReviewData;
+import com.eventapp.app.ui.model.ReviewUiModel;
+import com.eventapp.app.ui.fake.SampleReviewData;
 
 import java.util.ArrayList;
 import java.util.Calendar;

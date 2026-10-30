@@ -46,3 +46,10 @@ stitch/
 
 #agents
 .opencode
+
+# ---------- Kotlin / Gradle session ----------
+.kotlin/
+
+# ---------- Ghi chú tạm ----------
+P6_*.md
+.freebuff/

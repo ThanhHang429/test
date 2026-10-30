@@ -2,7 +2,6 @@ package com.eventapp.app.ui.common.adapter;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +11,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.eventapp.app.R;
 import com.eventapp.app.ui.common.view.AiBadge;
 import com.eventapp.app.ui.common.view.PriceTextView;
 import com.eventapp.app.ui.common.view.StatusChip;
-import com.eventapp.app.ui.user.home.EventCategoryUi;
-import com.eventapp.app.ui.user.home.EventUiModel;
+import com.eventapp.app.ui.model.EventCategoryUi;
+import com.eventapp.app.ui.model.EventUiModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +40,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public enum Mode {
         LIST,
         FEATURED,
-        AI
+        AI,
+        HERO,
+        TRENDING
     }
 
     public interface OnEventActionListener {
@@ -50,6 +54,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_LIST = 0;
     private static final int TYPE_FEATURED = 1;
     private static final int TYPE_FOOTER = 2;
+    private static final int TYPE_HERO = 3;
+    private static final int TYPE_TRENDING = 4;
+    private static final int TYPE_AI = 5;
 
     private final Mode mode;
     private final List<EventUiModel> items = new ArrayList<>();
@@ -60,6 +67,10 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private OnEventActionListener listener;
     private boolean loadingMore;
+    /** Thành phố đang chọn ở bộ lọc; trùng với city của sự kiện thì ẩn phần thành phố. */
+    private String selectedCity;
+
+    private static final String[] WEEKDAYS = {"CN", "T2", "T3", "T4", "T5", "T6", "T7"};
 
     public EventAdapter() {
         this(Mode.LIST);
@@ -72,6 +83,10 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void setOnEventActionListener(OnEventActionListener listener) {
         this.listener = listener;
+    }
+
+    public void setSelectedCity(@Nullable String selectedCity) {
+        this.selectedCity = selectedCity;
     }
 
     public void submitList(List<EventUiModel> events) {
@@ -126,23 +141,47 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (loadingMore && position == items.size()) {
             return TYPE_FOOTER;
         }
-        return mode == Mode.LIST ? TYPE_LIST : TYPE_FEATURED;
+        switch (mode) {
+            case HERO:
+                return TYPE_HERO;
+            case TRENDING:
+                return TYPE_TRENDING;
+            case AI:
+                return TYPE_AI;
+            case FEATURED:
+                return TYPE_FEATURED;
+            case LIST:
+            default:
+                return TYPE_LIST;
+        }
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == TYPE_FOOTER) {
-            return new EventViewHolder(inflater.inflate(R.layout.item_loading_footer, parent, false),
-                    TYPE_FOOTER);
+        switch (viewType) {
+            case TYPE_FOOTER:
+                return new EventViewHolder(
+                        inflater.inflate(R.layout.item_loading_footer, parent, false), TYPE_FOOTER);
+            case TYPE_HERO:
+                return new EventViewHolder(
+                        inflater.inflate(R.layout.item_home_hero, parent, false), TYPE_HERO);
+            case TYPE_TRENDING:
+                return new EventViewHolder(
+                        inflater.inflate(R.layout.item_home_trending, parent, false), TYPE_TRENDING);
+            case TYPE_AI:
+                return new EventViewHolder(
+                        inflater.inflate(R.layout.item_home_ai, parent, false), TYPE_AI);
+            case TYPE_FEATURED:
+                return new EventViewHolder(
+                        inflater.inflate(R.layout.item_event_featured, parent, false),
+                        TYPE_FEATURED);
+            case TYPE_LIST:
+            default:
+                return new EventViewHolder(
+                        inflater.inflate(R.layout.item_event, parent, false), TYPE_LIST);
         }
-        if (viewType == TYPE_LIST) {
-            return new EventViewHolder(inflater.inflate(R.layout.item_event, parent, false),
-                    TYPE_LIST);
-        }
-        return new EventViewHolder(inflater.inflate(R.layout.item_event_featured, parent, false),
-                TYPE_FEATURED);
     }
 
     @Override
@@ -152,10 +191,23 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return;
         }
         EventUiModel event = items.get(position);
-        if (viewHolder.type == TYPE_LIST) {
-            bindList(viewHolder, event, position);
-        } else {
-            bindFeatured(viewHolder, event, position);
+        switch (viewHolder.type) {
+            case TYPE_HERO:
+                bindHero(viewHolder, event, position);
+                break;
+            case TYPE_TRENDING:
+                bindTrending(viewHolder, event, position);
+                break;
+            case TYPE_AI:
+                bindAi(viewHolder, event, position);
+                break;
+            case TYPE_FEATURED:
+                bindFeatured(viewHolder, event, position);
+                break;
+            case TYPE_LIST:
+            default:
+                bindList(viewHolder, event, position);
+                break;
         }
     }
 
@@ -168,7 +220,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         bindCover(holder.cover, event);
         bindStatus(holder.status, event);
         holder.title.setText(event.title);
-        holder.time.setText(formatTime(holder.itemView.getContext(), event.startAt));
+        holder.time.setText(formatTime(event.startAt));
         holder.location.setText(formatLocation(holder.itemView.getContext(), event));
         bindPrice(holder.price, event);
         bindRating(holder.rating, holder.ratingStar, event);
@@ -198,7 +250,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         }
         holder.title.setText(event.title);
-        holder.time.setText(formatTime(holder.itemView.getContext(), event.startAt));
+        holder.time.setText(formatTime(event.startAt));
         holder.location.setText(formatLocation(holder.itemView.getContext(), event));
         bindPrice(holder.price, event);
         bindFavorite(holder.favorite, event);
@@ -211,21 +263,85 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.favorite.setOnClickListener(v -> toggleFavorite(position));
     }
 
+    private void bindHero(EventViewHolder holder, EventUiModel event, int position) {
+        bindCover(holder.cover, event, 16);
+        bindStatus(holder.status, event);
+        holder.title.setText(event.title);
+        holder.time.setText(formatTime(event.startAt));
+        holder.location.setText(formatLocation(holder.itemView.getContext(), event));
+        bindPrice(holder.price, event);
+        bindFavorite(holder.favorite, event);
+        bindClicks(holder, event, position);
+    }
+
+    private void bindTrending(EventViewHolder holder, EventUiModel event, int position) {
+        bindCover(holder.cover, event, 16);
+        bindStatus(holder.status, event);
+        if (holder.category != null) {
+            holder.category.setText(EventCategoryUi.label(holder.itemView.getContext(),
+                    event.category));
+        }
+        holder.title.setText(event.title);
+        holder.time.setText(formatTime(event.startAt));
+        holder.location.setText(formatLocation(holder.itemView.getContext(), event));
+        bindPrice(holder.price, event);
+        bindFavorite(holder.favorite, event);
+        bindClicks(holder, event, position);
+    }
+
+    private void bindAi(EventViewHolder holder, EventUiModel event, int position) {
+        bindCover(holder.cover, event, 12);
+        if (holder.aiBadge != null) {
+            boolean hasReason = event.aiReason != null && !event.aiReason.trim().isEmpty();
+            boolean showAi = event.aiScore != null || hasReason;
+            holder.aiBadge.setVisibility(showAi ? View.VISIBLE : View.GONE);
+            if (showAi) {
+                holder.aiBadge.setScore(event.aiScore);
+                holder.aiBadge.setReason(event.aiReason);
+            }
+        }
+        holder.title.setText(event.title);
+        holder.time.setText(formatTime(event.startAt));
+        holder.location.setText(formatLocation(holder.itemView.getContext(), event));
+        bindPrice(holder.price, event);
+        bindClicks(holder, event, position);
+    }
+
+    private void bindClicks(EventViewHolder holder, EventUiModel event, int position) {
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEventClick(event);
+            }
+        });
+        holder.itemView.setContentDescription(event.title);
+        if (holder.favorite != null) {
+            holder.favorite.setOnClickListener(v -> toggleFavorite(position));
+        }
+    }
+
     private void bindCover(ImageView cover, EventUiModel event) {
+        bindCover(cover, event, 12);
+    }
+
+    private void bindCover(ImageView cover, EventUiModel event, int radiusDp) {
         if (cover == null) {
             return;
         }
-        Context context = cover.getContext();
-        GradientDrawable gradient = new GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                new int[]{EventCategoryUi.gradientStart(context, event.category),
-                        EventCategoryUi.gradientEnd(context, event.category)});
-        gradient.setCornerRadius(dp(context, 12));
-        cover.setBackground(gradient);
-        cover.setImageResource(EventCategoryUi.iconRes(event.category));
-        cover.setImageTintList(ColorStateList.valueOf(
-                ContextCompat.getColor(context, R.color.ds_white)));
-        cover.setAlpha(0.92f);
+        if (!TextUtils.isEmpty(event.coverUrl)) {
+            cover.setBackground(EventCoverRenderer.gradient(cover.getContext(),
+                    event.category, radiusDp));
+            cover.setImageTintList(null);
+            cover.setAlpha(1f);
+            cover.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            Glide.with(cover)
+                    .load(event.coverUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .centerCrop()
+                    .into(cover);
+            return;
+        }
+        Glide.with(cover).clear(cover);
+        EventCoverRenderer.showPlaceholder(cover, event.category, radiusDp);
     }
 
     private void bindStatus(StatusChip chip, EventUiModel event) {
@@ -244,7 +360,11 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 chip.setVisibility(View.VISIBLE);
                 break;
             case FEW_LEFT:
-                chip.setStatus(chip.getContext().getString(R.string.hc_event_few_left),
+                chip.setStatus(chip.getContext().getString(
+                                event.remainingTickets > 0
+                                        ? R.string.hc_event_remaining
+                                        : R.string.hc_event_few_left,
+                                event.remainingTickets),
                         StatusChip.Tone.WARNING);
                 chip.setVisibility(View.VISIBLE);
                 break;
@@ -297,24 +417,13 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         : R.string.hc_event_favorite_add));
     }
 
-    private String formatTime(Context context, long startAt) {
-        Calendar now = Calendar.getInstance();
+    /** Định dạng thống nhất: "T7, 16/11 • 14:00". */
+    private String formatTime(long startAt) {
         Calendar event = Calendar.getInstance();
         event.setTimeInMillis(startAt);
-        boolean sameDay = now.get(Calendar.YEAR) == event.get(Calendar.YEAR)
-                && now.get(Calendar.DAY_OF_YEAR) == event.get(Calendar.DAY_OF_YEAR);
-        Calendar tomorrow = Calendar.getInstance();
-        tomorrow.add(Calendar.DAY_OF_YEAR, 1);
-        boolean isTomorrow = tomorrow.get(Calendar.YEAR) == event.get(Calendar.YEAR)
-                && tomorrow.get(Calendar.DAY_OF_YEAR) == event.get(Calendar.DAY_OF_YEAR);
-        String clock = timeFormat.format(new Date(startAt));
-        if (sameDay) {
-            return context.getString(R.string.hc_event_today, clock);
-        }
-        if (isTomorrow) {
-            return context.getString(R.string.hc_event_tomorrow, clock);
-        }
-        return dateFormat.format(new Date(startAt)) + " • " + clock;
+        String weekday = WEEKDAYS[event.get(Calendar.DAY_OF_WEEK) - 1];
+        Date date = new Date(startAt);
+        return weekday + ", " + dateFormat.format(date) + " • " + timeFormat.format(date);
     }
 
     private String formatLocation(Context context, EventUiModel event) {
@@ -324,7 +433,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (TextUtils.isEmpty(event.venue)) {
             return event.city;
         }
-        if (TextUtils.isEmpty(event.city)) {
+        if (TextUtils.isEmpty(event.city) || event.city.equalsIgnoreCase(selectedCity)) {
             return event.venue;
         }
         return event.venue + ", " + event.city;

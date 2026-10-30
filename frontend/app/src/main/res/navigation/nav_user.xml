@@ -9,12 +9,12 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.eventapp.app.ui.user.home.HomeFragment"
-        tools:layout="@layout/fragment_home_home" />
+        tools:layout="@layout/fragment_user_home" />
 
     <fragment
         android:id="@+id/event_listFragment"
         android:name="com.eventapp.app.ui.user.home.EventListFragment"
-        tools:layout="@layout/fragment_home_event_list">
+        tools:layout="@layout/fragment_user_home_event_list">
 
         <argument
             android:name="arg_query"
@@ -27,7 +27,7 @@
         <argument
             android:name="arg_criteria"
             android:defaultValue="@null"
-            app:argType="com.eventapp.app.ui.user.home.EventFilterCriteria" />
+            app:argType="com.eventapp.app.data.model.EventFilterCriteria" />
         <argument
             android:name="arg_open_search"
             android:defaultValue="false"
@@ -41,18 +41,18 @@
     <dialog
         android:id="@+id/event_filterFragment"
         android:name="com.eventapp.app.ui.user.home.EventFilterFragment"
-        tools:layout="@layout/fragment_home_event_filter">
+        tools:layout="@layout/fragment_user_home_event_filter">
 
         <argument
             android:name="arg_filter_criteria"
             android:defaultValue="@null"
-            app:argType="com.eventapp.app.ui.user.home.EventFilterCriteria" />
+            app:argType="com.eventapp.app.data.model.EventFilterCriteria" />
     </dialog>
 
     <fragment
         android:id="@+id/event_detailFragment"
         android:name="com.eventapp.app.ui.user.home.EventDetailFragment"
-        tools:layout="@layout/fragment_home_event_detail">
+        tools:layout="@layout/fragment_user_home_event_detail">
 
         <argument
             android:name="arg_event_id"
@@ -67,126 +67,126 @@
     <fragment
         android:id="@+id/recommendFragment"
         android:name="com.eventapp.app.ui.user.home.RecommendFragment"
-        tools:layout="@layout/fragment_home_recommend" />
+        tools:layout="@layout/fragment_user_home_recommend" />
 
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.eventapp.app.ui.user.favorite.FavoritesFragment"
-        tools:layout="@layout/fragment_favorite_favorites" />
+        tools:layout="@layout/fragment_user_favorites" />
 
     <fragment
         android:id="@+id/my_ticketsFragment"
         android:name="com.eventapp.app.ui.user.ticket.MyTicketsFragment"
-        tools:layout="@layout/fragment_ticket_my_tickets" />
+        tools:layout="@layout/fragment_user_ticket_my_tickets" />
 
     <fragment
         android:id="@+id/ticket_detailFragment"
         android:name="com.eventapp.app.ui.user.ticket.TicketDetailFragment"
-        tools:layout="@layout/fragment_ticket_ticket_detail" />
+        tools:layout="@layout/fragment_user_ticket_detail" />
 
     <fragment
         android:id="@+id/cancel_ticketFragment"
         android:name="com.eventapp.app.ui.user.ticket.CancelTicketFragment"
-        tools:layout="@layout/fragment_ticket_cancel_ticket" />
+        tools:layout="@layout/fragment_user_ticket_cancel_ticket" />
 
     <fragment
         android:id="@+id/free_registerFragment"
         android:name="com.eventapp.app.ui.user.order.FreeRegisterFragment"
-        tools:layout="@layout/fragment_order_free_register" />
+        tools:layout="@layout/fragment_user_order_free_register" />
 
     <fragment
         android:id="@+id/checkoutFragment"
         android:name="com.eventapp.app.ui.user.order.CheckoutFragment"
-        tools:layout="@layout/fragment_order_checkout" />
+        tools:layout="@layout/fragment_user_order_checkout" />
 
     <fragment
         android:id="@+id/payment_qrFragment"
         android:name="com.eventapp.app.ui.user.order.PaymentQrFragment"
-        tools:layout="@layout/fragment_order_payment_qr" />
+        tools:layout="@layout/fragment_user_order_payment_qr" />
 
     <fragment
         android:id="@+id/order_statusFragment"
         android:name="com.eventapp.app.ui.user.order.OrderStatusFragment"
-        tools:layout="@layout/fragment_order_order_status" />
+        tools:layout="@layout/fragment_user_order_status" />
 
     <fragment
         android:id="@+id/order_historyFragment"
         android:name="com.eventapp.app.ui.user.order.OrderHistoryFragment"
-        tools:layout="@layout/fragment_order_order_history" />
+        tools:layout="@layout/fragment_user_order_history" />
 
     <fragment
         android:id="@+id/user_order_detailFragment"
         android:name="com.eventapp.app.ui.user.order.UserOrderDetailFragment"
-        tools:layout="@layout/fragment_order_order_detail" />
+        tools:layout="@layout/fragment_user_order_detail" />
 
     <fragment
         android:id="@+id/scan_qrFragment"
         android:name="com.eventapp.app.ui.user.checkin.ScanQrFragment"
-        tools:layout="@layout/fragment_checkin_scan_qr" />
+        tools:layout="@layout/fragment_user_checkin_scan_qr" />
 
     <fragment
         android:id="@+id/checkin_resultFragment"
         android:name="com.eventapp.app.ui.user.checkin.CheckinResultFragment"
-        tools:layout="@layout/fragment_checkin_checkin_result" />
+        tools:layout="@layout/fragment_user_checkin_result" />
 
     <fragment
         android:id="@+id/my_calendarFragment"
         android:name="com.eventapp.app.ui.user.calendar.MyCalendarFragment"
-        tools:layout="@layout/fragment_calendar_my_calendar" />
+        tools:layout="@layout/fragment_user_calendar_my_calendar" />
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.eventapp.app.ui.user.profile.ProfileFragment"
-        tools:layout="@layout/fragment_profile_profile" />
+        tools:layout="@layout/fragment_user_profile" />
 
     <fragment
         android:id="@+id/edit_profileFragment"
         android:name="com.eventapp.app.ui.user.profile.EditProfileFragment"
-        tools:layout="@layout/fragment_profile_edit_profile" />
+        tools:layout="@layout/fragment_user_profile_edit_profile" />
 
     <fragment
         android:id="@+id/preferencesFragment"
         android:name="com.eventapp.app.ui.user.profile.PreferencesFragment"
-        tools:layout="@layout/fragment_profile_preferences" />
+        tools:layout="@layout/fragment_user_profile_preferences" />
 
     <fragment
         android:id="@+id/privacy_settingsFragment"
         android:name="com.eventapp.app.ui.user.profile.PrivacySettingsFragment"
-        tools:layout="@layout/fragment_profile_privacy_settings" />
+        tools:layout="@layout/fragment_user_profile_privacy_settings" />
 
     <fragment
         android:id="@+id/become_organizerFragment"
         android:name="com.eventapp.app.ui.user.profile.BecomeOrganizerFragment"
-        tools:layout="@layout/fragment_profile_become_organizer" />
+        tools:layout="@layout/fragment_user_profile_become_organizer" />
 
     <fragment
         android:id="@+id/write_reviewFragment"
         android:name="com.eventapp.app.ui.user.review.WriteReviewFragment"
-        tools:layout="@layout/fragment_review_write_review" />
+        tools:layout="@layout/fragment_user_review_write_review" />
 
     <fragment
         android:id="@+id/event_reviewsFragment"
         android:name="com.eventapp.app.ui.user.review.EventReviewsFragment"
-        tools:layout="@layout/fragment_review_event_reviews" />
+        tools:layout="@layout/fragment_user_review_event_reviews" />
 
     <fragment
         android:id="@+id/support_listFragment"
         android:name="com.eventapp.app.ui.user.support.SupportListFragment"
-        tools:layout="@layout/fragment_support_support_list" />
+        tools:layout="@layout/fragment_user_support_list" />
 
     <fragment
         android:id="@+id/create_supportFragment"
         android:name="com.eventapp.app.ui.user.support.CreateSupportFragment"
-        tools:layout="@layout/fragment_support_create_support" />
+        tools:layout="@layout/fragment_user_support_create_support" />
 
     <fragment
         android:id="@+id/support_detailFragment"
         android:name="com.eventapp.app.ui.user.support.SupportDetailFragment"
-        tools:layout="@layout/fragment_support_support_detail" />
+        tools:layout="@layout/fragment_user_support_detail" />
 
     <fragment
         android:id="@+id/notification_listFragment"
         android:name="com.eventapp.app.ui.user.notification.NotificationListFragment"
-        tools:layout="@layout/fragment_notification_notification_list" />
+        tools:layout="@layout/fragment_user_notification_list" />
 
 </navigation>

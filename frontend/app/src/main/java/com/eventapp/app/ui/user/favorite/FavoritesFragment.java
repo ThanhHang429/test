@@ -1,5 +1,7 @@
 package com.eventapp.app.ui.user.favorite;
 
+
+import com.eventapp.app.ui.model.FavoriteUiModel;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +19,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.eventapp.app.R;
 import com.eventapp.app.ui.common.adapter.EventAdapter;
-import com.eventapp.app.ui.common.adapter.FavoriteAdapter;
+import com.eventapp.app.ui.user.favorite.adapter.FavoriteAdapter;
 import com.eventapp.app.ui.common.view.EmptyStateView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
 import com.eventapp.app.ui.common.view.SectionHeaderView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
 import com.eventapp.app.ui.user.home.EventListFragment;
-import com.eventapp.app.ui.user.home.EventUiModel;
+import com.eventapp.app.ui.model.EventUiModel;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.snackbar.Snackbar;
@@ -56,7 +58,7 @@ public class FavoritesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_favorite_favorites, container, false);
+        return inflater.inflate(R.layout.fragment_user_favorites, container, false);
     }
 
     @Override

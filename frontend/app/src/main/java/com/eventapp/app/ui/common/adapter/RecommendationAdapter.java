@@ -19,9 +19,9 @@ import com.eventapp.app.R;
 import com.eventapp.app.ui.common.view.AiBadge;
 import com.eventapp.app.ui.common.view.PriceTextView;
 import com.eventapp.app.ui.common.view.StatusChip;
-import com.eventapp.app.ui.user.home.EventCategoryUi;
-import com.eventapp.app.ui.user.home.EventUiModel;
-import com.eventapp.app.ui.user.home.RecommendationUiModel;
+import com.eventapp.app.ui.model.EventCategoryUi;
+import com.eventapp.app.ui.model.EventUiModel;
+import com.eventapp.app.ui.model.RecommendationUiModel;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;

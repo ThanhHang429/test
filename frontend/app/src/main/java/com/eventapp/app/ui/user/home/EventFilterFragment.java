@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.data.model.EventFilterCriteria;
+import com.eventapp.app.ui.model.EventCategoryUi;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -113,7 +116,7 @@ public class EventFilterFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_event_filter, container, false);
+        return inflater.inflate(R.layout.fragment_user_home_event_filter, container, false);
     }
 
     @Override

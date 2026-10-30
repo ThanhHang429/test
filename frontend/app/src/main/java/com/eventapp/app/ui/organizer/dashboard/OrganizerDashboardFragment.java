@@ -1,5 +1,7 @@
 package com.eventapp.app.ui.organizer.dashboard;
 
+
+import com.eventapp.app.ui.model.DashboardUiModel;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.eventapp.app.R;
-import com.eventapp.app.ui.common.adapter.DashboardStatusLabels;
-import com.eventapp.app.ui.common.adapter.DashboardTaskAdapter;
-import com.eventapp.app.ui.common.adapter.TopEventAdapter;
+import com.eventapp.app.ui.model.DashboardStatusLabels;
+import com.eventapp.app.ui.organizer.dashboard.adapter.DashboardTaskAdapter;
+import com.eventapp.app.ui.organizer.dashboard.adapter.TopEventAdapter;
 import com.eventapp.app.ui.common.view.EmptyStateView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
 import com.eventapp.app.ui.common.view.KpiTileView;
@@ -103,7 +105,7 @@ public class OrganizerDashboardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dashboard_organizer_dashboard, container,
+        return inflater.inflate(R.layout.fragment_organizer_dashboard, container,
                 false);
     }
 

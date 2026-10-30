@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.user.favorite;
 
+
+import com.eventapp.app.ui.fake.SampleFavoriteData;
+import com.eventapp.app.ui.model.FavoriteUiModel;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -7,8 +10,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eventapp.app.ui.user.home.EventUiModel;
-import com.eventapp.app.ui.user.home.SampleEventData;
+import com.eventapp.app.ui.model.EventUiModel;
+import com.eventapp.app.ui.fake.SampleEventData;
 
 import java.util.ArrayList;
 import java.util.Collections;

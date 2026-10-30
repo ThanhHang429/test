@@ -1,5 +1,7 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.data.model.EventFilterCriteria;
 import androidx.lifecycle.ViewModel;
 
 /** Draft filter state shared across EventFilterFragment configuration changes. */

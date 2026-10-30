@@ -3,17 +3,18 @@
  * scaffold.mjs — Sinh khung (skeleton) cho project Android ETicket.
  *
  * Quy tắc bắt buộc (xem docs/00-overview.md):
- *  - Mỗi màn hình = 1 Fragment + 1 ViewModel + 1 layout placeholder.
- *  - Tên layout:  fragment_<area>_<snake_case(Class)>.xml
+ *  - Mỗi màn hình = 1 Fragment + 1 ViewModel + 1 layout placeholder, đặt trong ui/<role>/<area>/.
+ *  - Tên layout:  fragment_<role>_<area>_<snake_case(Class)>.xml (bỏ <area> nếu trùng tiền tố tên màn hình).
  *  - Nav id:       snake_case(Class) + "Fragment"  (trùng tên giữa 2 vai trò → thêm tiền tố role)
  *  - Mọi class stub đều `public`, thân rỗng, KHÔNG có logic nghiệp vụ.
- *  - Chạy lại nhiều lần cho kết quả giống nhau (idempotent).
+ *  - KHÔNG ghi đè file đã tồn tại — chỉ tạo file còn thiếu. Dùng --force để ghi đè toàn bộ.
  *
- * Dùng:  node scripts/scaffold.mjs           → sinh toàn bộ
+ * Dùng:  node scripts/scaffold.mjs           → chỉ tạo file còn thiếu (an toàn)
+ *        node scripts/scaffold.mjs --force   → ghi đè toàn bộ (xoá code thật, cẩn thận)
  *        node scripts/scaffold.mjs --tree    → in cây thư mục 3 cấp
  */
 
-import { mkdirSync, writeFileSync, readdirSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,9 +35,17 @@ function javaPath(pkg, ...files) {
 /* ------------------------------------------------------------------ */
 
 let written = 0;
+let skipped = 0;
 const created = [];
 
+/** Mặc định KHÔNG ghi đè file đã có (tránh xoá code thật). Dùng --force để ghi đè. */
+const FORCE = process.argv.includes('--force');
+
 function write(file, content) {
+  if (!FORCE && existsSync(file)) {
+    skipped++;
+    return;
+  }
   mkdirSync(dirname(file), { recursive: true });
   const body = content.endsWith('\n') ? content : content + '\n';
   writeFileSync(file, body, 'utf8');
@@ -184,11 +193,17 @@ function javaPkg(s) {
 }
 
 function javaClassName(name) {
-  return name === 'AppConstants' ? 'CoreConstants' : name;
+  return name;
 }
 
+/* fragment_<role>_<area>_<snake>.xml — bỏ <area> khi tên màn hình đã bắt đầu bằng area. */
 function layoutName(s) {
-  return `fragment_${s.area}_${snake(s.name)}`;
+  let screen = snake(screenName(s));
+  if (screen.startsWith(s.role + '_')) screen = screen.slice(s.role.length + 1);
+  const parts = [s.role];
+  if (s.area !== s.role && !screen.startsWith(s.area)) parts.push(s.area);
+  parts.push(screen);
+  return `fragment_${parts.join('_')}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -196,13 +211,14 @@ function layoutName(s) {
 /* ------------------------------------------------------------------ */
 
 const ACTIVITIES = [
-  { name: 'SplashActivity', desc: 'Màn hình khởi động, kiểm tra phiên đăng nhập và chuyển hướng', fr: 'FR-U01,FR-U02' },
-  { name: 'AuthActivity', desc: 'Host chứa luồng đăng nhập, đăng ký và quên mật khẩu', fr: 'FR-U01,FR-U02' },
-  { name: 'UserHostActivity', desc: 'Host chứa khu vực người dùng và bottom navigation', fr: 'FR-U03' },
-  { name: 'OrganizerHostActivity', desc: 'Host chứa khu vực nhà tổ chức và bottom navigation', fr: 'FR-O02' },
-  { name: 'AdminHostActivity', desc: 'Host chứa khu vực quản trị và bottom navigation', fr: 'FR-A01' },
+  { name: 'SplashActivity', pkg: `${PKG}.ui.host`, desc: 'Màn hình khởi động, kiểm tra phiên đăng nhập và chuyển hướng', fr: 'FR-U01,FR-U02' },
+  { name: 'AuthActivity', pkg: `${PKG}.ui.auth`, desc: 'Host chứa luồng đăng nhập, đăng ký và quên mật khẩu', fr: 'FR-U01,FR-U02' },
+  { name: 'UserHostActivity', pkg: `${PKG}.ui.host`, desc: 'Host chứa khu vực người dùng và bottom navigation', fr: 'FR-U03' },
+  { name: 'OrganizerHostActivity', pkg: `${PKG}.ui.host`, desc: 'Host chứa khu vực nhà tổ chức và bottom navigation', fr: 'FR-O02' },
+  { name: 'AdminHostActivity', pkg: `${PKG}.ui.host`, desc: 'Host chứa khu vực quản trị và bottom navigation', fr: 'FR-A01' },
 ];
 
+/* Adapter dùng bởi ≥2 feature → ui/common/adapter; chỉ 1 feature dùng → ui/<role>/<area>/adapter. */
 const ADAPTERS = [
   ['EventAdapter', 'Danh sách sự kiện', 'FR-U04'],
   ['TicketAdapter', 'Danh sách vé', 'FR-U14'],
@@ -221,21 +237,22 @@ const ADAPTERS = [
   ['PromotionAdapter', 'Danh sách khuyến mãi', 'FR-O18'],
   ['ReportAdapter', 'Danh sách báo cáo', 'FR-O26'],
   ['WalletTransactionAdapter', 'Lịch sử giao dịch ví', 'FR-U16'],
-  ['FavoriteAdapter', 'Danh sách sự kiện yêu thích', 'FR-U06'],
   ['PaymentHistoryAdapter', 'Lịch sử thanh toán', 'FR-U12'],
   ['RefundAdapter', 'Danh sách yêu cầu hoàn tiền', 'FR-A12'],
   ['StaffAdapter', 'Danh sách nhân sự check-in', 'FR-O20'],
-  ['AiInsightAdapter', 'Danh sách gợi ý AI', 'FR-O27'],
+  ['RecommendationAdapter', 'Danh sách gợi ý sự kiện', 'FR-U07'],
+  // Feature-local
+  ['FavoriteAdapter', 'Danh sách sự kiện yêu thích', 'FR-U06', `${PKG}.ui.user.favorite.adapter`],
+  ['EventGalleryAdapter', 'Thư viện ảnh của sự kiện', 'FR-U05', `${PKG}.ui.user.home.adapter`],
+  ['EventTicketAdapter', 'Danh sách loại vé trong chi tiết sự kiện', 'FR-U05', `${PKG}.ui.user.home.adapter`],
+  ['ModerationFlagAdapter', 'Danh sách cờ kiểm duyệt nội dung', 'FR-A07', `${PKG}.ui.admin.event.adapter`],
+  ['DashboardTaskAdapter', 'Danh sách việc cần làm trên dashboard', 'FR-O03', `${PKG}.ui.organizer.dashboard.adapter`],
+  ['TopEventAdapter', 'Bảng xếp hạng sự kiện', 'FR-O03', `${PKG}.ui.organizer.dashboard.adapter`],
+  ['AiInsightAdapter', 'Danh sách gợi ý AI', 'FR-O27', `${PKG}.ui.organizer.report.adapter`],
 ];
 
-const DIALOGS = [
-  ['ConfirmDialog', 'Hộp thoại xác nhận hành động', 'FR-U15'],
-  ['ReasonDialog', 'Hộp thoại nhập lý do kèm hậu quả', 'FR-U15'],
-  ['SuccessDialog', 'Hộp thoại thông báo thành công', 'FR-U10'],
-  ['ErrorDialog', 'Hộp thoại thông báo lỗi', 'FR-U10'],
-  ['PaymentQrDialog', 'Hộp thoại hiển thị QR thanh toán', 'FR-U11'],
-  ['QuantityPickerDialog', 'Hộp thoại chọn số lượng vé', 'FR-U10'],
-];
+const adapterPkg = (row) => row[3] ?? `${PKG}.ui.common.adapter`;
+
 
 const VIEWS = [
   ['StatusChip', 'Chip hiển thị trạng thái sự kiện hoặc đơn hàng', 'FR-U05'],
@@ -246,13 +263,6 @@ const VIEWS = [
   ['RoleGuardLayout', 'Layout chỉ cho phép hiển thị với đúng vai trò', 'FR-U03'],
 ];
 
-const BASE_CLASSES = [
-  ['BaseActivity', `${PKG}.ui.base`, 'Lớp cơ sở cho Activity, xử lý toolbar và trạng thái rỗng'],
-  ['BaseFragment', `${PKG}.ui.base`, 'Lớp cơ sở cho Fragment, quản lý binding và lifecycle'],
-  ['BaseViewModel', `${PKG}.ui.base`, 'Lớp cơ sở cho ViewModel, quản lý trạng thái và sự kiện'],
-  ['BaseAdapter', `${PKG}.ui.base`, 'Lớp cơ sở cho RecyclerView Adapter'],
-  ['BaseDialogFragment', `${PKG}.ui.base`, 'Lớp cơ sở cho DialogFragment'],
-];
 
 /* ------------------------------------------------------------------ */
 /* 3. TẦNG DATA                                                        */
@@ -328,15 +338,17 @@ const UTILS_FILES = [
   ['Validators', 'Kiểm tra dữ liệu đầu vào của form', 'FR-U01'],
   ['PermissionUtils', 'Xin quyền camera và thông báo', 'FR-U17'],
   ['ErrorMapper', 'Chuyển mã lỗi API thành thông báo tiếng Việt', 'FR-U01'],
-  ['AppConstants', 'Hằng số dùng chung của ứng dụng', 'FR-U01'],
 ];
 
+/* Chỉ AppFirebaseMessagingService ở lại fcm/; phần còn lại tách theo tầng. */
 const FCM_FILES = [
   ['AppFirebaseMessagingService', 'Nhận và ghi nhận thông báo đẩy FCM', 'FR-U19'],
-  ['FcmTokenManager', 'Đăng ký và thu hồi device token với backend', 'FR-U19'],
-  ['NotificationPayload', 'Dữ liệu thông báo nhận được từ FCM', 'FR-U19'],
-  ['LocalNotificationManager', 'Hiển thị thông báo cục bộ trên thiết bị', 'FR-U19'],
-  ['NotificationClickHandler', 'Điều hướng khi người dùng bấm vào thông báo', 'FR-U19'],
+];
+const FCM_SPLIT = [
+  ['NotificationPayload', 'data/remote/dto/notification', 'Dữ liệu thông báo nhận được từ FCM', 'FR-U19'],
+  ['DeviceTokenRepository', 'data/repository', 'Đăng ký và thu hồi device token với backend', 'FR-U19'],
+  ['LocalNotificationManager', 'ui/common/notification', 'Hiển thị thông báo cục bộ trên thiết bị', 'FR-U19'],
+  ['NotificationClickHandler', 'ui/common/nav', 'Điều hướng khi người dùng bấm vào thông báo', 'FR-U19'],
 ];
 
 /* 17 enum + 1 class holder (EventStatus) — xem docs/00-overview.md giả định A11, A20. */
@@ -458,52 +470,34 @@ for (const s of SCREENS) {
     javaFile(pkg, `${cls}ViewModel`, 'viewmodel', `ViewModel của màn hình ${s.name} - nạp dữ liệu qua Repository | ${s.fr}`));
 }
 
-/* 4.2 Activity */
+/* 4.2 Activity (Splash + 3 host → ui/host, Auth → ui/auth) */
 for (const a of ACTIVITIES) {
-  write(javaPath(`${PKG}.ui`, `${a.name}.java`),
-    javaFile(`${PKG}.ui`, a.name, 'activity', `${a.desc} | ${a.fr}`));
+  write(javaPath(a.pkg, `${a.name}.java`),
+    javaFile(a.pkg, a.name, 'activity', `${a.desc} | ${a.fr}`));
 }
 
-/* 4.3 Base */
-for (const [name, pkg, desc] of BASE_CLASSES) {
-  const kind = name === 'BaseAdapter' ? 'adapter' : name === 'BaseDialogFragment' ? 'dialog' : name === 'BaseActivity' ? 'activity' : name === 'BaseFragment' ? 'fragment' : 'viewmodel';
-  write(javaPath(pkg, `${name}.java`), javaFile(pkg, name, kind, desc));
-}
-
-/* 4.4 Adapter / Dialog / View */
-for (const [name, desc, fr] of ADAPTERS) {
-  write(javaPath(`${PKG}.ui.common.adapter`, `${name}.java`),
-    javaFile(`${PKG}.ui.common.adapter`, name, 'adapter', `${desc} | ${fr}`));
-}
-for (const [name, desc, fr] of DIALOGS) {
-  write(javaPath(`${PKG}.ui.common.dialog`, `${name}.java`),
-    javaFile(`${PKG}.ui.common.dialog`, name, 'dialog', `${desc} | ${fr}`));
+/* 4.4 Adapter / View */
+for (const row of ADAPTERS) {
+  const [name, desc, fr] = row;
+  const pkg = adapterPkg(row);
+  write(javaPath(pkg, `${name}.java`), javaFile(pkg, name, 'adapter', `${desc} | ${fr}`));
 }
 for (const [name, desc, fr] of VIEWS) {
   write(javaPath(`${PKG}.ui.common.view`, `${name}.java`),
     customViewFile(`${PKG}.ui.common.view`, name, `${desc} | ${fr}`));
 }
 
-/* 4.5 ui/common */
-write(javaPath(`${PKG}.ui.common`, 'Resource.java'), [
-  `package ${PKG}.ui.common;`,
-  '',
-  '// TODO: Trạng thái chuẩn của mọi lệnh gọi dữ liệu: LOADING, SUCCESS, EMPTY, ERROR | FR-U04',
-  'public enum Resource {',
-  '    LOADING,',
-  '    SUCCESS,',
-  '    EMPTY,',
-  '    ERROR',
-  '}',
-].join('\n'));
+/* 4.6 Api + Repository + DTO — tên class PascalCase, tên package giữ theo module backend. */
+const IRREGULAR = { ai: 'Ai', systemconfig: 'SystemConfig', tickettype: 'TicketType' };
+const pascal = (m) => IRREGULAR[m] ?? m.charAt(0).toUpperCase() + m.slice(1);
 
-/* 4.6 Api + Repository + DTO */
 for (const mod of MODULES) {
-  write(javaPath(`${PKG}.data.remote.api`, `${mod.m}Api.java`),
-    javaFile(`${PKG}.data.remote.api`, `${mod.m}Api`, 'interface', `Retrofit Api cho module ${mod.m}: ${mod.desc}`));
+  const cls = pascal(mod.m);
+  write(javaPath(`${PKG}.data.remote.api`, `${cls}Api.java`),
+    javaFile(`${PKG}.data.remote.api`, `${cls}Api`, 'interface', `Retrofit Api cho module ${mod.m}: ${mod.desc}`));
 
-  write(javaPath(`${PKG}.data.repository`, `${mod.m}Repository.java`),
-    javaFile(`${PKG}.data.repository`, `${mod.m}Repository`, 'class', `Repository cho module ${mod.m}: ${mod.desc}. Chỉ đọc trạng thái chính thức từ backend`));
+  write(javaPath(`${PKG}.data.repository`, `${cls}Repository.java`),
+    javaFile(`${PKG}.data.repository`, `${cls}Repository`, 'class', `Repository cho module ${mod.m}: ${mod.desc}. Chỉ đọc trạng thái chính thức từ backend`));
 
   for (const dto of mod.dto) {
     write(javaPath(`${PKG}.data.remote.dto.${mod.m}`, `${dto}.java`),
@@ -513,12 +507,15 @@ for (const mod of MODULES) {
 
 /* 4.7 local / session / mapper */
 for (const [name, desc, fr] of LOCAL_FILES) {
-  write(javaPath(`${PKG}.data.local`, `${name}.java`),
-    javaFile(`${PKG}.data.local`, name, 'class', `${desc}. Cache cục bộ, KHÔNG phải nguồn sự thật | ${fr}`));
+  const sub = name.endsWith('Entity') ? '.entity' : name.endsWith('Dao') ? '.dao' : '';
+  const pkg = `${PKG}.data.local${sub}`;
+  write(javaPath(pkg, `${name}.java`),
+    javaFile(pkg, name, 'class', `${desc}. Cache cục bộ, KHÔNG phải nguồn sự thật | ${fr}`));
 }
+/* Session là hạ tầng dùng chung cho AuthInterceptor nên nằm ở core, không phải data. */
 for (const [name, desc, fr] of SESSION_FILES) {
-  write(javaPath(`${PKG}.data.session`, `${name}.java`),
-    javaFile(`${PKG}.data.session`, name, 'class', `${desc} | ${fr}`));
+  write(javaPath(`${PKG}.core.session`, `${name}.java`),
+    javaFile(`${PKG}.core.session`, name, 'class', `${desc} | ${fr}`));
 }
 for (const [name, desc, fr] of MAPPER_FILES) {
   write(javaPath(`${PKG}.data.mapper`, `${name}.java`),
@@ -542,22 +539,28 @@ write(javaPath(`${PKG}.core.enums`, 'EventStatus.java'), [
   '}',
 ].join('\n'));
 for (const [name, desc, fr] of UTILS_FILES) {
-  write(javaPath(`${PKG}.core.utils`, `${name}.java`),
-    javaFile(`${PKG}.core.utils`, name, 'class', `${desc} | ${fr}`));
+  const pkg = name === 'PermissionUtils' ? `${PKG}.core.platform` : `${PKG}.core.util`;
+  write(javaPath(pkg, `${name}.java`), javaFile(pkg, name, 'class', `${desc} | ${fr}`));
 }
 for (const [name, desc, fr] of NETWORK_FILES) {
-  write(javaPath(`${PKG}.core.network`, `${name}.java`),
-    javaFile(`${PKG}.core.network`, name, 'class', `${desc} | ${fr}`));
+  const pkg = name === 'NetworkMonitor' ? `${PKG}.core.platform`
+    : name === 'TokenProvider' ? `${PKG}.core.session`
+    : `${PKG}.core.network`;
+  write(javaPath(pkg, `${name}.java`), javaFile(pkg, name, 'class', `${desc} | ${fr}`));
 }
 write(javaPath(`${PKG}.core.common`, 'AppLogger.java'),
   javaFile(`${PKG}.core.common`, 'AppLogger', 'class', 'Ghi log có tiền tố tag chung của ứng dụng | FR-U01'));
-write(javaPath(`${PKG}.core.common`, `${javaClassName('AppConstants')}.java`),
-  javaFile(`${PKG}.core.common`, javaClassName('AppConstants'), 'class', 'Hằng số dùng chung: paging size, timeout, giá trị mặc định | FR-U01'));
+write(javaPath(`${PKG}.core.common`, 'AppConstants.java'),
+  javaFile(`${PKG}.core.common`, 'AppConstants', 'class', 'Hằng số dùng chung: paging size, timeout, giá trị mặc định | FR-U01'));
 
-/* 4.9 fcm */
+/* 4.9 fcm — chỉ còn entry point; phần còn lại đã tách về data/ và ui/ */
 for (const [name, desc, fr] of FCM_FILES) {
   write(javaPath(`${PKG}.fcm`, `${name}.java`),
     javaFile(`${PKG}.fcm`, name, 'class', `${desc} | ${fr}`));
+}
+for (const [name, pkgRel, desc, fr] of FCM_SPLIT) {
+  const pkg = `${PKG}.${pkgRel.split('/').join('.')}`;
+  write(javaPath(pkg, `${name}.java`), javaFile(pkg, name, 'class', `${desc} | ${fr}`));
 }
 
 /* 4.10 Application */
@@ -565,8 +568,8 @@ write(javaPath(PKG, 'EventApp.java'),
   javaFile(PKG, 'EventApp', 'application', 'Application của ứng dụng: khởi tạo container phụ thuộc và FCM | FR-U01'));
 
 /* 4.11 Test */
-write(join(TEST, 'core', 'utils', 'MoneyUtilsTest.java'), [
-  `package ${PKG}.core.utils;`,
+write(join(TEST, 'core', 'util', 'MoneyUtilsTest.java'), [
+  `package ${PKG}.core.util;`,
   '',
   'import static org.junit.Assert.assertTrue;',
   '',
@@ -581,8 +584,8 @@ write(join(TEST, 'core', 'utils', 'MoneyUtilsTest.java'), [
   '    }',
   '}',
 ].join('\n'));
-write(join(TEST, 'core', 'utils', 'DateTimeUtilsTest.java'), [
-  `package ${PKG}.core.utils;`,
+write(join(TEST, 'core', 'util', 'DateTimeUtilsTest.java'), [
+  `package ${PKG}.core.util;`,
   '',
   'import static org.junit.Assert.assertTrue;',
   '',
@@ -640,11 +643,8 @@ for (const [name, desc, fr] of ADAPTERS) {
     placeholderLayout('LinearLayout', `Item ${desc.toLowerCase()} trong danh sách`, fr, '\n    android:orientation="vertical"'));
 }
 
-/* 5.3 layout dialog_ (6) */
-for (const [name, desc, fr] of DIALOGS) {
-  write(join(RES, 'layout', `dialog_${snake(name.replace('Dialog', ''))}.xml`),
-    placeholderLayout('LinearLayout', `Nội dung ${desc.toLowerCase()}`, fr, '\n    android:orientation="vertical"'));
-}
+/* 5.3 layout dialog_ — hiện không có dialog dùng chung; dialog riêng của feature
+   nằm trong ui/<role>/<area>/dialog/ và layout của nó được tạo cùng lúc với class. */
 
 /* 5.4 layout activity_ (5) */
 write(join(RES, 'layout', 'activity_splash.xml'), [
@@ -948,11 +948,11 @@ if (errors.length) {
 /* 9. IN KẾT QUẢ                                                      */
 /* ------------------------------------------------------------------ */
 
-console.log(`Đã sinh ${written} file.`);
+console.log(`Đã sinh ${written} file mới, bỏ qua ${skipped} file đã tồn tại${FORCE ? ' (--force: ghi đè)' : ''}.`);
 console.log(`  Màn hình: ${SCREENS.length} (auth ${SCREENS.filter((s) => s.role === 'auth').length}, user ${SCREENS.filter((s) => s.role === 'user').length}, organizer ${SCREENS.filter((s) => s.role === 'organizer').length}, admin ${SCREENS.filter((s) => s.role === 'admin').length})`);
-console.log(`  Layout fragment: ${SCREENS.length}, item: ${ADAPTERS.length}, dialog: ${DIALOGS.length}, activity: ${ACTIVITIES.length}`);
+console.log(`  Layout fragment: ${SCREENS.length}, item: ${ADAPTERS.length}, activity: ${ACTIVITIES.length}`);
 console.log(`  Module data: ${MODULES.length} (Api + Repository), DTO: ${MODULES.reduce((a, m) => a + m.dto.length, 0)}`);
-console.log(`  Enum: ${ENUMS.length} + EventStatus, Activity: ${ACTIVITIES.length}, Adapter: ${ADAPTERS.length}, Dialog: ${DIALOGS.length}, View: ${VIEWS.length}`);
+console.log(`  Enum: ${ENUMS.length} + EventStatus, Activity: ${ACTIVITIES.length}, Adapter: ${ADAPTERS.length}, View: ${VIEWS.length}`);
 
 if (process.argv.includes('--tree')) {
   const base = join(APP, 'java', 'com', 'eventapp', 'app');

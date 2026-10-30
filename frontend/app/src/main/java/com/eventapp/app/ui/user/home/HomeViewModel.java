@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.ui.fake.SampleEventData;
+import com.eventapp.app.ui.model.EventUiModel;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -21,6 +24,7 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<List<EventUiModel>> aiEvents = new MutableLiveData<>();
     private final MutableLiveData<List<EventUiModel>> featuredEvents = new MutableLiveData<>();
     private final MutableLiveData<List<EventUiModel>> upcomingEvents = new MutableLiveData<>();
+    private final MutableLiveData<List<EventUiModel>> trendingEvents = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(true);
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -39,6 +43,11 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<List<EventUiModel>> getUpcomingEvents() {
         return upcomingEvents;
+    }
+
+    /** Sự kiện bán chạy cho mục "Thịnh hành tuần này" (sắp theo số lượt đánh giá). */
+    public LiveData<List<EventUiModel>> getTrendingEvents() {
+        return trendingEvents;
     }
 
     public LiveData<Boolean> getLoading() {
@@ -84,9 +93,17 @@ public class HomeViewModel extends ViewModel {
                 upcoming = new ArrayList<>(upcoming.subList(0, 6));
             }
 
+            List<EventUiModel> trending = new ArrayList<>(all);
+            Collections.sort(trending, (left, right) ->
+                    Integer.compare(right.reviewCount, left.reviewCount));
+            if (trending.size() > 4) {
+                trending = new ArrayList<>(trending.subList(0, 4));
+            }
+
             aiEvents.setValue(ai);
             featuredEvents.setValue(featured);
             upcomingEvents.setValue(upcoming);
+            trendingEvents.setValue(trending);
             loading.setValue(false);
         }, 320L);
     }

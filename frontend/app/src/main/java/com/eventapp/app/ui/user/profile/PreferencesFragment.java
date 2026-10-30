@@ -20,7 +20,7 @@ import com.eventapp.app.ui.common.view.BudgetInputView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
 import com.eventapp.app.ui.common.view.SectionHeaderView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
-import com.eventapp.app.ui.user.home.EventCategoryUi;
+import com.eventapp.app.ui.model.EventCategoryUi;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -62,7 +62,7 @@ public class PreferencesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile_preferences, container, false);
+        return inflater.inflate(R.layout.fragment_user_profile_preferences, container, false);
     }
 
     @Override

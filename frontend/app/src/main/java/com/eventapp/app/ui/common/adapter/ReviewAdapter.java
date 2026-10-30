@@ -16,7 +16,7 @@ import com.eventapp.app.R;
 import com.eventapp.app.ui.common.view.SeverityChip;
 import com.eventapp.app.ui.common.view.StarRatingView;
 import com.eventapp.app.ui.common.view.StatusChip;
-import com.eventapp.app.ui.user.review.ReviewUiModel;
+import com.eventapp.app.ui.model.ReviewUiModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

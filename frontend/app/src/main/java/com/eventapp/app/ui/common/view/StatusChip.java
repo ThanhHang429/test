@@ -8,6 +8,7 @@ import android.view.Gravity;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.eventapp.app.R;
 import com.google.android.material.chip.Chip;
@@ -57,7 +58,8 @@ public class StatusChip extends Chip {
         setTextEndPadding(0f);
         setGravity(Gravity.CENTER_VERTICAL);
         setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 11f);
-        setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
+        setTypeface(Typeface.create(ResourcesCompat.getFont(getContext(),
+                R.font.plus_jakarta_sans), Typeface.BOLD));
         setTone(Tone.NEUTRAL);
     }
 

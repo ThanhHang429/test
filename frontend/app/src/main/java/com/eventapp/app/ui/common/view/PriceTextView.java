@@ -1,6 +1,8 @@
 package com.eventapp.app.ui.common.view;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
@@ -29,11 +31,23 @@ public class PriceTextView extends AppCompatTextView {
 
     public PriceTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs);
     }
 
-    private void init() {
+    private void init(@Nullable AttributeSet attrs) {
+        // setTextAppearance() ghi đè textColor từ XML, nên đọc lại màu tường minh (nếu có)
+        // để card tối như hero vẫn giữ được chữ trắng.
+        ColorStateList explicitColor = null;
+        if (attrs != null) {
+            TypedArray typed = getContext().obtainStyledAttributes(attrs,
+                    new int[]{android.R.attr.textColor});
+            explicitColor = typed.getColorStateList(0);
+            typed.recycle();
+        }
         setTextAppearance(R.style.TextAppearance_EventApp_Ds_Price);
+        if (explicitColor != null) {
+            setTextColor(explicitColor);
+        }
         setGravity(Gravity.CENTER_VERTICAL);
         setIncludeFontPadding(false);
     }

@@ -1,39 +1,55 @@
 package com.eventapp.app.ui.user.home;
 
-import android.content.res.ColorStateList;
+import android.animation.ValueAnimator;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.eventapp.app.R;
 import com.eventapp.app.core.enums.EventCategory;
+import com.eventapp.app.data.model.EventFilterCriteria;
 import com.eventapp.app.ui.common.adapter.EventAdapter;
 import com.eventapp.app.ui.common.view.EmptyStateView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
+import com.eventapp.app.ui.common.view.NavBarSpacing;
 import com.eventapp.app.ui.common.view.SectionHeaderView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
+import com.eventapp.app.ui.model.EventCategoryUi;
+import com.eventapp.app.ui.model.EventUiModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 /** FR-U04 discovery home: quick filters, AI suggestions and curated event sections. */
 public class HomeFragment extends Fragment {
+
+    /** Trang Khám phá chỉ hiển thị vài gợi ý AI; xem đầy đủ ở màn "Dành cho bạn". */
+    private static final int AI_SECTION_LIMIT = 3;
+    private static final int SEARCH_HEIGHT_EXPANDED_DP = 48;
+    private static final int SEARCH_HEIGHT_COMPACT_DP = 40;
+    private static final long COLLAPSE_DURATION_MS = 180L;
 
     private HomeViewModel viewModel;
     private SwipeRefreshLayout swipeRefresh;
@@ -42,23 +58,34 @@ public class HomeFragment extends Fragment {
     private EmptyStateView emptyState;
     private ErrorStateView errorState;
     private TextView aiCount;
+    private TextView aiHeader;
+    private TextView aiSubheader;
+    private TextView filterCount;
+    private View header;
+    private View searchBox;
+    private View filterBox;
     private ChipGroup quickGroup;
-    private ChipGroup categoryGroup;
     private Chip quickAll;
     private Chip quickNear;
+    private LinearLayout categoryRow;
     private EventAdapter aiAdapter;
-    private EventAdapter featuredAdapter;
+    private EventAdapter heroAdapter;
+    private EventAdapter trendingAdapter;
     private EventAdapter upcomingAdapter;
 
+    private int headerHeight;
+    private boolean headerHidden;
+    private boolean searchCompact;
+    private EventCategory selectedCategory;
+
     private boolean bindingQuick;
-    private boolean bindingCategory;
     private boolean firstLoad = true;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_home, container, false);
+        return inflater.inflate(R.layout.fragment_user_home, container, false);
     }
 
     @Override
@@ -72,10 +99,16 @@ public class HomeFragment extends Fragment {
         emptyState = view.findViewById(R.id.emptyHome);
         errorState = view.findViewById(R.id.errorHome);
         aiCount = view.findViewById(R.id.tvHomeAiCount);
+        aiHeader = view.findViewById(R.id.tvHomeAiHeader);
+        aiSubheader = view.findViewById(R.id.tvHomeAiSubheader);
+        filterCount = view.findViewById(R.id.tvHomeFilterCount);
+        header = view.findViewById(R.id.layoutHomeHeader);
+        searchBox = view.findViewById(R.id.layoutHomeSearch);
+        filterBox = view.findViewById(R.id.layoutHomeFilter);
         quickGroup = view.findViewById(R.id.chipGroupHomeQuick);
-        categoryGroup = view.findViewById(R.id.chipGroupHomeCategories);
         quickAll = view.findViewById(R.id.chipHomeQuickAll);
         quickNear = view.findViewById(R.id.chipHomeQuickNear);
+        categoryRow = view.findViewById(R.id.layoutHomeCategories);
 
         setupHeader(view);
         setupSearch(view);
@@ -86,6 +119,8 @@ public class HomeFragment extends Fragment {
         setupStates();
         observeData();
         registerFilterResult();
+        setupScrollBehavior();
+        applyNavBarClearance();
     }
 
     private void setupHeader(View view) {
@@ -93,8 +128,8 @@ public class HomeFragment extends Fragment {
                 navigate(R.id.favoritesFragment));
         view.findViewById(R.id.btnHomeNotifications).setOnClickListener(v ->
                 navigate(R.id.notification_listFragment));
-        view.findViewById(R.id.btnHomeProfile).setOnClickListener(v ->
-                navigate(R.id.profileFragment));
+        view.findViewById(R.id.btnHomeLocation).setOnClickListener(v -> showComingSoon());
+        view.findViewById(R.id.btnHomeSearchVoice).setOnClickListener(v -> showComingSoon());
     }
 
     private void setupSearch(View view) {
@@ -113,11 +148,14 @@ public class HomeFragment extends Fragment {
         quickNear.setContentDescription(getString(R.string.hc_coming_soon));
 
         quickGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            updateFilterBadge();
             if (bindingQuick) {
                 return;
             }
             if (checkedIds.isEmpty()) {
-                resetQuickSelection();
+                bindingQuick = true;
+                quickAll.setChecked(true);
+                bindingQuick = false;
                 return;
             }
             int id = checkedIds.get(0);
@@ -133,87 +171,120 @@ public class HomeFragment extends Fragment {
             } else if (id == R.id.chipHomeQuickFree) {
                 criteria.priceType = EventFilterCriteria.PriceType.FREE;
             } else {
-                resetQuickSelection();
                 return;
             }
             Bundle args = new Bundle();
             args.putSerializable(EventListFragment.ARG_CRITERIA, criteria);
             openEventList(args);
-            resetQuickSelection();
         });
     }
 
+    /** Danh mục hiển thị thành hàng icon tròn, mỗi danh mục một màu riêng. */
     private void setupCategories() {
         LayoutInflater inflater = LayoutInflater.from(requireContext());
         for (EventCategory category : EventCategory.values()) {
-            Chip chip = (Chip) inflater.inflate(R.layout.view_ds_filter_chip, categoryGroup, false);
-            chip.setId(View.generateViewId());
-            chip.setText(EventCategoryUi.label(requireContext(), category));
-            chip.setTag(category);
-            chip.setChipIconResource(EventCategoryUi.iconRes(category));
-            chip.setChipIconVisible(true);
-            chip.setChipIconSize(dp(16));
-            ColorStateList iconTint = AppCompatResources.getColorStateList(requireContext(),
-                    R.color.ds_chip_text);
-            chip.setChipIconTint(iconTint);
-            categoryGroup.addView(chip);
+            View item = inflater.inflate(R.layout.item_home_category, categoryRow, false);
+            ImageView icon = item.findViewById(R.id.ivCategoryIcon);
+            TextView label = item.findViewById(R.id.tvCategoryLabel);
+            View circle = item.findViewById(R.id.layoutCategoryCircle);
+
+            icon.setImageResource(EventCategoryUi.iconRes(category));
+            label.setText(EventCategoryUi.label(requireContext(), category));
+            item.setContentDescription(EventCategoryUi.label(requireContext(), category));
+            item.setTag(category);
+            circle.setBackground(categoryCircle(category, false));
+
+            ViewGroup.MarginLayoutParams params =
+                    (ViewGroup.MarginLayoutParams) item.getLayoutParams();
+            params.setMarginEnd(dp(8));
+            item.setLayoutParams(params);
+
+            item.setOnClickListener(v -> onCategoryClick(category));
+            categoryRow.addView(item);
         }
-        categoryGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (bindingCategory || checkedIds.isEmpty()) {
-                return;
+    }
+
+    private void onCategoryClick(EventCategory category) {
+        selectedCategory = selectedCategory == category ? null : category;
+        refreshCategorySelection();
+        updateFilterBadge();
+        if (selectedCategory == null) {
+            return;
+        }
+        Bundle args = new Bundle();
+        args.putLong(EventListFragment.ARG_CATEGORY_ID, EventCategoryUi.id(selectedCategory));
+        openEventList(args);
+    }
+
+    private void refreshCategorySelection() {
+        for (int i = 0; i < categoryRow.getChildCount(); i++) {
+            View child = categoryRow.getChildAt(i);
+            Object tag = child.getTag();
+            if (!(tag instanceof EventCategory)) {
+                continue;
             }
-            Chip chip = group.findViewById(checkedIds.get(0));
-            if (chip == null || !(chip.getTag() instanceof EventCategory)) {
-                return;
-            }
-            Bundle args = new Bundle();
-            args.putLong(EventListFragment.ARG_CATEGORY_ID,
-                    EventCategoryUi.id((EventCategory) chip.getTag()));
-            openEventList(args);
-            bindingCategory = true;
-            group.clearCheck();
-            bindingCategory = false;
-        });
+            View circle = child.findViewById(R.id.layoutCategoryCircle);
+            boolean selected = tag == selectedCategory;
+            circle.setBackground(categoryCircle((EventCategory) tag, selected));
+            child.setSelected(selected);
+        }
+    }
+
+    private GradientDrawable categoryCircle(EventCategory category, boolean selected) {
+        GradientDrawable circle = new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
+                new int[]{EventCategoryUi.gradientStart(requireContext(), category),
+                        EventCategoryUi.gradientEnd(requireContext(), category)});
+        circle.setShape(GradientDrawable.OVAL);
+        if (selected) {
+            circle.setStroke(dp(3), ContextCompat.getColor(requireContext(), R.color.ds_text));
+        }
+        return circle;
     }
 
     private void setupSectionHeaders() {
-        SectionHeaderView categories = requireView().findViewById(R.id.headerHomeCategories);
-        categories.setTitle(R.string.hc_home_categories_title);
+        SectionHeaderView upcoming = requireView().findViewById(R.id.headerHomeUpcoming);
+        upcoming.setTitle(R.string.hc_home_upcoming_title);
+        upcoming.setSubtitle(R.string.hc_home_upcoming_subtitle);
+        upcoming.setActionText(R.string.hc_home_see_all);
+        upcoming.setOnActionClickListener(v -> openEventList(null));
 
-        SectionHeaderView featured = requireView().findViewById(R.id.headerHomeFeatured);
-        featured.setTitle(R.string.hc_home_featured_title);
-        featured.setActionText(R.string.hc_home_see_all);
-        featured.setOnActionClickListener(v -> {
+        SectionHeaderView trending = requireView().findViewById(R.id.headerHomeTrending);
+        trending.setTitle(R.string.hc_home_trending_title);
+        trending.setActionText(R.string.hc_home_see_all);
+        trending.setOnActionClickListener(v -> {
             EventFilterCriteria criteria = new EventFilterCriteria();
             criteria.sort = EventFilterCriteria.Sort.POPULAR;
             Bundle args = new Bundle();
             args.putSerializable(EventListFragment.ARG_CRITERIA, criteria);
             openEventList(args);
         });
-
-        SectionHeaderView upcoming = requireView().findViewById(R.id.headerHomeUpcoming);
-        upcoming.setTitle(R.string.hc_home_upcoming_title);
-        upcoming.setSubtitle(R.string.hc_home_upcoming_subtitle);
-        upcoming.setActionText(R.string.hc_home_see_all);
-        upcoming.setOnActionClickListener(v -> openEventList(null));
     }
 
     private void setupLists(View view) {
         RecyclerView aiList = view.findViewById(R.id.rvHomeAi);
-        aiList.setLayoutManager(new LinearLayoutManager(requireContext(),
-                LinearLayoutManager.HORIZONTAL, false));
-        aiList.setHasFixedSize(true);
+        aiList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        aiList.setNestedScrollingEnabled(false);
         aiAdapter = new EventAdapter(EventAdapter.Mode.AI);
         aiAdapter.setOnEventActionListener(eventActions);
         aiList.setAdapter(aiAdapter);
 
-        RecyclerView featuredList = view.findViewById(R.id.rvHomeFeatured);
-        featuredList.setLayoutManager(new LinearLayoutManager(requireContext(),
+        RecyclerView heroList = view.findViewById(R.id.rvHomeHero);
+        heroList.setLayoutManager(new LinearLayoutManager(requireContext(),
                 LinearLayoutManager.HORIZONTAL, false));
-        featuredList.setHasFixedSize(true);
-        featuredAdapter = new EventAdapter(EventAdapter.Mode.FEATURED);
-        featuredAdapter.setOnEventActionListener(eventActions);
-        featuredList.setAdapter(featuredAdapter);
+        heroList.setHasFixedSize(true);
+        new PagerSnapHelper().attachToRecyclerView(heroList);
+        heroAdapter = new EventAdapter(EventAdapter.Mode.HERO);
+        heroAdapter.setOnEventActionListener(eventActions);
+        heroList.setAdapter(heroAdapter);
+
+        RecyclerView trendingList = view.findViewById(R.id.rvHomeTrending);
+        trendingList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        trendingList.setNestedScrollingEnabled(false);
+        trendingList.setItemAnimator(null);
+        trendingAdapter = new EventAdapter(EventAdapter.Mode.TRENDING);
+        trendingAdapter.setOnEventActionListener(eventActions);
+        trendingList.setAdapter(trendingAdapter);
 
         RecyclerView upcomingList = view.findViewById(R.id.rvHomeUpcoming);
         upcomingList.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -225,6 +296,7 @@ public class HomeFragment extends Fragment {
 
         view.findViewById(R.id.btnHomeAiSeeAll).setOnClickListener(v ->
                 navigate(R.id.recommendFragment));
+        view.findViewById(R.id.btnHomeAiRefresh).setOnClickListener(v -> viewModel.refresh());
     }
 
     private final EventAdapter.OnEventActionListener eventActions =
@@ -240,9 +312,9 @@ public class HomeFragment extends Fragment {
 
                 @Override
                 public void onFavoriteClick(EventUiModel event, int position) {
-                    Snackbar.make(requireView(),
-                            event.favorite ? R.string.hc_event_saved : R.string.hc_event_unsaved,
-                            Snackbar.LENGTH_SHORT).show();
+                    showMessage(event.favorite
+                            ? R.string.hc_event_saved
+                            : R.string.hc_event_unsaved);
                 }
             };
 
@@ -278,14 +350,23 @@ public class HomeFragment extends Fragment {
         });
 
         viewModel.getAiEvents().observe(getViewLifecycleOwner(), events -> {
-            aiAdapter.submitList(events);
+            List<EventUiModel> visible = events == null
+                    ? Collections.emptyList()
+                    : events.subList(0, Math.min(AI_SECTION_LIMIT, events.size()));
+            aiAdapter.submitList(visible);
             int count = events == null ? 0 : events.size();
             aiCount.setText(getString(R.string.hc_home_ai_count, count));
+            bindAiHeading(events);
             updateEmptyState();
         });
 
         viewModel.getFeaturedEvents().observe(getViewLifecycleOwner(), events -> {
-            featuredAdapter.submitList(events);
+            heroAdapter.submitList(events);
+            updateEmptyState();
+        });
+
+        viewModel.getTrendingEvents().observe(getViewLifecycleOwner(), events -> {
+            trendingAdapter.submitList(events);
             updateEmptyState();
         });
 
@@ -295,15 +376,115 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * FR-U07: chỉ gọi là "cá nhân hoá" khi có lý do gợi ý thật; ngược lại dùng tiêu đề
+     * "Phổ biến sắp diễn ra" để không ảo định là đã cá nhân hoá.
+     */
+    private void bindAiHeading(@Nullable List<EventUiModel> events) {
+        boolean personalized = false;
+        if (events != null) {
+            for (EventUiModel event : events) {
+                if (event.aiReason != null && !event.aiReason.trim().isEmpty()) {
+                    personalized = true;
+                    break;
+                }
+            }
+        }
+        aiHeader.setText(personalized
+                ? R.string.hc_home_ai_header
+                : R.string.hc_home_ai_header_popular);
+        aiSubheader.setText(personalized
+                ? R.string.hc_home_ai_subheader
+                : R.string.hc_home_ai_subheader_popular);
+    }
+
     private void updateEmptyState() {
         if (firstLoad || Boolean.TRUE.equals(viewModel.getLoading().getValue())) {
             return;
         }
         boolean empty = aiAdapter.getItemCount() == 0
-                && featuredAdapter.getItemCount() == 0
+                && heroAdapter.getItemCount() == 0
+                && trendingAdapter.getItemCount() == 0
                 && upcomingAdapter.getItemCount() == 0;
         emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
         scrollView.setVisibility(empty ? View.GONE : View.VISIBLE);
+    }
+
+    /** Header thu gọn khi cuộn xuống, bung ra khi cuộn lên; search bar thu nhỏ khi đã cuộn. */
+    private void setupScrollBehavior() {
+        header.post(() -> headerHeight = header.getHeight());
+        scrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldX, oldY) -> {
+                    if (headerHeight == 0) {
+                        headerHeight = header.getHeight();
+                    }
+                    int dy = scrollY - oldY;
+                    if (scrollY <= 0) {
+                        expandHeader();
+                    } else if (dy > dp(4)) {
+                        collapseHeader();
+                    } else if (dy < -dp(4)) {
+                        expandHeader();
+                    }
+                    setSearchCompact(scrollY > dp(12));
+                });
+    }
+
+    private void collapseHeader() {
+        if (headerHidden || headerHeight == 0) {
+            return;
+        }
+        headerHidden = true;
+        animateHeight(header, headerHeight, 0);
+        header.animate().alpha(0f).setDuration(COLLAPSE_DURATION_MS).start();
+    }
+
+    private void expandHeader() {
+        if (!headerHidden) {
+            return;
+        }
+        headerHidden = false;
+        animateHeight(header, 0, headerHeight);
+        header.animate().alpha(1f).setDuration(COLLAPSE_DURATION_MS).start();
+    }
+
+    private void setSearchCompact(boolean compact) {
+        if (searchCompact == compact) {
+            return;
+        }
+        searchCompact = compact;
+        int target = dp(compact ? SEARCH_HEIGHT_COMPACT_DP : SEARCH_HEIGHT_EXPANDED_DP);
+        animateHeight(searchBox, searchBox.getHeight(), target);
+        animateHeight(filterBox, filterBox.getHeight(), target);
+    }
+
+    private void animateHeight(View view, int from, int to) {
+        ValueAnimator animator = ValueAnimator.ofInt(from, to);
+        animator.setDuration(COLLAPSE_DURATION_MS);
+        animator.addUpdateListener(animation -> {
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            params.height = (int) animation.getAnimatedValue();
+            view.setLayoutParams(params);
+        });
+        animator.start();
+    }
+
+    /** Badge trên nút lọc = số bộ lọc nhanh đang áp dụng. */
+    private void updateFilterBadge() {
+        int count = 0;
+        if (quickGroup.getCheckedChipId() != View.NO_ID
+                && quickGroup.getCheckedChipId() != R.id.chipHomeQuickAll) {
+            count++;
+        }
+        if (selectedCategory != null) {
+            count++;
+        }
+        if (count == 0) {
+            filterCount.setVisibility(View.GONE);
+        } else {
+            filterCount.setText(String.valueOf(count));
+            filterCount.setVisibility(View.VISIBLE);
+        }
     }
 
     private void registerFilterResult() {
@@ -339,10 +520,22 @@ public class HomeFragment extends Fragment {
         Navigation.findNavController(requireView()).navigate(destinationId);
     }
 
-    private void resetQuickSelection() {
-        bindingQuick = true;
-        quickAll.setChecked(true);
-        bindingQuick = false;
+    private void applyNavBarClearance() {
+        NavBarSpacing.padBottomForNavBar(requireView(), scrollView, 16);
+    }
+
+    private void showComingSoon() {
+        showMessage(R.string.hc_coming_soon);
+    }
+
+    /** Snackbar neo lên thanh điều hướng nổi để không che mất các mục chính. */
+    private void showMessage(int messageRes) {
+        Snackbar snackbar = Snackbar.make(requireView(), messageRes, Snackbar.LENGTH_SHORT);
+        View navBar = requireActivity().findViewById(R.id.nav_bar_container);
+        if (navBar != null) {
+            snackbar.setAnchorView(navBar);
+        }
+        snackbar.show();
     }
 
     private void applyWeekendRange(EventFilterCriteria criteria) {

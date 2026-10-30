@@ -39,6 +39,26 @@ ETicket/
 └── backend/                   # ← project Spring Boot (dựng ở phiên khác)
 ```
 
+## Chạy frontend
+
+Yêu cầu: JDK 17+, Android SDK Platform 37, `adb` (emulator hoặc máy thật).
+
+```bash
+cd frontend
+echo "sdk.dir=$HOME/Android/Sdk" > local.properties   # nếu chưa có
+./gradlew :app:assembleDebug                          # Windows: gradlew.bat
+# bật emulator bằng Android Studio → Device Manager, hoặc <SDK>/emulator/emulator -avd <tên>
+./gradlew :app:installDebug
+adb shell am start -n com.eventapp.app/.ui.host.SplashActivity
+```
+
+APK: `frontend/app/build/outputs/apk/debug/app-debug.apk`.
+Backend mặc định được gọi ở `http://10.0.2.2:8080/api/v1/` (debug, emulator → máy host).
+
+> Hiện app là **khung**: chạy được luồng Splash → Home (dữ liệu mẫu), nhưng chưa có màn đăng nhập
+> và chưa gọi API thật. Chi tiết trạng thái, cấu hình API, Firebase, xử lý sự cố:
+> [`frontend/README.md`](frontend/README.md).
+
 ## Nhánh git
 
 - `Test` — nhánh chính hiện tại của repo.

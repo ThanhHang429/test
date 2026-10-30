@@ -1,5 +1,7 @@
 package com.eventapp.app.ui.user.review;
 
+
+import com.eventapp.app.ui.model.ReviewUiModel;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -69,7 +71,7 @@ public class EventReviewsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_review_event_reviews, container, false);
+        return inflater.inflate(R.layout.fragment_user_review_event_reviews, container, false);
     }
 
     @Override

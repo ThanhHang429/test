@@ -11,6 +11,10 @@
         <item name="colorOutline">@color/brand_outline</item>
         <item name="android:statusBarColor">@color/brand_primary_dark</item>
         <item name="android:windowBackground">@color/brand_background</item>
+        <!-- targetSdk 37: Android 15+ vẽ edge-to-edge, statusBarColor bị bỏ qua.
+             Nền app là màu sáng nên icon status bar phải là màu tối, nếu không sẽ vô hình. -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:forceDarkAllowed">false</item>
     </style>
 
@@ -18,6 +22,8 @@
     <style name="Theme.EventApp.Splash" parent="Theme.EventApp">
         <item name="android:windowBackground">@color/brand_primary</item>
         <item name="android:statusBarColor">@color/brand_primary</item>
+        <!-- Nền splash màu đậm → icon status bar màu sáng -->
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
     <style name="Theme.EventApp.Dialog" parent="Theme.Material3.Light.Dialog.Alert" />

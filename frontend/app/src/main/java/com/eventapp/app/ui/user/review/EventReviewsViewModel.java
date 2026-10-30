@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.user.review;
 
+
+import com.eventapp.app.ui.fake.SampleReviewData;
+import com.eventapp.app.ui.model.ReviewUiModel;
 import android.os.Handler;
 import android.os.Looper;
 

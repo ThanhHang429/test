@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.eventapp.app.R;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -58,7 +59,8 @@ public class RatingDistributionView extends LinearLayout {
             label.setText(starValue + "★");
             label.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 12f);
             label.setTextColor(ContextCompat.getColor(context, R.color.ds_text_muted));
-            label.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+            label.setTypeface(Typeface.create(
+                    ResourcesCompat.getFont(getContext(), R.font.be_vietnam_pro), Typeface.NORMAL));
             label.setWidth(dp(32));
             row.addView(label);
 
@@ -79,7 +81,8 @@ public class RatingDistributionView extends LinearLayout {
             TextView count = new TextView(context);
             count.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 12f);
             count.setTextColor(ContextCompat.getColor(context, R.color.ds_text_muted));
-            count.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+            count.setTypeface(Typeface.create(
+                    ResourcesCompat.getFont(getContext(), R.font.be_vietnam_pro), Typeface.NORMAL));
             count.setGravity(Gravity.END);
             count.setWidth(dp(76));
             row.addView(count);

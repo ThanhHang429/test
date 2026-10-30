@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.organizer.report;
 
+
+import com.eventapp.app.ui.fake.SampleInsightData;
+import com.eventapp.app.ui.model.AiInsightUiModel;
 import android.os.Handler;
 import android.os.Looper;
 

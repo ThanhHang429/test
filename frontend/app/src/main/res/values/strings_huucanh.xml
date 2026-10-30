@@ -24,6 +24,9 @@
     <string name="hc_ai_badge">Gợi ý bởi AI</string>
     <string name="hc_ai_badge_rule">Phù hợp sở thích</string>
     <string name="hc_ai_match">Phù hợp %1$d%%</string>
+    <string name="hc_ai_tier_high">Rất phù hợp</string>
+    <string name="hc_ai_tier_medium">Phù hợp</string>
+    <string name="hc_ai_tier_low">Có thể bạn thích</string>
     <string name="hc_ai_badge_estimate">Độ phù hợp ước tính %1$d%%</string>
     <string name="hc_ai_disclaimer">Trợ lý AI có thể sai, hãy kiểm tra lại ở trang sự kiện.</string>
     <string name="hc_coming_soon">Sắp ra mắt</string>
@@ -59,6 +62,7 @@
     <string name="hc_home_greeting_guest">Xin chào bạn</string>
     <string name="hc_home_question">Hôm nay bạn muốn đi đâu?</string>
     <string name="hc_home_search_hint">Tìm sự kiện, nghệ sĩ, địa điểm…</string>
+    <string name="hc_home_search_voice">Tìm bằng giọng nói</string>
     <string name="hc_home_quick_all">Tất cả</string>
     <string name="hc_home_quick_today">Hôm nay</string>
     <string name="hc_home_quick_weekend">Cuối tuần</string>
@@ -79,6 +83,21 @@
     <string name="hc_home_avatar">Ảnh đại diện</string>
     <string name="hc_home_empty_title">Chưa có sự kiện nào</string>
     <string name="hc_home_empty_message">Hãy quay lại sau để khám phá thêm sự kiện mới.</string>
+    <string name="hc_brand_name">ETICKET</string>
+    <string name="hc_brand_tagline">Sự kiện &amp; cộng đồng</string>
+    <string name="hc_home_location">TP. Hồ Chí Minh</string>
+    <string name="hc_home_location_change">Đổi khu vực</string>
+    <string name="hc_home_hero_price_label">Giá vé từ</string>
+    <string name="hc_home_hero_cta">Đặt vé</string>
+    <string name="hc_home_trending_title">Thịnh hành tuần này</string>
+    <string name="hc_home_trending_best_seller">Bán chạy nhất</string>
+    <string name="hc_home_trending_cta">Đặt vé</string>
+    <string name="hc_home_ai_header">Gợi ý cho bạn</string>
+    <string name="hc_home_ai_subheader">Cá nhân hoá theo sở thích và hoạt động gần đây</string>
+    <string name="hc_home_ai_header_popular">Phổ biến sắp diễn ra</string>
+    <string name="hc_home_ai_subheader_popular">Những sự kiện được quan tâm nhiều nhất tuần này</string>
+    <string name="hc_home_ai_match">AI Match %1$d%%</string>
+    <string name="hc_home_ai_cta">Đặt vé</string>
 
     <!-- ===== Danh mục ===== -->
     <string name="hc_category_all">Tất cả</string>
@@ -95,6 +114,7 @@
     <!-- ===== Thẻ sự kiện ===== -->
     <string name="hc_event_free">Miễn phí</string>
     <string name="hc_event_few_left">Sắp hết vé</string>
+    <string name="hc_event_remaining">Còn %1$d vé</string>
     <string name="hc_event_sold_out">Hết vé</string>
     <string name="hc_event_cancelled">Đã hủy</string>
     <string name="hc_event_available">Còn vé</string>
@@ -821,4 +841,21 @@
     <string name="hc_a14_reason_fake">Đánh giá giả</string>
     <string name="hc_a14_reason_off_topic">Lạc đề</string>
     <string name="hc_a14_reason_other">Khác</string>
+    <!-- EventMonitor (P6) -->
+    <string name="hc_monitor_title">Giám sát sự kiện</string>
+    <string name="hc_monitor_net">Tỷ lệ check-in</string>
+    <string name="hc_monitor_count">Sự kiện đang diễn ra</string>
+    <string name="hc_monitor_count_value">0</string>
+    <string name="hc_monitor_type">Hạng vé</string>
+    <string name="hc_monitor_type_value">0</string>
+    <string name="hc_monitor_risk">Rủi ro</string>
+    <string name="hc_monitor_risk_value">0</string>
+    <string name="hc_monitor_severity">Mức độ</string>
+    <string name="hc_monitor_severity_value">0</string>
+    <string name="hc_monitor_total">Tổng số vé đã phát hành</string>
+    <string name="hc_monitor_total_value">0</string>
+    <string name="hc_monitor_status">Trạng thái</string>
+    <string name="hc_monitor_status_value">Chưa có phản hồi</string>
+    <string name="hc_ai_tag_short">AI</string>
+    <string name="hc_splash_tagline">Khám phá sự kiện quanh bạn</string>
 </resources>

@@ -80,12 +80,22 @@ public class AiBadge extends LinearLayout {
     }
 
     private void updateBadgeText() {
-        if (score == null) {
-            badgeView.setText(R.string.hc_ai_badge);
-        } else {
-            badgeView.setText(getContext().getString(R.string.hc_ai_match, score));
-        }
+        badgeView.setText(tierLabel());
         updateContentDescription();
+    }
+
+    /** Nhãn mức độ phù hợp thay cho con số phần trăm, dễ hiểu hơn với người dùng. */
+    private int tierLabel() {
+        if (score == null) {
+            return R.string.hc_ai_badge;
+        }
+        if (score >= 85) {
+            return R.string.hc_ai_tier_high;
+        }
+        if (score >= 70) {
+            return R.string.hc_ai_tier_medium;
+        }
+        return R.string.hc_ai_tier_low;
     }
 
     private void updateContentDescription() {

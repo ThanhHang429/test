@@ -1,5 +1,9 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.ui.fake.SampleEventData;
+import com.eventapp.app.ui.model.EventUiModel;
+import com.eventapp.app.ui.model.EventCategoryUi;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -9,8 +13,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.eventapp.app.R;
-import com.eventapp.app.ui.user.review.ReviewUiModel;
-import com.eventapp.app.ui.user.review.SampleReviewData;
+import com.eventapp.app.ui.model.ReviewUiModel;
+import com.eventapp.app.ui.fake.SampleReviewData;
 
 import java.util.ArrayList;
 import java.util.List;

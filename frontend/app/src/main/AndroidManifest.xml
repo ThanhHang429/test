@@ -29,7 +29,7 @@
 
         <!-- Màn hình khởi động / kiểm tra phiên đăng nhập | FR-U01, FR-U02 -->
         <activity
-            android:name=".ui.SplashActivity"
+            android:name=".ui.host.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.EventApp.Splash">
             <intent-filter>
@@ -40,19 +40,19 @@
 
         <!-- Đăng nhập / đăng ký / quên mật khẩu | FR-U01, FR-U02 -->
         <activity
-            android:name=".ui.AuthActivity"
+            android:name=".ui.auth.AuthActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 3 vùng chức năng sau khi đăng nhập | FR-U03, FR-O02, FR-A01 -->
         <activity
-            android:name=".ui.UserHostActivity"
+            android:name=".ui.host.UserHostActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.OrganizerHostActivity"
+            android:name=".ui.host.OrganizerHostActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.AdminHostActivity"
+            android:name=".ui.host.AdminHostActivity"
             android:exported="false" />
 
         <!-- Nhận thông báo đẩy FCM | FR-U19, FR-O23, FR-A15 -->

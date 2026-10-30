@@ -1,5 +1,8 @@
 package com.eventapp.app.ui.organizer.dashboard;
 
+
+import com.eventapp.app.ui.fake.SampleDashboardData;
+import com.eventapp.app.ui.model.DashboardUiModel;
 import android.os.Handler;
 import android.os.Looper;
 

@@ -77,7 +77,7 @@ public class AiDescriptionFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_event_ai_description, container, false);
+        return inflater.inflate(R.layout.fragment_organizer_event_ai_description, container, false);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.eventapp.app.ui.user.home;
 
+
+import com.eventapp.app.ui.model.EventUiModel;
+import com.eventapp.app.ui.model.EventCategoryUi;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,8 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.eventapp.app.R;
-import com.eventapp.app.ui.common.adapter.EventGalleryAdapter;
-import com.eventapp.app.ui.common.adapter.EventTicketAdapter;
+import com.eventapp.app.ui.common.adapter.EventCoverRenderer;
+import com.eventapp.app.ui.common.view.NavBarSpacing;
+import com.eventapp.app.ui.user.home.adapter.EventGalleryAdapter;
+import com.eventapp.app.ui.user.home.adapter.EventTicketAdapter;
 import com.eventapp.app.ui.common.adapter.ReviewAdapter;
 import com.eventapp.app.ui.common.view.AiBadge;
 import com.eventapp.app.ui.common.view.EmptyStateView;
@@ -37,7 +41,7 @@ import com.eventapp.app.ui.common.view.SectionHeaderView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
 import com.eventapp.app.ui.common.view.StarRatingView;
 import com.eventapp.app.ui.common.view.StatusChip;
-import com.eventapp.app.ui.user.review.ReviewUiModel;
+import com.eventapp.app.ui.model.ReviewUiModel;
 import com.eventapp.app.ui.user.review.WriteReviewFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -119,7 +123,7 @@ public class EventDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_event_detail, container, false);
+        return inflater.inflate(R.layout.fragment_user_home_event_detail, container, false);
     }
 
     @Override
@@ -136,6 +140,8 @@ public class EventDetailFragment extends Fragment {
         setupLists();
         setupActions();
         observe();
+        // Thanh điều hướng là overlay: đẩy thanh CTA dính đáy lên trên nó.
+        NavBarSpacing.marginBottomForNavBar(view, bottomBar, 4);
         long eventId = getArguments() == null ? -1L : getArguments().getLong(ARG_EVENT_ID, -1L);
         viewModel.load(eventId);
     }
@@ -399,15 +405,7 @@ public class EventDetailFragment extends Fragment {
     }
 
     private void bindHero(EventUiModel event, EventDetailViewModel.DetailState state) {
-        GradientDrawable gradient = new GradientDrawable(
-                GradientDrawable.Orientation.TL_BR,
-                new int[]{EventCategoryUi.gradientStart(requireContext(), event.category),
-                        EventCategoryUi.gradientEnd(requireContext(), event.category)});
-        gradient.setCornerRadius(dp(20));
-        cover.setBackground(gradient);
-        cover.setImageResource(EventCategoryUi.iconRes(event.category));
-        cover.setImageTintList(ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.ds_white)));
+        EventCoverRenderer.showPlaceholder(cover, event.category, 20);
         heroCategory.setText(EventCategoryUi.label(requireContext(), event.category));
         galleryCount.setText(getString(R.string.hc_detail_gallery_count, state.gallery.size()));
         bindHeroStatus(state);
