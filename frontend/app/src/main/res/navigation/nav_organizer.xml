@@ -139,7 +139,19 @@
     <fragment
         android:id="@+id/ai_insightFragment"
         android:name="com.eventapp.app.ui.organizer.report.AiInsightFragment"
-        tools:layout="@layout/fragment_report_ai_insight" />
+        tools:layout="@layout/fragment_report_ai_insight">
+
+        <argument
+            android:name="arg_event_id"
+            android:defaultValue="-1L"
+            app:argType="long" />
+
+        <argument
+            android:name="arg_event_title"
+            android:defaultValue="@null"
+            android:nullable="true"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/export_dataFragment"

@@ -1,6 +1,445 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Màn hình AiInsight: Gợi ý kinh doanh do AI phân tích | FR-O27 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- O27 AI phân tích: chọn sự kiện, số liệu từ metrics, biểu đồ, tóm tắt, gợi ý có độ tin cậy. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/brand_background" />
+    android:layout_height="match_parent"
+    android:background="@color/ds_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ds_top_bar_height"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/ds_space_4"
+        android:paddingEnd="@dimen/ds_space_4">
+
+        <ImageButton
+            android:id="@+id/btnInsightBack"
+            android:layout_width="@dimen/ds_touch_target"
+            android:layout_height="@dimen/ds_touch_target"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/hc_insight_back"
+            android:padding="@dimen/ds_space_12"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_ds_back"
+            app:tint="@color/ds_text" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_4"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hc_insight_title"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.H3" />
+
+            <TextView
+                android:id="@+id/tvInsightEventSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                tools:text="Đêm nhạc Indie Sài Gòn 2026" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnInsightRefresh"
+            android:layout_width="@dimen/ds_touch_target"
+            android:layout_height="@dimen/ds_touch_target"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/hc_insight_refresh"
+            android:padding="@dimen/ds_space_12"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_ds_refresh"
+            app:tint="@color/ds_primary" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshInsight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollInsight"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:fillViewport="true"
+                android:overScrollMode="never">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/ds_space_24">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilInsightEvent"
+                        style="@style/Widget.EventApp.Ds.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:hint="@string/hc_insight_event_hint"
+                        app:endIconMode="dropdown_menu">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/dropdownInsightEvent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingTop="@dimen/ds_space_12"
+                            android:paddingBottom="@dimen/ds_space_12" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvInsightGeneratedAt"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                            tools:text="Tạo lúc 09:40 30/10" />
+
+                        <com.eventapp.app.ui.common.view.StatusChip
+                            android:id="@+id/chipInsightSource"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="Nguồn AI" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvInsightCachedNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_4"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        android:visibility="gone"
+                        tools:text="Đang xem bản lưu lúc 08:10 30/10"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/tvInsightQuota"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_4"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:text="@string/hc_insight_quota"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        android:textColor="@color/ds_warning_dark"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/cardInsightInsufficient"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:background="@drawable/bg_ds_warning_soft"
+                        android:orientation="vertical"
+                        android:padding="@dimen/ds_space_12"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_insight_insufficient_title"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+                            android:textColor="@color/ds_warning_dark" />
+
+                        <TextView
+                            android:id="@+id/tvInsightInsufficientMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_4"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                            tools:text="Cần ít nhất 7 ngày mở bán hoặc 20 đăng ký hợp lệ. Hiện có 6 đăng ký sau 2 ngày." />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_4"
+                            android:text="@string/hc_insight_threshold"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:orientation="horizontal">
+
+                        <com.eventapp.app.ui.common.view.KpiTileView
+                            android:id="@+id/tileInsightRegistrations"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <com.eventapp.app.ui.common.view.KpiTileView
+                            android:id="@+id/tileInsightFill"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/ds_card_gap"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:orientation="horizontal">
+
+                        <com.eventapp.app.ui.common.view.KpiTileView
+                            android:id="@+id/tileInsightDaysLeft"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <com.eventapp.app.ui.common.view.KpiTileView
+                            android:id="@+id/tileInsightCheckin"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/ds_card_gap"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <com.eventapp.app.ui.common.view.KpiTileView
+                        android:id="@+id/tileInsightRating"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardInsightChart"
+                        style="@style/Widget.EventApp.Ds.Card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/ds_space_16">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/hc_insight_chart_title"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.H3" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ds_space_2"
+                                android:text="@string/hc_insight_chart_subtitle"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+
+                            <com.eventapp.app.ui.common.view.SimpleBarChartView
+                                android:id="@+id/chartInsightDaily"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/ds_chart_height"
+                                android:layout_marginTop="@dimen/ds_space_8" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ds_space_4"
+                                android:text="@string/hc_insight_chart_caption"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardInsightSummary"
+                        style="@style/Widget.EventApp.Ds.Card.Soft"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/ds_space_16">
+
+                            <com.eventapp.app.ui.common.view.AiBadge
+                                android:id="@+id/badgeInsightSummary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ds_space_8"
+                                android:text="@string/hc_insight_summary_title"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Label" />
+
+                            <LinearLayout
+                                android:id="@+id/layoutInsightSummary"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ds_space_4"
+                                android:orientation="vertical" />
+
+                            <TextView
+                                android:id="@+id/tvInsightRuleNotice"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ds_space_8"
+                                android:text="@string/hc_insight_rule_notice"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                                android:textColor="@color/ds_warning_dark"
+                                android:visibility="gone"
+                                tools:visibility="visible" />
+
+                            <TextView
+                                android:id="@+id/tvInsightDisclaimer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/ds_space_12"
+                                android:text="@string/hc_insight_disclaimer"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:id="@+id/cardInsightLimitations"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:background="@drawable/bg_ds_warning_soft"
+                        android:orientation="vertical"
+                        android:padding="@dimen/ds_space_12"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_insight_limitations_title"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+                            android:textColor="@color/ds_warning_dark" />
+
+                        <LinearLayout
+                            android:id="@+id/layoutInsightLimitations"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_4"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+
+                    <com.eventapp.app.ui.common.view.SectionHeaderView
+                        android:id="@+id/headerInsightList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_16"
+                        android:layout_marginEnd="@dimen/ds_space_12" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvInsightItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_4"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingStart="@dimen/ds_content_margin"
+                        android:paddingEnd="@dimen/ds_content_margin" />
+
+                    <TextView
+                        android:id="@+id/tvInsightEmptyItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:text="@string/hc_insight_empty_items"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvInsightFooter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_content_margin"
+                        android:layout_marginTop="@dimen/ds_space_16"
+                        android:layout_marginEnd="@dimen/ds_content_margin"
+                        android:text="@string/hc_insight_footer"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.eventapp.app.ui.common.view.SkeletonLayout
+            android:id="@+id/skeletonInsight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:padding="@dimen/ds_content_margin"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="@dimen/ds_space_12"
+                android:background="@drawable/bg_ds_skeleton" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginBottom="@dimen/ds_space_12"
+                android:background="@drawable/bg_ds_skeleton" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ds_chart_height"
+                android:background="@drawable/bg_ds_skeleton" />
+        </com.eventapp.app.ui.common.view.SkeletonLayout>
+
+        <com.eventapp.app.ui.common.view.ErrorStateView
+            android:id="@+id/errorInsight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

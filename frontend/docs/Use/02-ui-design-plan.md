@@ -31,9 +31,9 @@ theo đúng trạng thái file.
 | FR-U07 | `recommendFragment` (+ mục "Dành cho bạn" ở Home) | `user/home/RecommendFragment` | **Đã thiết kế** (lý do, nguồn AI/RULE, quota làm mới, ẩn gợi ý) | `kh_m_ph_ai_g_i_s_ki_n` |
 | FR-U03 | `preferencesFragment` | `user/profile/PreferencesFragment` | **Đã thiết kế** (chip danh mục 10, hình thức, ngân sách, 3 thành phố, ngày, xử lý 409) | **Chưa có Stitch → tự thiết kế** |
 | FR-U08 | **chưa có destination** | — | Chưa có màn hình trong skeleton | `eticket_u08_ai_tr_l_t_v_n_s_ki_n` |
-| FR-O03 | `organizer_dashboardFragment` | `organizer/dashboard/*` | Khung rỗng | `organizer_qu_n_l_s_ki_n_doanh_thu` |
+| FR-O03 | `organizer_dashboardFragment` | `organizer/dashboard/*` | **Đã thiết kế** (chu kỳ 7/30/tùy chọn, khối tài chính tách đã nhận/đang chờ, trạng thái 2 chiều, việc cần xử lý, top sự kiện) | `organizer_qu_n_l_s_ki_n_doanh_thu` |
 | FR-O06 | `ai_descriptionFragment` (+ nút AI trong form) | `organizer/event/AiDescriptionFragment` | Khung rỗng | `t_o_s_ki_n_b_c_1_...ai_copilot` |
-| FR-O27 | `ai_insightFragment` | `organizer/report/AiInsightFragment` | Khung rỗng | `organizer_b_o_c_o_ph_n_t_ch_doanh_thu` |
+| FR-O27 | `ai_insightFragment` | `organizer/report/AiInsightFragment` | **Đã thiết kế** (picker sự kiện, KPI từ metrics, chart, tóm tắt AI/RULE, gợi ý có độ tin cậy, thiếu dữ liệu, quota) | `organizer_b_o_c_o_ph_n_t_ch_doanh_thu` |
 | FR-A07 | `content_moderationFragment` | `admin/event/ContentModerationFragment` | Khung rỗng | `admin_x_l_b_o_c_o_vi_ph_m_light`, `admin_h_ng_i_ki_m_duy_t_s_ki_n_light` |
 | FR-A09 | `category_manageFragment` | `admin/category/CategoryManageFragment` | Khung rỗng | **Chưa có → tự thiết kế** |
 | FR-A14 | **gộp vào `content_moderationFragment`** (xem §5.3) | `admin/event/ContentModerationFragment` | Khung rỗng | `admin_x_l_b_o_c_o_vi_ph_m_light` |
@@ -193,6 +193,13 @@ Tham chiếu `organizer_qu_n_l_s_ki_n_doanh_thu`, đổi teal → `ds_organizer*
 Chuỗi mới: `hc_odash_*`. VM: `OrganizerDashboardViewModel` với `DashboardState` gồm từng khối + status +
 asOf, dữ liệu mẫu trong `SampleDashboardData`.
 
+**Đã triển khai (2026-10-30).** `KpiTileView` (mới, dùng chung với O27) hiển thị số lớn + delta + chú thích,
+đồng thời có khối lỗi riêng với nút "Thử lại" → `retryMetric()` chỉ tải lại đúng khối đó. `MaterialDatePicker`
+cho khoảng tùy chọn, chặn > 366 ngày ngay trên client. `DashboardTaskAdapter` (icon/mức khẩn riêng) và
+`TopEventAdapter` (hạng + thanh tỷ trọng theo doanh thu cao nhất) điều hướng sang `my_eventsFragment`,
+`organizer_refundsFragment`, `ticket_type_listFragment`, `ai_insightFragment`. Dữ liệu mẫu cố ý để khối
+check-in ở trạng thái `ERROR` lần đầu để thấy đúng hành vi O03-R05; bấm "Thử lại" sẽ nạp lại thành công.
+
 ### 4.6 FR-O06 — AI viết mô tả (`fragment_event_ai_description.xml` + nút trong form)
 
 Tham chiếu khối AI Copilot ở `t_o_s_ki_n_b_c_1_...` (đổi teal → `ds_ai_gradient_*`).
@@ -228,6 +235,12 @@ Tham chiếu `organizer_b_o_c_o_ph_n_t_ch_doanh_thu`.
    "Chưa đủ dữ liệu để phân tích" + nêu ngưỡng cần đạt, **không** hiện gợi ý.
 Chuỗi mới: `hc_insight_*`. VM: `AiInsightViewModel` (metrics, summary, insights, source, disclaimer,
 limitations, insufficientData, loading/error).
+
+**Đã triển khai (2026-10-30).** `MaterialAutoCompleteTextView` đổi sự kiện tại chỗ; mỗi sự kiện là một
+nhánh dữ liệu mẫu riêng: AI đầy đủ (Indie), fallback luật kèm `hc_insight_rule_notice` (Hội thảo), và
+`insufficientData` (Workshop) — nhánh thiếu dữ liệu ẩn toàn bộ gợi ý nhưng vẫn hiện metrics + chart.
+`AiInsightAdapter` gắn chip loại/độ tin cậy và **chỉ** mở màn chỉnh sửa, không có nút áp dụng. Quota 5 lượt/
+sự kiện/ngày mở khóa lại khi đổi sự kiện; hết quota thì làm mờ nút làm mới và hiện ghi chú.
 
 ### 4.8 FR-A07 + FR-A14 — Kiểm duyệt nội dung & báo cáo (`fragment_event_content_moderation.xml`)
 
@@ -295,7 +308,7 @@ toggles, range, loading/error).
 |---|---|---|
 | `AiReasonRow` (TextView + `AiBadge`) | U07, O06, O27, U08 | tách từ `EventDetailFragment.bindHeader` |
 | `SeverityChip` (map severity → `StatusChip.Tone`) | A07, A14 | tránh lặp `if` ở 2 màn |
-| `KpiTileView` (số lớn + nhãn + delta) | O03, O27, A20 | dựa trên `ProgressMetricView` |
+| `KpiTileView` (số lớn + nhãn + delta) | O03, O27, A20 | **Đã có** — `view_ds_kpi_tile.xml` + trạng thái lỗi/retry từng khối |
 | `ChatBubbleView` | U08 | chỉ khi U08 được duyệt |
 | `CategoryTreeRow` / `ItemTouchHelper.Callback` | A09 | kéo thả, không thêm thư viện |
 | `ChannelStatusRow` | A20 | dot trạng thái + số liệu |
@@ -312,7 +325,7 @@ Không thêm item layout nếu có thể cấu hình bằng `item_event.xml` + c
 |---|---|---|---|
 | **P1** | U06 Yêu thích + U07 Gợi ý | Tái dùng nhiều nhất (`EventAdapter`, `item_event`, `HomeFragment`), hoàn tất cụm Khám phá | L |
 | **P2** ✅ | U03 Sở thích — đã xong 2026-10-30 | Là đầu vào của U07/U08; cần dialog 409 — độc lập | M |
-| **P3** | O03 Dashboard + O27 AI Insight | Cùng bộ KPI/chart, cùng dữ liệu mẫu organizer | L |
+| **P3** ✅ | O03 Dashboard + O27 AI Insight — đã xong 2026-10-30 | Cùng bộ KPI/chart, cùng dữ liệu mẫu organizer | L |
 | **P4** | O06 AI mô tả | Cần mở rộng `EventFormFragment` (đang chỉ có khối O09) | M |
 | **P5** | A07 + A14 kiểm duyệt → A09 danh mục → A20 tích hợp | Cụm admin, dùng chung `SeverityChip`/`KpiTileView` | L |
 | **P6** (tùy chọn) | U08 Chatbot | Cần duyệt DQ-11 + thêm destination vào `nav_user.xml` | M |

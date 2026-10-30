@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Item danh sách gợi ý ai trong danh sách | FR-O27 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- O27 item quan sát/gợi ý: loại, độ tin cậy, nội dung, số liệu liên quan, liên kết tự nguyện. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.EventApp.Ds.Card.Outlined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" />
+    android:layout_marginBottom="@dimen/ds_space_8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/ds_space_12">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.eventapp.app.ui.common.view.StatusChip
+                android:id="@+id/chipInsightType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Gợi ý" />
+
+            <com.eventapp.app.ui.common.view.StatusChip
+                android:id="@+id/chipInsightConfidence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_space_8"
+                tools:text="Tin cậy vừa" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvInsightText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_8"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.BodyM"
+            tools:text="Cân nhắc mở thêm một đợt vé Standard cho khách đến muộn." />
+
+        <TextView
+            android:id="@+id/tvInsightRelated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_6"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+            android:visibility="gone"
+            tools:text="Liên quan: Tỷ lệ lấp đầy"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvInsightEstimate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_6"
+            android:text="@string/hc_insight_estimate"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+            android:textColor="@color/ds_warning_dark"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnInsightAction"
+            style="@style/Widget.EventApp.Ds.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_4"
+            android:paddingStart="0dp"
+            android:paddingEnd="@dimen/ds_space_8"
+            android:visibility="gone"
+            tools:text="Mở cấu hình vé"
+            tools:visibility="visible" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
