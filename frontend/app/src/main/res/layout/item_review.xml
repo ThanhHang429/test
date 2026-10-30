@@ -69,7 +69,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/ds_space_4"
                         android:visibility="gone"
-                        tools:text="Bị báo cáo"
+                        tools:text="REPORTED"
+                        tools:visibility="visible" />
+
+                    <com.eventapp.app.ui.common.view.StatusChip
+                        android:id="@+id/chipReviewSeverity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_4"
+                        android:visibility="gone"
+                        tools:text="Cao"
                         tools:visibility="visible" />
                 </LinearLayout>
 

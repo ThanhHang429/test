@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -37,7 +38,7 @@ public class SimpleBarChartView extends View {
     private final List<Bar> bars = new ArrayList<>();
     private final Paint barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint labelPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint valuePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint emptyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF barRect = new RectF();

@@ -9,9 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eventapp.app.R;
+import com.eventapp.app.ui.common.view.SeverityChip;
 import com.eventapp.app.ui.common.view.StarRatingView;
 import com.eventapp.app.ui.common.view.StatusChip;
 import com.eventapp.app.ui.user.review.ReviewUiModel;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /** Shared review row for event detail, the public review list and admin moderation (FR-U20/A14). */
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
@@ -63,11 +66,51 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     }
 
     public void submitList(List<ReviewUiModel> reviews) {
+        List<ReviewUiModel> next = reviews == null
+                ? new ArrayList<>() : new ArrayList<>(reviews);
+        DiffUtil.DiffResult diff = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return items.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return next.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                return items.get(oldPosition).id == next.get(newPosition).id;
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldPosition, int newPosition) {
+                return sameContents(items.get(oldPosition), next.get(newPosition));
+            }
+        });
         items.clear();
-        if (reviews != null) {
-            items.addAll(reviews);
-        }
-        notifyDataSetChanged();
+        items.addAll(next);
+        diff.dispatchUpdatesTo(this);
+    }
+
+    private boolean sameContents(ReviewUiModel left, ReviewUiModel right) {
+        return left.status == right.status
+                && left.source == right.source
+                && left.mine == right.mine
+                && left.editCount == right.editCount
+                && left.editedAt == right.editedAt
+                && left.createdAt == right.createdAt
+                && Float.compare(left.rating, right.rating) == 0
+                && Objects.equals(left.eventTitle, right.eventTitle)
+                && Objects.equals(left.authorName, right.authorName)
+                && Objects.equals(left.authorCode, right.authorCode)
+                && Objects.equals(left.comment, right.comment)
+                && Objects.equals(left.flagReason, right.flagReason)
+                && Objects.equals(left.evidence, right.evidence)
+                && Objects.equals(left.severity, right.severity)
+                && Objects.equals(left.spamScore, right.spamScore)
+                && Objects.equals(left.toxicityScore, right.toxicityScore);
     }
 
     public List<ReviewUiModel> getItems() {
@@ -122,6 +165,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
         bindStatus(holder.status, review);
         bindSource(holder.source, review);
+        bindSeverity(holder.severity, review);
         bindFlag(holder, review);
         bindActions(holder, review);
     }
@@ -164,21 +208,32 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         }
         switch (review.source) {
             case HELD:
-                chip.setStatus(chip.getContext().getString(R.string.hc_review_source_held),
+                chip.setStatus(chip.getContext().getString(R.string.hc_mod_source_held),
                         StatusChip.Tone.WARNING);
                 break;
             case FLAGGED:
-                chip.setStatus(chip.getContext().getString(R.string.hc_review_source_flagged),
+                chip.setStatus(chip.getContext().getString(R.string.hc_mod_source_flagged),
                         StatusChip.Tone.DANGER);
                 break;
             case REPORTED:
-                chip.setStatus(chip.getContext().getString(R.string.hc_review_source_reported),
+                chip.setStatus(chip.getContext().getString(R.string.hc_mod_source_reported),
                         StatusChip.Tone.INFO);
                 break;
             case USER:
             default:
                 chip.setVisibility(View.GONE);
                 break;
+        }
+    }
+
+    private void bindSeverity(StatusChip chip, ReviewUiModel review) {
+        if (chip == null) {
+            return;
+        }
+        boolean show = mode == Mode.MODERATION && !TextUtils.isEmpty(review.severity);
+        chip.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (show) {
+            SeverityChip.bind(chip, review.severity);
         }
     }
 
@@ -235,6 +290,17 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
                 listener.onModerateReview(review);
             }
         });
+
+        if (moderation) {
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onModerateReview(review);
+                }
+            });
+        } else {
+            holder.itemView.setOnClickListener(null);
+            holder.itemView.setClickable(false);
+        }
     }
 
     @Override
@@ -267,6 +333,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         final TextView comment;
         final StatusChip status;
         final StatusChip source;
+        final StatusChip severity;
         final View flag;
         final TextView flagTitle;
         final TextView flagReason;
@@ -288,6 +355,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
             comment = itemView.findViewById(R.id.tvReviewComment);
             status = itemView.findViewById(R.id.chipReviewStatus);
             source = itemView.findViewById(R.id.chipReviewSource);
+            severity = itemView.findViewById(R.id.chipReviewSeverity);
             flag = itemView.findViewById(R.id.layoutReviewFlag);
             flagTitle = itemView.findViewById(R.id.tvReviewFlagTitle);
             flagReason = itemView.findViewById(R.id.tvReviewFlagReason);

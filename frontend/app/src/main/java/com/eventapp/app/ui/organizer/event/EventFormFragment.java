@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.MaterialAlertDialogBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,6 +25,7 @@ import com.eventapp.app.ui.common.view.ClassificationSectionView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -197,8 +197,8 @@ public class EventFormFragment extends Fragment {
     private void renderSuggestions() {
         String[] ideas = getResources().getStringArray(R.array.hc_aidesc_keypoint_ideas);
         for (String idea : ideas) {
-            Chip chip = new Chip(requireContext());
-            chip.setStyle(R.style.Widget_EventApp_Ds_Chip_Preset);
+            Chip chip = new Chip(new android.view.ContextThemeWrapper(
+                    requireContext(), R.style.Widget_EventApp_Ds_Chip_Preset));
             chip.setText(idea);
             chip.setContentDescription(getString(R.string.hc_aidesc_keypoints_add) + ": " + idea);
             chip.setOnClickListener(v -> addKeyPoint(idea));
@@ -210,8 +210,8 @@ public class EventFormFragment extends Fragment {
         keyPointGroup.removeAllViews();
         List<String> points = viewModel.getKeyPoints();
         for (String point : points) {
-            Chip chip = new Chip(requireContext());
-            chip.setStyle(R.style.Widget_EventApp_Ds_Chip_Tag);
+            Chip chip = new Chip(new android.view.ContextThemeWrapper(
+                    requireContext(), R.style.Widget_EventApp_Ds_Chip_Tag));
             chip.setText(point);
             chip.setContentDescription(
                     getString(R.string.hc_aidesc_keypoint_remove, point));

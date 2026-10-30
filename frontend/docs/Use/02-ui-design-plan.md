@@ -34,13 +34,14 @@ theo đúng trạng thái file.
 | FR-O03 | `organizer_dashboardFragment` | `organizer/dashboard/*` | **Đã thiết kế** (chu kỳ 7/30/tùy chọn, khối tài chính tách đã nhận/đang chờ, trạng thái 2 chiều, việc cần xử lý, top sự kiện) | `organizer_qu_n_l_s_ki_n_doanh_thu` |
 | FR-O06 | `ai_descriptionFragment` (+ nút AI trong form) | `organizer/event/AiDescriptionFragment` | **Đã thiết kế** (gate dữ liệu tối thiểu, giọng/độ dài/số phương án, tab 1–3, hậu kiểm + placeholder, thay thế/chèn/thoác tác) | `t_o_s_ki_n_b_c_1_...ai_copilot` |
 | FR-O27 | `ai_insightFragment` | `organizer/report/AiInsightFragment` | **Đã thiết kế** (picker sự kiện, KPI từ metrics, chart, tóm tắt AI/RULE, gợi ý có độ tin cậy, thiếu dữ liệu, quota) | `organizer_b_o_c_o_ph_n_t_ch_doanh_thu` |
-| FR-A07 | `content_moderationFragment` | `admin/event/ContentModerationFragment` | Khung rỗng | `admin_x_l_b_o_c_o_vi_ph_m_light`, `admin_h_ng_i_ki_m_duy_t_s_ki_n_light` |
+| FR-A07 | `content_moderationFragment` | `admin/event/ContentModerationFragment` | **Đã thiết kế** (2 tab A07/A14, KPI, filter, card cờ, confirm/dismiss/rescan, snackbar hoàn tác, skeleton/empty/error) | `admin_x_l_b_o_c_o_vi_ph_m_light`, `admin_h_ng_i_ki_m_duy_t_s_ki_n_light` |
 | FR-A09 | `category_manageFragment` | `admin/category/CategoryManageFragment` | Khung rỗng | **Chưa có → tự thiết kế** |
-| FR-A14 | **gộp vào `content_moderationFragment`** (xem §5.3) | `admin/event/ContentModerationFragment` | Khung rỗng | `admin_x_l_b_o_c_o_vi_ph_m_light` |
+| FR-A14 | **gộp vào `content_moderationFragment`** (xem §5.3) | `admin/event/ContentModerationFragment` | **Đã thiết kế** (tab đánh giá bị báo cáo, bottom sheet chi tiết, ẩn/giữ/yêu cầu sửa kèm mã lý do + ghi chú) | `admin_x_l_b_o_c_o_vi_ph_m_light` |
 | FR-A20 | `integration_healthFragment` | `admin/system/IntegrationHealthFragment` | Khung rỗng | `admin_gi_m_s_t_h_th_ng_ki_m_to_n_light` |
 
-**Kết luận:** 4/15 FR đã có giao diện thật (U04, U05, U20, O09). 10 FR còn khung rỗng, 1 FR (U08) chưa
-có màn hình. Kế hoạch dưới đây chỉ làm 11 hạng mục còn lại, không sửa lại phần đã xong.
+**Kết luận:** 12/15 FR đã có giao diện thật (U03, U04, U05, U06, U07, U20, O03, O06, O09, O27,
+A07, A14). 2 FR còn khung rỗng (A09, A20), 1 FR (U08) chưa có màn hình. Kế hoạch dưới đây chỉ làm
+các hạng mục còn lại, không sửa lại phần đã xong.
 
 ---
 

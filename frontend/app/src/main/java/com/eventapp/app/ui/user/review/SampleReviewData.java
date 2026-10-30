@@ -127,7 +127,7 @@ public final class SampleReviewData {
         reviews.add(new ReviewUiModel.Builder()
                 .id(9002)
                 .eventId(2)
-                .eventTitle("Hội thảo AI &amp; Tương lai 2026")
+                .eventTitle("Hội thảo AI & Tương lai 2026")
                 .authorName("Ngọc Mai")
                 .authorCode("USR-1109")
                 .rating(1)

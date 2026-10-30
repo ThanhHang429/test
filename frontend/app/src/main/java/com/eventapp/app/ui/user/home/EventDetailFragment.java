@@ -38,6 +38,7 @@ import com.eventapp.app.ui.common.view.SkeletonLayout;
 import com.eventapp.app.ui.common.view.StarRatingView;
 import com.eventapp.app.ui.common.view.StatusChip;
 import com.eventapp.app.ui.user.review.ReviewUiModel;
+import com.eventapp.app.ui.user.review.WriteReviewFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;

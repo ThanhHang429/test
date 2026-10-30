@@ -698,4 +698,127 @@
     <string name="hc_aidesc_replace_message">Bạn đã có mô tả trong form. Chọn cách đưa bản AI vào.</string>
     <string name="hc_aidesc_replace">Thay thế</string>
     <string name="hc_aidesc_append">Chèn thêm</string>
+    <string name="hc_content_moderation_title">Kiểm duyệt nội dung</string>
+    <string name="hc_content_moderation_live">Live • 3 phán xử chờ</string>
+    <string name="hc_content_moderation_pending">Chờ duyệt</string>
+    <string name="hc_content_moderation_approved">Đã duyệt</string>
+    <string name="hc_content_moderation_under_review">Đang thẩm định</string>
+    <string name="hc_content_moderation_all">Tất cả</string>
+    <string name="hc_content_moderation_high">HIGH</string>
+    <string name="hc_content_moderation_medium">MEDIUM</string>
+    <string name="hc_content_moderation_low">LOW</string>
+    <string name="hc_content_moderation_filter_live">Lọc theo thời gian thực</string>
+    <string name="hc_content_moderation_source">Nguồn</string>
+    <string name="hc_content_moderation_confirm">Xác nhận</string>
+    <string name="hc_content_moderation_dismiss">Loại bỏ</string>
+    <string name="hc_content_moderation_empty_title">Chưa có cờ kiểm duyệt</string>
+    <string name="hc_content_moderation_empty_subtitle">Hệ thống chưa phát hiện nội dung cần phán xử tại thời điểm này.</string>
+    <string name="hc_content_moderation_empty_action">Quét lại</string>
+    <string name="hc_admin_moderation_title">Quản lý cờ nội dung</string>
+    <string name="hc_scene_stage_note">Trạng thái thử nghiệm — không lưu dữ liệu.</string>
+    <string name="hc_content_moderation_buttons_queue">Hành động: Hàng đợi</string>
+    <string name="hc_content_moderation_buttons_monitor">Hành động: Giám sát</string>
+
+    <!-- ===== P5 / A07 + A14: kiểm duyệt nội dung ===== -->
+    <string name="hc_mod_title">Kiểm duyệt nội dung</string>
+    <string name="hc_mod_back">Quay lại</string>
+    <string name="hc_mod_tab_flags">Cờ nội dung</string>
+    <string name="hc_mod_tab_reviews">Đánh giá bị báo cáo</string>
+    <string name="hc_mod_subtitle">%1$d cờ đang mở • %2$d đánh giá chờ</string>
+
+    <string name="hc_mod_kpi_open">Cần xử lý</string>
+    <string name="hc_mod_kpi_open_caption">Cờ đang mở</string>
+    <string name="hc_mod_kpi_high">Mức cao</string>
+    <string name="hc_mod_kpi_high_caption">Ưu tiên trước</string>
+    <string name="hc_mod_kpi_handled">Đã xử lý hôm nay</string>
+    <string name="hc_mod_kpi_handled_caption">Có ghi nhật ký</string>
+
+    <string name="hc_mod_filter_target">Loại</string>
+    <string name="hc_mod_filter_severity">Mức độ</string>
+    <string name="hc_mod_filter_status">Trạng thái</string>
+    <string name="hc_mod_filter_all">Tất cả</string>
+    <string name="hc_mod_target_event">Sự kiện</string>
+    <string name="hc_mod_target_image">Ảnh</string>
+    <string name="hc_mod_target_tag">Nhãn</string>
+    <string name="hc_mod_target_review">Đánh giá</string>
+
+    <string name="hc_mod_severity_high">Cao</string>
+    <string name="hc_mod_severity_medium">Vừa</string>
+    <string name="hc_mod_severity_low">Thấp</string>
+
+    <string name="hc_mod_status_open">Đang mở</string>
+    <string name="hc_mod_status_confirmed">Đã xác nhận</string>
+    <string name="hc_mod_status_dismissed">Đã bỏ qua</string>
+    <string name="hc_mod_status_handled">Đã xử lý</string>
+    <string name="hc_mod_status_all">Tất cả</string>
+
+    <string name="hc_mod_source_ai">AI</string>
+    <string name="hc_mod_source_rule">RULE</string>
+    <string name="hc_mod_source_held">HELD</string>
+    <string name="hc_mod_source_flagged">FLAGGED</string>
+    <string name="hc_mod_source_reported">REPORTED</string>
+    <string name="hc_mod_confidence">Độ tin cậy %1$d%%</string>
+    <string name="hc_mod_unchecked">Chưa quét AI</string>
+    <string name="hc_mod_changed">Nội dung đã thay đổi</string>
+    <string name="hc_mod_meta">%1$s • %2$s</string>
+    <string name="hc_mod_time_now">Vừa xong</string>
+    <string name="hc_mod_time_minutes">%1$d phút trước</string>
+    <string name="hc_mod_time_hours">%1$d giờ trước</string>
+    <string name="hc_mod_time_days">%1$d ngày trước</string>
+
+    <string name="hc_mod_confirm">Xác nhận</string>
+    <string name="hc_mod_dismiss">Bỏ qua</string>
+    <string name="hc_mod_rescan">Quét lại</string>
+    <string name="hc_mod_cancel">Hủy</string>
+    <string name="hc_mod_reason_code">Mã lý do</string>
+    <string name="hc_mod_note_hint">Nhập ghi chú cho thao tác này</string>
+    <string name="hc_mod_note_required">Ghi chú tối thiểu 3 ký tự</string>
+    <string name="hc_mod_code_required">Chọn mã lý do</string>
+
+    <string name="hc_mod_dismiss_title">Bỏ qua cờ nội dung</string>
+    <string name="hc_mod_dismiss_message">Ghi chú lý do bỏ qua. Hệ thống dùng thông tin này để điều chỉnh ngưỡng phát hiện.</string>
+    <string name="hc_mod_dismiss_confirm">Bỏ qua cờ</string>
+    <string name="hc_mod_hide_title">Ẩn đánh giá</string>
+    <string name="hc_mod_hide_message">Chọn mã lý do và ghi chú. Tác giả sẽ nhận thông báo chung, không lộ danh tính người báo cáo.</string>
+    <string name="hc_mod_hide_confirm">Ẩn đánh giá</string>
+    <string name="hc_mod_keep_title">Giữ lại đánh giá</string>
+    <string name="hc_mod_keep_message">Ghi chú lý do giữ nguyên đánh giá. Cờ sẽ được đóng và lưu vào nhật ký.</string>
+    <string name="hc_mod_keep_confirm">Giữ lại</string>
+    <string name="hc_mod_edit_title">Yêu cầu sửa đánh giá</string>
+    <string name="hc_mod_edit_message">Chọn mã lý do và ghi chú nội dung cần sửa. Yêu cầu được gửi tới tác giả.</string>
+    <string name="hc_mod_edit_confirm">Gửi yêu cầu</string>
+
+    <string name="hc_mod_empty_title">Không có cờ nào cần xử lý</string>
+    <string name="hc_mod_empty_message">Mọi cờ trong bộ lọc hiện tại đã được xử lý.</string>
+    <string name="hc_mod_empty_action">Xem đã xử lý</string>
+    <string name="hc_mod_a14_empty_title">Không có đánh giá nào cần xử lý</string>
+    <string name="hc_mod_a14_empty_message">Hàng đợi đánh giá đã sạch với bộ lọc hiện tại.</string>
+    <string name="hc_mod_a14_empty_action">Xem tất cả nguồn</string>
+    <string name="hc_mod_error_title">Không tải được hàng đợi</string>
+    <string name="hc_mod_error_message">Kết nối tới máy chủ kiểm duyệt tạm thời gián đoạn. Vui lòng thử lại.</string>
+
+    <string name="hc_mod_action_confirmed">Đã xác nhận cờ</string>
+    <string name="hc_mod_action_dismissed">Đã bỏ qua cờ</string>
+    <string name="hc_mod_action_rescanned">Đã gửi quét lại</string>
+    <string name="hc_mod_action_undone">Đã hoàn tác thao tác</string>
+    <string name="hc_mod_snackbar">%1$s • %2$s</string>
+    <string name="hc_mod_audit_note">Đã ghi nhật ký thao tác</string>
+    <string name="hc_mod_undo">Hoàn tác</string>
+
+    <string name="hc_mod_a14_source_filter">Nguồn</string>
+    <string name="hc_mod_a14_event">%1$s • EVT-%2$04d</string>
+    <string name="hc_mod_a14_content">Nội dung đánh giá</string>
+    <string name="hc_mod_a14_hide">Ẩn đánh giá</string>
+    <string name="hc_mod_a14_keep">Giữ lại</string>
+    <string name="hc_mod_a14_request_edit">Yêu cầu sửa</string>
+    <string name="hc_a14_action_hidden">Đã ẩn đánh giá</string>
+    <string name="hc_a14_action_kept">Đã giữ đánh giá</string>
+    <string name="hc_a14_action_edit">Đã gửi yêu cầu sửa</string>
+
+    <string name="hc_a14_reason_spam">Spam</string>
+    <string name="hc_a14_reason_offensive">Xúc phạm</string>
+    <string name="hc_a14_reason_personal_data">Dữ liệu cá nhân</string>
+    <string name="hc_a14_reason_fake">Đánh giá giả</string>
+    <string name="hc_a14_reason_off_topic">Lạc đề</string>
+    <string name="hc_a14_reason_other">Khác</string>
 </resources>
