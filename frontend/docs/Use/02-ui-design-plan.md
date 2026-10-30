@@ -32,7 +32,7 @@ theo đúng trạng thái file.
 | FR-U03 | `preferencesFragment` | `user/profile/PreferencesFragment` | **Đã thiết kế** (chip danh mục 10, hình thức, ngân sách, 3 thành phố, ngày, xử lý 409) | **Chưa có Stitch → tự thiết kế** |
 | FR-U08 | **chưa có destination** | — | Chưa có màn hình trong skeleton | `eticket_u08_ai_tr_l_t_v_n_s_ki_n` |
 | FR-O03 | `organizer_dashboardFragment` | `organizer/dashboard/*` | **Đã thiết kế** (chu kỳ 7/30/tùy chọn, khối tài chính tách đã nhận/đang chờ, trạng thái 2 chiều, việc cần xử lý, top sự kiện) | `organizer_qu_n_l_s_ki_n_doanh_thu` |
-| FR-O06 | `ai_descriptionFragment` (+ nút AI trong form) | `organizer/event/AiDescriptionFragment` | Khung rỗng | `t_o_s_ki_n_b_c_1_...ai_copilot` |
+| FR-O06 | `ai_descriptionFragment` (+ nút AI trong form) | `organizer/event/AiDescriptionFragment` | **Đã thiết kế** (gate dữ liệu tối thiểu, giọng/độ dài/số phương án, tab 1–3, hậu kiểm + placeholder, thay thế/chèn/thoác tác) | `t_o_s_ki_n_b_c_1_...ai_copilot` |
 | FR-O27 | `ai_insightFragment` | `organizer/report/AiInsightFragment` | **Đã thiết kế** (picker sự kiện, KPI từ metrics, chart, tóm tắt AI/RULE, gợi ý có độ tin cậy, thiếu dữ liệu, quota) | `organizer_b_o_c_o_ph_n_t_ch_doanh_thu` |
 | FR-A07 | `content_moderationFragment` | `admin/event/ContentModerationFragment` | Khung rỗng | `admin_x_l_b_o_c_o_vi_ph_m_light`, `admin_h_ng_i_ki_m_duy_t_s_ki_n_light` |
 | FR-A09 | `category_manageFragment` | `admin/category/CategoryManageFragment` | Khung rỗng | **Chưa có → tự thiết kế** |
@@ -219,6 +219,17 @@ Tham chiếu khối AI Copilot ở `t_o_s_ki_n_b_c_1_...` (đổi teal → `ds_a
 Chuỗi mới: `hc_aidesc_*`. VM: `AiDescriptionViewModel` (tone, length, variants, state REQUESTING/SUCCESS/
 ERROR, warnings, missingInfo, selectedVariant, undoStack).
 
+**Đã triển khai (2026-10-30).** Form có card "Mô tả sự kiện" mới: ô tiêu đề (counter 120, lỗi khi 0< len <5),
+hình thức (Trực tiếp/Trực tuyến), ô nhập ý chính + chip tag đóng được + chip gợi ý (`hc_aidesc_keypoint_ideas`,
+tối đa 10, mỗi ý 3–200 ký tự), ô mô tả và nút AI. `EventFormViewModel.AiGate` chặn nút khi thiếu tiêu đề /
+danh mục chính / ít nhất 3 ý chính và hiện đúng lý do bên cạnh nút (O06 điều kiện trước).
+`ai_descriptionFragment` mở với `init` snapshot từ form, tự tạo lần đầu, chip `Đang tạo…` + `Hủy` (guard 25s),
+`TabLayout` cho 1–3 phương án, preview tô nền mọi chỗ `[Cần bổ sung: …]`, card "Thông tin còn thiếu" và card
+"Cần kiểm tra" (hậu kiểm số/ngày/điện thoại/URL bằng regex — `SampleAiDescriptionData.postCheck`, nhánh SHORT
+cố ý chứa số lạ để thấy cảnh báo), card lỗi/từ chối/hết quota (từ chối chặn từ cấm, quota 10 lượt/giờ).
+Trả kết quả qua `SavedStateHandle` của back-stack trước; form hỏi "Thay thế hay chèn thêm?" rồi hiện Snackbar
+"Hoàn tác"; nhãn "Do AI soạn, hãy kiểm tra lại" tự mất ngay lần sửa đầu tiên (O06-R05).
+
 ### 4.7 FR-O27 — AI phân tích (`fragment_report_ai_insight.xml`)
 
 Tham chiếu `organizer_b_o_c_o_ph_n_t_ch_doanh_thu`.
@@ -326,7 +337,7 @@ Không thêm item layout nếu có thể cấu hình bằng `item_event.xml` + c
 | **P1** | U06 Yêu thích + U07 Gợi ý | Tái dùng nhiều nhất (`EventAdapter`, `item_event`, `HomeFragment`), hoàn tất cụm Khám phá | L |
 | **P2** ✅ | U03 Sở thích — đã xong 2026-10-30 | Là đầu vào của U07/U08; cần dialog 409 — độc lập | M |
 | **P3** ✅ | O03 Dashboard + O27 AI Insight — đã xong 2026-10-30 | Cùng bộ KPI/chart, cùng dữ liệu mẫu organizer | L |
-| **P4** | O06 AI mô tả | Cần mở rộng `EventFormFragment` (đang chỉ có khối O09) | M |
+| **P4** ✅ | O06 AI mô tả — đã xong 2026-10-30 | Cần mở rộng `EventFormFragment` (đang chỉ có khối O09) | M |
 | **P5** | A07 + A14 kiểm duyệt → A09 danh mục → A20 tích hợp | Cụm admin, dùng chung `SeverityChip`/`KpiTileView` | L |
 | **P6** (tùy chọn) | U08 Chatbot | Cần duyệt DQ-11 + thêm destination vào `nav_user.xml` | M |
 

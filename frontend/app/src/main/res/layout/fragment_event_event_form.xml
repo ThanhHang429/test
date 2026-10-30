@@ -109,6 +109,235 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- O06: khối mô tả -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardEventDescription"
+                    style="@style/Widget.EventApp.Ds.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_16">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/ds_space_16">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_aidesc_form_title"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.H3" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_2"
+                            android:text="@string/hc_aidesc_form_subtitle"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilEventFormTitle"
+                            style="@style/Widget.EventApp.Ds.TextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_12"
+                            android:hint="@string/hc_aidesc_title_hint"
+                            app:counterEnabled="true"
+                            app:counterMaxLength="120">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etEventFormTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapSentences"
+                                android:maxLength="120" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_12"
+                            android:text="@string/hc_aidesc_format"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupEventFormat"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_6"
+                            app:chipSpacingHorizontal="@dimen/ds_space_6"
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipEventFormatOnsite"
+                                style="@style/Widget.EventApp.Ds.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:text="@string/hc_aidesc_format_onsite" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipEventFormatOnline"
+                                style="@style/Widget.EventApp.Ds.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/hc_aidesc_format_online" />
+                        </com.google.android.material.chip.ChipGroup>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_12"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hc_aidesc_keypoints"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Label" />
+
+                            <TextView
+                                android:id="@+id/tvEventFormKeyPointCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/hc_aidesc_keypoints_count_format"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                                tools:text="0/10" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_6"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilEventFormKeyPoint"
+                                style="@style/Widget.EventApp.Ds.TextInputLayout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="@string/hc_aidesc_keypoints_hint">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etEventFormKeyPoint"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="textCapSentences|textMultiLine"
+                                    android:maxLength="200" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnEventFormAddKeyPoint"
+                                style="@style/Widget.EventApp.Ds.Button.Outlined"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/ds_space_8"
+                                android:text="@string/hc_aidesc_keypoints_add" />
+                        </LinearLayout>
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupEventKeyPoints"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_6"
+                            app:chipSpacingHorizontal="@dimen/ds_space_6"
+                            app:chipSpacingVertical="@dimen/ds_space_6" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_8"
+                            android:text="@string/hc_aidesc_keypoint_suggestions"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupEventKeyPointSuggest"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_4"
+                            app:chipSpacingHorizontal="@dimen/ds_space_6"
+                            app:chipSpacingVertical="@dimen/ds_space_6" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilEventFormDescription"
+                            style="@style/Widget.EventApp.Ds.TextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_12"
+                            android:hint="@string/hc_aidesc_description_hint">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etEventFormDescription"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="top"
+                                android:inputType="textCapSentences|textMultiLine"
+                                android:minLines="4" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <LinearLayout
+                            android:id="@+id/rowEventFormAiLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_6"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="@dimen/ds_icon_16"
+                                android:layout_height="@dimen/ds_icon_16"
+                                android:contentDescription="@null"
+                                android:src="@drawable/ic_ds_ai_sparkle"
+                                app:tint="@color/ds_primary" />
+
+                            <TextView
+                                android:id="@+id/tvEventFormAiLabel"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/ds_space_4"
+                                android:layout_weight="1"
+                                android:text="@string/hc_aidesc_ai_label"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                                android:textColor="@color/ds_primary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_8"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnEventFormAi"
+                                style="@style/Widget.EventApp.Ds.Button.Outlined"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/hc_aidesc_open"
+                                app:icon="@drawable/ic_ds_ai_sparkle"
+                                app:iconTint="@color/ds_primary" />
+
+                            <TextView
+                                android:id="@+id/tvEventFormAiReason"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/ds_space_8"
+                                android:layout_weight="1"
+                                android:maxLines="3"
+                                android:text="@string/hc_aidesc_gate_ready"
+                                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                                android:textColor="@color/ds_text_muted" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
                 <!-- O09 -->
                 <com.google.android.material.card.MaterialCardView
                     style="@style/Widget.EventApp.Ds.Card"

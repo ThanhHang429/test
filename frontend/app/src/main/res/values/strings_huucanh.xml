@@ -612,4 +612,90 @@
     <string name="hc_insight_error_title">Không thể tải phân tích</string>
     <string name="hc_insight_error_message">Kết quả phân tích tạm thời không khả dụng. Bạn vẫn xem được số liệu tổng hợp.</string>
     <string name="hc_insight_footer">Mọi con số lấy từ dữ liệu hệ thống; văn bản AI chỉ diễn giải.</string>
+    <!-- ===== O06: AI viết mô tả ===== -->
+    <string name="hc_aidesc_form_title">Mô tả sự kiện</string>
+    <string name="hc_aidesc_form_subtitle">Nhập tay hoặc để AI soạn bản nháp. Bạn giữ quyền quyết định cuối cùng.</string>
+    <string name="hc_aidesc_title_hint">Tiêu đề sự kiện</string>
+    <string name="hc_aidesc_title_error">Tiêu đề phải từ 5 đến 120 ký tự</string>
+    <string name="hc_aidesc_format">Hình thức</string>
+    <string name="hc_aidesc_format_onsite">Trực tiếp</string>
+    <string name="hc_aidesc_format_online">Trực tuyến</string>
+    <string name="hc_aidesc_keypoints">Ý chính (3–10 ý)</string>
+    <string name="hc_aidesc_keypoints_hint">Nhập ý chính rồi bấm Thêm</string>
+    <string name="hc_aidesc_keypoints_count_format">%1$d/10</string>
+    <string name="hc_aidesc_keypoints_add">Thêm</string>
+    <string name="hc_aidesc_keypoints_limit">Tối đa 10 ý chính</string>
+    <string name="hc_aidesc_keypoints_duplicate">Ý chính này đã có</string>
+    <string name="hc_aidesc_keypoints_length">Mỗi ý phải từ 3 đến 200 ký tự</string>
+    <string name="hc_aidesc_keypoint_remove">Xóa ý chính %1$s</string>
+    <string name="hc_aidesc_keypoint_suggestions">Gợi ý ý chính</string>
+    <string-array name="hc_aidesc_keypoint_ideas">
+        <item>Diễn giả chia sẻ thực tế</item>
+        <item>Workshop thực hành</item>
+        <item>Kết nối cộng đồng</item>
+        <item>Ưu đãi vé sớm</item>
+    </string-array>
+    <string name="hc_aidesc_description_hint">Mô tả sự kiện</string>
+    <string name="hc_aidesc_ai_label">Do AI soạn, hãy kiểm tra lại</string>
+    <string name="hc_aidesc_ai_label_dismissed">Bạn đã chỉnh sửa nên nhãn nguồn đã tắt</string>
+    <string name="hc_aidesc_open">Viết mô tả bằng AI</string>
+    <string name="hc_aidesc_gate_reason">Cần bổ sung: %1$s</string>
+    <string name="hc_aidesc_gate_ready">Đủ dữ liệu, có thể tạo mô tả bằng AI</string>
+    <string name="hc_aidesc_missing_title">thiếu tiêu đề (5–120 ký tự)</string>
+    <string name="hc_aidesc_missing_category">thiếu danh mục chính</string>
+    <string name="hc_aidesc_missing_keypoints">cần ít nhất 3 ý chính</string>
+
+    <string name="hc_aidesc_title">Viết mô tả bằng AI</string>
+    <string name="hc_aidesc_back">Quay lại</string>
+    <string name="hc_aidesc_conditions">Điều kiện tạo mô tả</string>
+    <string name="hc_aidesc_conditions_hint">Chọn giọng văn, độ dài và số phương án</string>
+    <string name="hc_aidesc_tone">Giọng văn</string>
+    <string name="hc_aidesc_tone_professional">Chuyên nghiệp</string>
+    <string name="hc_aidesc_tone_friendly">Thân thiện</string>
+    <string name="hc_aidesc_tone_formal">Trang trọng</string>
+    <string name="hc_aidesc_length">Độ dài</string>
+    <string name="hc_aidesc_length_short">Ngắn (~100 từ)</string>
+    <string name="hc_aidesc_length_medium">Vừa (~200 từ)</string>
+    <string name="hc_aidesc_length_long">Dài (~350 từ)</string>
+    <string name="hc_aidesc_variants">Số phương án</string>
+    <string name="hc_aidesc_variant_1">1</string>
+    <string name="hc_aidesc_variant_2">2</string>
+    <string name="hc_aidesc_variant_3">3</string>
+    <string name="hc_aidesc_generate">Tạo mô tả</string>
+    <string name="hc_aidesc_regenerate">Sinh lại</string>
+    <string name="hc_aidesc_cancel">Hủy</string>
+    <string name="hc_aidesc_use">Dùng bản này</string>
+    <string name="hc_aidesc_undo">Hoàn tác</string>
+    <string name="hc_aidesc_status_idle">Sẵn sàng tạo mô tả</string>
+    <string name="hc_aidesc_status_requesting">Đang tạo mô tả…</string>
+    <string name="hc_aidesc_status_success">Đã tạo %1$d phương án lúc %2$s</string>
+    <string name="hc_aidesc_quota_used">Đã dùng %1$d/10 lượt mỗi giờ</string>
+    <string name="hc_aidesc_timeout_note">Mỗi lần tạo tối đa 25 giây</string>
+    <string name="hc_aidesc_tab">Phương án %1$d</string>
+    <string name="hc_aidesc_generated_at">Tạo lúc %1$s</string>
+    <string name="hc_aidesc_preview_label">Xem trước</string>
+    <string name="hc_aidesc_summary">Tóm tắt: %1$s</string>
+    <string name="hc_aidesc_warnings_title">Cần kiểm tra trước khi dùng</string>
+    <string name="hc_aidesc_warning_item">• %1$s</string>
+    <string name="hc_aidesc_warning_number">Có số liệu trong kết quả nhưng không có trong dữ liệu bạn nhập: %1$s</string>
+    <string name="hc_aidesc_warning_date">Có ngày tháng trong kết quả nhưng không có trong dữ liệu bạn nhập: %1$s</string>
+    <string name="hc_aidesc_warning_phone">Có số điện thoại trong kết quả nhưng không có trong dữ liệu bạn nhập: %1$s</string>
+    <string name="hc_aidesc_warning_link">Có liên kết trong kết quả nhưng không có trong dữ liệu bạn nhập: %1$s</string>
+    <string name="hc_aidesc_missing_card_title">Thông tin còn thiếu</string>
+    <string name="hc_aidesc_missing_item">• %1$s</string>
+    <string name="hc_aidesc_error_title">Không tạo được mô tả</string>
+    <string name="hc_aidesc_error_message">Không tạo được mô tả, bạn vẫn có thể nhập tay. Mô tả trong form không bị đổi.</string>
+    <string name="hc_aidesc_error_retry">Thử lại</string>
+    <string name="hc_aidesc_blocked_title">Yêu cầu bị từ chối</string>
+    <string name="hc_aidesc_blocked_message">Nội dung chưa phù hợp để AI xử lý. Bạn vẫn có thể nhập mô tả tay.</string>
+    <string name="hc_aidesc_quota_title">Hết lượt tạo</string>
+    <string name="hc_aidesc_quota_message">Bạn đã dùng hết 10 lượt tạo mỗi giờ. Thử lại sau %1$d phút.</string>
+    <string name="hc_aidesc_disclaimer">Văn bản do AI soạn, chỉ mang tính tham khảo. Hãy kiểm tra trước khi dùng.</string>
+    <string name="hc_aidesc_empty">Chưa có phương án nào</string>
+    <string name="hc_aidesc_used">Đã đưa mô tả vào form</string>
+    <string name="hc_aidesc_undo_done">Đã khôi phục mô tả trước đó</string>
+    <string name="hc_aidesc_replace_title">Thay thế hay chèn thêm?</string>
+    <string name="hc_aidesc_replace_message">Bạn đã có mô tả trong form. Chọn cách đưa bản AI vào.</string>
+    <string name="hc_aidesc_replace">Thay thế</string>
+    <string name="hc_aidesc_append">Chèn thêm</string>
 </resources>

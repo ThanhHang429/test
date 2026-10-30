@@ -49,6 +49,7 @@ public class EventFormViewModel extends AndroidViewModel {
 
     public EventFormViewModel(@NonNull Application application) {
         super(application);
+        publishAiGate();
         loadCategories();
     }
 
@@ -63,7 +64,9 @@ public class EventFormViewModel extends AndroidViewModel {
             initialSecondaryIds.add(EventCategoryUi.id(EventCategory.TECH));
             initialTags.add("indie");
             initialTags.add("live music");
+            classificationPrimaryId = initialPrimaryId;
         }
+        publishAiGate();
     }
 
     public LiveData<List<ClassificationSectionView.CategoryOption>> getCategories() {
@@ -148,6 +151,8 @@ public class EventFormViewModel extends AndroidViewModel {
             if (tags != null) {
                 initialTags.addAll(tags);
             }
+            classificationPrimaryId = primaryId;
+            publishAiGate();
             saving.setValue(false);
             saveResult.setValue(SAVE_SUCCESS);
         }, SAVE_DELAY_MS);
@@ -182,5 +187,151 @@ public class EventFormViewModel extends AndroidViewModel {
     protected void onCleared() {
         handler.removeCallbacksAndMessages(null);
         super.onCleared();
+    }
+
+    // ===== FR-O06: description slice =====
+
+    public static final int KEYPOINT_OK = 0;
+    public static final int KEYPOINT_DUPLICATE = 1;
+    public static final int KEYPOINT_LENGTH = 2;
+    public static final int KEYPOINT_LIMIT = 3;
+
+    private static final int MIN_KEYPOINT_LENGTH = 3;
+    private static final int MAX_KEYPOINT_LENGTH = 200;
+    private static final int MIN_KEYPOINTS = 3;
+    private static final int MAX_KEYPOINTS = 10;
+    private static final int MIN_TITLE_LENGTH = 5;
+    private static final int MAX_TITLE_LENGTH = 120;
+
+    /** Result of the O06 precondition check: the assistant is gated on real form data. */
+    public static class AiGate {
+        public final boolean ready;
+        public final List<String> missing;
+
+        AiGate(boolean ready, List<String> missing) {
+            this.ready = ready;
+            this.missing = missing == null ? new ArrayList<>() : missing;
+        }
+    }
+
+    private final MutableLiveData<AiGate> aiGate =
+            new MutableLiveData<>(new AiGate(false, new ArrayList<>()));
+    private final List<String> keyPoints = new ArrayList<>();
+
+    private String eventTitle = "";
+    private String eventFormat = "ONSITE";
+    private long classificationPrimaryId;
+    private String description = "";
+    private String aiDraft = "";
+    private String previousDescription = "";
+    private boolean descriptionFromAi;
+
+    public void setDescriptionTitle(String value) {
+        eventTitle = value == null ? "" : value;
+        publishAiGate();
+    }
+
+    public String getEventTitle() {
+        return eventTitle;
+    }
+
+    public void setEventFormat(String value) {
+        eventFormat = value == null || value.isEmpty() ? "ONSITE" : value;
+        publishAiGate();
+    }
+
+    public String getEventFormat() {
+        return eventFormat;
+    }
+
+    public void setClassificationPrimary(long id) {
+        classificationPrimaryId = id;
+        publishAiGate();
+    }
+
+    public long getClassificationPrimaryId() {
+        return classificationPrimaryId;
+    }
+
+    public LiveData<AiGate> getAiGate() {
+        return aiGate;
+    }
+
+    public List<String> getKeyPoints() {
+        return new ArrayList<>(keyPoints);
+    }
+
+    /** @return one of the KEYPOINT_* codes so the screen can show a precise message. */
+    public int addKeyPoint(String raw) {
+        String value = raw == null ? "" : raw.trim();
+        if (value.length() < MIN_KEYPOINT_LENGTH || value.length() > MAX_KEYPOINT_LENGTH) {
+            return KEYPOINT_LENGTH;
+        }
+        if (keyPoints.contains(value)) {
+            return KEYPOINT_DUPLICATE;
+        }
+        if (keyPoints.size() >= MAX_KEYPOINTS) {
+            return KEYPOINT_LIMIT;
+        }
+        keyPoints.add(value);
+        publishAiGate();
+        return KEYPOINT_OK;
+    }
+
+    public void removeKeyPoint(String value) {
+        if (keyPoints.remove(value)) {
+            publishAiGate();
+        }
+    }
+
+    public boolean hasDescription() {
+        return !description.trim().isEmpty();
+    }
+
+    public boolean isDescriptionFromAi() {
+        return descriptionFromAi;
+    }
+
+    /** Keeps the "Do AI soạn" flag until the organizer actually edits the text (O06-R05). */
+    public void setDescription(String value) {
+        String next = value == null ? "" : value;
+        if (descriptionFromAi && !next.equals(aiDraft)) {
+            descriptionFromAi = false;
+        }
+        description = next;
+    }
+
+    /** Puts the generated text into the form and remembers the previous one for undo. */
+    public String applyAiDescription(String text, boolean replace) {
+        previousDescription = description;
+        if (replace || description.trim().isEmpty()) {
+            description = text;
+        } else {
+            description = description + "\n\n" + text;
+        }
+        aiDraft = description;
+        descriptionFromAi = true;
+        return description;
+    }
+
+    public String undoDescription() {
+        description = previousDescription;
+        descriptionFromAi = false;
+        return description;
+    }
+
+    private void publishAiGate() {
+        List<String> missing = new ArrayList<>();
+        int titleLength = eventTitle.trim().length();
+        if (titleLength < MIN_TITLE_LENGTH || titleLength > MAX_TITLE_LENGTH) {
+            missing.add(getApplication().getString(R.string.hc_aidesc_missing_title));
+        }
+        if (classificationPrimaryId <= 0L) {
+            missing.add(getApplication().getString(R.string.hc_aidesc_missing_category));
+        }
+        if (keyPoints.size() < MIN_KEYPOINTS) {
+            missing.add(getApplication().getString(R.string.hc_aidesc_missing_keypoints));
+        }
+        aiGate.setValue(new AiGate(missing.isEmpty(), missing));
     }
 }

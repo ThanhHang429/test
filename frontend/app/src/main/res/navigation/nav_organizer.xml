@@ -39,7 +39,32 @@
     <fragment
         android:id="@+id/ai_descriptionFragment"
         android:name="com.eventapp.app.ui.organizer.event.AiDescriptionFragment"
-        tools:layout="@layout/fragment_event_ai_description" />
+        tools:layout="@layout/fragment_event_ai_description">
+
+        <argument
+            android:name="arg_event_title"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="arg_category_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+
+        <argument
+            android:name="arg_format"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="arg_key_points"
+            app:argType="stringArrayList" />
+
+        <argument
+            android:name="arg_audience"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/media_manageFragment"
