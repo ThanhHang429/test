@@ -396,6 +396,47 @@
     <string name="hc_write_success_message">Cảm ơn bạn! Đánh giá đã được ghi nhận và điểm sự kiện sẽ được cập nhật.</string>
     <string name="hc_write_held_message">Đánh giá có nội dung cần kiểm tra thêm nên đang chờ quản trị viên duyệt. Chỉ bạn nhìn thấy trạng thái này.</string>
 
+    <!-- ===== U03: Sở thích ===== -->
+    <string name="hc_pref_title">Sở thích</string>
+    <string name="hc_pref_back">Quay lại</string>
+    <string name="hc_pref_skip">Bỏ qua</string>
+    <string name="hc_pref_skipped">Bạn có thể chọn sở thích sau trong Hồ sơ</string>
+    <string name="hc_pref_intro_title">Cá nhân hóa trải nghiệm</string>
+    <string name="hc_pref_intro_message">Chọn điều bạn quan tâm để gợi ý sự kiện sát hơn. Bạn có thể thay đổi bất cứ lúc nào.</string>
+    <string name="hc_pref_categories_title">Danh mục quan tâm</string>
+    <string name="hc_pref_categories_hint">Chọn tối đa 10 danh mục</string>
+    <string name="hc_pref_categories_count">%1$d/10</string>
+    <string name="hc_pref_categories_limit">Chỉ chọn được tối đa 10 danh mục</string>
+    <string name="hc_pref_hidden_note">Danh mục đã ẩn: %1$s</string>
+    <string name="hc_pref_format_title">Hình thức</string>
+    <string name="hc_pref_format_any">Cả hai</string>
+    <string name="hc_pref_format_onsite">Trực tiếp</string>
+    <string name="hc_pref_format_online">Trực tuyến</string>
+    <string name="hc_pref_price_title">Mức giá</string>
+    <string name="hc_pref_price_hint">Dùng để lọc sự kiện trong ngân sách của bạn</string>
+    <string name="hc_pref_price_any">Mọi mức giá</string>
+    <string name="hc_pref_price_free">Chỉ miễn phí</string>
+    <string name="hc_pref_price_paid">Chỉ có phí</string>
+    <string name="hc_pref_cities_title">Thành phố</string>
+    <string name="hc_pref_cities_hint">Chọn tối đa 3 thành phố</string>
+    <string name="hc_pref_cities_limit">Chỉ chọn được tối đa 3 thành phố</string>
+    <string name="hc_pref_days_title">Thời gian ưa thích</string>
+    <string name="hc_pref_days_hint">Chọn ngày bạn thường đi sự kiện</string>
+    <string name="hc_pref_day_weekday">Ngày trong tuần</string>
+    <string name="hc_pref_day_weekend">Cuối tuần</string>
+    <string name="hc_pref_reset">Đặt lại</string>
+    <string name="hc_pref_reset_done">Đã đặt lại sở thích</string>
+    <string name="hc_pref_save">Lưu sở thích</string>
+    <string name="hc_pref_saving">Đang lưu…</string>
+    <string name="hc_pref_saved">Đã lưu sở thích</string>
+    <string name="hc_pref_save_error">Không thể lưu sở thích, vui lòng thử lại</string>
+    <string name="hc_pref_load_error">Không thể tải sở thích</string>
+    <string name="hc_pref_conflict_title">Sở thích đã thay đổi ở thiết bị khác</string>
+    <string name="hc_pref_conflict_message">Bản trên máy chủ mới hơn bản bạn đang sửa. Chọn bản muốn giữ.</string>
+    <string name="hc_pref_conflict_use_latest">Dùng bản mới nhất</string>
+    <string name="hc_pref_conflict_keep_mine">Giữ bản của bạn</string>
+    <string name="hc_pref_footer">Cài đặt này chỉ dùng để gợi ý sự kiện. Bạn có thể tắt cá nhân hóa trong Quyền riêng tư.</string>
+
     <!-- ===== U06: Yêu thích / Đã lưu ===== -->
     <string name="hc_fav_title">Đã lưu</string>
     <string name="hc_fav_back">Quay lại</string>

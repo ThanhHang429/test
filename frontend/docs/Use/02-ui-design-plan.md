@@ -29,7 +29,7 @@ theo đúng trạng thái file.
 | FR-O09 | `event_formFragment` | `organizer/event/EventFormFragment` + `ClassificationSectionView` | **Đã thiết kế** (khối phân loại) | `t_o_s_ki_n_b_c_1_...` (mục Danh mục) |
 | FR-U06 | `favoritesFragment` | `user/favorite/FavoritesFragment` | **Đã thiết kế** (bộ lọc, chuông nhắc, item 4 trạng thái, hoàn tác) | `user_s_ki_n_y_u_th_ch_l_u` |
 | FR-U07 | `recommendFragment` (+ mục "Dành cho bạn" ở Home) | `user/home/RecommendFragment` | **Đã thiết kế** (lý do, nguồn AI/RULE, quota làm mới, ẩn gợi ý) | `kh_m_ph_ai_g_i_s_ki_n` |
-| FR-U03 | `preferencesFragment` | `user/profile/PreferencesFragment` | Khung rỗng | **Chưa có → tự thiết kế** |
+| FR-U03 | `preferencesFragment` | `user/profile/PreferencesFragment` | **Đã thiết kế** (chip danh mục 10, hình thức, ngân sách, 3 thành phố, ngày, xử lý 409) | **Chưa có Stitch → tự thiết kế** |
 | FR-U08 | **chưa có destination** | — | Chưa có màn hình trong skeleton | `eticket_u08_ai_tr_l_t_v_n_s_ki_n` |
 | FR-O03 | `organizer_dashboardFragment` | `organizer/dashboard/*` | Khung rỗng | `organizer_qu_n_l_s_ki_n_doanh_thu` |
 | FR-O06 | `ai_descriptionFragment` (+ nút AI trong form) | `organizer/event/AiDescriptionFragment` | Khung rỗng | `t_o_s_ki_n_b_c_1_...ai_copilot` |
@@ -311,7 +311,7 @@ Không thêm item layout nếu có thể cấu hình bằng `item_event.xml` + c
 | Giai đoạn | Nội dung | Vì sao thứ tự này | Ước lượng |
 |---|---|---|---|
 | **P1** | U06 Yêu thích + U07 Gợi ý | Tái dùng nhiều nhất (`EventAdapter`, `item_event`, `HomeFragment`), hoàn tất cụm Khám phá | L |
-| **P2** | U03 Sở thích | Là đầu vào của U07/U08; cần dialog 409 — độc lập | M |
+| **P2** ✅ | U03 Sở thích — đã xong 2026-10-30 | Là đầu vào của U07/U08; cần dialog 409 — độc lập | M |
 | **P3** | O03 Dashboard + O27 AI Insight | Cùng bộ KPI/chart, cùng dữ liệu mẫu organizer | L |
 | **P4** | O06 AI mô tả | Cần mở rộng `EventFormFragment` (đang chỉ có khối O09) | M |
 | **P5** | A07 + A14 kiểm duyệt → A09 danh mục → A20 tích hợp | Cụm admin, dùng chung `SeverityChip`/`KpiTileView` | L |
