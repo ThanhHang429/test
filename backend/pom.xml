@@ -1,7 +1,7 @@
-﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<project xmlns=\"http://maven.apache.org/POM/4.0.0\"
-         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
-         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/xsd/maven-4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -75,18 +75,18 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version></version>
+            <version>0.12.6</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version></version>
+            <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version></version>
+            <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -94,33 +94,33 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version></version>
+            <version>2.6.0</version>
         </dependency>
 
         <!-- Firebase Admin -->
         <dependency>
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
-            <version></version>
+            <version>9.4.1</version>
         </dependency>
 
         <!-- ZXing for QR -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
-            <version></version>
+            <version>3.5.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
-            <version></version>
+            <version>3.5.3</version>
         </dependency>
 
         <!-- MapStruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version></version>
+            <version>1.6.3</version>
         </dependency>
 
         <!-- Test -->
@@ -137,8 +137,8 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>/src/test/kotlin</testSourceDirectory>
+        <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -166,17 +166,17 @@
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-plugin</artifactId>
-                        <version></version>
+                        <version>1.9.25</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-allopen</artifactId>
-                        <version></version>
+                        <version>1.9.25</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-noarg</artifactId>
-                        <version></version>
+                        <version>1.9.25</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -188,7 +188,7 @@
                         <annotationProcessorPath>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version></version>
+                            <version>1.6.3</version>
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
                 </configuration>

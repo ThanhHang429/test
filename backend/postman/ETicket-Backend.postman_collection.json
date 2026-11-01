@@ -1,0 +1,4077 @@
+{
+  "info": {
+    "_postman_id": "b314f705-766a-4d56-a686-042da18c8ec4",
+    "name": "ETicket Backend — Module Hữu Cảnh",
+    "description": "Bộ request cho toàn bộ API backend đã triển khai (FR-U03, U04, U05, U06, U07, U20,\nO03, O06, O09, O27, A07, A09, A14, A20).\n\n## Cách dùng\n1. Chạy backend profile dev: `cd backend && mvn spring-boot:run`\n2. Import file này vào Postman.\n3. Chạy folder `00` trước để lấy `userId` và JWT.\n4. Các request dùng header `X-User-Id` (đường dev) — biến `adminId`, `organizer1Id`,\n   `user1Id`… mặc định trỏ tới tài khoản seed.\n\n## Biến\n| Biến | Mặc định | Ý nghĩa |\n|---|---|---|\n| `baseUrl` | http://localhost:8080 | |\n| `adminId` / `organizer1Id` / `organizer2Id` | 7 / 8 / 9 | |\n| `user1Id` / `user2Id` / `user3Id` | 10 / 11 / 12 | |\n| `eventId` | 14 | sự kiện đang mở bán |\n| `pastEventId` | 27 | sự kiện COMPLETED (để test đánh giá) |\n| `reviewId` | 3 | đánh giá PENDING trong seed |\n\nMột số test chấp nhận cả 409 (chạy lại lần hai) — đó là hành vi đúng, không phải lỗi.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "adminId",
+      "value": "7"
+    },
+    {
+      "key": "organizer1Id",
+      "value": "8"
+    },
+    {
+      "key": "organizer2Id",
+      "value": "9"
+    },
+    {
+      "key": "user1Id",
+      "value": "10"
+    },
+    {
+      "key": "user2Id",
+      "value": "11"
+    },
+    {
+      "key": "user3Id",
+      "value": "12"
+    },
+    {
+      "key": "eventId",
+      "value": "14"
+    },
+    {
+      "key": "pastEventId",
+      "value": "27"
+    },
+    {
+      "key": "reviewId",
+      "value": "3"
+    },
+    {
+      "key": "recommendedEventId",
+      "value": "16"
+    },
+    {
+      "key": "createdCategoryId",
+      "value": "17"
+    },
+    {
+      "key": "flagId",
+      "value": "review:3"
+    },
+    {
+      "key": "correlationId",
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "prefVersion",
+      "value": "1"
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Kiểm tra chung cho mọi request: JSON hợp lệ + có correlationId.",
+          "if (pm.response.headers.get(\"Content-Type\") && pm.response.headers.get(\"Content-Type\").includes(\"application/json\")) {",
+          "    pm.test(\"Response là JSON hợp lệ\", () => pm.response.json());",
+          "    pm.test(\"Có header X-Correlation-Id\", () => pm.expect(pm.response.headers.has(\"X-Correlation-Id\")).to.be.true);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "00 · Dev helper & danh mục công khai",
+      "description": "Chỉ có ở profile dev. Dùng để lấy userId và JWT mà không cần màn đăng nhập.",
+      "item": [
+        {
+          "name": "Danh sách tài khoản seed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dev/accounts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dev",
+                "accounts"
+              ]
+            },
+            "description": "Trả userId + roles của 6 tài khoản seed. Dùng để điền biến adminId / user1Id…"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Có ít nhất 6 tài khoản\", () => pm.expect(pm.response.json().data.length).to.be.above(5));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cấp JWT cho user1 (dev)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dev/token?userId={{user1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dev",
+                "token"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{user1Id}}"
+                }
+              ]
+            },
+            "description": "Lấy JWT HS256 cho user1. Token lưu vào biến `accessToken` để dùng Authorization: Bearer."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có token\", () => pm.expect(d.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.collectionVariables.set(\"accessToken\", d.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cấp JWT cho admin (dev)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dev/token?userId={{adminId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dev",
+                "token"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{adminId}}"
+                }
+              ]
+            },
+            "description": "Lấy JWT cho admin (dùng khi tắt cờ dev-header)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"adminToken\", pm.response.json().data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cây danh mục công khai",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Chỉ danh mục đang hoạt động, tối đa 2 cấp (FR-U04)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 · FR-U04 / U05 — Khám phá & tìm kiếm",
+      "description": "Chỉ trả sự kiện APPROVED + PUBLISHED. CANCELLED/SUSPENDED/DRAFT luôn bị loại.",
+      "item": [
+        {
+          "name": "Danh sách sự kiện (phân trang)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?page=0&size=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Mặc định page=0, size=20. Lưu sự kiện đầu tiên vào biến `eventId`."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "if (d.length) pm.collectionVariables.set(\"eventId\", d[0].id);",
+                  "pm.test(\"meta phân trang đúng\", () => pm.expect(pm.response.json().meta).to.have.all.keys(\"page\",\"size\",\"totalItems\",\"hasNext\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tìm không dấu",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?q=hoi nhac&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "hoi nhac"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "`hoi nhac` phải khớp “Hội nhạc” / “Hội Nhạc” (chuẩn hoá tiếng Việt ở server)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lọc theo danh mục + thành phố + còn vé",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?categoryIds=9&city=Hồ Chí Minh&availableOnly=true&sort=PRICE_ASC",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "categoryIds",
+                  "value": "9"
+                },
+                {
+                  "key": "city",
+                  "value": "Hồ Chí Minh"
+                },
+                {
+                  "key": "availableOnly",
+                  "value": "true"
+                },
+                {
+                  "key": "sort",
+                  "value": "PRICE_ASC"
+                }
+              ]
+            },
+            "description": "categoryIds nhận nhiều giá trị, khớp cả danh mục con."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "size=200 bị hạ về 50",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?size=200",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "size",
+                  "value": "200"
+                }
+              ]
+            },
+            "description": "U04-R08: size > 50 hạ về 50, KHÔNG báo lỗi."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"size bị chặn về 50\", () => pm.expect(pm.response.json().meta.size).to.eql(50));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Khoảng giá sai → 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?priceMin=100&priceMax=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "priceMin",
+                  "value": "100"
+                },
+                {
+                  "key": "priceMax",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "priceMin > priceMax phải bị từ chối với VALIDATION_ERROR."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chi tiết sự kiện",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{eventId}}"
+              ]
+            },
+            "description": "Token tuỳ chọn: gửi X-User-Id để có isFavorite / allowedActions theo user."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "pm.test(\"Có allowedActions\", () => pm.expect(pm.response.json().data.allowedActions).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chi tiết sự kiện (khách)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{eventId}}"
+              ]
+            },
+            "description": "Không gửi danh tính → allowedActions chỉ còn hành động công khai."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sự kiện không tồn tại → 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "999999"
+              ]
+            },
+            "description": "Sự kiện chưa duyệt / đã huỷ cũng trả 404 để không lộ dữ liệu."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 · FR-U03 — Sở thích",
+      "description": "Lưu sở thích onboarding. Lưu/reset đều xoá cache gợi ý.",
+      "item": [
+        {
+          "name": "Lấy sở thích",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "preferences"
+              ]
+            },
+            "description": "Trả mặc định nếu chưa từng lưu."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lưu sở thích",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "preferences"
+              ]
+            },
+            "description": "Tối đa 10 danh mục, ≤ 3 thành phố (schema chỉ lưu thành phố đầu tiên). Lưu `version` trả về vào biến.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryIds\": [\n    9,\n    15\n  ],\n  \"eventFormat\": \"ONSITE\",\n  \"priceMode\": \"ANY\",\n  \"maxBudgetVnd\": 500000,\n  \"preferredCities\": [\n    \"Hồ Chí Minh\"\n  ],\n  \"preferredDays\": [\n    \"WEEKEND\"\n  ],\n  \"onboardingCompleted\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "pm.collectionVariables.set(\"prefVersion\", pm.response.json().data.version);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lưu với version cũ → 409",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "preferences"
+              ]
+            },
+            "description": "Khoá lạc quan: version lệch → 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryIds\": [\n    9\n  ],\n  \"eventFormat\": \"ANY\",\n  \"priceMode\": \"ANY\",\n  \"version\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Quá 10 danh mục → 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "preferences"
+              ]
+            },
+            "description": "Ràng buộc U03.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryIds\": [\n    9,\n    10,\n    11,\n    12,\n    13,\n    14,\n    15,\n    16,\n    17,\n    18,\n    19\n  ],\n  \"eventFormat\": \"ANY\",\n  \"priceMode\": \"ANY\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Đặt lại sở thích",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "preferences"
+              ]
+            },
+            "description": "Trả DTO sau khi reset."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chưa đăng nhập → 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "preferences"
+              ]
+            },
+            "description": "Không gửi danh tính."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 · FR-U06 — Yêu thích",
+      "description": "Thêm/xoá idempotent. Giới hạn 500 sự kiện.",
+      "item": [
+        {
+          "name": "Thêm yêu thích",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/favorites/{{eventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "favorites",
+                "{{eventId}}"
+              ]
+            },
+            "description": "Idempotent: gọi lại vẫn 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Thêm lại (idempotent)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/favorites/{{eventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "favorites",
+                "{{eventId}}"
+              ]
+            },
+            "description": "Không tạo bản ghi trùng."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Danh sách đã lưu",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/favorites?filter=ALL",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "favorites"
+              ],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "ALL"
+                }
+              ]
+            },
+            "description": "filter: ALL | UPCOMING | PAST."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "filter sai → 400",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/favorites?filter=SAI",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "favorites"
+              ],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "SAI"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bỏ yêu thích",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/favorites/{{eventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "favorites",
+                "{{eventId}}"
+              ]
+            },
+            "description": "Idempotent: xoá khi chưa có vẫn 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Yêu thích sự kiện không công khai → 404",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/favorites/22",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "favorites",
+                "22"
+              ]
+            },
+            "description": "22 là sự kiện DRAFT trong seed."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 · FR-U20 — Đánh giá",
+      "description": "Cần: sự kiện đã kết thúc + đã check-in + trong 30 ngày. user3 đã check-in sự kiện COMPLETED (id 27).",
+      "item": [
+        {
+          "name": "Danh sách đánh giá",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user3Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{pastEventId}}/reviews?sort=NEWEST",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{pastEventId}}",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "NEWEST"
+                }
+              ]
+            },
+            "description": "Công khai, chỉ VISIBLE. Đánh giá của chính mình được ghim đầu (mine=true)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tổng hợp điểm",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{pastEventId}}/reviews/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{pastEventId}}",
+                "reviews",
+                "summary"
+              ]
+            },
+            "description": "averageRating, distribution 1..5, highlights."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Viết đánh giá (có Idempotency-Key)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user3Id}}"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "postman-review-{{pastEventId}}-{{user3Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{pastEventId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{pastEventId}}",
+                "reviews"
+              ]
+            },
+            "description": "Cùng key + cùng nội dung → trả lại kết quả cũ; khác nội dung → 409 IDEMPOTENCY_CONFLICT.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"text\": \"Sự kiện rất hay, tổ chức chu đáo.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Viết đánh giá trùng → 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user3Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{pastEventId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{pastEventId}}",
+                "reviews"
+              ]
+            },
+            "description": "Mỗi user 1 đánh giá / sự kiện.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"text\": \"Đánh giá lần hai.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sửa đánh giá của tôi",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user3Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{pastEventId}}/reviews/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{pastEventId}}",
+                "reviews",
+                "me"
+              ]
+            },
+            "description": "Tối đa 3 lần / 7 ngày. Chạy lại nhiều lần sẽ trả 409 REVIEW_EDIT_LIMIT.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"text\": \"Cập nhật: vẫn rất đáng tiền.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Đánh giá của tôi (mọi trạng thái)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user3Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "reviews"
+              ]
+            },
+            "description": "Kèm editCount, canEdit, editDaysLeft."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Đánh giá khi sự kiện chưa kết thúc → 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{eventId}}",
+                "reviews"
+              ]
+            },
+            "description": "EVENT_NOT_ENDED.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"code = EVENT_NOT_ENDED\", () => pm.expect(pm.response.json().error.code).to.eql(\"EVENT_NOT_ENDED\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Báo cáo đánh giá",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user2Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reviews/{{reviewId}}/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "{{reviewId}}",
+                "report"
+              ]
+            },
+            "description": "1 lần/đánh giá, tối đa 10/ngày. Lần thứ hai → 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonCode\": \"SPAM\",\n  \"note\": \"Nội dung quảng cáo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mã lý do sai → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user2Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/reviews/{{reviewId}}/report",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "{{reviewId}}",
+                "report"
+              ]
+            },
+            "description": "reasonCode phải thuộc danh sách cho phép.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonCode\": \"SAI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 · FR-A14 / A07 — Kiểm duyệt (ADMIN)",
+      "description": "Cần quyền ADMIN. Mọi hành động đều ghi audit_logs.",
+      "item": [
+        {
+          "name": "Hàng chờ đánh giá",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews"
+              ]
+            },
+            "description": "Lọc theo status / eventId / rating."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Không phải Admin → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Duyệt hiển thị",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews/{{reviewId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews",
+                "{{reviewId}}",
+                "approve"
+              ]
+            },
+            "description": "PENDING → VISIBLE. Nếu đã VISIBLE thì 409 (đã đúng trạng thái).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonCode\": \"OTHER\",\n  \"note\": \"Nội dung hợp lệ\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ẩn đánh giá",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews/{{reviewId}}/hide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews",
+                "{{reviewId}}",
+                "hide"
+              ]
+            },
+            "description": "Bắt buộc reasonCode.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonCode\": \"OFFENSIVE\",\n  \"note\": \"Ngôn từ không phù hợp\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Khôi phục đánh giá",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews/{{reviewId}}/restore",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews",
+                "{{reviewId}}",
+                "restore"
+              ]
+            },
+            "description": "HIDDEN → VISIBLE.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonCode\": \"OTHER\",\n  \"note\": \"Đã xem xét lại\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Thiếu reasonCode → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews/{{reviewId}}/hide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews",
+                "{{reviewId}}",
+                "hide"
+              ]
+            },
+            "description": "reasonCode là bắt buộc.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"thiếu mã\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hàng chờ cờ kiểm duyệt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/moderation/flags?source=ALL",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "moderation",
+                "flags"
+              ],
+              "query": [
+                {
+                  "key": "source",
+                  "value": "ALL"
+                }
+              ]
+            },
+            "description": "source: ALL | HELD | REPORTED. Cờ suy ra từ reviews PENDING + audit_logs. Lưu cờ đầu tiên."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "if (d.length) pm.collectionVariables.set(\"flagId\", d[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Xác nhận vi phạm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/moderation/flags/{{flagId}}/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "moderation",
+                "flags",
+                "{{flagId}}",
+                "confirm"
+              ]
+            },
+            "description": "Ẩn nội dung bị gắn cờ.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonCode\": \"OFFENSIVE\",\n  \"note\": \"Xác nhận vi phạm\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bỏ qua cờ",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/moderation/flags/{{flagId}}/dismiss",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "moderation",
+                "flags",
+                "{{flagId}}",
+                "dismiss"
+              ]
+            },
+            "description": "Cho hiển thị lại.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonCode\": \"OTHER\",\n  \"note\": \"Không vi phạm\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Quét lại nội dung",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/moderation/rescan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "moderation",
+                "rescan"
+              ]
+            },
+            "description": "Idempotent theo targetType. sinceDays giới hạn phạm vi quét.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetType\": \"REVIEW\",\n  \"sinceDays\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "pm.test(\"Có số lượng quét\", () => pm.expect(pm.response.json().data).to.have.property(\"scanned\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 · FR-U07 — Gợi ý AI",
+      "description": "Cache 15 phút; refresh tối đa 1 lần/phút. AI tắt → vẫn trả danh sách với lý do rule.",
+      "item": [
+        {
+          "name": "Gợi ý cho tôi",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recommendations?limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "recommendations"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Lưu sự kiện đầu tiên vào `recommendedEventId`."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "if (d.items.length) pm.collectionVariables.set(\"recommendedEventId\", d.items[0].id);",
+                  "pm.test(\"Có meta gợi ý\", () => pm.expect(d.meta).to.have.property(\"isFallback\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Làm mới gợi ý",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recommendations?limit=10&refresh=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "recommendations"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "refresh",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "refresh=true bỏ cache; gọi quá 1 lần/phút → 429."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 429]\", () => pm.expect([200, 429]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Xem trước cho khách",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recommendations/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "recommendations",
+                "preview"
+              ]
+            },
+            "description": "Không cần đăng nhập, không lưu lịch sử, không gọi AI (reasonSource = RULE).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryIds\": [\n    9\n  ],\n  \"city\": \"Hà Nội\",\n  \"priceMode\": \"PAID_ONLY\",\n  \"maxBudgetVnd\": 500000,\n  \"eventFormat\": \"ONSITE\",\n  \"preferredDays\": [\n    \"WEEKEND\"\n  ],\n  \"limit\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "priceMode sai → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recommendations/preview",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "recommendations",
+                "preview"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priceMode\": \"BOGUS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Không quan tâm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recommendations/{{recommendedEventId}}/dismiss",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "recommendations",
+                "{{recommendedEventId}}",
+                "dismiss"
+              ]
+            },
+            "description": "Loại sự kiện khỏi gợi ý trong 30 ngày."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 · FR-O06 / O27 — AI cho Organizer",
+      "description": "Cần organizer APPROVED (organizer1 = 8). organizer2 (9) đang PENDING → 403.",
+      "item": [
+        {
+          "name": "AI viết mô tả sự kiện",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/ai/event-description",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "ai",
+                "event-description"
+              ]
+            },
+            "description": "Không tự lưu. Quota 10 lượt/giờ → 429 với extra.retryAfterSeconds.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Đêm nhạc Acoustic mùa đông\",\n  \"categoryId\": 9,\n  \"format\": \"OFFLINE\",\n  \"startTime\": \"20:00 20/12/2026\",\n  \"location\": \"Nhà hát Thành phố\",\n  \"audience\": \"Sinh viên và người yêu nhạc\",\n  \"keyPoints\": [\n    \"Dàn nhạc giao hưởng\",\n    \"Khách mời quốc tế\",\n    \"Không gian ngoài trời\"\n  ],\n  \"tone\": \"FRIENDLY\",\n  \"length\": \"MEDIUM\",\n  \"variants\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 429]\", () => pm.expect([200, 429]).to.include(pm.response.code));",
+                  "if (pm.response.code === 200) {",
+                  "  pm.test(\"Có mô tả\", () => pm.expect(pm.response.json().data.descriptions.length).to.be.above(0));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Thiếu ý chính → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/ai/event-description",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "ai",
+                "event-description"
+              ]
+            },
+            "description": "keyPoints phải 3…10 ý.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Thiếu ý chính\",\n  \"categoryId\": 9,\n  \"keyPoints\": [\n    \"một\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Organizer chưa duyệt → 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer2Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/ai/event-description",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "ai",
+                "event-description"
+              ]
+            },
+            "description": "organizer2 đang PENDING.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Organizer chưa duyệt\",\n  \"categoryId\": 9,\n  \"keyPoints\": [\n    \"một\",\n    \"hai\",\n    \"ba\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "AI phân tích sự kiện",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/ai-analysis",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{eventId}}",
+                "ai-analysis"
+              ]
+            },
+            "description": "Quota 5 lượt/ngày; hết quota → trả phân tích rule kèm ghi chú (không 429)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 403]\", () => pm.expect([200, 403]).to.include(pm.response.code));",
+                  "if (pm.response.code === 200) {",
+                  "  pm.test(\"Có metrics\", () => pm.expect(pm.response.json().data).to.have.property(\"metrics\"));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Phân tích sự kiện người khác → 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/16/ai-analysis",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "16",
+                "ai-analysis"
+              ]
+            },
+            "description": "16 (Hội thảo AI) thuộc organizer2."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 · FR-O09 — Phân loại & nhãn",
+      "description": "Chỉ chủ sự kiện. Nhãn được chuẩn hoá và tạo tự động nếu chưa có.",
+      "item": [
+        {
+          "name": "Xem phân loại hiện tại",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{eventId}}",
+                "classification"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Gắn danh mục + nhãn",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{eventId}}",
+                "classification"
+              ]
+            },
+            "description": "≤ 2 danh mục phụ, ≤ 5 nhãn. Đổi danh mục chính của sự kiện APPROVED → requiresReReview = true.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"primaryCategoryId\": 15,\n  \"secondaryCategoryIds\": [\n    16\n  ],\n  \"tags\": [\n    \"Acoustic\",\n    \"  Live   Music \"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "pm.test(\"Nhãn được chuẩn hoá\", () => {",
+                  "    const t = pm.response.json().data.tags.map(x => x.name);",
+                  "    pm.expect(t).to.include(\"live music\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nhãn chứa từ khoá cấm → 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{eventId}}",
+                "classification"
+              ]
+            },
+            "description": "Đọc danh sách cấm từ platform_settings key content.blocked_keywords.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"primaryCategoryId\": 15,\n  \"secondaryCategoryIds\": [],\n  \"tags\": [\n    \"cá độ bóng đá\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Quá 5 nhãn → 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{eventId}}",
+                "classification"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"primaryCategoryId\": 15,\n  \"secondaryCategoryIds\": [],\n  \"tags\": [\n    \"a1\",\n    \"a2\",\n    \"a3\",\n    \"a4\",\n    \"a5\",\n    \"a6\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sự kiện người khác → 403",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/16/classification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "16",
+                "classification"
+              ]
+            },
+            "description": "16 thuộc organizer2.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"primaryCategoryId\": 15,\n  \"secondaryCategoryIds\": [],\n  \"tags\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Gợi ý nhãn",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tags/suggest?q=ac&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tags",
+                "suggest"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "ac"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Sắp theo mức độ dùng. Cần đăng nhập (dùng cho màn tạo sự kiện)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "09 · FR-O03 — Dashboard Organizer",
+      "description": "Mỗi khối có status OK/ERROR; một khối lỗi không làm hỏng cả dashboard.",
+      "item": [
+        {
+          "name": "Dashboard 30 ngày",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/dashboard?range=30d",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "30d"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "pm.test(\"Đủ 6 khối\", () => pm.expect(pm.response.json().data).to.include.all.keys(\"events\",\"registrations\",\"finance\",\"checkin\",\"reviews\",\"tasks\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Dashboard 7 ngày",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/dashboard?range=7d",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "7d"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Khoảng tuỳ chọn",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/dashboard?range=custom&from=2026-10-01&to=2026-10-31",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "custom"
+                },
+                {
+                  "key": "from",
+                  "value": "2026-10-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-31"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "range không hỗ trợ → 400",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/dashboard?range=90d",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "90d"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ngày đảo ngược → 400",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/dashboard?range=custom&from=2026-11-01&to=2026-10-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "custom"
+                },
+                {
+                  "key": "from",
+                  "value": "2026-11-01"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-10-01"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Organizer PENDING → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer2Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/dashboard?range=30d",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "dashboard"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "30d"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10 · FR-A20 — Giám sát tích hợp (ADMIN)",
+      "description": "Trạng thái AI/PAYMENT/FCM, thống kê sử dụng AI, bật/tắt khẩn.",
+      "item": [
+        {
+          "name": "Trạng thái 3 dịch vụ",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations"
+              ]
+            },
+            "description": "HEALTHY | DEGRADED | DOWN | UNKNOWN."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "pm.test(\"Có 3 dịch vụ\", () => pm.expect(pm.response.json().data.length).to.eql(3));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sử dụng AI 24h",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations/ai/requests?range=24h",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations",
+                "ai",
+                "requests"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "24h"
+                }
+              ]
+            },
+            "description": "range: 1h | 24h | 7d."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});",
+                  "pm.test(\"Có successRate\", () => pm.expect(pm.response.json().data).to.have.property(\"successRate\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lỗi AI gần đây",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations/ai/requests/errors?limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations",
+                "ai",
+                "requests",
+                "errors"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "User được che dạng 1*0."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tra theo correlationId",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations/ai/requests/{{correlationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations",
+                "ai",
+                "requests",
+                "{{correlationId}}"
+              ]
+            },
+            "description": "Lấy correlationId từ một response bất kỳ (header X-Correlation-Id). Không có → 404."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 404]\", () => pm.expect([200, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tắt khẩn RECOMMEND",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations/ai/features/RECOMMEND",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations",
+                "ai",
+                "features",
+                "RECOMMEND"
+              ]
+            },
+            "description": "reason bắt buộc. Hiệu lực ngay (cache 5 giây).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": false,\n  \"reason\": \"Provider lỗi liên tục, tắt tạm\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bật lại RECOMMEND",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations/ai/features/RECOMMEND",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations",
+                "ai",
+                "features",
+                "RECOMMEND"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true,\n  \"reason\": \"Đã khắc phục\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Thiếu lý do → 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations/ai/features/RECOMMEND",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations",
+                "ai",
+                "features",
+                "RECOMMEND"
+              ]
+            },
+            "description": "A20-R04.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "taskType sai → 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/integrations/ai/features/BOGUS",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "integrations",
+                "ai",
+                "features",
+                "BOGUS"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true,\n  \"reason\": \"test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "11 · FR-A09 — Quản lý danh mục (ADMIN)",
+      "description": "Không có API xoá cứng — chỉ ẩn để giữ toàn vẹn dữ liệu lịch sử.",
+      "item": [
+        {
+          "name": "Cây danh mục đầy đủ",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories?includeInactive=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "includeInactive",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "includeInactive=true để thấy cả danh mục đã ẩn."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tạo danh mục",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories"
+              ]
+            },
+            "description": "Mã và slug phải duy nhất. Lưu id vào `createdCategoryId`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryCode\": \"FOOD\",\n  \"categoryName\": \"Ẩm thực & Đồ uống\",\n  \"description\": \"Danh mục tạo từ Postman\",\n  \"parentCategoryId\": null,\n  \"sortOrder\": 7\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set(\"createdCategoryId\", pm.response.json().data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Trùng mã → 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories"
+              ]
+            },
+            "description": "categoryCode đã tồn tại.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryCode\": \"FOOD\",\n  \"categoryName\": \"Trùng mã\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sửa danh mục",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories",
+                "{{createdCategoryId}}"
+              ]
+            },
+            "description": "version = updatedAt epoch millis; lệch → 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryName\": \"Ẩm thực\",\n  \"slug\": \"am-thuc\",\n  \"sortOrder\": 7\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ẩn danh mục",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}/hide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories",
+                "{{createdCategoryId}}",
+                "hide"
+              ]
+            },
+            "description": "reason bắt buộc.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Dọn dẹp danh mục test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 404]\", () => pm.expect([200, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bỏ ẩn danh mục",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}/unhide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories",
+                "{{createdCategoryId}}",
+                "unhide"
+              ]
+            },
+            "description": "Vẫn tôn trọng giới hạn 50 danh mục ACTIVE."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ẩn không lý do → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}/hide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories",
+                "{{createdCategoryId}}",
+                "hide"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sắp xếp lại thứ tự",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories/order",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories",
+                "order"
+              ]
+            },
+            "description": "1…200 mục.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"categoryId\": 9,\n      \"sortOrder\": 1\n    },\n    {\n      \"categoryId\": 10,\n      \"sortOrder\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\");",
+                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Không phải Admin → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "12 · Hạ tầng chung",
+      "description": "Envelope, correlationId, route không tồn tại.",
+      "item": [
+        {
+          "name": "CorrelationId được echo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-Id",
+                "value": "postman-fixed-id"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ]
+            },
+            "description": "Server dùng lại X-Correlation-Id của client."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Header echo đúng\", () => pm.expect(pm.response.headers.get(\"X-Correlation-Id\")).to.eql(\"postman-fixed-id\"));",
+                  "pm.test(\"Body cùng id\", () => pm.expect(pm.response.json().correlationId).to.eql(\"postman-fixed-id\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Route không tồn tại (khách) → 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/khong-ton-tai",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "khong-ton-tai"
+              ]
+            },
+            "description": "Spring Security chặn trước khi routing."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Route không tồn tại (đã đăng nhập) → 404",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/khong-ton-tai",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "khong-ton-tai"
+              ]
+            },
+            "description": "Đi qua security, không có handler."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

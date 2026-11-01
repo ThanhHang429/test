@@ -1,8 +1,6 @@
-﻿spring:
+spring:
   application:
     name: event-platform-backend
-  profiles:
-    active: 
   jpa:
     hibernate:
       ddl-auto: validate
@@ -18,9 +16,21 @@
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
+  datasource:
+    url: "${DB_URL:jdbc:mysql://localhost:3306/event_platform?useSSL=true&requireSSL=true&verifyServerCertificate=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf-8}"
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
 
 server:
-  port: 
+  port: ${SERVER_PORT:8080}
 
 springdoc:
   api-docs:

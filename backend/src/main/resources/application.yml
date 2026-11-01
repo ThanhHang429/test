@@ -1,16 +1,34 @@
-﻿spring:
+spring:
   application:
     name: event-platform-backend
+
+  # Spring Boot KHÔNG tự đọc file .env. Nạp nó như một file properties
+  # (.env có định dạng KEY=VALUE trùng với .properties nên dùng loader [.properties]).
+  # "optional:" => không lỗi khi thiếu file (prod dùng biến môi trường thật).
+  # Biến môi trường của OS vẫn có độ ưu tiên cao hơn giá trị trong .env.
+  # Lưu ý: file .env phải là UTF-8 KHÔNG có BOM, nếu không key đầu tiên sẽ bị hỏng.
+  config:
+    import:
+      - optional:file:./.env[.properties]
+      - optional:file:../.env[.properties]
+
   profiles:
-    active: 
+    # Chạy local mặc định dùng profile dev; prod đặt SPRING_PROFILES_ACTIVE=prod
+    default: dev
+
   jpa:
     hibernate:
+      # Schema do nhóm quản lý trực tiếp trên MySQL; app KHÔNG tự sửa cấu trúc bảng.
+      # dev/test dùng "validate" để phát hiện sớm lệch mapping (validate không ALTER gì).
       ddl-auto: validate
     open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+        # DATETIME(3) lưu theo UTC (SRS 2.4: lưu UTC, hiển thị UTC+7 ở client)
+        jdbc:
+          time_zone: UTC
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -18,12 +36,59 @@
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
+  datasource:
+    url: "${DB_URL:jdbc:mysql://localhost:3306/event_platform?useSSL=true&requireSSL=true&verifyServerCertificate=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf-8}"
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
 
 server:
-  port: 
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+# Cấu hình riêng của ứng dụng
+app:
+  jwt:
+    # Prod BẮT BUỘC set JWT_SECRET thật (>= 32 byte). Giá trị dưới chỉ dùng cho dev.
+    secret: ${JWT_SECRET:dev-insecure-secret-key-change-me-32bytes-min}
+    ttl: ${JWT_TTL:PT24H}
+  security:
+    # Cho phép header X-User-Id thay cho Bearer token. CHỈ bật ở profile dev.
+    dev-header-enabled: ${DEV_HEADER_ENABLED:false}
+  seed:
+    # Tạo dữ liệu mẫu khi bảng users rỗng. CHỈ bật ở profile dev.
+    enabled: ${APP_SEED_ENABLED:false}
+  ai:
+    # mock = provider giả lập tất định (không cần API key); đổi sang provider thật sau.
+    provider: ${AI_PROVIDER:mock}
+    api-key: ${AI_API_KEY:}
+    base-url: ${AI_BASE_URL:https://generativelanguage.googleapis.com}
+    model: ${AI_MODEL:gemini-2.0-flash}
+    # Ngân sách/giới hạn theo tác vụ (SRS 5.1)
+    daily-budget-usd: ${AI_DAILY_BUDGET_USD:2.0}
+    # Timeout cứng cho một lời gọi AI (U07-R12)
+    timeout-seconds: ${AI_TIMEOUT_SECONDS:5}
+    # Đơn giá ước tính để tính chi phí ở màn hình giám sát A20
+    cost-per-1k-tokens: ${AI_COST_PER_1K_TOKENS:0.0005}
+  payment:
+    webhook-secret: ${PAYMENT_WEBHOOK_SECRET:}
+  fcm:
+    credentials-path: ${FCM_CREDENTIALS_PATH:}
 
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+  default-produces-media-type: application/json

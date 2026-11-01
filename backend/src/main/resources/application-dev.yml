@@ -1,0 +1,29 @@
+spring:
+  # Dev: Hibernate tự tạo/cập nhật bảng từ entity (DB Aiven đang trống).
+  jpa:
+    hibernate:
+      # "validate" = chỉ kiểm tra mapping, KHÔNG sửa cấu trúc bảng trên DB dùng chung.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    # Aiven giới hạn số connection -> giữ pool nhỏ khi dev
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+
+app:
+  security:
+    dev-header-enabled: true
+  seed:
+    enabled: true
+  ai:
+    provider: mock
+
+logging:
+  level:
+    com.eventapp: debug
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
