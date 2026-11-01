@@ -16,9 +16,23 @@ mvn spring-boot:run       # profile dev: seed dữ liệu mẫu + bật X-User-I
 - Swagger UI: <http://localhost:8080/swagger-ui.html>
 - Health: <http://localhost:8080/actuator/health>
 
-Profile `dev` tự tạo 6 tài khoản seed (mật khẩu `Password123!`), 14 sự kiện,
-19 loại vé, đơn hàng, thanh toán, đánh giá và yêu thích. Xem danh sách:
+Profile `dev` tự tạo dữ liệu mẫu (mật khẩu `Password123!`). Xem tài khoản:
 `GET /api/v1/dev/accounts`.
+
+### Dữ liệu mẫu
+
+Hai seeder, cả hai chỉ chạy ở profile `dev` và **không bao giờ xoá** dữ liệu:
+
+| Seeder | Điều kiện | Nội dung |
+|---|---|---|
+| `DevDataSeeder` | `app.seed.enabled=true` + bảng `users` rỗng | Bộ gốc, id **cố định** (user 7–12, event 14–27) — smoke test dựa vào |
+| `DemoDataSeeder` | `app.seed.demo-enabled=true` + chưa có `EVT-DEMO-%` | Bộ lớn, chỉ `INSERT` thêm |
+
+Sau khi cả hai chạy: **34 user, 6 organizer, 59 sự kiện, 108 loại vé, 210 vé,
+131 check-in, 98 đơn hàng, 95 đánh giá, 173 yêu thích**. Chi tiết từng nhóm và
+cách tạo lại: [`docs/API.md` mục 6](docs/API.md#6-dữ-liệu-mẫu).
+
+Tắt bộ demo: `app.seed.demo-enabled=false` trong `application-dev.yml`.
 
 > `.env` được nạp qua `spring.config.import` — Spring Boot **không** đọc `.env`
 > mặc định. File phải là UTF-8 **không BOM**, và dùng `spring.profiles.active=dev`
@@ -48,7 +62,9 @@ src/main/kotlin/com/eventapp/
 | File | Nội dung |
 |---|---|
 | [`docs/API.md`](docs/API.md) | Đặc tả toàn bộ endpoint, mã lỗi, khác biệt schema vs SRS |
-| [`postman/ETicket-Backend.postman_collection.json`](postman/ETicket-Backend.postman_collection.json) | 85 request, 13 folder — chạy trực tiếp trong Postman |
+| [`postman/ETicket-Backend.postman_collection.json`](postman/ETicket-Backend.postman_collection.json) | 95 request, 13 folder — chạy trực tiếp trong Postman |
+| [`postman/ETicket-Local.postman_environment.json`](postman/ETicket-Local.postman_environment.json) | Environment `ETicket Local` (chỉ chứa `baseUrl`) |
+| [`postman/README.md`](postman/README.md) | Hướng dẫn import, thứ tự chạy, bản đồ folder, ý nghĩa biến |
 | [`scripts/api-smoke.sh`](scripts/api-smoke.sh) | Smoke test 70 ca bằng curl + jq |
 | `docs/*.pdf` | SRS và Project Final Business Analysis (nguồn yêu cầu) |
 

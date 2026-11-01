@@ -1,78 +1,145 @@
 {
   "info": {
-    "_postman_id": "b314f705-766a-4d56-a686-042da18c8ec4",
+    "_postman_id": "e7c1a4f2-3b6d-4a58-9c0e-5f1d2b8a7c33",
     "name": "ETicket Backend — Module Hữu Cảnh",
-    "description": "Bộ request cho toàn bộ API backend đã triển khai (FR-U03, U04, U05, U06, U07, U20,\nO03, O06, O09, O27, A07, A09, A14, A20).\n\n## Cách dùng\n1. Chạy backend profile dev: `cd backend && mvn spring-boot:run`\n2. Import file này vào Postman.\n3. Chạy folder `00` trước để lấy `userId` và JWT.\n4. Các request dùng header `X-User-Id` (đường dev) — biến `adminId`, `organizer1Id`,\n   `user1Id`… mặc định trỏ tới tài khoản seed.\n\n## Biến\n| Biến | Mặc định | Ý nghĩa |\n|---|---|---|\n| `baseUrl` | http://localhost:8080 | |\n| `adminId` / `organizer1Id` / `organizer2Id` | 7 / 8 / 9 | |\n| `user1Id` / `user2Id` / `user3Id` | 10 / 11 / 12 | |\n| `eventId` | 14 | sự kiện đang mở bán |\n| `pastEventId` | 27 | sự kiện COMPLETED (để test đánh giá) |\n| `reviewId` | 3 | đánh giá PENDING trong seed |\n\nMột số test chấp nhận cả 409 (chạy lại lần hai) — đó là hành vi đúng, không phải lỗi.",
+    "description": "Bộ request cho toàn bộ API backend đã triển khai (FR-U03, U04, U05, U06, U07, U20,\nO03, O06, O09, O27, A07, A09, A14, A20).\n\n## Chạy lần đầu\n1. Backend chạy profile `dev`: `cd backend && mvn spring-boot:run`\n2. Import collection + environment `ETicket Local`.\n3. Chạy **folder 00** — request đầu tự nạp `adminId`, `user1Id`… theo email.\n4. Chạy lần lượt folder 01 → 12 (thứ tự đã sắp đúng phụ thuộc).\n\nHoặc: chuột phải collection → **Run collection** → tất cả request, ~20 giây.\n\n## Quy ước\n- Xác thực bằng header `X-User-Id` (đường dev). Muốn test JWT thật: chạy request\n  `Cấp JWT`, rồi ở từng request chọn `Authorization: Bearer {{accessToken}}` và tắt `X-User-Id`.\n- Một số test chấp nhận nhiều mã (409/429) vì đó là **hành vi đúng** khi chạy lại\n  (đã đánh giá, hết lượt sửa, hết quota AI, làm mới gợi ý quá nhanh).\n- Mỗi request đều kiểm tra envelope `{success, data, meta?, correlationId}`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080"
+      "value": "http://localhost:8080",
+      "type": "string"
     },
     {
       "key": "adminId",
-      "value": "7"
+      "value": "7",
+      "type": "string"
     },
     {
       "key": "organizer1Id",
-      "value": "8"
+      "value": "8",
+      "type": "string"
     },
     {
       "key": "organizer2Id",
-      "value": "9"
+      "value": "9",
+      "type": "string"
     },
     {
       "key": "user1Id",
-      "value": "10"
+      "value": "10",
+      "type": "string"
     },
     {
       "key": "user2Id",
-      "value": "11"
+      "value": "11",
+      "type": "string"
     },
     {
       "key": "user3Id",
-      "value": "12"
+      "value": "12",
+      "type": "string"
     },
     {
       "key": "eventId",
-      "value": "14"
+      "value": "14",
+      "type": "string"
+    },
+    {
+      "key": "upcomingEventId",
+      "value": "28",
+      "type": "string"
+    },
+    {
+      "key": "organizerEventId",
+      "value": "14",
+      "type": "string"
+    },
+    {
+      "key": "otherOrganizerEventId",
+      "value": "16",
+      "type": "string"
     },
     {
       "key": "pastEventId",
-      "value": "27"
+      "value": "27",
+      "type": "string"
     },
     {
       "key": "reviewId",
-      "value": "3"
+      "value": "3",
+      "type": "string"
     },
     {
       "key": "recommendedEventId",
-      "value": "16"
+      "value": "16",
+      "type": "string"
     },
     {
       "key": "createdCategoryId",
-      "value": "17"
+      "value": "17",
+      "type": "string"
+    },
+    {
+      "key": "childCategoryId",
+      "value": "18",
+      "type": "string"
+    },
+    {
+      "key": "notAttendedEventId",
+      "value": "61",
+      "type": "string"
+    },
+    {
+      "key": "staleVersion",
+      "value": "0",
+      "type": "string"
+    },
+    {
+      "key": "newCategoryCode",
+      "value": "PMDEMO",
+      "type": "string"
+    },
+    {
+      "key": "newChildCode",
+      "value": "PMCDEMO",
+      "type": "string"
+    },
+    {
+      "key": "newLevel3Code",
+      "value": "PMLDEMO",
+      "type": "string"
     },
     {
       "key": "flagId",
-      "value": "review:3"
+      "value": "review:3",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "9",
+      "type": "string"
     },
     {
       "key": "correlationId",
-      "value": "00000000-0000-0000-0000-000000000000"
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
     },
     {
       "key": "accessToken",
-      "value": ""
+      "value": "",
+      "type": "string"
     },
     {
       "key": "adminToken",
-      "value": ""
+      "value": "",
+      "type": "string"
     },
     {
       "key": "prefVersion",
-      "value": "1"
+      "value": "1",
+      "type": "string"
     }
   ],
   "event": [
@@ -81,8 +148,9 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Kiểm tra chung cho mọi request: JSON hợp lệ + có correlationId.",
-          "if (pm.response.headers.get(\"Content-Type\") && pm.response.headers.get(\"Content-Type\").includes(\"application/json\")) {",
+          "// Kiểm tra chung cho MỌI request.",
+          "const ct = pm.response.headers.get(\"Content-Type\") || \"\";",
+          "if (ct.indexOf(\"application/json\") >= 0) {",
           "    pm.test(\"Response là JSON hợp lệ\", () => pm.response.json());",
           "    pm.test(\"Có header X-Correlation-Id\", () => pm.expect(pm.response.headers.has(\"X-Correlation-Id\")).to.be.true);",
           "}"
@@ -92,11 +160,11 @@
   ],
   "item": [
     {
-      "name": "00 · Dev helper & danh mục công khai",
-      "description": "Chỉ có ở profile dev. Dùng để lấy userId và JWT mà không cần màn đăng nhập.",
+      "name": "00 · Setup — nạp biến & xác thực",
+      "description": "**Chạy folder này trước tiên.**\n\nRequest đầu tiên đọc `/dev/accounts` và tự điền `adminId`, `organizer1Id`, `organizer2Id`, `user1Id`… vào biến collection theo **email chính xác**, nên collection vẫn đúng dù id trong DB thay đổi.\n\nHai request sau cấp JWT để test đường `Authorization: Bearer` (mặc định collection dùng header `X-User-Id` cho nhanh).",
       "item": [
         {
-          "name": "Danh sách tài khoản seed",
+          "name": "1. Nạp ID tài khoản từ /dev/accounts",
           "request": {
             "method": "GET",
             "header": [],
@@ -112,7 +180,7 @@
                 "accounts"
               ]
             },
-            "description": "Trả userId + roles của 6 tài khoản seed. Dùng để điền biến adminId / user1Id…"
+            "description": "Chạy request này đầu tiên. Script tự tìm tài khoản theo email và ghi vào biến."
           },
           "event": [
             {
@@ -120,15 +188,34 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "const body = pm.response.json();",
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"Có ít nhất 6 tài khoản\", () => pm.expect(pm.response.json().data.length).to.be.above(5));"
+                  "pm.test(\"Có ít nhất 6 tài khoản seed\", () => pm.expect(body.data.length).to.be.above(5));",
+                  "",
+                  "const acc = body.data;",
+                  "const byEmail = (e) => { const u = acc.find(a => a.email === e); return u ? u.userId : null; };",
+                  "const admin = acc.find(a => Array.isArray(a.roles) && a.roles.indexOf(\"ADMIN\") >= 0);",
+                  "",
+                  "const mapping = {",
+                  "    adminId: admin ? admin.userId : null,",
+                  "    organizer1Id: byEmail(\"organizer1@eticket.local\"),",
+                  "    organizer2Id: byEmail(\"organizer2@eticket.local\"),",
+                  "    user1Id: byEmail(\"user1@eticket.local\"),",
+                  "    user2Id: byEmail(\"user2@eticket.local\"),",
+                  "    user3Id: byEmail(\"user3@eticket.local\")",
+                  "};",
+                  "Object.keys(mapping).forEach(k => { if (mapping[k]) pm.collectionVariables.set(k, mapping[k]); });",
+                  "",
+                  "pm.test(\"Tìm đủ tài khoản cho mọi vai trò\", () => {",
+                  "    Object.keys(mapping).forEach(k => pm.expect(mapping[k], k).to.be.a(\"number\"));",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Cấp JWT cho user1 (dev)",
+          "name": "2. Cấp JWT cho user1",
           "request": {
             "method": "POST",
             "header": [],
@@ -150,7 +237,7 @@
                 }
               ]
             },
-            "description": "Lấy JWT HS256 cho user1. Token lưu vào biến `accessToken` để dùng Authorization: Bearer."
+            "description": "Token lưu vào `accessToken`. Dùng khi muốn test Bearer thay cho X-User-Id."
           },
           "event": [
             {
@@ -159,16 +246,15 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
-                  "const d = pm.response.json().data;",
-                  "pm.test(\"Có token\", () => pm.expect(d.token).to.be.a(\"string\").and.not.empty);",
-                  "pm.collectionVariables.set(\"accessToken\", d.token);"
+                  "pm.test(\"Có token\", () => pm.expect(pm.response.json().data.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.collectionVariables.set(\"accessToken\", pm.response.json().data.token);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Cấp JWT cho admin (dev)",
+          "name": "3. Cấp JWT cho admin",
           "request": {
             "method": "POST",
             "header": [],
@@ -190,7 +276,7 @@
                 }
               ]
             },
-            "description": "Lấy JWT cho admin (dùng khi tắt cờ dev-header)."
+            "description": "Token lưu vào `adminToken`."
           },
           "event": [
             {
@@ -199,6 +285,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Có token\", () => pm.expect(pm.response.json().data.token).to.be.a(\"string\").and.not.empty);",
                   "pm.collectionVariables.set(\"adminToken\", pm.response.json().data.token);"
                 ]
               }
@@ -206,7 +293,7 @@
           ]
         },
         {
-          "name": "Cây danh mục công khai",
+          "name": "4. Cây danh mục công khai",
           "request": {
             "method": "GET",
             "header": [],
@@ -221,7 +308,7 @@
                 "categories"
               ]
             },
-            "description": "Chỉ danh mục đang hoạt động, tối đa 2 cấp (FR-U04)."
+            "description": "Chỉ danh mục đang hoạt động, tối đa 2 cấp. Lưu `categoryId` cho các request sau."
           },
           "event": [
             {
@@ -232,9 +319,81 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "if (pm.response.json().data.length) pm.collectionVariables.set(\"categoryId\", pm.response.json().data[0].id);",
+                  "const cats = pm.response.json().data;",
+                  "pm.test(\"Trả về mảng danh mục\", () => pm.expect(cats).to.be.an(\"array\").that.is.not.empty);",
+                  "pm.test(\"Danh mục có children\", () => pm.expect(cats[0]).to.have.property(\"children\").that.is.an(\"array\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Tìm sự kiện thuộc organizer1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?size=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "size",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Folder 07/08 cần một sự kiện **của organizer1** và một sự kiện **của người khác**. Request này dò bằng `/organizer/events/{id}/classification` rồi lưu `organizerEventId` / `otherOrganizerEventId`."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "const base = pm.collectionVariables.get(\"baseUrl\");",
+                  "const uid = pm.collectionVariables.get(\"organizer1Id\");",
+                  "const ids = pm.response.json().data.map(e => e.id).slice(0, 25);",
+                  "const found = { mine: null, other: null };",
+                  "let i = 0;",
+                  "const walk = () => {",
+                  "    if (i >= ids.length || (found.mine && found.other)) {",
+                  "        if (found.mine) pm.collectionVariables.set(\"organizerEventId\", found.mine);",
+                  "        if (found.other) pm.collectionVariables.set(\"otherOrganizerEventId\", found.other);",
+                  "        pm.test(\"Tìm được sự kiện của organizer1\", () => pm.expect(found.mine).to.be.a(\"number\"));",
+                  "        return;",
+                  "    }",
+                  "    const id = ids[i++];",
+                  "    pm.sendRequest({",
+                  "        url: base + \"/api/v1/organizer/events/\" + id + \"/classification\",",
+                  "        header: { \"X-User-Id\": uid }",
+                  "    }, (err, res) => {",
+                  "        if (!err && res.code === 200 && !found.mine) found.mine = id;",
+                  "        if (!err && res.code === 403 && !found.other) found.other = id;",
+                  "        walk();",
+                  "    });",
+                  "};",
+                  "walk();"
                 ]
               }
             }
@@ -244,10 +403,10 @@
     },
     {
       "name": "01 · FR-U04 / U05 — Khám phá & tìm kiếm",
-      "description": "Chỉ trả sự kiện APPROVED + PUBLISHED. CANCELLED/SUSPENDED/DRAFT luôn bị loại.",
+      "description": "Chỉ trả sự kiện `APPROVED` + `PUBLISHED` (thêm `COMPLETED` khi `includePast=true`). `DRAFT` / `PENDING_REVIEW` / `SUSPENDED` / `CANCELLED` luôn bị loại.",
       "item": [
         {
-          "name": "Danh sách sự kiện (phân trang)",
+          "name": "1. Danh sách sự kiện (phân trang)",
           "request": {
             "method": "GET",
             "header": [],
@@ -272,7 +431,7 @@
                 }
               ]
             },
-            "description": "Mặc định page=0, size=20. Lưu sự kiện đầu tiên vào biến `eventId`."
+            "description": "Mặc định page=0, size=20. Lưu sự kiện đầu tiên vào `eventId`."
           },
           "event": [
             {
@@ -283,19 +442,27 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
-                  "const d = pm.response.json().data;",
-                  "if (d.length) pm.collectionVariables.set(\"eventId\", d[0].id);",
-                  "pm.test(\"meta phân trang đúng\", () => pm.expect(pm.response.json().meta).to.have.all.keys(\"page\",\"size\",\"totalItems\",\"hasNext\"));"
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "if (pm.response.json().data.length) pm.collectionVariables.set(\"eventId\", pm.response.json().data[0].id);",
+                  "const b = pm.response.json();",
+                  "pm.test(\"meta phân trang đủ 4 khoá\", () => pm.expect(b.meta).to.have.all.keys(\"page\",\"size\",\"totalItems\",\"hasNext\"));",
+                  "pm.test(\"Mỗi thẻ có trường bắt buộc\", () => {",
+                  "    b.data.forEach(e => {",
+                  "        pm.expect(e).to.include.all.keys(\"id\",\"title\",\"startAt\",\"endAt\",\"statusLabel\",\"saleStatus\");",
+                  "    });",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Tìm không dấu",
+          "name": "2. Tìm không dấu",
           "request": {
             "method": "GET",
             "header": [],
@@ -320,7 +487,7 @@
                 }
               ]
             },
-            "description": "`hoi nhac` phải khớp “Hội nhạc” / “Hội Nhạc” (chuẩn hoá tiếng Việt ở server)."
+            "description": "`hoi nhac` phải khớp “Hội nhạc” / “Hội Nhạc” — server chuẩn hoá tiếng Việt."
           },
           "event": [
             {
@@ -331,16 +498,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Có kết quả\", () => pm.expect(pm.response.json().data.length).to.be.above(0));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Lọc theo danh mục + thành phố + còn vé",
+          "name": "3. Lọc danh mục + thành phố + còn vé",
           "request": {
             "method": "GET",
             "header": [],
@@ -373,7 +542,7 @@
                 }
               ]
             },
-            "description": "categoryIds nhận nhiều giá trị, khớp cả danh mục con."
+            "description": "`categoryIds` nhận nhiều giá trị và khớp cả danh mục con."
           },
           "event": [
             {
@@ -384,8 +553,13 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Giá không giảm dần\", () => {",
+                  "    const prices = pm.response.json().data.map(e => Number(e.minPrice || 0));",
+                  "    for (let i = 1; i < prices.length; i++) pm.expect(prices[i]).to.be.at.least(prices[i-1]);",
                   "});"
                 ]
               }
@@ -393,7 +567,7 @@
           ]
         },
         {
-          "name": "size=200 bị hạ về 50",
+          "name": "4. size=200 bị hạ về 50",
           "request": {
             "method": "GET",
             "header": [],
@@ -414,7 +588,7 @@
                 }
               ]
             },
-            "description": "U04-R08: size > 50 hạ về 50, KHÔNG báo lỗi."
+            "description": "U04-R08: `size > 50` hạ về 50, **không** báo lỗi."
           },
           "event": [
             {
@@ -423,14 +597,15 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"size bị chặn về 50\", () => pm.expect(pm.response.json().meta.size).to.eql(50));"
+                  "pm.test(\"size bị chặn về 50\", () => pm.expect(pm.response.json().meta.size).to.eql(50));",
+                  "pm.test(\"Số phần tử <= 50\", () => pm.expect(pm.response.json().data.length).to.be.at.most(50));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Khoảng giá sai → 400",
+          "name": "5. Khoảng giá sai → 400",
           "request": {
             "method": "GET",
             "header": [],
@@ -455,7 +630,7 @@
                 }
               ]
             },
-            "description": "priceMin > priceMax phải bị từ chối với VALIDATION_ERROR."
+            "description": "`priceMin > priceMax` phải bị từ chối."
           },
           "event": [
             {
@@ -463,15 +638,66 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
-                  "pm.test(\"code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Chi tiết sự kiện",
+          "name": "6. sort sai → 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?sort=BOGUS",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "BOGUS"
+                }
+              ]
+            },
+            "description": "`sort` ngoài danh sách cho phép."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. Chi tiết sự kiện (đã đăng nhập)",
           "request": {
             "method": "GET",
             "header": [
@@ -492,7 +718,7 @@
                 "{{eventId}}"
               ]
             },
-            "description": "Token tuỳ chọn: gửi X-User-Id để có isFavorite / allowedActions theo user."
+            "description": "Gửi `X-User-Id` để `isFavorite` / `allowedActions` tính theo user."
           },
           "event": [
             {
@@ -503,17 +729,22 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
-                  "pm.test(\"Có allowedActions\", () => pm.expect(pm.response.json().data.allowedActions).to.be.an(\"array\"));"
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có allowedActions\", () => pm.expect(d.allowedActions).to.be.an(\"array\"));",
+                  "pm.test(\"Có bảng giá\", () => pm.expect(d.ticketTypes).to.be.an(\"array\"));",
+                  "pm.test(\"Có tổng hợp đánh giá\", () => pm.expect(d.reviewSummary).to.include.keys(\"averageRating\",\"totalReviews\"));",
+                  "pm.test(\"isFavorite là boolean\", () => pm.expect(d.isFavorite).to.be.a(\"boolean\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Chi tiết sự kiện (khách)",
+          "name": "8. Chi tiết sự kiện (khách)",
           "request": {
             "method": "GET",
             "header": [],
@@ -529,7 +760,7 @@
                 "{{eventId}}"
               ]
             },
-            "description": "Không gửi danh tính → allowedActions chỉ còn hành động công khai."
+            "description": "Không gửi danh tính → chỉ còn hành động công khai."
           },
           "event": [
             {
@@ -540,16 +771,19 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Khách không có WRITE_REVIEW\", () => pm.expect(d.allowedActions).to.not.include(\"WRITE_REVIEW\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Sự kiện không tồn tại → 404",
+          "name": "9. Sự kiện không tồn tại → 404",
           "request": {
             "method": "GET",
             "header": [],
@@ -573,7 +807,15 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                  "pm.test(\"HTTP thuộc [404]\", () => pm.expect([404]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = NOT_FOUND\", () => pm.expect(pm.response.json().error.code).to.eql(\"NOT_FOUND\"));"
                 ]
               }
             }
@@ -583,10 +825,10 @@
     },
     {
       "name": "02 · FR-U03 — Sở thích",
-      "description": "Lưu sở thích onboarding. Lưu/reset đều xoá cache gợi ý.",
+      "description": "Lưu sở thích onboarding. Lưu hoặc reset đều **xoá cache gợi ý** của user.",
       "item": [
         {
-          "name": "Lấy sở thích",
+          "name": "1. Lấy sở thích",
           "request": {
             "method": "GET",
             "header": [
@@ -618,16 +860,19 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Đủ trường\", () => pm.expect(d).to.include.keys(\"categoryIds\",\"eventFormat\",\"priceMode\",\"version\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Lưu sở thích",
+          "name": "2. Lưu sở thích",
           "request": {
             "method": "PUT",
             "header": [
@@ -652,7 +897,7 @@
                 "preferences"
               ]
             },
-            "description": "Tối đa 10 danh mục, ≤ 3 thành phố (schema chỉ lưu thành phố đầu tiên). Lưu `version` trả về vào biến.",
+            "description": "Tối đa 10 danh mục; schema chỉ lưu **thành phố đầu tiên**.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"categoryIds\": [\n    9,\n    15\n  ],\n  \"eventFormat\": \"ONSITE\",\n  \"priceMode\": \"ANY\",\n  \"maxBudgetVnd\": 500000,\n  \"preferredCities\": [\n    \"Hồ Chí Minh\"\n  ],\n  \"preferredDays\": [\n    \"WEEKEND\"\n  ],\n  \"onboardingCompleted\": true\n}",
@@ -672,17 +917,21 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
-                  "pm.collectionVariables.set(\"prefVersion\", pm.response.json().data.version);"
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "pm.collectionVariables.set(\"prefVersion\", pm.response.json().data.version);",
+                  "pm.test(\"version là số\", () => pm.expect(pm.response.json().data.version).to.be.a(\"number\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Lưu với version cũ → 409",
+          "name": "3. Lưu lại cùng version (idempotent)",
           "request": {
             "method": "PUT",
             "header": [
@@ -707,10 +956,10 @@
                 "preferences"
               ]
             },
-            "description": "Khoá lạc quan: version lệch → 409.",
+            "description": "Gửi lại đúng `version` vừa nhận → 200, version không nhảy.\n\nLưu ý: `version` phải là **số** (không đặt trong ngoặc kép) — nếu không Jackson sẽ báo `VALIDATION_ERROR`.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoryIds\": [\n    9\n  ],\n  \"eventFormat\": \"ANY\",\n  \"priceMode\": \"ANY\",\n  \"version\": 1\n}",
+              "raw": "{\n  \"categoryIds\": [9, 15],\n  \"eventFormat\": \"ONSITE\",\n  \"priceMode\": \"ANY\",\n  \"maxBudgetVnd\": 500000,\n  \"preferredCities\": [\"Hồ Chí Minh\"],\n  \"preferredDays\": [\"WEEKEND\"],\n  \"version\": {{prefVersion}}\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -724,14 +973,81 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));"
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "pm.collectionVariables.set(\"staleVersion\", String(Number(pm.collectionVariables.get(\"prefVersion\")) - 1));",
+                  "pm.test(\"version không đổi\", () => pm.expect(String(pm.response.json().data.version)).to.eql(String(pm.collectionVariables.get(\"prefVersion\"))));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Quá 10 danh mục → 400",
+          "name": "4. Version cũ → 409",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/preferences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "preferences"
+              ]
+            },
+            "description": "Khoá lạc quan: `version` lệch → 409.\n\n`staleVersion` = `prefVersion` - 1 nên luôn lệch, kể cả khi user mới có version 1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryIds\": [9],\n  \"eventFormat\": \"ANY\",\n  \"priceMode\": \"ANY\",\n  \"version\": {{staleVersion}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [409]\", () => pm.expect([409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = CONFLICT\", () => pm.expect(pm.response.json().error.code).to.eql(\"CONFLICT\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Quá 10 danh mục → 400",
           "request": {
             "method": "PUT",
             "header": [
@@ -773,14 +1089,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Đặt lại sở thích",
+          "name": "6. Đặt lại sở thích",
           "request": {
             "method": "DELETE",
             "header": [
@@ -812,8 +1136,9 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});"
                 ]
               }
@@ -821,7 +1146,7 @@
           ]
         },
         {
-          "name": "Chưa đăng nhập → 401",
+          "name": "7. Chưa đăng nhập → 401",
           "request": {
             "method": "GET",
             "header": [],
@@ -845,7 +1170,15 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));"
+                  "pm.test(\"HTTP thuộc [401]\", () => pm.expect([401]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = UNAUTHENTICATED\", () => pm.expect(pm.response.json().error.code).to.eql(\"UNAUTHENTICATED\"));"
                 ]
               }
             }
@@ -855,10 +1188,10 @@
     },
     {
       "name": "03 · FR-U06 — Yêu thích",
-      "description": "Thêm/xoá idempotent. Giới hạn 500 sự kiện.",
+      "description": "Thêm/xoá **idempotent**; giới hạn 500 sự kiện mỗi tài khoản.",
       "item": [
         {
-          "name": "Thêm yêu thích",
+          "name": "1. Thêm yêu thích",
           "request": {
             "method": "PUT",
             "header": [
@@ -880,7 +1213,7 @@
                 "{{eventId}}"
               ]
             },
-            "description": "Idempotent: gọi lại vẫn 200."
+            "description": "Gọi lại vẫn 200 và không tạo bản ghi trùng."
           },
           "event": [
             {
@@ -891,16 +1224,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"isFavorite = true\", () => pm.expect(pm.response.json().data.isFavorite).to.be.true);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Thêm lại (idempotent)",
+          "name": "2. Thêm lại (idempotent)",
           "request": {
             "method": "PUT",
             "header": [
@@ -922,7 +1257,7 @@
                 "{{eventId}}"
               ]
             },
-            "description": "Không tạo bản ghi trùng."
+            "description": "Vẫn 200, `isFavorite` vẫn true."
           },
           "event": [
             {
@@ -933,16 +1268,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Vẫn true\", () => pm.expect(pm.response.json().data.isFavorite).to.be.true);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Danh sách đã lưu",
+          "name": "3. Danh sách đã lưu",
           "request": {
             "method": "GET",
             "header": [
@@ -969,7 +1306,7 @@
                 }
               ]
             },
-            "description": "filter: ALL | UPCOMING | PAST."
+            "description": "`filter`: ALL | UPCOMING | PAST."
           },
           "event": [
             {
@@ -980,16 +1317,20 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có ít nhất 1 mục\", () => pm.expect(d.length).to.be.above(0));",
+                  "pm.test(\"Mục có thẻ sự kiện\", () => pm.expect(d[0]).to.include.keys(\"eventId\",\"favoritedAt\",\"event\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "filter sai → 400",
+          "name": "4. filter sai → 400",
           "request": {
             "method": "GET",
             "header": [
@@ -1016,7 +1357,7 @@
                 }
               ]
             },
-            "description": ""
+            "description": "Chỉ nhận 3 giá trị."
           },
           "event": [
             {
@@ -1024,14 +1365,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Bỏ yêu thích",
+          "name": "5. Bỏ yêu thích",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1064,16 +1413,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"isFavorite = false\", () => pm.expect(pm.response.json().data.isFavorite).to.be.false);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Yêu thích sự kiện không công khai → 404",
+          "name": "6. Sự kiện không công khai → 404",
           "request": {
             "method": "PUT",
             "header": [
@@ -1103,7 +1454,14 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                  "pm.test(\"HTTP thuộc [404]\", () => pm.expect([404]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
@@ -1113,10 +1471,94 @@
     },
     {
       "name": "04 · FR-U20 — Đánh giá",
-      "description": "Cần: sự kiện đã kết thúc + đã check-in + trong 30 ngày. user3 đã check-in sự kiện COMPLETED (id 27).",
+      "description": "Điều kiện: sự kiện **đã kết thúc**, user **đã check-in**, trong **30 ngày** kể từ `endAt`.\n\nRequest đầu tiên tự dò và chọn 2 sự kiện phù hợp:\n\n- `pastEventId` — user3 **đã check-in** và **còn hạn đánh giá** (dùng cho tạo/sửa đánh giá).\n- `notAttendedEventId` — user3 **chưa từng đăng ký** (dùng cho case 403 `NOT_ATTENDED`).",
       "item": [
         {
-          "name": "Danh sách đánh giá",
+          "name": "1. Chọn sự kiện đã kết thúc để test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?includePast=true&size=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "includePast",
+                  "value": "true"
+                },
+                {
+                  "key": "size",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Lọc sự kiện có `endAt` trong khoảng (now-30 ngày, now), rồi gọi `/events/{id}` cho từng ứng viên để biết `registrationStatus` / `canReview` của user3."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "const base = pm.collectionVariables.get(\"baseUrl\");",
+                  "const uid = pm.collectionVariables.get(\"user3Id\");",
+                  "",
+                  "const now = Date.now();",
+                  "const windowMs = 30 * 24 * 3600 * 1000;",
+                  "const past = pm.response.json().data.filter(e => {",
+                  "    const end = new Date(e.endAt).getTime();",
+                  "    return end < now && end > now - windowMs;",
+                  "});",
+                  "pm.test(\"Có sự kiện đã kết thúc trong 30 ngày\", () => pm.expect(past.length).to.be.above(0));",
+                  "",
+                  "// Sự kiện còn đang mở — dùng cho case \"chưa kết thúc thì không đánh giá được\".",
+                  "const upcoming = pm.response.json().data.find(e => new Date(e.endAt).getTime() > now);",
+                  "if (upcoming) pm.collectionVariables.set(\"upcomingEventId\", upcoming.id);",
+                  "",
+                  "const found = { reviewable: null, attended: null, none: null };",
+                  "let i = 0;",
+                  "const walk = () => {",
+                  "    if (i >= past.length) {",
+                  "        const target = found.reviewable || found.attended;",
+                  "        if (target) pm.collectionVariables.set(\"pastEventId\", target);",
+                  "        if (found.none) pm.collectionVariables.set(\"notAttendedEventId\", found.none);",
+                  "        pm.test(\"Chọn được sự kiện để test đánh giá\", () => {",
+                  "            pm.expect(target, \"pastEventId\").to.be.a(\"number\");",
+                  "            pm.expect(found.none, \"notAttendedEventId\").to.be.a(\"number\");",
+                  "        });",
+                  "        return;",
+                  "    }",
+                  "    const id = past[i++].id;",
+                  "    pm.sendRequest({",
+                  "        url: base + \"/api/v1/events/\" + id,",
+                  "        header: { \"X-User-Id\": uid }",
+                  "    }, (err, res) => {",
+                  "        if (!err && res.code === 200) {",
+                  "            const d = res.json().data;",
+                  "            if (d.registrationStatus === \"CONFIRMED\" && d.canReview && !found.reviewable) found.reviewable = id;",
+                  "            if (d.registrationStatus === \"CONFIRMED\" && !found.attended) found.attended = id;",
+                  "            if (d.registrationStatus === \"NONE\" && !found.none) found.none = id;",
+                  "        }",
+                  "        walk();",
+                  "    });",
+                  "};",
+                  "walk();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Danh sách đánh giá (công khai)",
           "request": {
             "method": "GET",
             "header": [
@@ -1144,7 +1586,7 @@
                 }
               ]
             },
-            "description": "Công khai, chỉ VISIBLE. Đánh giá của chính mình được ghim đầu (mine=true)."
+            "description": "Chỉ trả `VISIBLE`; đánh giá của chính mình được ghim đầu và có `mine: true`."
           },
           "event": [
             {
@@ -1155,16 +1597,21 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Không lộ đánh giá bị ẩn\", () => pm.expect(d.every(r => !r.status || r.status === \"VISIBLE\")).to.be.true);",
+                  "pm.test(\"rating trong 1..5\", () => d.forEach(r => pm.expect(r.rating).to.be.within(1, 5)));",
+                  "pm.test(\"Tên tác giả đã rút gọn\", () => d.forEach(r => pm.expect(r.authorName.split(\" \").length).to.be.at.most(3)));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Tổng hợp điểm",
+          "name": "3. Tổng hợp điểm",
           "request": {
             "method": "GET",
             "header": [],
@@ -1182,7 +1629,7 @@
                 "summary"
               ]
             },
-            "description": "averageRating, distribution 1..5, highlights."
+            "description": "`averageRating`, phân bố 1..5, các đánh giá nổi bật."
           },
           "event": [
             {
@@ -1193,16 +1640,20 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có phân bố 1..5\", () => pm.expect(d.distribution).to.include.keys(\"1\",\"2\",\"3\",\"4\",\"5\"));",
+                  "pm.test(\"Điểm trung bình hợp lệ\", () => pm.expect(d.averageRating).to.be.within(0, 5));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Viết đánh giá (có Idempotency-Key)",
+          "name": "4. Viết đánh giá",
           "request": {
             "method": "POST",
             "header": [
@@ -1232,7 +1683,7 @@
                 "reviews"
               ]
             },
-            "description": "Cùng key + cùng nội dung → trả lại kết quả cũ; khác nội dung → 409 IDEMPOTENCY_CONFLICT.",
+            "description": "Có `Idempotency-Key`. 200 = tạo mới, 409 = user3 đã đánh giá sự kiện này (đúng).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 5,\n  \"text\": \"Sự kiện rất hay, tổ chức chu đáo.\"\n}",
@@ -1249,14 +1700,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP 200 (tạo mới) hoặc 409 (đã có)\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Trả về review + notice\", () => {",
+                  "        const d = pm.response.json().data;",
+                  "        pm.expect(d).to.include.keys(\"review\",\"notice\");",
+                  "        pm.expect(d.review.status).to.be.oneOf([\"VISIBLE\",\"PENDING\"]);",
+                  "    });",
+                  "    pm.collectionVariables.set(\"reviewId\", pm.response.json().data.review.id);",
+                  "}"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Viết đánh giá trùng → 409",
+          "name": "5. Viết trùng → 409",
           "request": {
             "method": "POST",
             "header": [
@@ -1282,7 +1741,7 @@
                 "reviews"
               ]
             },
-            "description": "Mỗi user 1 đánh giá / sự kiện.",
+            "description": "Mỗi user chỉ 1 đánh giá / sự kiện.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 5,\n  \"text\": \"Đánh giá lần hai.\"\n}",
@@ -1299,14 +1758,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));"
+                  "pm.test(\"HTTP thuộc [409]\", () => pm.expect([409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = REVIEW_ALREADY_EXISTS\", () => pm.expect(pm.response.json().error.code).to.eql(\"REVIEW_ALREADY_EXISTS\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Sửa đánh giá của tôi",
+          "name": "6. Sửa đánh giá của tôi",
           "request": {
             "method": "PUT",
             "header": [
@@ -1333,7 +1800,7 @@
                 "me"
               ]
             },
-            "description": "Tối đa 3 lần / 7 ngày. Chạy lại nhiều lần sẽ trả 409 REVIEW_EDIT_LIMIT.",
+            "description": "Tối đa 3 lần / 7 ngày. 403 nếu quá 7 ngày, 409 nếu hết lượt sửa.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 4,\n  \"text\": \"Cập nhật: vẫn rất đáng tiền.\"\n}",
@@ -1350,14 +1817,15 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP 200 / 403 (quá 7 ngày) / 409 (hết lượt)\", () => pm.expect([200, 403, 409]).to.include(pm.response.code));",
+                  "if (pm.response.code !== 200) console.log(\"Không sửa được:\", pm.response.json().error.code);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Đánh giá của tôi (mọi trạng thái)",
+          "name": "7. Đánh giá của tôi (mọi trạng thái)",
           "request": {
             "method": "GET",
             "header": [
@@ -1378,7 +1846,7 @@
                 "reviews"
               ]
             },
-            "description": "Kèm editCount, canEdit, editDaysLeft."
+            "description": "Kèm `editCount`, `canEdit`, `editDaysLeft`."
           },
           "event": [
             {
@@ -1389,16 +1857,20 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có ít nhất 1 đánh giá\", () => pm.expect(d.length).to.be.above(0));",
+                  "pm.test(\"Có thông tin lượt sửa\", () => pm.expect(d[0]).to.include.keys(\"editCount\",\"canEdit\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Đánh giá khi sự kiện chưa kết thúc → 403",
+          "name": "8. Sự kiện chưa kết thúc → 403",
           "request": {
             "method": "POST",
             "header": [
@@ -1412,7 +1884,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}/reviews",
+              "raw": "{{baseUrl}}/api/v1/events/{{upcomingEventId}}/reviews",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1420,11 +1892,11 @@
                 "api",
                 "v1",
                 "events",
-                "{{eventId}}",
+                "{{upcomingEventId}}",
                 "reviews"
               ]
             },
-            "description": "EVENT_NOT_ENDED.",
+            "description": "`upcomingEventId` do request 1 chọn: sự kiện có `endAt` ở tương lai.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 5\n}",
@@ -1441,15 +1913,80 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
-                  "pm.test(\"code = EVENT_NOT_ENDED\", () => pm.expect(pm.response.json().error.code).to.eql(\"EVENT_NOT_ENDED\"));"
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = EVENT_NOT_ENDED\", () => pm.expect(pm.response.json().error.code).to.eql(\"EVENT_NOT_ENDED\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Báo cáo đánh giá",
+          "name": "9. Chưa tham dự → 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user3Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{notAttendedEventId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{notAttendedEventId}}",
+                "reviews"
+              ]
+            },
+            "description": "Dùng sự kiện user3 **chưa từng đăng ký** (request 1 dò ra) nên luôn ra đúng `NOT_ATTENDED`, không bị `REVIEW_ALREADY_EXISTS` che mất.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = NOT_ATTENDED\", () => pm.expect(pm.response.json().error.code).to.eql(\"NOT_ATTENDED\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Báo cáo đánh giá",
           "request": {
             "method": "POST",
             "header": [
@@ -1475,7 +2012,7 @@
                 "report"
               ]
             },
-            "description": "1 lần/đánh giá, tối đa 10/ngày. Lần thứ hai → 409.",
+            "description": "1 lần / đánh giá, tối đa 10/ngày. Lần thứ hai → 409.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reasonCode\": \"SPAM\",\n  \"note\": \"Nội dung quảng cáo\"\n}",
@@ -1492,14 +2029,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Mã lý do sai → 400",
+          "name": "11. Mã lý do sai → 400",
           "request": {
             "method": "POST",
             "header": [
@@ -1525,7 +2069,7 @@
                 "report"
               ]
             },
-            "description": "reasonCode phải thuộc danh sách cho phép.",
+            "description": "`reasonCode` phải thuộc danh sách cho phép.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reasonCode\": \"SAI\"\n}",
@@ -1542,7 +2086,15 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
@@ -1552,10 +2104,67 @@
     },
     {
       "name": "05 · FR-A14 / A07 — Kiểm duyệt (ADMIN)",
-      "description": "Cần quyền ADMIN. Mọi hành động đều ghi audit_logs.",
+      "description": "Cần quyền `ADMIN`. Mọi hành động đều ghi `audit_logs`.\n\nRequest đầu tiên chọn một đánh giá `PENDING` và ghi vào `reviewId`.",
       "item": [
         {
-          "name": "Hàng chờ đánh giá",
+          "name": "1. Chọn đánh giá đang chờ duyệt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews?status=PENDING&size=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                },
+                {
+                  "key": "size",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Lấy 1 đánh giá `PENDING` → `reviewId`; nếu hết thì giữ giá trị cũ."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "if (pm.response.json().data.length) pm.collectionVariables.set(\"reviewId\", pm.response.json().data[0].id);",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Đúng trạng thái PENDING\", () => d.forEach(r => pm.expect(r.status).to.eql(\"PENDING\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Hàng chờ đánh giá (tất cả)",
           "request": {
             "method": "GET",
             "header": [
@@ -1576,7 +2185,7 @@
                 "reviews"
               ]
             },
-            "description": "Lọc theo status / eventId / rating."
+            "description": "Lọc theo `status` / `eventId` / `rating`."
           },
           "event": [
             {
@@ -1587,16 +2196,19 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Có đánh giá\", () => pm.expect(pm.response.json().data.length).to.be.above(0));",
+                  "pm.test(\"Có cờ và số báo cáo\", () => pm.expect(pm.response.json().data[0]).to.include.keys(\"flaggedCodes\",\"reportCount\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Không phải Admin → 403",
+          "name": "3. Không phải Admin → 403",
           "request": {
             "method": "GET",
             "header": [
@@ -1617,7 +2229,7 @@
                 "reviews"
               ]
             },
-            "description": ""
+            "description": "user1 không có quyền."
           },
           "event": [
             {
@@ -1625,14 +2237,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = FORBIDDEN\", () => pm.expect(pm.response.json().error.code).to.eql(\"FORBIDDEN\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Duyệt hiển thị",
+          "name": "4. Duyệt hiển thị",
           "request": {
             "method": "POST",
             "header": [
@@ -1659,7 +2279,7 @@
                 "approve"
               ]
             },
-            "description": "PENDING → VISIBLE. Nếu đã VISIBLE thì 409 (đã đúng trạng thái).",
+            "description": "PENDING → VISIBLE. Nếu đã VISIBLE thì 409.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reasonCode\": \"OTHER\",\n  \"note\": \"Nội dung hợp lệ\"\n}",
@@ -1676,14 +2296,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Ẩn đánh giá",
+          "name": "5. Ẩn đánh giá",
           "request": {
             "method": "POST",
             "header": [
@@ -1710,7 +2337,7 @@
                 "hide"
               ]
             },
-            "description": "Bắt buộc reasonCode.",
+            "description": "Bắt buộc `reasonCode`.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reasonCode\": \"OFFENSIVE\",\n  \"note\": \"Ngôn từ không phù hợp\"\n}",
@@ -1727,14 +2354,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Khôi phục đánh giá",
+          "name": "6. Khôi phục đánh giá",
           "request": {
             "method": "POST",
             "header": [
@@ -1778,14 +2412,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Thiếu reasonCode → 400",
+          "name": "7. Thiếu reasonCode → 400",
           "request": {
             "method": "POST",
             "header": [
@@ -1812,7 +2453,7 @@
                 "hide"
               ]
             },
-            "description": "reasonCode là bắt buộc.",
+            "description": "`reasonCode` là bắt buộc.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"note\": \"thiếu mã\"\n}",
@@ -1829,14 +2470,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Hàng chờ cờ kiểm duyệt",
+          "name": "8. Hàng chờ cờ kiểm duyệt",
           "request": {
             "method": "GET",
             "header": [
@@ -1864,7 +2513,7 @@
                 }
               ]
             },
-            "description": "source: ALL | HELD | REPORTED. Cờ suy ra từ reviews PENDING + audit_logs. Lưu cờ đầu tiên."
+            "description": "`source`: ALL | HELD | REPORTED. Cờ suy ra từ `reviews.PENDING` + `audit_logs`."
           },
           "event": [
             {
@@ -1875,18 +2524,23 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "if (pm.response.json().data.length) pm.collectionVariables.set(\"flagId\", pm.response.json().data[0].id);",
                   "const d = pm.response.json().data;",
-                  "if (d.length) pm.collectionVariables.set(\"flagId\", d[0].id);"
+                  "pm.test(\"Có cờ đang mở\", () => pm.expect(d.length).to.be.above(0));",
+                  "pm.test(\"Cờ có đủ trường\", () => pm.expect(d[0]).to.include.keys(\"id\",\"targetType\",\"reasonCode\",\"severity\",\"status\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Xác nhận vi phạm",
+          "name": "9. Xác nhận vi phạm",
           "request": {
             "method": "POST",
             "header": [
@@ -1931,14 +2585,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Bỏ qua cờ",
+          "name": "10. Bỏ qua cờ",
           "request": {
             "method": "POST",
             "header": [
@@ -1983,14 +2644,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Quét lại nội dung",
+          "name": "11. Quét lại nội dung",
           "request": {
             "method": "POST",
             "header": [
@@ -2016,7 +2684,7 @@
                 "rescan"
               ]
             },
-            "description": "Idempotent theo targetType. sinceDays giới hạn phạm vi quét.",
+            "description": "Idempotent theo `targetType`.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"targetType\": \"REVIEW\",\n  \"sinceDays\": 30\n}",
@@ -2036,10 +2704,11 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
-                  "pm.test(\"Có số lượng quét\", () => pm.expect(pm.response.json().data).to.have.property(\"scanned\"));"
+                  "pm.test(\"Có số liệu quét\", () => pm.expect(pm.response.json().data).to.include.keys(\"scanned\",\"flagged\",\"flagIds\"));"
                 ]
               }
             }
@@ -2049,10 +2718,10 @@
     },
     {
       "name": "06 · FR-U07 — Gợi ý AI",
-      "description": "Cache 15 phút; refresh tối đa 1 lần/phút. AI tắt → vẫn trả danh sách với lý do rule.",
+      "description": "Cache 15 phút; `refresh=true` tối đa 1 lần/phút. Khi AI bị tắt, danh sách **vẫn trả về** với `isFallback: true` và lý do do rule sinh.",
       "item": [
         {
-          "name": "Gợi ý cho tôi",
+          "name": "1. Gợi ý cho tôi",
           "request": {
             "method": "GET",
             "header": [
@@ -2089,19 +2758,24 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "if (pm.response.json().data.items.length) pm.collectionVariables.set(\"recommendedEventId\", pm.response.json().data.items[0].id);",
                   "const d = pm.response.json().data;",
-                  "if (d.items.length) pm.collectionVariables.set(\"recommendedEventId\", d.items[0].id);",
-                  "pm.test(\"Có meta gợi ý\", () => pm.expect(d.meta).to.have.property(\"isFallback\"));"
+                  "pm.test(\"Có danh sách gợi ý\", () => pm.expect(d.items).to.be.an(\"array\").that.is.not.empty);",
+                  "pm.test(\"meta có cờ fallback\", () => pm.expect(d.meta).to.include.keys(\"isFallback\",\"personalized\",\"engineVersion\"));",
+                  "pm.test(\"Mỗi mục có lý do\", () => d.items.forEach(i => pm.expect(i).to.include.keys(\"id\",\"reason\",\"reasonSource\")));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Làm mới gợi ý",
+          "name": "2. Làm mới gợi ý",
           "request": {
             "method": "GET",
             "header": [
@@ -2131,7 +2805,7 @@
                 }
               ]
             },
-            "description": "refresh=true bỏ cache; gọi quá 1 lần/phút → 429."
+            "description": "`refresh=true` bỏ cache; gọi quá 1 lần/phút → 429."
           },
           "event": [
             {
@@ -2139,14 +2813,14 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 429]\", () => pm.expect([200, 429]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP 200 hoặc 429 (giới hạn làm mới)\", () => pm.expect([200, 429]).to.include(pm.response.code));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Xem trước cho khách",
+          "name": "3. Xem trước cho khách",
           "request": {
             "method": "POST",
             "header": [
@@ -2167,7 +2841,7 @@
                 "preview"
               ]
             },
-            "description": "Không cần đăng nhập, không lưu lịch sử, không gọi AI (reasonSource = RULE).",
+            "description": "Không cần đăng nhập, không lưu lịch sử, không gọi AI (`reasonSource: RULE`).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"categoryIds\": [\n    9\n  ],\n  \"city\": \"Hà Nội\",\n  \"priceMode\": \"PAID_ONLY\",\n  \"maxBudgetVnd\": 500000,\n  \"eventFormat\": \"ONSITE\",\n  \"preferredDays\": [\n    \"WEEKEND\"\n  ],\n  \"limit\": 5\n}",
@@ -2187,16 +2861,19 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Khách dùng lý do RULE\", () => d.items.forEach(i => pm.expect(i.reasonSource).to.eql(\"RULE\")));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "priceMode sai → 400",
+          "name": "4. priceMode sai → 400",
           "request": {
             "method": "POST",
             "header": [
@@ -2217,7 +2894,7 @@
                 "preview"
               ]
             },
-            "description": "",
+            "description": "Chỉ nhận ANY | FREE_ONLY | PAID_ONLY.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"priceMode\": \"BOGUS\"\n}",
@@ -2234,14 +2911,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Không quan tâm",
+          "name": "5. Không quan tâm",
           "request": {
             "method": "POST",
             "header": [
@@ -2274,9 +2959,11 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"dismissed = true\", () => pm.expect(pm.response.json().data.dismissed).to.be.true);"
                 ]
               }
             }
@@ -2286,10 +2973,10 @@
     },
     {
       "name": "07 · FR-O06 / O27 — AI cho Organizer",
-      "description": "Cần organizer APPROVED (organizer1 = 8). organizer2 (9) đang PENDING → 403.",
+      "description": "Cần organizer **đã duyệt**. `organizer2` (PENDING) và organizer SUSPENDED đều bị 403.\n\nQuota: mô tả **10 lượt/giờ**, phân tích **5 lượt/ngày**.",
       "item": [
         {
-          "name": "AI viết mô tả sự kiện",
+          "name": "1. AI viết mô tả sự kiện",
           "request": {
             "method": "POST",
             "header": [
@@ -2315,7 +3002,7 @@
                 "event-description"
               ]
             },
-            "description": "Không tự lưu. Quota 10 lượt/giờ → 429 với extra.retryAfterSeconds.",
+            "description": "Không tự lưu. 429 khi hết quota — xem `error.extra.retryAfterSeconds`.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Đêm nhạc Acoustic mùa đông\",\n  \"categoryId\": 9,\n  \"format\": \"OFFLINE\",\n  \"startTime\": \"20:00 20/12/2026\",\n  \"location\": \"Nhà hát Thành phố\",\n  \"audience\": \"Sinh viên và người yêu nhạc\",\n  \"keyPoints\": [\n    \"Dàn nhạc giao hưởng\",\n    \"Khách mời quốc tế\",\n    \"Không gian ngoài trời\"\n  ],\n  \"tone\": \"FRIENDLY\",\n  \"length\": \"MEDIUM\",\n  \"variants\": 2\n}",
@@ -2332,9 +3019,14 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 429]\", () => pm.expect([200, 429]).to.include(pm.response.code));",
+                  "pm.test(\"HTTP 200 hoặc 429 (hết quota)\", () => pm.expect([200, 429]).to.include(pm.response.code));",
                   "if (pm.response.code === 200) {",
-                  "  pm.test(\"Có mô tả\", () => pm.expect(pm.response.json().data.descriptions.length).to.be.above(0));",
+                  "    const d = pm.response.json().data;",
+                  "    pm.test(\"Có phương án mô tả\", () => pm.expect(d.descriptions.length).to.be.above(0));",
+                  "    pm.test(\"source hợp lệ\", () => pm.expect(d.source).to.be.oneOf([\"AI\",\"RULE_UNAVAILABLE\"]));",
+                  "    pm.test(\"Có danh sách thông tin thiếu\", () => pm.expect(d.missingInfo).to.be.an(\"array\"));",
+                  "} else {",
+                  "    pm.test(\"429 kèm thời gian chờ\", () => pm.expect(pm.response.json().error.extra.retryAfterSeconds).to.be.a(\"number\"));",
                   "}"
                 ]
               }
@@ -2342,7 +3034,7 @@
           ]
         },
         {
-          "name": "Thiếu ý chính → 400",
+          "name": "2. Thiếu ý chính → 400",
           "request": {
             "method": "POST",
             "header": [
@@ -2368,7 +3060,7 @@
                 "event-description"
               ]
             },
-            "description": "keyPoints phải 3…10 ý.",
+            "description": "`keyPoints` phải 3…10 ý.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Thiếu ý chính\",\n  \"categoryId\": 9,\n  \"keyPoints\": [\n    \"một\"\n  ]\n}",
@@ -2385,14 +3077,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Organizer chưa duyệt → 403",
+          "name": "3. Organizer chưa duyệt → 403",
           "request": {
             "method": "POST",
             "header": [
@@ -2435,14 +3135,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = FORBIDDEN\", () => pm.expect(pm.response.json().error.code).to.eql(\"FORBIDDEN\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "AI phân tích sự kiện",
+          "name": "4. AI phân tích sự kiện",
           "request": {
             "method": "POST",
             "header": [
@@ -2452,7 +3160,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/ai-analysis",
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{organizerEventId}}/ai-analysis",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2461,11 +3169,11 @@
                 "v1",
                 "organizer",
                 "events",
-                "{{eventId}}",
+                "{{organizerEventId}}",
                 "ai-analysis"
               ]
             },
-            "description": "Quota 5 lượt/ngày; hết quota → trả phân tích rule kèm ghi chú (không 429)."
+            "description": "Hết quota thì trả phân tích rule kèm ghi chú (không 429).\n\n`organizerEventId` do folder 00 dò ra — luôn là sự kiện của organizer1."
           },
           "event": [
             {
@@ -2473,17 +3181,24 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 403]\", () => pm.expect([200, 403]).to.include(pm.response.code));",
-                  "if (pm.response.code === 200) {",
-                  "  pm.test(\"Có metrics\", () => pm.expect(pm.response.json().data).to.have.property(\"metrics\"));",
-                  "}"
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có metrics\", () => pm.expect(d.metrics).to.be.an(\"object\"));",
+                  "pm.test(\"Có khuyến nghị\", () => pm.expect(d.insights).to.be.an(\"array\"));",
+                  "pm.test(\"Có miễn trừ trách nhiệm\", () => pm.expect(d.disclaimer).to.be.a(\"string\").and.not.empty);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Phân tích sự kiện người khác → 403",
+          "name": "5. Phân tích sự kiện người khác → 403",
           "request": {
             "method": "POST",
             "header": [
@@ -2493,7 +3208,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/organizer/events/16/ai-analysis",
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{otherOrganizerEventId}}/ai-analysis",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2502,11 +3217,11 @@
                 "v1",
                 "organizer",
                 "events",
-                "16",
+                "{{otherOrganizerEventId}}",
                 "ai-analysis"
               ]
             },
-            "description": "16 (Hội thảo AI) thuộc organizer2."
+            "description": "Sự kiện thuộc organizer khác (folder 00 dò ra)."
           },
           "event": [
             {
@@ -2514,7 +3229,15 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = FORBIDDEN\", () => pm.expect(pm.response.json().error.code).to.eql(\"FORBIDDEN\"));"
                 ]
               }
             }
@@ -2524,10 +3247,10 @@
     },
     {
       "name": "08 · FR-O09 — Phân loại & nhãn",
-      "description": "Chỉ chủ sự kiện. Nhãn được chuẩn hoá và tạo tự động nếu chưa có.",
+      "description": "Chỉ chủ sự kiện. Nhãn được chuẩn hoá (chữ thường, gộp khoảng trắng) và tạo tự động nếu chưa có.",
       "item": [
         {
-          "name": "Xem phân loại hiện tại",
+          "name": "1. Xem phân loại hiện tại",
           "request": {
             "method": "GET",
             "header": [
@@ -2537,7 +3260,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{organizerEventId}}/classification",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2546,7 +3269,7 @@
                 "v1",
                 "organizer",
                 "events",
-                "{{eventId}}",
+                "{{organizerEventId}}",
                 "classification"
               ]
             },
@@ -2561,16 +3284,19 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có danh mục chính và nhãn\", () => pm.expect(d).to.include.keys(\"primaryCategory\",\"secondaryCategories\",\"tags\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Gắn danh mục + nhãn",
+          "name": "2. Gắn danh mục + nhãn",
           "request": {
             "method": "PUT",
             "header": [
@@ -2584,7 +3310,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{organizerEventId}}/classification",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2593,11 +3319,11 @@
                 "v1",
                 "organizer",
                 "events",
-                "{{eventId}}",
+                "{{organizerEventId}}",
                 "classification"
               ]
             },
-            "description": "≤ 2 danh mục phụ, ≤ 5 nhãn. Đổi danh mục chính của sự kiện APPROVED → requiresReReview = true.",
+            "description": "≤ 2 danh mục phụ, ≤ 5 nhãn. Đổi danh mục chính của sự kiện APPROVED → `requiresReReview: true`.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"primaryCategoryId\": 15,\n  \"secondaryCategoryIds\": [\n    16\n  ],\n  \"tags\": [\n    \"Acoustic\",\n    \"  Live   Music \"\n  ]\n}",
@@ -2617,20 +3343,23 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
+                  "const d = pm.response.json().data;",
                   "pm.test(\"Nhãn được chuẩn hoá\", () => {",
-                  "    const t = pm.response.json().data.tags.map(x => x.name);",
-                  "    pm.expect(t).to.include(\"live music\");",
-                  "});"
+                  "    const names = d.tags.map(t => t.name);",
+                  "    pm.expect(names).to.include(\"live music\");",
+                  "});",
+                  "pm.test(\"Có cờ duyệt lại\", () => pm.expect(d).to.have.property(\"requiresReReview\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Nhãn chứa từ khoá cấm → 400",
+          "name": "3. Nhãn chứa từ khoá cấm → 400",
           "request": {
             "method": "PUT",
             "header": [
@@ -2644,7 +3373,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{organizerEventId}}/classification",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2653,11 +3382,11 @@
                 "v1",
                 "organizer",
                 "events",
-                "{{eventId}}",
+                "{{organizerEventId}}",
                 "classification"
               ]
             },
-            "description": "Đọc danh sách cấm từ platform_settings key content.blocked_keywords.",
+            "description": "Đọc danh sách cấm từ `platform_settings.content.blocked_keywords`.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"primaryCategoryId\": 15,\n  \"secondaryCategoryIds\": [],\n  \"tags\": [\n    \"cá độ bóng đá\"\n  ]\n}",
@@ -2674,14 +3403,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Quá 5 nhãn → 400",
+          "name": "4. Quá 5 nhãn → 400",
           "request": {
             "method": "PUT",
             "header": [
@@ -2695,7 +3431,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/organizer/events/{{eventId}}/classification",
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{organizerEventId}}/classification",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2704,7 +3440,7 @@
                 "v1",
                 "organizer",
                 "events",
-                "{{eventId}}",
+                "{{organizerEventId}}",
                 "classification"
               ]
             },
@@ -2725,14 +3461,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Sự kiện người khác → 403",
+          "name": "5. Sự kiện người khác → 403",
           "request": {
             "method": "PUT",
             "header": [
@@ -2746,7 +3490,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/organizer/events/16/classification",
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{otherOrganizerEventId}}/classification",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -2755,11 +3499,11 @@
                 "v1",
                 "organizer",
                 "events",
-                "16",
+                "{{otherOrganizerEventId}}",
                 "classification"
               ]
             },
-            "description": "16 thuộc organizer2.",
+            "description": "Sự kiện thuộc organizer khác (folder 00 dò ra).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"primaryCategoryId\": 15,\n  \"secondaryCategoryIds\": [],\n  \"tags\": []\n}",
@@ -2776,14 +3520,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = FORBIDDEN\", () => pm.expect(pm.response.json().error.code).to.eql(\"FORBIDDEN\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Gợi ý nhãn",
+          "name": "6. Gợi ý nhãn",
           "request": {
             "method": "GET",
             "header": [
@@ -2814,7 +3566,7 @@
                 }
               ]
             },
-            "description": "Sắp theo mức độ dùng. Cần đăng nhập (dùng cho màn tạo sự kiện)."
+            "description": "Sắp theo mức độ dùng. Cần đăng nhập."
           },
           "event": [
             {
@@ -2825,9 +3577,12 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Mục có usageCount\", () => d.forEach(t => pm.expect(t).to.include.keys(\"id\",\"name\",\"usageCount\")));"
                 ]
               }
             }
@@ -2837,10 +3592,10 @@
     },
     {
       "name": "09 · FR-O03 — Dashboard Organizer",
-      "description": "Mỗi khối có status OK/ERROR; một khối lỗi không làm hỏng cả dashboard.",
+      "description": "Mỗi khối có `meta.status` = OK/ERROR; một khối lỗi **không** làm hỏng cả dashboard.",
       "item": [
         {
-          "name": "Dashboard 30 ngày",
+          "name": "1. Dashboard 30 ngày",
           "request": {
             "method": "GET",
             "header": [
@@ -2878,17 +3633,21 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
-                  "pm.test(\"Đủ 6 khối\", () => pm.expect(pm.response.json().data).to.include.all.keys(\"events\",\"registrations\",\"finance\",\"checkin\",\"reviews\",\"tasks\"));"
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Đủ 6 khối\", () => pm.expect(d).to.include.all.keys(\"events\",\"registrations\",\"finance\",\"checkin\",\"reviews\",\"tasks\"));",
+                  "pm.test(\"events có 10 khoá trạng thái\", () => pm.expect(Object.keys(d.events.counts).length).to.eql(10));",
+                  "pm.test(\"Mỗi khối có meta.status\", () => [\"events\",\"registrations\",\"finance\",\"checkin\",\"reviews\"].forEach(k => pm.expect(d[k].meta.status).to.be.oneOf([\"OK\",\"ERROR\"])));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Dashboard 7 ngày",
+          "name": "2. Dashboard 7 ngày",
           "request": {
             "method": "GET",
             "header": [
@@ -2915,7 +3674,7 @@
                 }
               ]
             },
-            "description": ""
+            "description": "Số liệu phải nhỏ hơn hoặc bằng khoảng 30 ngày."
           },
           "event": [
             {
@@ -2926,16 +3685,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"range = 7d\", () => pm.expect(pm.response.json().data.range).to.eql(\"7d\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Khoảng tuỳ chọn",
+          "name": "3. Khoảng tuỳ chọn",
           "request": {
             "method": "GET",
             "header": [
@@ -2981,16 +3742,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Có from/to\", () => pm.expect(pm.response.json().data).to.include.keys(\"from\",\"to\"))"
                 ]
               }
             }
           ]
         },
         {
-          "name": "range không hỗ trợ → 400",
+          "name": "4. range không hỗ trợ → 400",
           "request": {
             "method": "GET",
             "header": [
@@ -3017,7 +3780,7 @@
                 }
               ]
             },
-            "description": ""
+            "description": "Chỉ nhận 7d | 30d | custom."
           },
           "event": [
             {
@@ -3025,14 +3788,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Ngày đảo ngược → 400",
+          "name": "5. Ngày đảo ngược → 400",
           "request": {
             "method": "GET",
             "header": [
@@ -3075,14 +3846,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Organizer PENDING → 403",
+          "name": "6. Organizer PENDING → 403",
           "request": {
             "method": "GET",
             "header": [
@@ -3117,7 +3896,15 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = FORBIDDEN\", () => pm.expect(pm.response.json().error.code).to.eql(\"FORBIDDEN\"));"
                 ]
               }
             }
@@ -3127,10 +3914,10 @@
     },
     {
       "name": "10 · FR-A20 — Giám sát tích hợp (ADMIN)",
-      "description": "Trạng thái AI/PAYMENT/FCM, thống kê sử dụng AI, bật/tắt khẩn.",
+      "description": "Trạng thái AI / PAYMENT / FCM, thống kê sử dụng AI và công tắc bật/tắt khẩn cấp.",
       "item": [
         {
-          "name": "Trạng thái 3 dịch vụ",
+          "name": "1. Trạng thái 3 dịch vụ",
           "request": {
             "method": "GET",
             "header": [
@@ -3151,7 +3938,7 @@
                 "integrations"
               ]
             },
-            "description": "HEALTHY | DEGRADED | DOWN | UNKNOWN."
+            "description": "`HEALTHY` | `DEGRADED` | `DOWN` | `UNKNOWN`."
           },
           "event": [
             {
@@ -3162,17 +3949,21 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
-                  "pm.test(\"Có 3 dịch vụ\", () => pm.expect(pm.response.json().data.length).to.eql(3));"
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Đúng 3 dịch vụ\", () => pm.expect(d.length).to.eql(3));",
+                  "pm.test(\"Đúng tên dịch vụ\", () => pm.expect(d.map(x => x.name).sort()).to.eql([\"AI\",\"FCM\",\"PAYMENT\"]));",
+                  "pm.test(\"status hợp lệ\", () => d.forEach(s => pm.expect(s.status).to.be.oneOf([\"HEALTHY\",\"DEGRADED\",\"DOWN\",\"UNKNOWN\"])));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Sử dụng AI 24h",
+          "name": "2. Sử dụng AI 24h",
           "request": {
             "method": "GET",
             "header": [
@@ -3201,7 +3992,7 @@
                 }
               ]
             },
-            "description": "range: 1h | 24h | 7d."
+            "description": "`range`: 1h | 24h | 7d."
           },
           "event": [
             {
@@ -3212,17 +4003,20 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});",
-                  "pm.test(\"Có successRate\", () => pm.expect(pm.response.json().data).to.have.property(\"successRate\"));"
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Có successRate\", () => pm.expect(d).to.include.keys(\"total\",\"successRate\",\"byTaskType\",\"circuitState\"));",
+                  "pm.test(\"successRate trong 0..1\", () => pm.expect(d.successRate).to.be.within(0, 1));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Lỗi AI gần đây",
+          "name": "3. Lỗi AI gần đây",
           "request": {
             "method": "GET",
             "header": [
@@ -3252,7 +4046,7 @@
                 }
               ]
             },
-            "description": "User được che dạng 1*0."
+            "description": "Thông tin user được che dạng `1*0`."
           },
           "event": [
             {
@@ -3263,16 +4057,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Trả về mảng\", () => pm.expect(pm.response.json().data).to.be.an(\"array\"))"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Tra theo correlationId",
+          "name": "4. Tra theo correlationId",
           "request": {
             "method": "GET",
             "header": [
@@ -3296,7 +4092,7 @@
                 "{{correlationId}}"
               ]
             },
-            "description": "Lấy correlationId từ một response bất kỳ (header X-Correlation-Id). Không có → 404."
+            "description": "Lấy `X-Correlation-Id` từ một response bất kỳ rồi dán vào biến. Không có → 404."
           },
           "event": [
             {
@@ -3304,14 +4100,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 404]\", () => pm.expect([200, 404]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP thuộc [200, 404]\", () => pm.expect([200, 404]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Tắt khẩn RECOMMEND",
+          "name": "5. Tắt khẩn RECOMMEND",
           "request": {
             "method": "PUT",
             "header": [
@@ -3339,7 +4142,7 @@
                 "RECOMMEND"
               ]
             },
-            "description": "reason bắt buộc. Hiệu lực ngay (cache 5 giây).",
+            "description": "`reason` bắt buộc. Hiệu lực ngay (cache 5 giây).",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"enabled\": false,\n  \"reason\": \"Provider lỗi liên tục, tắt tạm\"\n}",
@@ -3359,16 +4162,20 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Đã tắt\", () => pm.expect(d.enabled).to.be.false);",
+                  "pm.test(\"Hiệu lực ngay\", () => pm.expect(d.effectiveImmediately).to.be.true);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Bật lại RECOMMEND",
+          "name": "6. Bật lại RECOMMEND",
           "request": {
             "method": "PUT",
             "header": [
@@ -3416,16 +4223,18 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Đã bật\", () => pm.expect(pm.response.json().data.enabled).to.be.true);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Thiếu lý do → 400",
+          "name": "7. Thiếu lý do → 400",
           "request": {
             "method": "PUT",
             "header": [
@@ -3470,14 +4279,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "taskType sai → 400",
+          "name": "8. taskType sai → 400",
           "request": {
             "method": "PUT",
             "header": [
@@ -3522,7 +4339,14 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
@@ -3532,10 +4356,10 @@
     },
     {
       "name": "11 · FR-A09 — Quản lý danh mục (ADMIN)",
-      "description": "Không có API xoá cứng — chỉ ẩn để giữ toàn vẹn dữ liệu lịch sử.",
+      "description": "Không có API xoá cứng — chỉ ẩn để giữ toàn vẹn dữ liệu lịch sử.\n\nMã danh mục sinh tự động mỗi lần chạy (`newCategoryCode`, `newChildCode`, `newLevel3Code`) nên **chạy lại không bị 409**.\n\nLuồng: tạo gốc → tạo con (cấp 2, hợp lệ) → thử tạo cấp 3 (400) → ẩn/bỏ ẩn → dọn dẹp bằng cách ẩn cả 2 danh mục vừa tạo (giữ số danh mục ACTIVE không tăng qua các lần chạy).",
       "item": [
         {
-          "name": "Cây danh mục đầy đủ",
+          "name": "1. Cây danh mục đầy đủ",
           "request": {
             "method": "GET",
             "header": [
@@ -3562,7 +4386,7 @@
                 }
               ]
             },
-            "description": "includeInactive=true để thấy cả danh mục đã ẩn."
+            "description": "`includeInactive=true` để thấy cả danh mục đã ẩn."
           },
           "event": [
             {
@@ -3573,16 +4397,19 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
-                  "});"
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Mỗi danh mục có eventCount\", () => d.forEach(c => pm.expect(c).to.include.keys(\"id\",\"code\",\"name\",\"eventCount\")));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Tạo danh mục",
+          "name": "2. Tạo danh mục",
           "request": {
             "method": "POST",
             "header": [
@@ -3607,10 +4434,10 @@
                 "categories"
               ]
             },
-            "description": "Mã và slug phải duy nhất. Lưu id vào `createdCategoryId`.",
+            "description": "Mã sinh tự động. Lưu `createdCategoryId` để các request sau dùng.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoryCode\": \"FOOD\",\n  \"categoryName\": \"Ẩm thực & Đồ uống\",\n  \"description\": \"Danh mục tạo từ Postman\",\n  \"parentCategoryId\": null,\n  \"sortOrder\": 7\n}",
+              "raw": "{\n  \"categoryCode\": \"{{newCategoryCode}}\",\n  \"categoryName\": \"Danh mục Postman {{newCategoryCode}}\",\n  \"description\": \"Tạo từ Postman\",\n  \"sortOrder\": 7\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3620,21 +4447,37 @@
           },
           "event": [
             {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"newCategoryCode\", \"PM\" + Date.now().toString().slice(-8));"
+                ]
+              }
+            },
+            {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
-                  "if (pm.response.code === 200) {",
-                  "  pm.collectionVariables.set(\"createdCategoryId\", pm.response.json().data.id);",
-                  "}"
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "pm.collectionVariables.set(\"createdCategoryId\", pm.response.json().data.id);",
+                  "pm.test(\"Đúng mã vừa gửi\", () => pm.expect(pm.response.json().data.code).to.eql(pm.collectionVariables.get(\"newCategoryCode\")));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Trùng mã → 409",
+          "name": "3. Trùng mã → 409",
           "request": {
             "method": "POST",
             "header": [
@@ -3659,10 +4502,10 @@
                 "categories"
               ]
             },
-            "description": "categoryCode đã tồn tại.",
+            "description": "Gửi lại đúng mã vừa tạo.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoryCode\": \"FOOD\",\n  \"categoryName\": \"Trùng mã\"\n}",
+              "raw": "{\n  \"categoryCode\": \"{{newCategoryCode}}\",\n  \"categoryName\": \"Trùng mã\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3676,14 +4519,157 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));"
+                  "pm.test(\"HTTP thuộc [409]\", () => pm.expect([409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = CONFLICT\", () => pm.expect(pm.response.json().error.code).to.eql(\"CONFLICT\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Sửa danh mục",
+          "name": "4. Tạo danh mục con",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories"
+              ]
+            },
+            "description": "`parentCategoryId` = danh mục gốc vừa tạo → cấp 2 hợp lệ.\n\nLưu `childCategoryId` để request sau thử tạo cấp 3.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryCode\": \"{{newChildCode}}\",\n  \"categoryName\": \"Danh mục con {{newChildCode}}\",\n  \"parentCategoryId\": \"{{createdCategoryId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"newChildCode\", \"PMC\" + Date.now().toString().slice(-7));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "",
+                  "// ---- lưu biến cho các request sau ----",
+                  "pm.collectionVariables.set(\"childCategoryId\", pm.response.json().data.id);",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Là cấp 2\", () => pm.expect(d.parentCategoryId).to.be.a(\"number\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Danh mục cấp 3 → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories"
+              ]
+            },
+            "description": "Chỉ hỗ trợ 2 cấp: parent phải là danh mục gốc. Dùng chính danh mục con vừa tạo làm parent → 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryCode\": \"{{newLevel3Code}}\",\n  \"categoryName\": \"Cấp 3\",\n  \"parentCategoryId\": \"{{childCategoryId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"newLevel3Code\", \"PML\" + Date.now().toString().slice(-7));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Sửa danh mục",
           "request": {
             "method": "PUT",
             "header": [
@@ -3709,10 +4695,10 @@
                 "{{createdCategoryId}}"
               ]
             },
-            "description": "version = updatedAt epoch millis; lệch → 409.",
+            "description": "`version` = `updatedAt` epoch millis; lệch → 409.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"categoryName\": \"Ẩm thực\",\n  \"slug\": \"am-thuc\",\n  \"sortOrder\": 7\n}",
+              "raw": "{\n  \"categoryName\": \"Danh mục Postman (đã sửa)\",\n  \"sortOrder\": 8\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3726,14 +4712,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"Tên đã đổi\", () => pm.expect(pm.response.json().data.name).to.contain(\"đã sửa\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Ẩn danh mục",
+          "name": "7. Ẩn danh mục con",
           "request": {
             "method": "POST",
             "header": [
@@ -3747,7 +4740,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}/hide",
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{childCategoryId}}/hide",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3756,11 +4749,11 @@
                 "v1",
                 "admin",
                 "categories",
-                "{{createdCategoryId}}",
+                "{{childCategoryId}}",
                 "hide"
               ]
             },
-            "description": "reason bắt buộc.",
+            "description": "`reason` bắt buộc.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reason\": \"Dọn dẹp danh mục test\"\n}",
@@ -3777,14 +4770,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 404]\", () => pm.expect([200, 404]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"active = false\", () => pm.expect(pm.response.json().data.active).to.be.false);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Bỏ ẩn danh mục",
+          "name": "8. Bỏ ẩn danh mục con",
           "request": {
             "method": "POST",
             "header": [
@@ -3794,7 +4794,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}/unhide",
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{childCategoryId}}/unhide",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3803,7 +4803,7 @@
                 "v1",
                 "admin",
                 "categories",
-                "{{createdCategoryId}}",
+                "{{childCategoryId}}",
                 "unhide"
               ]
             },
@@ -3815,14 +4815,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP thuộc [200, 409, 404]\", () => pm.expect([200, 409, 404]).to.include(pm.response.code));"
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
+                  "});",
+                  "pm.test(\"active = true\", () => pm.expect(pm.response.json().data.active).to.be.true);"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Ẩn không lý do → 400",
+          "name": "9. Ẩn không lý do → 400",
           "request": {
             "method": "POST",
             "header": [
@@ -3836,7 +4843,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}/hide",
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{childCategoryId}}/hide",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3845,11 +4852,11 @@
                 "v1",
                 "admin",
                 "categories",
-                "{{createdCategoryId}}",
+                "{{childCategoryId}}",
                 "hide"
               ]
             },
-            "description": "",
+            "description": "`reason` là bắt buộc.",
             "body": {
               "mode": "raw",
               "raw": "{}",
@@ -3866,14 +4873,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+                  "pm.test(\"HTTP thuộc [400]\", () => pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Sắp xếp lại thứ tự",
+          "name": "10. Sắp xếp lại thứ tự",
           "request": {
             "method": "PUT",
             "header": [
@@ -3919,8 +4934,9 @@
                   "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Envelope đúng chuẩn\", () => {",
                   "    const b = pm.response.json();",
-                  "    pm.expect(b).to.have.property(\"success\");",
-                  "    pm.expect(b).to.have.property(\"correlationId\");",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"correlationId\").that.is.a(\"string\");",
+                  "    pm.expect(b).to.have.property(\"data\");",
                   "});"
                 ]
               }
@@ -3928,7 +4944,7 @@
           ]
         },
         {
-          "name": "Không phải Admin → 403",
+          "name": "11. Không phải Admin → 403",
           "request": {
             "method": "GET",
             "header": [
@@ -3957,7 +4973,131 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                  "pm.test(\"HTTP thuộc [403]\", () => pm.expect([403]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = FORBIDDEN\", () => pm.expect(pm.response.json().error.code).to.eql(\"FORBIDDEN\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Dọn dẹp — ẩn danh mục con",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{childCategoryId}}/hide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories",
+                "{{childCategoryId}}",
+                "hide"
+              ]
+            },
+            "description": "Để mỗi lần chạy không tích thêm danh mục ACTIVE (giới hạn 50). Chạy lại lần hai sẽ nhận 409 — cả hai đều đúng.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Dọn dẹp sau khi test Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Dọn dẹp — ẩn danh mục gốc",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{adminId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/categories/{{createdCategoryId}}/hide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "categories",
+                "{{createdCategoryId}}",
+                "hide"
+              ]
+            },
+            "description": "Ẩn nốt danh mục gốc vừa tạo.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Dọn dẹp sau khi test Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP thuộc [200, 409]\", () => pm.expect([200, 409]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});"
                 ]
               }
             }
@@ -3967,10 +5107,10 @@
     },
     {
       "name": "12 · Hạ tầng chung",
-      "description": "Envelope, correlationId, route không tồn tại.",
+      "description": "Envelope, `X-Correlation-Id`, và cách Spring Security xử lý route không tồn tại.",
       "item": [
         {
-          "name": "CorrelationId được echo",
+          "name": "1. CorrelationId được echo",
           "request": {
             "method": "GET",
             "header": [
@@ -3990,7 +5130,7 @@
                 "categories"
               ]
             },
-            "description": "Server dùng lại X-Correlation-Id của client."
+            "description": "Server dùng lại `X-Correlation-Id` của client ở cả header và body."
           },
           "event": [
             {
@@ -4007,7 +5147,7 @@
           ]
         },
         {
-          "name": "Route không tồn tại (khách) → 401",
+          "name": "2. Route không tồn tại (khách) → 401",
           "request": {
             "method": "GET",
             "header": [],
@@ -4030,14 +5170,22 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));"
+                  "pm.test(\"HTTP thuộc [401]\", () => pm.expect([401]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = UNAUTHENTICATED\", () => pm.expect(pm.response.json().error.code).to.eql(\"UNAUTHENTICATED\"));"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Route không tồn tại (đã đăng nhập) → 404",
+          "name": "3. Route không tồn tại (đã đăng nhập) → 404",
           "request": {
             "method": "GET",
             "header": [
@@ -4057,7 +5205,7 @@
                 "khong-ton-tai"
               ]
             },
-            "description": "Đi qua security, không có handler."
+            "description": "Đi qua security nhưng không có handler."
           },
           "event": [
             {
@@ -4065,7 +5213,15 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                  "pm.test(\"HTTP thuộc [404]\", () => pm.expect([404]).to.include(pm.response.code));",
+                  "pm.test(\"Envelope lỗi đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", false);",
+                  "    pm.expect(b).to.have.property(\"error\");",
+                  "    pm.expect(b.error).to.have.property(\"code\").that.is.a(\"string\");",
+                  "    pm.expect(b.error).to.have.property(\"message\").that.is.a(\"string\");",
+                  "});",
+                  "pm.test(\"error.code = NOT_FOUND\", () => pm.expect(pm.response.json().error.code).to.eql(\"NOT_FOUND\"));"
                 ]
               }
             }

@@ -85,6 +85,7 @@ import java.time.temporal.ChronoUnit
  */
 @Component
 @Profile("dev")
+@org.springframework.core.annotation.Order(1)
 @ConditionalOnProperty(name = ["app.seed.enabled"], havingValue = "true")
 class DevDataSeeder(
     private val userRepository: UserRepository,

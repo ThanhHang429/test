@@ -6,7 +6,9 @@ Tài liệu này mô tả **toàn bộ API đã triển khai** cho phạm vi mod
 - Base URL: `http://localhost:8080`
 - Prefix: `/api/v1`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Postman collection: `backend/postman/ETicket-Backend.postman_collection.json`
+- Postman collection: `backend/postman/ETicket-Backend.postman_collection.json` (95 request, 13 folder)
+- Postman environment: `backend/postman/ETicket-Local.postman_environment.json`
+- Hướng dẫn test Postman: `backend/postman/README.md` — **chạy folder `00 · Setup` trước**
 - Smoke test: `backend/scripts/api-smoke.sh`
 
 ---
@@ -55,6 +57,15 @@ curl -H "X-User-Id: 10" http://localhost:8080/api/v1/me/preferences
 | 12 | user3@eticket.local | USER | đã check-in sự kiện COMPLETED → viết được đánh giá |
 
 Danh sách đầy đủ: `GET /api/v1/dev/accounts`.
+
+Profile `dev` còn tạo thêm **bộ dữ liệu demo** (xem mục 6):
+
+| Nhóm | Tài khoản |
+|---|---|
+| User thường | `user4@eticket.local` … `user27@eticket.local` (24 tài khoản, cùng mật khẩu) |
+| Organizer APPROVED | `organizer3@eticket.local` (Sài Gòn Show), `organizer4@eticket.local` (Đà Nẵng Events) |
+| Organizer SUSPENDED | `organizer5@eticket.local` — dùng để test 403 |
+| Organizer MORE_INFO | `organizer6@eticket.local` — dùng để test 403 |
 
 ---
 
@@ -601,26 +612,37 @@ Gợi ý nhãn theo mức độ dùng: `[{ "id": 7, "name": "Acoustic", "usageCo
 
 ```json
 { "success": true, "data": {
-  "range": { "from": "2026-10-02", "to": "2026-11-01", "days": 30 },
-  "asOf": "2026-11-01T02:00:00Z",
-  "events": { "status": "OK", "asOf": "...", "note": null,
-              "total": 10,
-              "byStatus": { "DRAFT": 1, "PENDING_REVIEW": 1, "REJECTED": 1,
-                            "UPCOMING": 4, "COMPLETED": 1, "SUSPENDED": 1, "CANCELLED": 1 } },
-  "registrations": { "status": "OK", "total": 3, "confirmed": 3, "cancelled": 0, "pending": 0 },
-  "finance": { "status": "OK", "verifiedAmount": 600000, "pendingAmount": 300000,
-               "refundedAmount": 0, "feeAmount": 0, "netAmount": 600000, "currency": "VND" },
-  "checkin": { "status": "OK", "checkedIn": 3, "totalTickets": 3, "rate": 1.0 },
-  "reviews": { "status": "OK", "averageRating": 4.25, "visible": 4, "newInRange": 4 },
-  "tasks": [ { "type": "EVENT_REJECTED", "eventId": 22, "title": "...",
-               "detail": "...", "dueAt": null, "priority": 3 } ],
-  "topEvents": [ { "eventId": 14, "title": "...", "verifiedAmount": 300000,
-                   "registrations": 0, "fillRate": 0.0 } ]
+  "range": "30d", "from": "2026-10-02", "to": "2026-11-01",
+  "asOf": "2026-11-01T05:51:14Z",
+  "events": {
+    "counts": { "DRAFT": 2, "PENDING_REVIEW": 1, "REVISION_REQUIRED": 0, "REJECTED": 2,
+                "APPROVED_UNPUBLISHED": 1, "ON_SALE": 0, "UPCOMING": 13,
+                "COMPLETED": 4, "SUSPENDED": 1, "CANCELLED": 1 },
+    "total": 25,
+    "meta": { "status": "OK", "asOf": "...", "note": null }
+  },
+  "registrations": { "confirmed": 13, "cancelled": 0, "waitlisted": 0,
+                     "ticketsIssued": 64, "ticketsCancelled": 0,
+                     "meta": { "status": "OK", "asOf": "...", "note": null } },
+  "finance": { "verifiedAmount": 11420000, "pendingAmount": 3300000, "refundedAmount": 300000,
+               "feeAmount": 0, "netAmount": 11420000, "currency": "VND",
+               "meta": { "status": "OK", "asOf": "...", "note": null } },
+  "checkin": { "checkedIn": 38, "ticketsIssued": 64, "checkinRate": 0.5938,
+               "meta": { "status": "OK", "asOf": "...", "note": null } },
+  "reviews": { "averageRating": 4.1, "totalVisible": 20, "newInRange": 19,
+               "meta": { "status": "OK", "asOf": "...", "note": null } },
+  "tasks": [ { "type": "EVENT_REJECTED", "eventId": 69, "title": "...",
+               "detail": "Sự kiện bị từ chối duyệt", "dueAt": null, "priority": 3 } ],
+  "topEvents": [ { "eventId": 36, "title": "...", "verifiedAmount": 2400000, "registrations": 0 } ]
 }}
 ```
 
-Mỗi khối có `status`: `OK` | `ERROR`. Một khối lỗi **không** làm hỏng cả dashboard
-(`note` ghi lý do).
+Mỗi khối có `meta.status`: `OK` | `ERROR`. Một khối lỗi **không** làm hỏng cả
+dashboard (`meta.note` ghi lý do).
+
+`events.counts` khoá cố định: `DRAFT`, `PENDING_REVIEW`, `REVISION_REQUIRED`,
+`REJECTED`, `APPROVED_UNPUBLISHED`, `ON_SALE`, `UPCOMING`, `COMPLETED`,
+`SUSPENDED`, `CANCELLED` (luôn trả đủ 10 khoá, giá trị 0 nếu không có).
 
 `tasks[].priority`: `1` = sự kiện diễn ra trong 48h, `2` = cần sửa hồ sơ,
 `3` = bị từ chối, `4` = loại vé sắp đóng bán.
@@ -760,3 +782,58 @@ BASE=http://192.168.1.10:8080 ./scripts/api-smoke.sh
 
 Smoke test tự dò `userId` từ `/api/v1/dev/accounts`, dùng `X-User-Id`, và
 **chạy lại được nhiều lần** mà không cần reset DB.
+
+---
+
+## 6. Dữ liệu mẫu
+
+Có **hai** seeder, cả hai chỉ chạy ở profile `dev`:
+
+| Seeder | Điều kiện | Vai trò |
+|---|---|---|
+| `DevDataSeeder` | `app.seed.enabled=true`, bảng `users` rỗng | Bộ dữ liệu gốc, id **cố định** (user 7–12, event 14–27, review 1–4) — smoke test và Postman dựa vào |
+| `DemoDataSeeder` | `app.seed.demo-enabled=true`, chưa có event `EVT-DEMO-%` | Bộ dữ liệu lớn, **chỉ thêm** (`INSERT`), không sửa/xoá dữ liệu gốc |
+
+### Khối lượng hiện có
+
+| Bảng | Số dòng |
+|---|---|
+| `users` / `organizer_profiles` | 34 / 6 |
+| `events` | 59 (36 đang mở, 11 đã kết thúc, 12 ở trạng thái khác) |
+| `ticket_types` | 108 |
+| `registrations` / `tickets` | 210 / 210 |
+| `check_ins` | 131 |
+| `orders` / `order_items` / `payments` | 98 / 98 / 91 |
+| `reviews` | 95 (VISIBLE 69, PENDING 14, HIDDEN 9, REMOVED 3 — số liệu trên DB hiện tại) |
+| `favorites` / `user_preferences` | 173 / 25 |
+| `event_categories` / `event_tags` | 29 / 24 |
+| `audit_logs` | 313 |
+| `ai_requests` / `integration_health_logs` | 81 / 103 |
+
+Đặc điểm dữ liệu được thiết kế để test:
+
+- **36 sự kiện đang mở** trải 6 thành phố, 3 hình thức (OFFLINE/ONLINE/HYBRID),
+  5 mức giá (miễn phí → 4 triệu), 4 cửa sổ bán vé (chưa mở / đang mở / đã đóng / hết vé).
+- **11 sự kiện đã kết thúc** trong 5–50 ngày gần đây → nguồn cho đánh giá, dashboard,
+  và ca `REVIEW_WINDOW_CLOSED` (sự kiện kết thúc > 30 ngày).
+- **Đơn hàng & thanh toán** trải 60 ngày với đủ trạng thái `PAID`, `PENDING_PAYMENT`,
+  `EXPIRED`, `REFUNDED`, `PARTIALLY_REFUNDED` → dashboard đổi số khi đổi `range`.
+- **Đánh giá** có phân bố sao lệch (42% 5★, 30% 4★…), 14 bài `PENDING` chứa SĐT/link
+  để test kiểm duyệt, 9 bài `HIDDEN` có lịch sử `audit_logs`.
+- **7 cờ `REPORTED`** sinh từ `audit_logs` (nhiều người báo cáo cùng một đánh giá).
+- **AI telemetry**: 81 request (có cả `FAILED` với `AI_TIMEOUT`), 103 log tích hợp
+  (PAYMENT/FCM có lỗi) → màn A20 có số liệu thật để xem.
+
+### Tạo lại từ đầu
+
+Dữ liệu demo là **idempotent** — khởi động lại không nhân đôi. Muốn tạo lại:
+
+```sql
+DELETE FROM audit_logs WHERE entity_id IN
+  (SELECT CAST(review_id AS CHAR) FROM reviews WHERE event_id IN
+     (SELECT event_id FROM events WHERE event_code LIKE 'EVT-DEMO-%'));
+-- rồi xoá lần lượt các bảng con của các event EVT-DEMO-% và cuối cùng là events
+```
+
+Cách gọn hơn: đổi `app.seed.demo-enabled=false` nếu chỉ muốn dùng dữ liệu gốc.
+Seeder **không bao giờ** xoá dữ liệu, nên an toàn trên DB dùng chung.

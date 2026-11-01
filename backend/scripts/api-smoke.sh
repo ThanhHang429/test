@@ -79,12 +79,14 @@ expect "GET /categories (công khai)" 200 "$st"
 st=$(call GET "/dev/accounts")
 expect "GET /dev/accounts (dev helper)" 200 "$st"
 
-ADMIN=$(jq -r '.data[] | select(.roles|index("ADMIN")) | .userId' < /tmp/smoke_body.json)
-ORG1=$(jq -r '.data[] | select(.email|startswith("organizer1")) | .userId' < /tmp/smoke_body.json)
-ORG2=$(jq -r '.data[] | select(.email|startswith("organizer2")) | .userId' < /tmp/smoke_body.json)
-U1=$(jq -r '.data[] | select(.email|startswith("user1")) | .userId' < /tmp/smoke_body.json)
-U2=$(jq -r '.data[] | select(.email|startswith("user2")) | .userId' < /tmp/smoke_body.json)
-U3=$(jq -r '.data[] | select(.email|startswith("user3")) | .userId' < /tmp/smoke_body.json)
+# Phải so khớp CHÍNH XÁC: dữ liệu demo có thêm user10..user27 nên startswith("user1")
+# sẽ khớp nhiều dòng và làm header X-User-Id bị hỏng.
+ADMIN=$(jq -r '[.data[] | select(.roles|index("ADMIN")) | .userId][0]' < /tmp/smoke_body.json)
+ORG1=$(jq -r '[.data[] | select(.email=="organizer1@eticket.local") | .userId][0]' < /tmp/smoke_body.json)
+ORG2=$(jq -r '[.data[] | select(.email=="organizer2@eticket.local") | .userId][0]' < /tmp/smoke_body.json)
+U1=$(jq -r '[.data[] | select(.email=="user1@eticket.local") | .userId][0]' < /tmp/smoke_body.json)
+U2=$(jq -r '[.data[] | select(.email=="user2@eticket.local") | .userId][0]' < /tmp/smoke_body.json)
+U3=$(jq -r '[.data[] | select(.email=="user3@eticket.local") | .userId][0]' < /tmp/smoke_body.json)
 
 if [[ -z "$ADMIN" || -z "$ORG1" || -z "$U1" ]]; then
   echo "$(red 'Không đọc được danh sách tài khoản dev. Kiểm tra profile dev và seeder.')"
@@ -158,7 +160,26 @@ expect "chưa đăng nhập → 401" 401 "$st"
 # ---------------------------------------------------------------------------
 section "4. FR-U20 — đánh giá"
 # ---------------------------------------------------------------------------
-PAST_ID=$(call GET "/events?includePast=true&size=50" >/dev/null; jq -r '[.data[] | select(.endAt < (now|todate))][0].id // empty' < /tmp/smoke_body.json)
+# Chọn sự kiện đã kết thúc mà U3 thực sự có thể đánh giá.
+# Dữ liệu demo có nhiều sự kiện COMPLETED nên không thể lấy phần tử đầu tiên.
+# Chỉ lấy sự kiện đã kết thúc TRONG 30 NGÀY (U20: quá hạn thì không đánh giá được).
+PAST_IDS=$(call GET "/events?includePast=true&size=50" >/dev/null; \
+  jq -r '.data[] | select(.endAt < (now|todate)) | select(.endAt > ((now-2592000)|todate)) | .id' < /tmp/smoke_body.json)
+
+PAST_ID=""
+# (a) ưu tiên sự kiện U3 đã check-in và chưa đánh giá → kiểm thử luồng tạo mới thật
+for id in $PAST_IDS; do
+  call GET "/events/$id" "$U3" >/dev/null
+  if [[ "$(jqv '.data.canReview')" == "true" ]]; then PAST_ID="$id"; break; fi
+done
+# (b) đã đánh giá hết → dùng lại sự kiện U3 đã tham dự (POST trả 409, vẫn kiểm tra được endpoint)
+if [[ -z "$PAST_ID" ]]; then
+  for id in $PAST_IDS; do
+    call GET "/events/$id" "$U3" >/dev/null
+    if [[ "$(jqv '.data.registrationStatus')" == "CONFIRMED" ]]; then PAST_ID="$id"; break; fi
+  done
+fi
+
 if [[ -z "$PAST_ID" ]]; then
   skip "đánh giá sự kiện đã kết thúc" "không có sự kiện COMPLETED trong dữ liệu mẫu"
 else
@@ -171,17 +192,19 @@ else
   expect "GET /events/{id}/reviews/summary" 200 "$st"
 
   st=$(call POST "/events/$PAST_ID/reviews" "$U3" '{"rating":5,"text":"Smoke test: sự kiện rất hay."}' "Idempotency-Key: smoke-$PAST_ID-$U3")
+  POST_ST="$st"
   expect_one_of "POST đánh giá (200 lần đầu / 409 nếu đã có)" "200 409" "$st"
 
   st=$(call POST "/events/$PAST_ID/reviews" "$U3" '{"rating":5,"text":"Smoke test: sự kiện rất hay."}')
   expect "đánh giá trùng → 409" 409 "$st"
 
-  # Chạy lại script trong 7 ngày với cùng user sẽ hết lượt sửa (tối đa 3 lần) → 409 REVIEW_EDIT_LIMIT.
   st=$(call PUT "/events/$PAST_ID/reviews/me" "$U3" '{"rating":4,"text":"Smoke test: cập nhật đánh giá."}')
-  if [[ "$st" == "409" ]]; then
-    expect "PUT /events/{id}/reviews/me (đã hết lượt sửa)" REVIEW_EDIT_LIMIT "$(jqv '.error.code')"
-  else
+  if [[ "$POST_ST" == "200" ]]; then
+    # Vừa tạo mới → chắc chắn còn hạn sửa.
     expect "PUT /events/{id}/reviews/me" 200 "$st"
+  else
+    # Dùng lại đánh giá cũ: có thể hết 7 ngày (403) hoặc hết 3 lượt sửa (409) — cả hai đều đúng.
+    expect_one_of "PUT /events/{id}/reviews/me (đánh giá cũ)" "200 403 409" "$st"
   fi
 
   st=$(call GET "/me/reviews" "$U3")

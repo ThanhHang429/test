@@ -19,6 +19,8 @@ app:
     dev-header-enabled: true
   seed:
     enabled: true
+    # Bộ dữ liệu demo quy mô lớn (chạy sau DevDataSeeder, idempotent, không sửa dữ liệu cũ).
+    demo-enabled: true
   ai:
     provider: mock
 
