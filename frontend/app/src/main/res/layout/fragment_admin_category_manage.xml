@@ -1,6 +1,389 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Màn hình CategoryManage: Quản lý danh mục sự kiện | FR-A09 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- FR-A09: danh mục, từ khóa cấm/tên miền và nội dung hướng dẫn trong một màn 3 tab. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/brand_background" />
+    android:layout_height="match_parent"
+    android:background="@color/ds_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ds_top_bar_height"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/ds_content_margin"
+        android:paddingEnd="@dimen/ds_content_margin">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hc_cat_title"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.H3" />
+
+            <TextView
+                android:id="@+id/tvCatCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                tools:text="7/50 danh mục · 9/500 từ khóa" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabsCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_content_margin"
+        android:layout_marginTop="@dimen/ds_space_8"
+        android:layout_marginEnd="@dimen/ds_content_margin"
+        android:background="@color/ds_surface"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/ds_primary"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/ds_primary"
+        app:tabTextColor="@color/ds_text_muted" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Tab 1: cây danh mục -->
+        <FrameLayout
+            android:id="@+id/groupCategories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCategories"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/ds_space_8"
+                android:paddingBottom="@dimen/ds_space_16" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabAddCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/ds_space_16"
+                android:contentDescription="@string/hc_cat_add"
+                app:backgroundTint="@color/ds_primary"
+                app:srcCompat="@drawable/ic_ds_add"
+                app:tint="@color/white" />
+
+            <com.eventapp.app.ui.common.view.EmptyStateView
+                android:id="@+id/emptyCategories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- Tab 2: từ khóa cấm / tên miền -->
+        <LinearLayout
+            android:id="@+id/groupRules"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupRuleKind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/ds_content_margin"
+                    android:paddingTop="@dimen/ds_space_8"
+                    android:paddingEnd="@dimen/ds_content_margin"
+                    app:chipSpacingHorizontal="@dimen/ds_space_8"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipRuleKindKeyword"
+                        style="@style/Widget.EventApp.Ds.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/hc_cat_kind_keyword" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipRuleKindDomain"
+                        style="@style/Widget.EventApp.Ds.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hc_cat_kind_domain" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.EventApp.Ds.Card.Soft"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_content_margin"
+                android:layout_marginTop="@dimen/ds_space_8"
+                android:layout_marginEnd="@dimen/ds_content_margin">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/ds_space_12">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutRuleTerm"
+                        style="@style/Widget.EventApp.Ds.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hc_cat_rule_hint">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etRuleTerm"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:maxLength="50"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        android:text="@string/hc_cat_rule_label_match"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupRuleMatch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        app:chipSpacingHorizontal="@dimen/ds_space_6"
+                        app:selectionRequired="true"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipMatchContains"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/hc_cat_rule_match_contains" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipMatchWord"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_cat_rule_match_word" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        android:text="@string/hc_cat_rule_label_scope"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupRuleScope"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        app:chipSpacingHorizontal="@dimen/ds_space_6"
+                        app:singleLine="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipScopeEventText"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/hc_cat_rule_scope_event" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipScopeTag"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/hc_cat_rule_scope_tag" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipScopeReview"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_cat_rule_scope_review" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_8"
+                        android:text="@string/hc_cat_rule_label_severity"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupRuleSeverity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="@dimen/ds_space_6"
+                        app:selectionRequired="true"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipSeverityLow"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_mod_severity_low" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipSeverityMedium"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/hc_mod_severity_medium" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipSeverityHigh"
+                            style="@style/Widget.EventApp.Ds.Chip.Preset"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_mod_severity_high" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAddRule"
+                        style="@style/Widget.EventApp.Ds.Button.Primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/ds_space_12"
+                        android:text="@string/hc_cat_rule_add" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tvRuleCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_content_margin"
+                android:layout_marginTop="@dimen/ds_space_8"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                tools:text="6/500 mục" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRules"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="@dimen/ds_space_16" />
+
+                <com.eventapp.app.ui.common.view.EmptyStateView
+                    android:id="@+id/emptyRules"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- Tab 3: nội dung hướng dẫn -->
+        <FrameLayout
+            android:id="@+id/groupFaqs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFaqs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/ds_space_8"
+                android:paddingBottom="@dimen/ds_space_16" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabAddFaq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/ds_space_16"
+                android:contentDescription="@string/hc_cat_faq_add"
+                app:backgroundTint="@color/ds_primary"
+                app:srcCompat="@drawable/ic_ds_add"
+                app:tint="@color/white" />
+
+            <com.eventapp.app.ui.common.view.EmptyStateView
+                android:id="@+id/emptyFaqs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <com.eventapp.app.ui.common.view.SkeletonLayout
+            android:id="@+id/skeletonCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:padding="@dimen/ds_content_margin"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ds_skeleton_height"
+                android:layout_marginBottom="@dimen/ds_space_12"
+                android:background="@drawable/bg_ds_skeleton" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ds_skeleton_height"
+                android:layout_marginBottom="@dimen/ds_space_12"
+                android:background="@drawable/bg_ds_skeleton" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ds_skeleton_height"
+                android:layout_marginBottom="@dimen/ds_space_12"
+                android:background="@drawable/bg_ds_skeleton" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/ds_skeleton_height"
+                android:background="@drawable/bg_ds_skeleton" />
+        </com.eventapp.app.ui.common.view.SkeletonLayout>
+
+        <com.eventapp.app.ui.common.view.ErrorStateView
+            android:id="@+id/errorCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

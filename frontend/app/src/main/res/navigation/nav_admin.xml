@@ -49,7 +49,23 @@
     <fragment
         android:id="@+id/content_moderationFragment"
         android:name="com.eventapp.app.ui.admin.event.ContentModerationFragment"
-        tools:layout="@layout/fragment_admin_event_content_moderation" />
+        tools:layout="@layout/fragment_admin_event_content_moderation">
+        <argument
+            android:name="startTab"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+
+    <!-- FR-A14 tách thành màn riêng: cùng fragment nhưng ẩn thanh tab, chỉ hiện đánh giá. -->
+    <fragment
+        android:id="@+id/review_moderationFragment"
+        android:name="com.eventapp.app.ui.admin.event.ContentModerationFragment"
+        tools:layout="@layout/fragment_admin_event_content_moderation">
+        <argument
+            android:name="reviewsOnly"
+            android:defaultValue="true"
+            app:argType="boolean" />
+    </fragment>
 
     <fragment
         android:id="@+id/event_monitorFragment"

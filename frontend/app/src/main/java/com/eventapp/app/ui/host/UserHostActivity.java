@@ -61,9 +61,13 @@ public class UserHostActivity extends AppCompatActivity {
             int bottomMargin = bars.bottom + baseGap;
             if (params.bottomMargin != bottomMargin) {
                 params.bottomMargin = bottomMargin;
-                navBar.setLayoutParams(params);
+                view.post(() -> navBar.setLayoutParams(params));
             }
-            return insets;
+            // Safe area đã xử lý thủ công ở đây; chặn inset xuống con để BottomNavigationView
+            // không cộng thêm padding đáy lần nữa (trước đây làm thanh cao thêm ~24dp).
+            return new WindowInsetsCompat.Builder(insets)
+                    .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.NONE)
+                    .build();
         });
     }
 }

@@ -43,11 +43,15 @@ import java.util.Locale;
 /**
  * FR-O27 analysis screen: event picker, backend metrics, daily chart, AI summary and linked
  * suggestions. No control here changes price, capacity or sales settings (O27-R03).
+ *
+ * <p>Khi được nhúng làm tab "Phân tích" trong chi tiết sự kiện, {@link #ARG_EMBEDDED} ẩn thanh
+ * tiêu đề và bộ chọn sự kiện vì màn cha đã chốt sự kiện.
  */
 public class AiInsightFragment extends Fragment {
 
     public static final String ARG_EVENT_ID = "arg_event_id";
     public static final String ARG_EVENT_TITLE = "arg_event_title";
+    public static final String ARG_EMBEDDED = "arg_embedded";
 
     private final SimpleDateFormat timeFormat =
             new SimpleDateFormat("HH:mm dd/MM", new Locale("vi", "VN"));
@@ -111,8 +115,17 @@ public class AiInsightFragment extends Fragment {
         if (eventTitle != null && !eventTitle.isEmpty()) {
             eventSubtitle.setText(eventTitle);
         }
+        applyEmbedded(args != null && args.getBoolean(ARG_EMBEDDED, false));
         viewModel.selectEvent(eventId);
         observe();
+    }
+
+    private void applyEmbedded(boolean embedded) {
+        if (!embedded) {
+            return;
+        }
+        requireView().findViewById(R.id.barInsight).setVisibility(View.GONE);
+        requireView().findViewById(R.id.tilInsightEvent).setVisibility(View.GONE);
     }
 
     private void bindViews(View view) {
@@ -191,8 +204,12 @@ public class AiInsightFragment extends Fragment {
     }
 
     private void setupStates() {
-        swipeRefresh.setColorSchemeResources(R.color.ds_primary);
+        swipeRefresh.setColorSchemeResources(R.color.ds_organizer);
         swipeRefresh.setOnRefreshListener(() -> viewModel.refresh());
+
+        // Cột biểu đồ theo colorPrimary để khu Nhà tổ chức (teal) không còn cột màu tím.
+        chart.setBarColor(com.google.android.material.color.MaterialColors.getColor(
+                chart, androidx.appcompat.R.attr.colorPrimary));
 
         errorState.setTitle(R.string.hc_insight_error_title);
         errorState.setMessage(R.string.hc_insight_error_message);

@@ -172,7 +172,7 @@
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chipEventFormatOnsite"
-                                style="@style/Widget.EventApp.Ds.Chip.Filter"
+                                style="@style/Widget.EventApp.Organizer.Chip.Filter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:checked="true"
@@ -180,7 +180,7 @@
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chipEventFormatOnline"
-                                style="@style/Widget.EventApp.Ds.Chip.Filter"
+                                style="@style/Widget.EventApp.Organizer.Chip.Filter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/hc_aidesc_format_online" />
@@ -234,7 +234,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnEventFormAddKeyPoint"
-                                style="@style/Widget.EventApp.Ds.Button.Outlined"
+                                style="@style/Widget.EventApp.Organizer.Button.Outlined"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="@dimen/ds_space_8"
@@ -295,7 +295,7 @@
                                 android:layout_height="@dimen/ds_icon_16"
                                 android:contentDescription="@null"
                                 android:src="@drawable/ic_ds_ai_sparkle"
-                                app:tint="@color/ds_primary" />
+                                app:tint="@color/ds_organizer" />
 
                             <TextView
                                 android:id="@+id/tvEventFormAiLabel"
@@ -305,7 +305,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/hc_aidesc_ai_label"
                                 android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
-                                android:textColor="@color/ds_primary" />
+                                android:textColor="@color/ds_organizer" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -317,12 +317,12 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnEventFormAi"
-                                style="@style/Widget.EventApp.Ds.Button.Outlined"
+                                style="@style/Widget.EventApp.Organizer.Button.Outlined"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/hc_aidesc_open"
                                 app:icon="@drawable/ic_ds_ai_sparkle"
-                                app:iconTint="@color/ds_primary" />
+                                app:iconTint="@color/ds_organizer" />
 
                             <TextView
                                 android:id="@+id/tvEventFormAiReason"
@@ -377,13 +377,13 @@
                 android:layout_marginBottom="@dimen/ds_space_8"
                 android:indeterminate="true"
                 android:visibility="gone"
-                app:indicatorColor="@color/ds_primary"
-                app:trackColor="@color/ds_primary_soft"
+                app:indicatorColor="@color/ds_organizer"
+                app:trackColor="@color/ds_organizer_soft"
                 tools:visibility="gone" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEventFormSave"
-                style="@style/Widget.EventApp.Ds.Button.Primary"
+                style="@style/Widget.EventApp.Organizer.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/hc_o09_save"

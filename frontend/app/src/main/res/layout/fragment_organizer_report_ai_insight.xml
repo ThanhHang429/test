@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/barInsight"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ds_top_bar_height"
         android:gravity="center_vertical"
@@ -59,7 +60,7 @@
             android:padding="@dimen/ds_space_12"
             android:scaleType="centerInside"
             android:src="@drawable/ic_ds_refresh"
-            app:tint="@color/ds_primary" />
+            app:tint="@color/ds_organizer" />
     </LinearLayout>
 
     <FrameLayout

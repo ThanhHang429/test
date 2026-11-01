@@ -30,6 +30,8 @@
     <color name="ds_primary_soft">#FFE2DFFF</color>
     <color name="ds_secondary">#FF712AE2</color>
     <color name="ds_secondary_soft">#FFEADDFF</color>
+    <color name="ds_secondary_container">#FF8A4CFC</color>
+    <color name="ds_on_secondary_container">#FFFFFBFF</color>
     <color name="ds_cta">#FFFF5722</color>
     <color name="ds_cta_dark">#FFE64A19</color>
 
@@ -63,9 +65,14 @@
     <color name="ds_info">#FF0EA5E9</color>
     <color name="ds_info_dark">#FF0369A1</color>
     <color name="ds_info_soft">#FFF0F9FF</color>
+    <!-- Sắc thái phụ dùng cho badge/ô KPI ở màn Tổng quan quản trị (lấy từ palette Stitch) -->
+    <color name="ds_tertiary_soft">#FFFFDBD1</color>
+    <color name="ds_tertiary_text">#FF862200</color>
 
     <!-- Role accents -->
     <color name="ds_organizer">#FF0F766E</color>
+    <color name="ds_organizer_dark">#FF115E59</color>
+    <color name="ds_organizer_container">#FF0D9488</color>
     <color name="ds_organizer_soft">#FFF0FDFA</color>
     <color name="ds_organizer_bright">#FF14B8A6</color>
     <color name="ds_admin_risk">#FFE11D48</color>

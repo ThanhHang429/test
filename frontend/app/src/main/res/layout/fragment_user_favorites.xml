@@ -13,24 +13,12 @@
         android:layout_height="@dimen/ds_top_bar_height"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/ds_space_4"
+        android:paddingStart="@dimen/ds_content_margin"
         android:paddingEnd="@dimen/ds_space_16">
-
-        <ImageButton
-            android:id="@+id/btnFavBack"
-            android:layout_width="@dimen/ds_touch_target"
-            android:layout_height="@dimen/ds_touch_target"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/hc_fav_back"
-            android:padding="@dimen/ds_space_12"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_ds_back"
-            app:tint="@color/ds_text" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/ds_space_4"
             android:layout_weight="1"
             android:orientation="vertical">
 

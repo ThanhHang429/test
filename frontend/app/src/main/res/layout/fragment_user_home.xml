@@ -101,23 +101,6 @@
             </LinearLayout>
 
             <FrameLayout
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="@dimen/ds_space_2">
-
-                <ImageButton
-                    android:id="@+id/btnHomeFavorites"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/hc_home_favorites"
-                    android:padding="@dimen/ds_space_6"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_ds_heart"
-                    app:tint="@color/ds_text" />
-            </FrameLayout>
-
-            <FrameLayout
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="@dimen/ds_space_2">
@@ -246,7 +229,7 @@
                 android:clipToPadding="false"
                 android:fillViewport="true"
                 android:overScrollMode="never"
-                android:paddingBottom="@dimen/ds_space_24">
+                android:paddingBottom="@dimen/ds_nav_bottom_padding">
 
                 <LinearLayout
                     android:layout_width="match_parent"

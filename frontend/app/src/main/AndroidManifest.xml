@@ -44,6 +44,11 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Chọn khu vực kiểm thử thay cho đăng nhập, chỉ mở ở bản debug -->
+        <activity
+            android:name=".ui.host.RolePickerActivity"
+            android:exported="false" />
+
         <!-- 3 vùng chức năng sau khi đăng nhập | FR-U03, FR-O02, FR-A01 -->
         <activity
             android:name=".ui.host.UserHostActivity"

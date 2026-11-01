@@ -124,8 +124,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupHeader(View view) {
-        view.findViewById(R.id.btnHomeFavorites).setOnClickListener(v ->
-                navigate(R.id.favoritesFragment));
         view.findViewById(R.id.btnHomeNotifications).setOnClickListener(v ->
                 navigate(R.id.notification_listFragment));
         view.findViewById(R.id.btnHomeLocation).setOnClickListener(v -> showComingSoon());
@@ -272,7 +270,6 @@ public class HomeFragment extends Fragment {
         RecyclerView heroList = view.findViewById(R.id.rvHomeHero);
         heroList.setLayoutManager(new LinearLayoutManager(requireContext(),
                 LinearLayoutManager.HORIZONTAL, false));
-        heroList.setHasFixedSize(true);
         new PagerSnapHelper().attachToRecyclerView(heroList);
         heroAdapter = new EventAdapter(EventAdapter.Mode.HERO);
         heroAdapter.setOnEventActionListener(eventActions);

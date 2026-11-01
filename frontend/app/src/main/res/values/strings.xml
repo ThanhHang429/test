@@ -19,7 +19,10 @@
 
     <!-- Bottom navigation: Admin -->
     <string name="nav_admin_dashboard">Tổng quan</string>
-    <string name="nav_review_queue">Duyệt</string>
+    <string name="nav_admin_moderation">Kiểm duyệt</string>
+    <string name="nav_admin_categories">Danh mục</string>
+    <string name="nav_admin_integrations">Tích hợp</string>
+    <string name="nav_review_queue">Đánh giá</string>
     <string name="nav_transactions">Giao dịch</string>
     <string name="nav_support">Hỗ trợ</string>
     <string name="nav_audit_log">Nhật ký</string>

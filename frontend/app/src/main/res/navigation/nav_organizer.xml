@@ -58,7 +58,8 @@
 
         <argument
             android:name="arg_key_points"
-            app:argType="stringArrayList" />
+            app:argType="string[]"
+            app:nullable="true" />
 
         <argument
             android:name="arg_audience"
@@ -162,9 +163,9 @@
         tools:layout="@layout/fragment_organizer_report_event_report" />
 
     <fragment
-        android:id="@+id/ai_insightFragment"
-        android:name="com.eventapp.app.ui.organizer.report.AiInsightFragment"
-        tools:layout="@layout/fragment_organizer_report_ai_insight">
+        android:id="@+id/organizer_event_detailFragment"
+        android:name="com.eventapp.app.ui.organizer.event.OrganizerEventDetailFragment"
+        tools:layout="@layout/fragment_organizer_event_detail">
 
         <argument
             android:name="arg_event_id"
@@ -176,6 +177,11 @@
             android:defaultValue="@null"
             app:nullable="true"
             app:argType="string" />
+
+        <argument
+            android:name="arg_tab"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
 
     <fragment

@@ -5,6 +5,7 @@ import com.eventapp.app.ui.model.EventUiModel;
 import com.eventapp.app.core.enums.EventCategory;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /** Dummy catalogue used until the event API and SQLite cache are available. */
@@ -16,7 +17,13 @@ public final class SampleEventData {
     }
 
     public static List<EventUiModel> createEvents() {
-        long now = System.currentTimeMillis();
+        // Neo về 00:00 hôm nay để giờ bắt đầu luôn tròn (19:00 thay vì 19:37) trên card.
+        Calendar midnight = Calendar.getInstance();
+        midnight.set(Calendar.HOUR_OF_DAY, 0);
+        midnight.set(Calendar.MINUTE, 0);
+        midnight.set(Calendar.SECOND, 0);
+        midnight.set(Calendar.MILLISECOND, 0);
+        long now = midnight.getTimeInMillis();
         List<EventUiModel> events = new ArrayList<>();
 
         events.add(new EventUiModel.Builder()

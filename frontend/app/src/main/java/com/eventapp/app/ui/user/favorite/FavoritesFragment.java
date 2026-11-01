@@ -22,6 +22,7 @@ import com.eventapp.app.ui.common.adapter.EventAdapter;
 import com.eventapp.app.ui.user.favorite.adapter.FavoriteAdapter;
 import com.eventapp.app.ui.common.view.EmptyStateView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
+import com.eventapp.app.ui.common.view.NavBarSpacing;
 import com.eventapp.app.ui.common.view.SectionHeaderView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
 import com.eventapp.app.ui.user.home.EventListFragment;
@@ -71,6 +72,7 @@ public class FavoritesFragment extends Fragment {
         setupFilters();
         setupStates();
         observe();
+        NavBarSpacing.padBottomForNavBar(view, view.findViewById(R.id.scrollFavorites), 8);
     }
 
     private void bindViews(View view) {
@@ -87,9 +89,6 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void setupToolbar() {
-        requireView().findViewById(R.id.btnFavBack).setOnClickListener(v ->
-                Navigation.findNavController(requireView()).popBackStack());
-
         ((SectionHeaderView) suggestionHeader).setTitle(R.string.hc_fav_suggestions_title);
         ((SectionHeaderView) suggestionHeader).setActionText(R.string.hc_home_see_all);
         ((SectionHeaderView) suggestionHeader).setOnActionClickListener(v ->

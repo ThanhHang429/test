@@ -15,6 +15,8 @@ public class OrganizerHostActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // Áp overlay trước khi inflate để các component đọc ?attr/colorPrimary ra teal.
+        getTheme().applyStyle(R.style.ThemeOverlay_EventApp_Organizer, true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer_host);
 

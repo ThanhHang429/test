@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FR-A20: tắt công tắc tác vụ AI bắt buộc nhập lý do. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/ds_space_24"
+    android:paddingTop="@dimen/ds_space_8"
+    android:paddingEnd="@dimen/ds_space_24">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutTaskReason"
+        style="@style/Widget.EventApp.Ds.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hc_health_reason_hint"
+        app:counterEnabled="true"
+        app:counterMaxLength="200">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTaskReason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|start"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="200"
+            android:maxLines="4"
+            android:minLines="2"
+            android:paddingTop="@dimen/ds_space_12"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.BodyM" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tvTaskReasonError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_8"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+        android:textColor="@color/ds_danger_dark"
+        android:visibility="gone"
+        tools:text="Nhập ít nhất 10 ký tự"
+        tools:visibility="visible" />
+</LinearLayout>

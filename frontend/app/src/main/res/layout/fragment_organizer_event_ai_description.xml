@@ -109,7 +109,7 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiToneProfessional"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
@@ -117,14 +117,14 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiToneFriendly"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hc_aidesc_tone_friendly" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiToneFormal"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hc_aidesc_tone_formal" />
@@ -148,14 +148,14 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiLengthShort"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hc_aidesc_length_short" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiLengthMedium"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
@@ -163,7 +163,7 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiLengthLong"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hc_aidesc_length_long" />
@@ -187,7 +187,7 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiVariant1"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
@@ -195,14 +195,14 @@
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiVariant2"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hc_aidesc_variant_2" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAiVariant3"
-                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            style="@style/Widget.EventApp.Organizer.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hc_aidesc_variant_3" />
@@ -240,8 +240,8 @@
                 android:layout_marginEnd="@dimen/ds_content_margin"
                 android:indeterminate="true"
                 android:visibility="gone"
-                app:indicatorColor="@color/ds_primary"
-                app:trackColor="@color/ds_primary_soft"
+                app:indicatorColor="@color/ds_organizer"
+                app:trackColor="@color/ds_organizer_soft"
                 tools:visibility="visible" />
 
             <com.google.android.material.tabs.TabLayout
@@ -412,7 +412,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAiDescRetry"
-                    style="@style/Widget.EventApp.Ds.Button.Outlined"
+                    style="@style/Widget.EventApp.Organizer.Button.Outlined"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/ds_space_8"
@@ -454,7 +454,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAiDescUndo"
-                style="@style/Widget.EventApp.Ds.Button.Text"
+                style="@style/Widget.EventApp.Organizer.Button.Text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -463,7 +463,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAiDescRegenerate"
-                style="@style/Widget.EventApp.Ds.Button.Outlined"
+                style="@style/Widget.EventApp.Organizer.Button.Outlined"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/ds_space_8"
@@ -473,7 +473,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAiDescUse"
-            style="@style/Widget.EventApp.Ds.Button.Primary"
+            style="@style/Widget.EventApp.Organizer.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ds_space_8"

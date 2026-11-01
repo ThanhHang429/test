@@ -269,7 +269,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.title.setText(event.title);
         holder.time.setText(formatTime(event.startAt));
         holder.location.setText(formatLocation(holder.itemView.getContext(), event));
-        bindPrice(holder.price, event);
+        // Hero đã có nhãn "Giá vé từ" phía trên nên chỉ in con số, tránh lặp chữ "Từ".
+        bindPriceValue(holder.price, event);
         bindFavorite(holder.favorite, event);
         bindClicks(holder, event, position);
     }
@@ -384,6 +385,18 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             price.setFree();
         } else {
             price.setPriceFrom(event.priceFrom);
+        }
+    }
+
+    /** Giá trị thuần, dùng khi nhãn "Giá vé từ" đã được đặt sẵn ở layout. */
+    private void bindPriceValue(PriceTextView price, EventUiModel event) {
+        if (price == null) {
+            return;
+        }
+        if (event.free) {
+            price.setFree();
+        } else {
+            price.setPrice(event.priceFrom);
         }
     }
 

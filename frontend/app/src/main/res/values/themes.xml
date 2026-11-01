@@ -2,6 +2,16 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Ứng dụng chỉ hỗ trợ giao diện sáng (ETicket light-only). -->
+    <!-- Khu Nhà tổ chức dùng tông teal theo mockup Stitch organizer: chỉ đổi các attr màu,
+         không đổi cấu trúc theme, để các component dùng ?attr/colorPrimary tự chuyển màu. -->
+    <style name="ThemeOverlay.EventApp.Organizer" parent="">
+        <item name="colorPrimary">@color/ds_organizer</item>
+        <item name="colorOnPrimary">@color/ds_white</item>
+        <item name="colorPrimaryContainer">@color/ds_organizer_container</item>
+        <item name="colorOnPrimaryContainer">@color/ds_white</item>
+        <item name="colorSecondary">@color/ds_organizer_container</item>
+    </style>
+
     <style name="Theme.EventApp" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/white</item>

@@ -7,13 +7,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 
 import com.eventapp.app.R;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.color.MaterialColors;
 
 /**
  * Compact KPI card used by the organizer dashboard and the AI analysis screen.
@@ -101,13 +101,13 @@ public class KpiTileView extends LinearLayout {
     public void setDelta(@Nullable CharSequence delta, Tone tone) {
         boolean visible = delta != null && delta.length() > 0;
         deltaView.setText(delta);
-        deltaView.setTextColor(ContextCompat.getColor(getContext(), colorFor(tone)));
+        deltaView.setTextColor(colorFor(tone));
         deltaView.setVisibility(visible ? VISIBLE : GONE);
         updateFoot();
     }
 
     public void setTone(Tone tone) {
-        valueView.setTextColor(ContextCompat.getColor(getContext(), colorFor(tone)));
+        valueView.setTextColor(colorFor(tone));
     }
 
     /** Replaces the number with an inline error and an optional retry action. */
@@ -144,18 +144,18 @@ public class KpiTileView extends LinearLayout {
         setContentDescription(value.length() == 0 ? label : label + ": " + value);
     }
 
-    @ColorRes
     private int colorFor(Tone tone) {
         switch (tone == null ? Tone.DEFAULT : tone) {
             case SUCCESS:
-                return R.color.ds_success_dark;
+                return ContextCompat.getColor(getContext(), R.color.ds_success_dark);
             case WARNING:
-                return R.color.ds_warning_dark;
+                return ContextCompat.getColor(getContext(), R.color.ds_warning_dark);
             case DANGER:
-                return R.color.ds_danger_dark;
+                return ContextCompat.getColor(getContext(), R.color.ds_danger_dark);
             case DEFAULT:
             default:
-                return R.color.ds_primary;
+                // Theo colorPrimary để khu Nhà tổ chức (theme overlay teal) đổi màu theo.
+                return MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary);
         }
     }
 

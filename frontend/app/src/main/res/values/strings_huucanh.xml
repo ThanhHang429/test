@@ -458,7 +458,7 @@
     <string name="hc_pref_footer">Cài đặt này chỉ dùng để gợi ý sự kiện. Bạn có thể tắt cá nhân hóa trong Quyền riêng tư.</string>
 
     <!-- ===== U06: Yêu thích / Đã lưu ===== -->
-    <string name="hc_fav_title">Đã lưu</string>
+    <string name="hc_fav_title">Yêu thích</string>
     <string name="hc_fav_back">Quay lại</string>
     <string name="hc_fav_count">%1$d sự kiện đã lưu</string>
     <string name="hc_fav_alerts_title">Chuông báo sự kiện</string>
@@ -587,6 +587,24 @@
     <string name="hc_odash_suspended">Hồ sơ nhà tổ chức đang tạm dừng. Bạn chỉ có thể xem số liệu.</string>
     <string name="hc_odash_read_only">Chỉ xem</string>
     <string name="hc_odash_footer">Số liệu tổng hợp từ hệ thống. Màn hình này không thay đổi dữ liệu.</string>
+
+    <!-- ===== O04 + O27: Chi tiết sự kiện, O27 là tab "Phân tích" ===== -->
+    <string name="hc_oed_title">Chi tiết sự kiện</string>
+    <string name="hc_oed_back">Quay lại</string>
+    <string name="hc_oed_tab_overview">Tổng quan</string>
+    <string name="hc_oed_tab_analysis">Phân tích</string>
+    <string name="hc_oed_code">Mã sự kiện #%1$d</string>
+    <string name="hc_oed_revenue">Doanh thu đã xác nhận</string>
+    <string name="hc_oed_registrations">Đăng ký hợp lệ</string>
+    <string name="hc_oed_registrations_value">%1$d</string>
+    <string name="hc_oed_manage_title">Quản lý sự kiện</string>
+    <string name="hc_oed_manage_subtitle">Mở nhanh từng phần của sự kiện</string>
+    <string name="hc_oed_action_tickets">Loại vé &amp; tồn kho</string>
+    <string name="hc_oed_action_attendees">Người đăng ký</string>
+    <string name="hc_oed_action_orders">Đơn hàng</string>
+    <string name="hc_oed_action_checkin">Check-in &amp; tra cứu vé</string>
+    <string name="hc_oed_action_report">Báo cáo sự kiện</string>
+    <string name="hc_oed_action_history">Lịch sử &amp; hủy sự kiện</string>
 
     <!-- ===== O27: AI phân tích và gợi ý vận hành ===== -->
     <string name="hc_insight_title">Phân tích AI</string>
@@ -741,6 +759,8 @@
 
     <!-- ===== P5 / A07 + A14: kiểm duyệt nội dung ===== -->
     <string name="hc_mod_title">Kiểm duyệt nội dung</string>
+    <string name="hc_mod_title_reviews">Quản lý đánh giá</string>
+    <string name="hc_mod_subtitle_reviews">%1$d đánh giá chờ xử lý</string>
     <string name="hc_mod_back">Quay lại</string>
     <string name="hc_mod_tab_flags">Cờ nội dung</string>
     <string name="hc_mod_tab_reviews">Đánh giá bị báo cáo</string>
@@ -858,4 +878,208 @@
     <string name="hc_monitor_status_value">Chưa có phản hồi</string>
     <string name="hc_ai_tag_short">AI</string>
     <string name="hc_splash_tagline">Khám phá sự kiện quanh bạn</string>
+    <!-- Vé của tôi (FR-U14 + FR-U18 gộp) -->
+    <string name="hc_tickets_title">Vé của tôi</string>
+    <string name="hc_tickets_tab_upcoming">Sắp diễn ra</string>
+    <string name="hc_tickets_tab_past">Đã qua</string>
+    <string name="hc_tickets_status_upcoming">Còn hiệu lực</string>
+    <string name="hc_tickets_status_past">Đã qua</string>
+    <string name="hc_tickets_status_cancelled">Đã huỷ</string>
+    <string name="hc_tickets_meta">%1$d vé • %2$s</string>
+    <string name="hc_tickets_meta_no_type">%1$d vé</string>
+    <string name="hc_tickets_month">TH%1$d</string>
+    <string name="hc_tickets_empty_upcoming_title">Chưa có vé nào</string>
+    <string name="hc_tickets_empty_upcoming_message">Vé bạn mua sẽ xuất hiện ở đây kèm mã QR để check-in.</string>
+    <string name="hc_tickets_empty_past_title">Chưa có vé đã qua</string>
+    <string name="hc_tickets_empty_past_message">Sự kiện bạn đã tham dự sẽ được lưu lại tại đây.</string>
+    <string name="hc_tickets_empty_action">Khám phá sự kiện</string>
+
+    <!-- Chọn khu vực kiểm thử (chỉ bản debug) -->
+    <string name="hc_mode_title">Chọn khu vực để kiểm thử</string>
+    <string name="hc_mode_subtitle">Dữ liệu trong app là dữ liệu mẫu, chưa nối API.</string>
+    <string name="hc_mode_user">Người dùng</string>
+    <string name="hc_mode_user_desc">Khám phá sự kiện, vé và đánh giá</string>
+    <string name="hc_mode_organizer">Nhà tổ chức</string>
+    <string name="hc_mode_organizer_desc">Dashboard, AI viết mô tả, phân tích</string>
+    <string name="hc_mode_admin">Quản trị</string>
+    <string name="hc_mode_admin_desc">Kiểm duyệt, danh mục và tích hợp</string>
+    <string name="hc_mode_footer">Chế độ kiểm thử — chỉ có ở bản debug</string>
+
+    <!-- Hub quản trị -->
+    <string name="hc_adminhub_title">Quản trị</string>
+    <string name="hc_adminhub_subtitle">Kiểm thử các chức năng của module</string>
+    <string name="hc_adminhub_section_moderation">Cần xử lý</string>
+    <string name="hc_adminhub_section_config">Cấu hình &amp; hệ thống</string>
+    <string name="hc_adminhub_flags">Kiểm duyệt nội dung</string>
+    <string name="hc_adminhub_flags_desc">Cờ do luật và AI gắn cho sự kiện, ảnh, nhãn</string>
+    <string name="hc_adminhub_reviews">Kiểm duyệt đánh giá</string>
+    <string name="hc_adminhub_reviews_desc">Đánh giá bị giữ, bị báo cáo hoặc gắn cờ</string>
+    <string name="hc_adminhub_categories">Danh mục &amp; nội dung</string>
+    <string name="hc_adminhub_categories_desc">Cây danh mục, từ khóa cấm, nội dung hướng dẫn</string>
+    <string name="hc_adminhub_integrations">Giám sát tích hợp</string>
+    <string name="hc_adminhub_integrations_desc">AI, thanh toán, FCM và công tắc tác vụ</string>
+    <string name="hc_adminhub_footer">Các mục còn lại thuộc thành viên khác và chưa có giao diện.</string>
+
+    <!-- Tổng quan quản trị (bám màn Admin Dashboard của Stitch) -->
+    <string name="hc_adm_badge">HOST</string>
+    <string name="hc_adm_report_label">Báo cáo điều hành</string>
+    <string name="hc_adm_today">Hôm nay: %1$s</string>
+    <string name="hc_adm_live">Trực tiếp</string>
+    <string name="hc_adm_alerts">%1$d cảnh báo rủi ro</string>
+    <string name="hc_adm_range_today">Hôm nay</string>
+    <string name="hc_adm_range_week">Tuần này</string>
+    <string name="hc_adm_range_month">Tháng này</string>
+    <string name="hc_adm_range_year">Năm nay</string>
+    <string name="hc_adm_kpi_gmv">Tổng doanh thu GMV</string>
+    <string name="hc_adm_kpi_tickets">Vé phát hành</string>
+    <string name="hc_adm_kpi_events">Sự kiện đang hoạt động</string>
+    <string name="hc_adm_kpi_orgs">Nhà tổ chức</string>
+    <string name="hc_adm_chart_title">Xu hướng GMV 7 ngày</string>
+    <string name="hc_adm_chart_caption">Cao điểm %1$s: %2$s</string>
+    <string name="hc_adm_updated">Cập nhật lúc %1$s</string>
+    <string name="hc_placeholder_message">Chức năng đang được xây dựng. Dữ liệu và thao tác sẽ có khi phần xử lý phía sau hoàn thiện.</string>
+
+    <!-- FR-A09: danh mục và nội dung cấu hình -->
+    <string name="hc_cat_back">Quay lại</string>
+    <string name="hc_cat_title">Danh mục &amp; nội dung</string>
+    <string name="hc_cat_count">%1$d/%2$d danh mục · %3$d/%4$d từ khóa</string>
+    <string name="hc_cat_tab_categories">Danh mục</string>
+    <string name="hc_cat_tab_rules">Từ khóa cấm</string>
+    <string name="hc_cat_tab_faq">Hướng dẫn</string>
+    <string name="hc_cat_add">Thêm danh mục</string>
+    <string name="hc_cat_edit">Sửa danh mục</string>
+    <string name="hc_cat_name">Tên danh mục</string>
+    <string name="hc_cat_name_error">Tên phải từ 2 đến 50 ký tự</string>
+    <string name="hc_cat_parent">Danh mục cha</string>
+    <string name="hc_cat_parent_none">Không có (danh mục gốc)</string>
+    <string name="hc_cat_icon">Biểu tượng</string>
+    <string name="hc_cat_color">Màu</string>
+    <string name="hc_cat_active">Đang hoạt động</string>
+    <string name="hc_cat_save">Lưu</string>
+    <string name="hc_cat_cancel">Hủy</string>
+    <string name="hc_cat_drag">Kéo để sắp xếp</string>
+    <string name="hc_cat_slug">/%1$s</string>
+    <string name="hc_cat_usage">%1$d sự kiện</string>
+    <string name="hc_cat_status_active">Hoạt động</string>
+    <string name="hc_cat_status_hidden">Đã ẩn</string>
+    <string name="hc_cat_empty_title">Chưa có danh mục</string>
+    <string name="hc_cat_empty_message">Tạo danh mục đầu tiên để phân loại sự kiện.</string>
+    <string name="hc_cat_duplicate">Tên danh mục đã tồn tại trong cùng cấp</string>
+    <string name="hc_cat_saved">Đã lưu danh mục</string>
+    <string name="hc_cat_hidden">Đã ẩn danh mục</string>
+    <string name="hc_cat_shown">Đã hiện lại danh mục</string>
+    <string name="hc_cat_reordered">Đã cập nhật thứ tự</string>
+    <string name="hc_cat_hide_title">Ẩn danh mục?</string>
+    <string name="hc_cat_hide_message">Danh mục đang được %1$d sự kiện sử dụng. Sự kiện cũ vẫn hiển thị nhưng không chọn được cho sự kiện mới.</string>
+    <string name="hc_cat_hide_children">Danh mục cha đang có %1$d danh mục con; ẩn cha sẽ ẩn luôn các danh mục con.</string>
+    <string name="hc_cat_hide_confirm">Ẩn</string>
+    <string name="hc_cat_kind_keyword">Từ khóa</string>
+    <string name="hc_cat_kind_domain">Tên miền</string>
+    <string name="hc_cat_rule_hint">Nhập từ khóa hoặc tên miền</string>
+    <string name="hc_cat_rule_error">Nội dung phải từ 2 đến 50 ký tự và chưa tồn tại</string>
+    <string name="hc_cat_rule_match_contains">Chứa</string>
+    <string name="hc_cat_rule_match_word">Đúng từ</string>
+    <string name="hc_cat_rule_scope_event">Tiêu đề/mô tả</string>
+    <string name="hc_cat_rule_scope_tag">Nhãn</string>
+    <string name="hc_cat_rule_scope_review">Đánh giá</string>
+    <string name="hc_cat_rule_add">Thêm</string>
+    <string name="hc_cat_rule_label_match">Cách khớp</string>
+    <string name="hc_cat_rule_label_scope">Phạm vi áp dụng</string>
+    <string name="hc_cat_rule_label_severity">Mức độ</string>
+    <string name="hc_cat_rule_count">%1$d/%2$d mục</string>
+    <string name="hc_cat_rule_empty_title">Chưa có mục nào</string>
+    <string name="hc_cat_rule_empty_message">Mục mới được áp dụng ngay cho nội dung tạo sau thời điểm thêm.</string>
+    <string name="hc_cat_rule_added">Đã thêm mục</string>
+    <string name="hc_cat_rule_deleted">Đã xóa mục</string>
+    <string name="hc_cat_rule_restored">Đã hoàn tác</string>
+    <string name="hc_cat_rule_undo">Hoàn tác</string>
+    <string name="hc_cat_rule_delete">Xóa</string>
+    <string name="hc_cat_faq_add">Thêm nội dung</string>
+    <string name="hc_cat_faq_edit">Sửa nội dung</string>
+    <string name="hc_cat_faq_title">Tiêu đề</string>
+    <string name="hc_cat_faq_content">Nội dung</string>
+    <string name="hc_cat_faq_visible">Hiển thị cho trợ lý AI</string>
+    <string name="hc_cat_faq_empty_title">Chưa có nội dung hướng dẫn</string>
+    <string name="hc_cat_faq_empty_message">Nội dung này dùng để trả lời câu hỏi chính sách khi bật trợ lý AI.</string>
+    <string name="hc_cat_faq_saved">Đã lưu nội dung</string>
+    <string name="hc_cat_faq_error">Tiêu đề 5–100 ký tự, nội dung 10–2000 ký tự</string>
+    <string name="hc_cat_faq_hidden">Đang ẩn</string>
+    <string name="hc_cat_faq_shown">Đang hiển thị</string>
+    <string name="hc_cat_faq_order">%1$d</string>
+
+    <!-- FR-A20: giám sát tích hợp -->
+    <string name="hc_health_back">Quay lại</string>
+    <string name="hc_health_refresh">Làm mới</string>
+    <string name="hc_health_title">Tích hợp</string>
+    <string name="hc_health_updated">Cập nhật lúc %1$s</string>
+    <string name="hc_health_range_1h">1 giờ</string>
+    <string name="hc_health_range_24h">24 giờ</string>
+    <string name="hc_health_range_7d">7 ngày</string>
+    <string name="hc_health_status_healthy">Ổn định</string>
+    <string name="hc_health_status_degraded">Suy giảm</string>
+    <string name="hc_health_status_down">Gián đoạn</string>
+    <string name="hc_health_status_unknown">Chưa rõ</string>
+    <string name="hc_health_kpi_error_rate">Tỷ lệ lỗi</string>
+    <string name="hc_health_kpi_error_rate_caption">Bình quân theo lưu lượng</string>
+    <string name="hc_health_kpi_latency">Độ trễ p95</string>
+    <string name="hc_health_kpi_latency_caption">Dịch vụ chậm nhất</string>
+    <string name="hc_health_kpi_requests">Yêu cầu</string>
+    <string name="hc_health_kpi_requests_caption">Trong khoảng đã chọn</string>
+    <string name="hc_health_kpi_fallback">Tác vụ dự phòng</string>
+    <string name="hc_health_kpi_fallback_caption">Đang tắt, dùng luật</string>
+    <string name="hc_health_kpi_value_pct">%1$s%%</string>
+    <string name="hc_health_kpi_value_ms">%1$d ms</string>
+    <string name="hc_health_kpi_value_count">%1$d</string>
+    <string name="hc_health_kpi_value_ratio">%1$d/%2$d</string>
+    <string name="hc_health_chart_title">Lỗi theo thời gian</string>
+    <string name="hc_health_chart_caption">%1$s gần nhất · cao nhất %2$d lỗi lúc %3$s</string>
+    <string name="hc_health_chart_caption_empty">%1$s gần nhất · chưa ghi nhận lỗi</string>
+    <string name="hc_health_section_services">Dịch vụ ngoài</string>
+    <string name="hc_health_section_services_sub">AI, thanh toán và thông báo</string>
+    <string name="hc_health_service_meta">%1$d%% lỗi · p95 %2$d ms · %3$d yêu cầu</string>
+    <string name="hc_health_service_ai">AI Gateway</string>
+    <string name="hc_health_service_payment">Cổng thanh toán</string>
+    <string name="hc_health_service_fcm">Thông báo FCM</string>
+    <string name="hc_health_key_note">Khóa API được cấu hình ở máy chủ và không bao giờ hiển thị giá trị.</string>
+    <string name="hc_health_section_tasks">Công tắc tác vụ AI</string>
+    <string name="hc_health_section_tasks_sub">Tắt để dùng dự phòng theo luật</string>
+    <string name="hc_health_task_recommend">Gợi ý sự kiện</string>
+    <string name="hc_health_task_chat">Trợ lý hội thoại</string>
+    <string name="hc_health_task_description">Viết mô tả sự kiện</string>
+    <string name="hc_health_task_analytics">Phân tích số liệu</string>
+    <string name="hc_health_task_moderation">Kiểm duyệt bằng AI</string>
+    <string name="hc_health_task_off">Đã tắt — hệ thống dùng fallback theo luật</string>
+    <string name="hc_health_reason_title">Tắt tác vụ AI</string>
+    <string name="hc_health_reason_message">Lý do được ghi vào nhật ký kiểm toán. Tác vụ tắt sẽ dùng dự phòng theo luật cho tới khi bật lại.</string>
+    <string name="hc_health_reason_hint">Lý do tắt (ít nhất 10 ký tự)</string>
+    <string name="hc_health_reason_error">Nhập ít nhất 10 ký tự</string>
+    <string name="hc_health_reason_confirm">Tắt tác vụ</string>
+    <string name="hc_health_cancel">Hủy</string>
+    <string name="hc_health_section_errors">Lỗi gần đây</string>
+    <string name="hc_health_section_errors_sub">8 lỗi mới nhất trong khoảng đã chọn</string>
+    <string name="hc_health_search_hint">Tra theo correlation id</string>
+    <string name="hc_health_error_meta">%1$s · %2$d ms · %3$s</string>
+    <string name="hc_health_error_empty_title">Không có lỗi</string>
+    <string name="hc_health_error_empty_message">Không có lỗi trong khoảng thời gian này.</string>
+    <string name="hc_health_error_no_match_title">Không tìm thấy</string>
+    <string name="hc_health_error_no_match_message">Không có lỗi nào khớp với mã đã nhập.</string>
+    <string name="hc_health_footer">Số liệu tổng hợp từ log của hệ thống, không phải cam kết chất lượng dịch vụ.</string>
+
+    <!-- FR-U20: Đánh giá của tôi -->
+    <string name="hc_myreviews_entry">Đánh giá</string>
+    <string name="hc_myreviews_back">Quay lại</string>
+    <string name="hc_myreviews_title">Đánh giá của tôi</string>
+    <string name="hc_myreviews_summary">%1$d đánh giá · %2$d đang hiển thị</string>
+    <string name="hc_myreviews_filter_all">Tất cả</string>
+    <string name="hc_myreviews_filter_visible">Đang hiển thị</string>
+    <string name="hc_myreviews_filter_held">Chờ kiểm duyệt</string>
+    <string name="hc_myreviews_filter_hidden">Đã bị ẩn</string>
+    <string name="hc_myreviews_filter_all_count">Tất cả (%1$d)</string>
+    <string name="hc_myreviews_filter_visible_count">Đang hiển thị (%1$d)</string>
+    <string name="hc_myreviews_filter_held_count">Chờ kiểm duyệt (%1$d)</string>
+    <string name="hc_myreviews_filter_hidden_count">Đã bị ẩn (%1$d)</string>
+    <string name="hc_myreviews_hidden_note">Đánh giá bị ẩn không hiển thị công khai và không sửa được. Nếu cho rằng đây là nhầm lẫn, hãy gửi khiếu nại cho ban quản trị.</string>
+    <string name="hc_myreviews_empty_title">Chưa có đánh giá</string>
+    <string name="hc_myreviews_empty_message">Bạn chỉ có thể đánh giá sự kiện đã check-in và trong 30 ngày sau khi sự kiện kết thúc.</string>
+    <string name="hc_myreviews_empty_action">Xem vé của tôi</string>
 </resources>

@@ -21,11 +21,11 @@
         <ImageView
             android:layout_width="@dimen/ds_avatar_md"
             android:layout_height="@dimen/ds_avatar_md"
-            android:background="@drawable/bg_ds_avatar"
+            android:background="@drawable/bg_ds_avatar_organizer"
             android:contentDescription="@string/hc_odash_avatar"
             android:padding="@dimen/ds_space_8"
             android:src="@drawable/ic_profile"
-            app:tint="@color/ds_primary" />
+            app:tint="@color/ds_organizer" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -163,14 +163,14 @@
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chipDashRange7"
-                                style="@style/Widget.EventApp.Ds.Chip.Filter"
+                                style="@style/Widget.EventApp.Organizer.Chip.Filter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/hc_odash_range_7" />
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chipDashRange30"
-                                style="@style/Widget.EventApp.Ds.Chip.Filter"
+                                style="@style/Widget.EventApp.Organizer.Chip.Filter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:checked="true"
@@ -178,7 +178,7 @@
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/chipDashRangeCustom"
-                                style="@style/Widget.EventApp.Ds.Chip.Filter"
+                                style="@style/Widget.EventApp.Organizer.Chip.Filter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/hc_odash_range_custom" />
@@ -198,7 +198,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnDashRangeFrom"
-                            style="@style/Widget.EventApp.Ds.Button.Outlined"
+                            style="@style/Widget.EventApp.Organizer.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -206,7 +206,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnDashRangeTo"
-                            style="@style/Widget.EventApp.Ds.Button.Outlined"
+                            style="@style/Widget.EventApp.Organizer.Button.Outlined"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/ds_space_8"
@@ -384,7 +384,7 @@
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btnDashFinanceRetry"
-                                    style="@style/Widget.EventApp.Ds.Button.Outlined"
+                                    style="@style/Widget.EventApp.Organizer.Button.Outlined"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="@dimen/ds_space_8"
@@ -562,7 +562,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnDashAiInsight"
-                        style="@style/Widget.EventApp.Ds.Button.Outlined"
+                        style="@style/Widget.EventApp.Organizer.Button.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/ds_content_margin"
@@ -570,7 +570,7 @@
                         android:layout_marginEnd="@dimen/ds_content_margin"
                         android:text="@string/hc_odash_ai_action"
                         app:icon="@drawable/ic_ds_ai_sparkle"
-                        app:iconTint="@color/ds_primary" />
+                        app:iconTint="@color/ds_organizer" />
 
                     <TextView
                         android:layout_width="match_parent"

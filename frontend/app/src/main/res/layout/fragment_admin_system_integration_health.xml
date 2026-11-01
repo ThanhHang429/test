@@ -1,6 +1,395 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Màn hình IntegrationHealth: Kiểm tra tình trạng tích hợp thanh toán và dịch vụ ngoài | FR-A20 -->
+<!-- FR-A20: giám sát tích hợp AI / thanh toán / FCM, công tắc tác vụ và tra cứu lỗi. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootHealth"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/brand_background" />
+    android:layout_height="match_parent"
+    android:background="@color/ds_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ds_top_bar_height"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/ds_space_4"
+            android:paddingEnd="@dimen/ds_content_margin">
+
+            <ImageButton
+                android:id="@+id/btnHealthBack"
+                android:layout_width="@dimen/ds_touch_target"
+                android:layout_height="@dimen/ds_touch_target"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/hc_health_back"
+                android:padding="@dimen/ds_space_12"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_ds_back"
+                app:tint="@color/ds_text" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_space_4"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hc_health_title"
+                    android:textAppearance="@style/TextAppearance.EventApp.Ds.H3" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_2"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.eventapp.app.ui.common.view.StatusChip
+                        android:id="@+id/chipOverall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Suy giảm" />
+
+                    <TextView
+                        android:id="@+id/tvHealthUpdated"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_8"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                        tools:text="Cập nhật lúc 09:42" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnHealthRefresh"
+                android:layout_width="@dimen/ds_touch_target"
+                android:layout_height="@dimen/ds_touch_target"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/hc_health_refresh"
+                android:padding="@dimen/ds_space_12"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_ds_refresh"
+                app:tint="@color/ds_text" />
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/ds_space_24">
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingStart="@dimen/ds_content_margin"
+                    android:paddingEnd="@dimen/ds_content_margin"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupRange"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="@dimen/ds_space_8"
+                        app:selectionRequired="true"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipRange1h"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_health_range_1h" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipRange24h"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/hc_health_range_24h" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipRange7d"
+                            style="@style/Widget.EventApp.Ds.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_health_range_7d" />
+                    </com.google.android.material.chip.ChipGroup>
+                </HorizontalScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:layout_marginEnd="@dimen/ds_content_margin"
+                    android:orientation="horizontal">
+
+                    <com.eventapp.app.ui.common.view.KpiTileView
+                        android:id="@+id/kpiErrorRate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ds_space_6"
+                        android:layout_weight="1" />
+
+                    <com.eventapp.app.ui.common.view.KpiTileView
+                        android:id="@+id/kpiLatency"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_6"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_card_gap"
+                    android:layout_marginEnd="@dimen/ds_content_margin"
+                    android:orientation="horizontal">
+
+                    <com.eventapp.app.ui.common.view.KpiTileView
+                        android:id="@+id/kpiRequests"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/ds_space_6"
+                        android:layout_weight="1" />
+
+                    <com.eventapp.app.ui.common.view.KpiTileView
+                        android:id="@+id/kpiFallback"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ds_space_6"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.EventApp.Ds.Card.Soft"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_12"
+                    android:layout_marginEnd="@dimen/ds_content_margin">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/ds_space_16">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hc_health_chart_title"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label" />
+
+                        <TextView
+                            android:id="@+id/tvChartCaption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/ds_space_2"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                            tools:text="24 giờ gần nhất · cao nhất 5 lỗi lúc 11:00" />
+
+                        <com.eventapp.app.ui.common.view.SimpleBarChartView
+                            android:id="@+id/chartErrors"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/ds_chart_height"
+                            android:layout_marginTop="@dimen/ds_space_8" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.eventapp.app.ui.common.view.SectionHeaderView
+                    android:id="@+id/headerHealthServices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_16"
+                    android:layout_marginEnd="@dimen/ds_content_margin" />
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.EventApp.Ds.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:layout_marginEnd="@dimen/ds_content_margin">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/ds_space_4"
+                        android:paddingBottom="@dimen/ds_space_12">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvServices"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never" />
+
+                        <TextView
+                            android:id="@+id/tvServicesNote"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/ds_space_16"
+                            android:layout_marginTop="@dimen/ds_space_4"
+                            android:layout_marginEnd="@dimen/ds_space_16"
+                            android:text="@string/hc_health_key_note"
+                            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.eventapp.app.ui.common.view.SectionHeaderView
+                    android:id="@+id/headerHealthTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_16"
+                    android:layout_marginEnd="@dimen/ds_content_margin" />
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.EventApp.Ds.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:layout_marginEnd="@dimen/ds_content_margin">
+
+                    <LinearLayout
+                        android:id="@+id/layoutTaskToggles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/ds_space_4"
+                        android:paddingBottom="@dimen/ds_space_4" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.eventapp.app.ui.common.view.SectionHeaderView
+                    android:id="@+id/headerHealthErrors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_16"
+                    android:layout_marginEnd="@dimen/ds_content_margin" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutCorrelation"
+                    style="@style/Widget.EventApp.Ds.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:layout_marginEnd="@dimen/ds_content_margin"
+                    android:hint="@string/hc_health_search_hint"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCorrelation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:maxLength="64"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardErrors"
+                    style="@style/Widget.EventApp.Ds.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:layout_marginEnd="@dimen/ds_content_margin">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvErrors"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        android:paddingTop="@dimen/ds_space_4"
+                        android:paddingBottom="@dimen/ds_space_4" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.eventapp.app.ui.common.view.EmptyStateView
+                    android:id="@+id/emptyErrors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_8"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvHealthFooter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/ds_content_margin"
+                    android:layout_marginTop="@dimen/ds_section_gap"
+                    android:layout_marginEnd="@dimen/ds_content_margin"
+                    android:text="@string/hc_health_footer"
+                    android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <com.eventapp.app.ui.common.view.SkeletonLayout
+        android:id="@+id/skeletonHealth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:padding="@dimen/ds_content_margin"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ds_skeleton_height"
+            android:layout_marginBottom="@dimen/ds_space_12"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ds_skeleton_height"
+            android:layout_marginBottom="@dimen/ds_space_12"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ds_skeleton_height"
+            android:layout_marginBottom="@dimen/ds_space_12"
+            android:background="@drawable/bg_ds_skeleton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ds_skeleton_height"
+            android:background="@drawable/bg_ds_skeleton" />
+    </com.eventapp.app.ui.common.view.SkeletonLayout>
+
+    <com.eventapp.app.ui.common.view.ErrorStateView
+        android:id="@+id/errorHealth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</FrameLayout>

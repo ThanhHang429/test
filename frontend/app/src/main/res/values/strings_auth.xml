@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Auth brand / common -->
+    <string name="auth_brand_name">ETicket</string>
+    <string name="auth_brand_tagline">Sự kiện quanh bạn</string>
+    <string name="auth_demo_badge">DEMO</string>
+    <string name="auth_demo_banner">Chế độ demo: không dùng thông tin thật.</string>
+    <string name="auth_or">hoặc</string>
+
+    <!-- Login -->
+    <string name="auth_login_eyebrow">ETICKET</string>
+    <string name="auth_login_title">Chào mừng trở lại</string>
+    <string name="auth_login_subtitle">Đăng nhập để tiếp tục khám phá sự kiện.</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Mật khẩu</string>
+    <string name="auth_login_action">Đăng nhập</string>
+    <string name="auth_forgot_password">Quên mật khẩu?</string>
+    <string name="auth_no_account">Chưa có tài khoản?</string>
+    <string name="auth_register_action">Đăng ký ngay</string>
+    <string name="auth_demo_title">Tài khoản demo</string>
+    <string name="auth_demo_subtitle">Chọn vai trò để vào nhanh. Mật khẩu demo chung: 123456.</string>
+    <string name="auth_demo_user">Người dùng</string>
+    <string name="auth_demo_user_desc">user@eticket.demo · Khám phá, mua vé, check-in</string>
+    <string name="auth_demo_organizer">Nhà tổ chức</string>
+    <string name="auth_demo_organizer_desc">organizer@eticket.demo · Tạo sự kiện, bán vé</string>
+    <string name="auth_demo_admin">Quản trị viên</string>
+    <string name="auth_demo_admin_desc">admin@eticket.demo · Duyệt nội dung, vận hành</string>
+    <string name="auth_demo_open">Vào ngay</string>
+
+    <!-- Register -->
+    <string name="auth_register_topbar">Đăng ký</string>
+    <string name="auth_register_title">Tạo tài khoản</string>
+    <string name="auth_register_subtitle">Một tài khoản cho mọi sự kiện bạn yêu thích.</string>
+    <string name="auth_full_name">Họ và tên</string>
+    <string name="auth_phone">Số điện thoại</string>
+    <string name="auth_confirm_password">Xác nhận mật khẩu</string>
+    <string name="auth_password_hint">Tối thiểu 6 ký tự</string>
+    <string name="auth_terms">Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật.</string>
+    <string name="auth_register_submit">Tạo tài khoản</string>
+    <string name="auth_register_success">Đã tạo tài khoản. Nhập mã demo 123456 để xác thực email.</string>
+    <string name="auth_have_account">Đã có tài khoản?</string>
+    <string name="auth_login_link">Đăng nhập</string>
+
+    <!-- Verify email -->
+    <string name="auth_verify_title">Xác thực email</string>
+    <string name="auth_verify_subtitle">Nhập mã 6 số đã gửi tới\n%1$s</string>
+    <string name="auth_verify_subtitle_fallback">Nhập mã 6 số đã gửi tới email đăng ký của bạn.</string>
+    <string name="auth_verify_code">Mã xác thực</string>
+    <string name="auth_verify_hint">Mã demo: 123456</string>
+    <string name="auth_verify_action">Xác thực</string>
+    <string name="auth_verify_success">Xác thực thành công. Chào mừng bạn đến với ETicket!</string>
+    <string name="auth_resend">Gửi lại mã</string>
+    <plurals name="auth_resend_countdown">
+        <item quantity="other">Gửi lại sau %1$d giây</item>
+    </plurals>
+    <string name="auth_back_to_login">Quay lại đăng nhập</string>
+
+    <!-- Forgot / reset -->
+    <string name="auth_forgot_title">Quên mật khẩu?</string>
+    <string name="auth_forgot_subtitle">Nhập email đã đăng ký, ETicket sẽ gửi hướng dẫn đặt lại mật khẩu.</string>
+    <string name="auth_send_reset">Gửi hướng dẫn</string>
+    <string name="auth_reset_title">Đặt lại mật khẩu</string>
+    <string name="auth_reset_subtitle">Tạo mật khẩu mới cho tài khoản\n%1$s</string>
+    <string name="auth_reset_subtitle_fallback">Tạo mật khẩu mới cho tài khoản của bạn.</string>
+    <string name="auth_new_password">Mật khẩu mới</string>
+    <string name="auth_reset_action">Cập nhật mật khẩu</string>
+    <string name="auth_reset_success">Đã cập nhật mật khẩu. Đăng nhập lại nhé.</string>
+    <string name="auth_reset_sent">Đã gửi hướng dẫn đặt lại mật khẩu (demo).</string>
+    <string name="auth_otp_resent">Đã gửi lại mã. Mã demo: 123456.</string>
+
+    <!-- Validation / errors -->
+    <string name="auth_error_email">Email không hợp lệ</string>
+    <string name="auth_error_email_empty">Vui lòng nhập email</string>
+    <string name="auth_error_password">Mật khẩu tối thiểu 6 ký tự</string>
+    <string name="auth_error_password_empty">Vui lòng nhập mật khẩu</string>
+    <string name="auth_error_password_mismatch">Mật khẩu xác nhận không khớp</string>
+    <string name="auth_error_name">Vui lòng nhập họ tên</string>
+    <string name="auth_error_phone">Số điện thoại không hợp lệ</string>
+    <string name="auth_error_terms">Bạn cần đồng ý điều khoản để tiếp tục</string>
+    <string name="auth_error_login">Email hoặc mật khẩu không đúng</string>
+    <string name="auth_error_unverified">Tài khoản chưa xác thực email</string>
+    <string name="auth_error_email_exists">Email này đã được đăng ký</string>
+    <string name="auth_error_email_not_found">Không tìm thấy tài khoản với email này</string>
+    <string name="auth_error_otp">Mã xác thực không đúng</string>
+    <string name="auth_error_generic">Có lỗi xảy ra. Vui lòng thử lại.</string>
+
+    <!-- Accessibility -->
+    <string name="auth_cd_back">Quay lại</string>
+    <string name="auth_cd_brand_logo">Logo ETicket</string>
+    <string name="auth_cd_demo_user">Đăng nhập demo Người dùng</string>
+    <string name="auth_cd_demo_organizer">Đăng nhập demo Nhà tổ chức</string>
+    <string name="auth_cd_demo_admin">Đăng nhập demo Quản trị viên</string>
+</resources>

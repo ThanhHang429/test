@@ -125,7 +125,7 @@ ok(`${checked} destination có class và layout đầy đủ`);
 /* ---- 4. Menu bottom khớp nav graph ------------------------------------ */
 const menuDir = join(RES, 'menu');
 // Số mục của bottom navigation theo từng role. Khu vực người dùng dùng 4 mục:
-// Thông báo và Yêu thích đã có lối vào riêng trên header trang Khám phá.
+// "Lịch của tôi" đã gộp vào "Vé của tôi"; "Yêu thích" là tab cấp 1 (bỏ trái tim ở header).
 const menus = [
   ['menu_user_bottom', 'nav_user', 4],
   ['menu_organizer_bottom', 'nav_organizer', 5],

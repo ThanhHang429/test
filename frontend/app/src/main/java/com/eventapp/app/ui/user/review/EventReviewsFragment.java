@@ -23,6 +23,7 @@ import com.eventapp.app.R;
 import com.eventapp.app.ui.common.adapter.ReviewAdapter;
 import com.eventapp.app.ui.common.view.EmptyStateView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
+import com.eventapp.app.ui.common.view.NavBarSpacing;
 import com.eventapp.app.ui.common.view.RatingDistributionView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
 import com.eventapp.app.ui.common.view.StarRatingView;
@@ -45,6 +46,7 @@ public class EventReviewsFragment extends Fragment {
     private ReviewAdapter adapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefresh;
+    private View scrollView;
     private SkeletonLayout skeleton;
     private EmptyStateView emptyState;
     private ErrorStateView errorState;
@@ -84,6 +86,7 @@ public class EventReviewsFragment extends Fragment {
         setupList();
         setupSort();
         observe();
+        NavBarSpacing.padBottomForNavBar(requireView(), scrollView, 16);
         viewModel.load(eventId, eventTitle, canReview, hasMine);
     }
 
@@ -102,6 +105,7 @@ public class EventReviewsFragment extends Fragment {
     private void bindViews(View view) {
         recyclerView = view.findViewById(R.id.rvReviews);
         swipeRefresh = view.findViewById(R.id.swipeRefreshReviews);
+        scrollView = view.findViewById(R.id.scrollReviews);
         skeleton = view.findViewById(R.id.skeletonReviews);
         emptyState = view.findViewById(R.id.emptyReviews);
         errorState = view.findViewById(R.id.errorReviews);

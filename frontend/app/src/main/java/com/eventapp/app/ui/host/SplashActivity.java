@@ -1,6 +1,5 @@
 package com.eventapp.app.ui.host;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,10 +8,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.eventapp.app.R;
+import com.eventapp.app.ui.demo.DemoAccount;
+import com.eventapp.app.ui.demo.DemoAuthStore;
+import com.eventapp.app.ui.demo.DemoRouter;
 
 /**
  * FR-U01, FR-U02: màn hình khởi động.
- * Tầng session (core/session) còn là stub nên tạm thời vào thẳng khu vực người dùng.
+ *
+ * <p>Trong giai đoạn UI-only, phiên đăng nhập được đọc từ {@link DemoAuthStore}. Có phiên thì mở
+ * host theo vai trò; chưa có thì mở luồng đăng nhập demo.</p>
  */
 public class SplashActivity extends AppCompatActivity {
 
@@ -24,11 +28,16 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        handler.postDelayed(this::openUserArea, SPLASH_DELAY_MS);
+        handler.postDelayed(this::openNextScreen, SPLASH_DELAY_MS);
     }
 
-    private void openUserArea() {
-        startActivity(new Intent(this, UserHostActivity.class));
+    private void openNextScreen() {
+        DemoAccount account = DemoAuthStore.get(this).currentAccount();
+        if (account == null) {
+            DemoRouter.openAuth(this);
+        } else {
+            DemoRouter.openHost(this, account.getRole());
+        }
         finish();
     }
 

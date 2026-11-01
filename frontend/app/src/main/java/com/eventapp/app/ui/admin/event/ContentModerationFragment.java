@@ -39,6 +39,12 @@ import com.google.android.material.tabs.TabLayout;
  */
 public class ContentModerationFragment extends Fragment {
 
+    /** Tab mở đầu tiên: 0 = cờ nội dung (A07), 1 = đánh giá (A14). */
+    public static final String ARG_START_TAB = "startTab";
+
+    /** Chế độ màn riêng cho A14: ẩn thanh tab, chỉ hiện phần đánh giá. */
+    public static final String ARG_REVIEWS_ONLY = "reviewsOnly";
+
     private ContentModerationViewModel viewModel;
     private ModerationFlagAdapter flagAdapter;
     private ReviewAdapter reviewAdapter;
@@ -77,9 +83,11 @@ public class ContentModerationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(ContentModerationViewModel.class);
         bindViews(view);
+        applyReviewsOnly(view);
         setupKpis();
         setupToolbar();
         setupTabs();
+        applyStartTab();
         setupLists();
         setupFilters();
         setupStates();
@@ -122,6 +130,25 @@ public class ContentModerationFragment extends Fragment {
         kpiHandled.setTone(KpiTileView.Tone.SUCCESS);
     }
 
+    /** Màn "Quản lý đánh giá" (A14) dùng lại bố cục này nhưng không có thanh tab. */
+    private void applyReviewsOnly(View view) {
+        Bundle args = getArguments();
+        if (args == null || !args.getBoolean(ARG_REVIEWS_ONLY, false)) {
+            return;
+        }
+        tabs.setVisibility(View.GONE);
+        ((TextView) view.findViewById(R.id.tvModTitle)).setText(R.string.hc_mod_title_reviews);
+        // Ba ô KPI của màn kiểm duyệt đếm cờ nội dung, không áp dụng cho hàng đợi đánh giá.
+        view.findViewById(R.id.kpiModOpen).setVisibility(View.GONE);
+        view.findViewById(R.id.kpiModHigh).setVisibility(View.GONE);
+        view.findViewById(R.id.kpiModHandled).setVisibility(View.GONE);
+    }
+
+    private boolean isReviewsOnly() {
+        Bundle args = getArguments();
+        return args != null && args.getBoolean(ARG_REVIEWS_ONLY, false);
+    }
+
     private void setupToolbar() {
         requireView().findViewById(R.id.btnModBack).setOnClickListener(v ->
                 Navigation.findNavController(requireView()).popBackStack());
@@ -146,6 +173,22 @@ public class ContentModerationFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+    }
+
+    /** Mở thẳng tab được yêu cầu khi màn hình được gọi từ hub quản trị. */
+    private void applyStartTab() {
+        Bundle args = getArguments();
+        int startTab = args == null ? 0 : args.getInt(ARG_START_TAB, 0);
+        if (isReviewsOnly()) {
+            startTab = 1;
+        }
+        if (startTab <= 0 || startTab >= tabs.getTabCount()) {
+            return;
+        }
+        TabLayout.Tab tab = tabs.getTabAt(startTab);
+        if (tab != null) {
+            tab.select();
+        }
     }
 
     private void setupLists() {
@@ -444,8 +487,13 @@ public class ContentModerationFragment extends Fragment {
         }
 
         Integer open = viewModel.getOpenCount().getValue();
-        subtitle.setText(getString(R.string.hc_mod_subtitle,
-                open == null ? 0 : open, reviewAdapter.getItemCount()));
+        if (isReviewsOnly()) {
+            subtitle.setText(getString(R.string.hc_mod_subtitle_reviews,
+                    reviewAdapter.getItemCount()));
+        } else {
+            subtitle.setText(getString(R.string.hc_mod_subtitle,
+                    open == null ? 0 : open, reviewAdapter.getItemCount()));
+        }
     }
 
     private void showAction(ContentModerationViewModel.ActionEvent event) {

@@ -73,8 +73,11 @@ public class StatusChip extends Chip {
         int foreground;
         switch (tone == null ? Tone.NEUTRAL : tone) {
             case PRIMARY:
-                background = ContextCompat.getColor(getContext(), R.color.ds_primary_soft);
-                foreground = ContextCompat.getColor(getContext(), R.color.ds_primary);
+                // Theo colorPrimary để chip tự đổi màu ở khu Organizer (theme overlay teal).
+                int primary = com.google.android.material.color.MaterialColors.getColor(
+                        this, androidx.appcompat.R.attr.colorPrimary);
+                background = androidx.core.graphics.ColorUtils.setAlphaComponent(primary, 0x20);
+                foreground = primary;
                 break;
             case SUCCESS:
                 background = ContextCompat.getColor(getContext(), R.color.ds_success_soft);

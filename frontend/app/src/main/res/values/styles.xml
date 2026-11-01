@@ -181,7 +181,7 @@
     </style>
 
     <style name="Widget.EventApp.Ds.Button.Text" parent="Widget.Material3.Button.TextButton">
-        <item name="android:textColor">@color/ds_primary</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:textAppearance">@style/TextAppearance.EventApp.Ds.Label</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:minHeight">@dimen/ds_touch_target</item>
@@ -216,6 +216,22 @@
         <item name="chipStrokeWidth">0dp</item>
         <item name="chipMinHeight">34dp</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Cụm chọn khoảng thời gian kiểu segmented control (màn Tổng quan quản trị):
+         nền chung surface-container, mục đang chọn là viên trắng nổi lên. -->
+    <style name="Widget.EventApp.Ds.Chip.Segment" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/ds_segment_bg</item>
+        <item name="android:textColor">@color/ds_segment_text</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipMinHeight">32dp</item>
+        <item name="chipCornerRadius">@dimen/ds_radius_pill</item>
+        <item name="android:textSize">13sp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="chipIconVisible">false</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <!-- Chip danh mục: bo góc nhẹ, đảo màu đậm khi chọn theo thiết kế Stitch. -->
@@ -258,8 +274,8 @@
     <style name="Widget.EventApp.NavIndicator"
         parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/ds_primary</item>
-        <item name="android:width">56dp</item>
-        <item name="android:height">32dp</item>
+        <item name="android:width">52dp</item>
+        <item name="android:height">28dp</item>
     </style>
 
     <style name="TextAppearance.EventApp.NavLabel" parent="TextAppearance.Material3.LabelMedium">
@@ -272,6 +288,56 @@
     <style name="TextAppearance.EventApp.NavLabel.Active" parent="TextAppearance.EventApp.NavLabel">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/ds_primary</item>
+    </style>
+
+    <!-- ===== Biến thể teal cho khu Nhà tổ chức (bám mockup Stitch organizer) ===== -->
+    <style name="Widget.EventApp.Organizer.NavIndicator" parent="Widget.EventApp.NavIndicator">
+        <item name="android:color">@color/ds_organizer</item>
+    </style>
+
+    <style name="Widget.EventApp.Organizer.BottomNav" parent="Widget.EventApp.BottomNav">
+        <item name="itemActiveIndicatorStyle">@style/Widget.EventApp.Organizer.NavIndicator</item>
+        <item name="itemTextColor">@color/ds_organizer_nav_text_tint</item>
+        <item name="itemRippleColor">@color/ds_organizer_soft</item>
+    </style>
+
+    <style name="Widget.EventApp.Organizer.Chip.Filter" parent="Widget.EventApp.Ds.Chip.Filter">
+        <item name="chipBackgroundColor">@color/ds_organizer_chip_bg</item>
+        <item name="chipStrokeColor">@color/ds_organizer_chip_stroke</item>
+    </style>
+
+    <style name="Widget.EventApp.Organizer.Chip.Preset" parent="Widget.EventApp.Organizer.Chip.Filter">
+        <item name="chipMinHeight">@dimen/ds_chip_height_small</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Widget.EventApp.Organizer.Button.Primary" parent="Widget.EventApp.Ds.Button.Primary">
+        <item name="backgroundTint">@color/ds_organizer_button_tint</item>
+    </style>
+
+    <style name="Widget.EventApp.Organizer.Button.Outlined" parent="Widget.EventApp.Ds.Button.Outlined">
+        <item name="android:textColor">@color/ds_organizer</item>
+        <item name="strokeColor">@color/ds_organizer</item>
+    </style>
+
+    <style name="Widget.EventApp.Organizer.Button.Text" parent="Widget.EventApp.Ds.Button.Text">
+        <item name="android:textColor">@color/ds_organizer</item>
+    </style>
+
+    <!-- Thanh điều hướng dạng dải phẳng cho host Organizer/Admin (không phải pill nổi).
+         Nhãn luôn hiện để khớp mockup Stitch; mặc định Material ẩn nhãn khi có từ 4 item. -->
+    <style name="Widget.EventApp.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@drawable/bg_bottom_nav</item>
+        <item name="android:elevation">0dp</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.EventApp.NavIndicator</item>
+        <item name="itemIconTint">@color/ds_nav_icon_tint</item>
+        <item name="itemRippleColor">@color/ds_primary_soft</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.EventApp.NavLabel.Active</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.EventApp.NavLabel</item>
+        <item name="itemTextColor">@color/ds_nav_text_tint</item>
+        <item name="itemPaddingTop">4dp</item>
+        <item name="itemPaddingBottom">4dp</item>
+        <item name="labelVisibilityMode">labeled</item>
     </style>
 
     <!-- ===== Toolbar ===== -->    <style name="Widget.EventApp.Ds.Toolbar" parent="Widget.Material3.Toolbar.Surface">

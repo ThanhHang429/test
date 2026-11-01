@@ -1,6 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Item danh sách vé trong danh sách | FR-U14 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Thẻ vé trong "Vé của tôi": khối ngày bên trái, thông tin sự kiện ở giữa. -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" />
+    android:layout_marginTop="@dimen/ds_space_12"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/ds_surface"
+    app:cardCornerRadius="@dimen/ds_radius_16"
+    app:cardElevation="0dp"
+    app:rippleColor="@color/ds_primary_soft"
+    app:strokeColor="@color/ds_outline_variant"
+    app:strokeWidth="@dimen/ds_stroke">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/ds_space_12">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_ds_date_tile"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTicketDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ds_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/plus_jakarta_sans"
+                    tools:text="16" />
+
+                <TextView
+                    android:id="@+id/tvTicketMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="true"
+                    android:textColor="@color/ds_primary"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/plus_jakarta_sans"
+                    tools:text="TH11" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_space_12"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTicketTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAppearance="@style/TextAppearance.EventApp.Ds.H3"
+                    android:textSize="15sp"
+                    tools:text="Đêm nhạc Indie Sài Gòn 2026" />
+
+                <TextView
+                    android:id="@+id/tvTicketTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/ds_space_2"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                    android:textColor="@color/ds_text_muted"
+                    tools:text="T7, 16/11 • 19:00" />
+
+                <TextView
+                    android:id="@+id/tvTicketVenue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                    android:textColor="@color/ds_text_muted"
+                    tools:text="Nhà hát Hòa Bình" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/ds_icon_20"
+                android:layout_height="@dimen/ds_icon_20"
+                android:layout_marginStart="@dimen/ds_space_4"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_ds_chevron_right"
+                app:tint="@color/ds_outline" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/ds_space_12"
+            android:background="@color/ds_outline_variant" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_8"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.eventapp.app.ui.common.view.StatusChip
+                android:id="@+id/chipTicketStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tvTicketMeta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ds_space_8"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+                tools:text="2 vé • Vé VIP" />
+
+            <com.eventapp.app.ui.common.view.PriceTextView
+                android:id="@+id/tvTicketPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                tools:text="1.100.000 đ" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

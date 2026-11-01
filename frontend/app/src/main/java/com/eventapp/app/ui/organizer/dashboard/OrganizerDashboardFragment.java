@@ -29,7 +29,7 @@ import com.eventapp.app.ui.common.view.PriceTextView;
 import com.eventapp.app.ui.common.view.SectionHeaderView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
 import com.eventapp.app.ui.common.view.StatusChip;
-import com.eventapp.app.ui.organizer.report.AiInsightFragment;
+import com.eventapp.app.ui.organizer.event.OrganizerEventDetailFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -191,7 +191,7 @@ public class OrganizerDashboardFragment extends Fragment {
 
         topAdapter = new TopEventAdapter();
         topAdapter.setOnTopEventClickListener(event ->
-                openInsight(event.id, event.title));
+                openEventOverview(event.id, event.title));
         topEventList.setLayoutManager(new LinearLayoutManager(requireContext()));
         topEventList.setItemAnimator(null);
         topEventList.setAdapter(topAdapter);
@@ -220,7 +220,7 @@ public class OrganizerDashboardFragment extends Fragment {
     }
 
     private void setupStates() {
-        swipeRefresh.setColorSchemeResources(R.color.ds_primary);
+        swipeRefresh.setColorSchemeResources(R.color.ds_organizer);
         swipeRefresh.setOnRefreshListener(() -> viewModel.refresh());
 
         offlineBanner.setOnRetryClickListener(v -> viewModel.refresh());
@@ -487,14 +487,20 @@ public class OrganizerDashboardFragment extends Fragment {
             return;
         }
         DashboardUiModel.TopEvent event = current.topEvents.get(0);
-        openInsight(event.id, event.title);
+        openEventDetail(event.id, event.title, OrganizerEventDetailFragment.TAB_ANALYSIS);
     }
 
-    private void openInsight(long eventId, String eventTitle) {
+    private void openEventOverview(long eventId, String eventTitle) {
+        openEventDetail(eventId, eventTitle, OrganizerEventDetailFragment.TAB_OVERVIEW);
+    }
+
+    /** O27 không còn là màn riêng: mở chi tiết sự kiện và chọn sẵn tab cần xem. */
+    private void openEventDetail(long eventId, String eventTitle, int tab) {
         Bundle args = new Bundle();
-        args.putLong(AiInsightFragment.ARG_EVENT_ID, eventId);
-        args.putString(AiInsightFragment.ARG_EVENT_TITLE, eventTitle);
-        navigate(R.id.ai_insightFragment, args);
+        args.putLong(OrganizerEventDetailFragment.ARG_EVENT_ID, eventId);
+        args.putString(OrganizerEventDetailFragment.ARG_EVENT_TITLE, eventTitle);
+        args.putInt(OrganizerEventDetailFragment.ARG_TAB, tab);
+        navigate(R.id.organizer_event_detailFragment, args);
     }
 
     private void navigate(int destination, @Nullable Bundle args) {

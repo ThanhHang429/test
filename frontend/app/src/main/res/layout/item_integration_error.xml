@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một lỗi gần đây trong FR-A20: giờ, loại tác vụ, mã lỗi + độ trễ + correlation id rút gọn. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/ds_space_16"
+    android:paddingTop="@dimen/ds_space_8"
+    android:paddingEnd="@dimen/ds_space_16"
+    android:paddingBottom="@dimen/ds_space_8">
+
+    <TextView
+        android:id="@+id/tvErrorTime"
+        android:layout_width="44dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ds_space_12"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+        tools:text="09:42" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvErrorTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+            tools:text="DESCRIPTION" />
+
+        <TextView
+            android:id="@+id/tvErrorMeta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_2"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+            tools:text="AI_UNAVAILABLE · 20000 ms · 8f3c2a71" />
+    </LinearLayout>
+</LinearLayout>

@@ -92,22 +92,58 @@
     <fragment
         android:id="@+id/free_registerFragment"
         android:name="com.eventapp.app.ui.user.order.FreeRegisterFragment"
-        tools:layout="@layout/fragment_user_order_free_register" />
+        tools:layout="@layout/fragment_user_order_free_register">
+
+        <argument
+            android:name="arg_event_id"
+            android:defaultValue="-1L"
+            app:argType="long" />
+        <argument
+            android:name="arg_event_title"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/checkoutFragment"
         android:name="com.eventapp.app.ui.user.order.CheckoutFragment"
-        tools:layout="@layout/fragment_user_order_checkout" />
+        tools:layout="@layout/fragment_user_order_checkout">
+
+        <argument
+            android:name="arg_event_id"
+            android:defaultValue="-1L"
+            app:argType="long" />
+        <argument
+            android:name="arg_event_title"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/payment_qrFragment"
         android:name="com.eventapp.app.ui.user.order.PaymentQrFragment"
-        tools:layout="@layout/fragment_user_order_payment_qr" />
+        tools:layout="@layout/fragment_user_order_payment_qr">
+
+        <argument
+            android:name="arg_order"
+            android:defaultValue="@null"
+            app:argType="com.eventapp.app.ui.fake.DemoOrder"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/order_statusFragment"
         android:name="com.eventapp.app.ui.user.order.OrderStatusFragment"
-        tools:layout="@layout/fragment_user_order_status" />
+        tools:layout="@layout/fragment_user_order_status">
+
+        <argument
+            android:name="arg_order"
+            android:defaultValue="@null"
+            app:argType="com.eventapp.app.ui.fake.DemoOrder"
+            app:nullable="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/order_historyFragment"
@@ -128,11 +164,6 @@
         android:id="@+id/checkin_resultFragment"
         android:name="com.eventapp.app.ui.user.checkin.CheckinResultFragment"
         tools:layout="@layout/fragment_user_checkin_result" />
-
-    <fragment
-        android:id="@+id/my_calendarFragment"
-        android:name="com.eventapp.app.ui.user.calendar.MyCalendarFragment"
-        tools:layout="@layout/fragment_user_calendar_my_calendar" />
 
     <fragment
         android:id="@+id/profileFragment"
@@ -168,6 +199,11 @@
         android:id="@+id/event_reviewsFragment"
         android:name="com.eventapp.app.ui.user.review.EventReviewsFragment"
         tools:layout="@layout/fragment_user_review_event_reviews" />
+
+    <fragment
+        android:id="@+id/my_reviewsFragment"
+        android:name="com.eventapp.app.ui.user.review.MyReviewsFragment"
+        tools:layout="@layout/fragment_user_review_my_reviews" />
 
     <fragment
         android:id="@+id/support_listFragment"

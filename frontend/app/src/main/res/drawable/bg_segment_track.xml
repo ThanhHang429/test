@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền chung của cụm chọn khoảng thời gian: một viên thuốc màu surface-container,
+     mục đang chọn nổi lên bằng nền trắng. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/ds_surface_container" />
+    <corners android:radius="@dimen/ds_radius_pill" />
+</shape>

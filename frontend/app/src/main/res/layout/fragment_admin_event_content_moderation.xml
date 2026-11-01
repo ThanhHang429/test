@@ -35,6 +35,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvModTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/hc_mod_title"
@@ -50,24 +51,12 @@
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/ds_surface"
-        android:layout_marginStart="@dimen/ds_content_margin"
-        android:layout_marginEnd="@dimen/ds_content_margin"
-        android:layout_marginTop="@dimen/ds_space_8"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="@color/ds_primary"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/ds_primary"
-        app:tabTextColor="@color/ds_text_muted" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/ds_space_8"
-        android:orientation="horizontal"
         android:id="@+id/tabsModeration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_content_margin"
+        android:layout_marginTop="@dimen/ds_space_8"
+        android:layout_marginEnd="@dimen/ds_content_margin"
         android:background="@color/ds_surface"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/ds_primary"

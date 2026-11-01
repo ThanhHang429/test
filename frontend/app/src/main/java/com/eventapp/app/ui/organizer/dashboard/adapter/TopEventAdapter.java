@@ -70,7 +70,7 @@ public class TopEventAdapter extends RecyclerView.Adapter<TopEventAdapter.TopEve
                 DashboardStatusLabels.lifecycleTone(event.lifecycleStage));
         holder.progress.setProgressCompat(share, false);
         holder.progress.setIndicatorColor(ContextCompat.getColor(context,
-                position == 0 ? R.color.ds_primary : R.color.ds_chart_bar_alt));
+                position == 0 ? R.color.ds_organizer : R.color.ds_chart_bar_alt));
         holder.itemView.setContentDescription(event.title + ". "
                 + PriceTextView.formatVnd(event.verifiedRevenue) + ". "
                 + context.getString(R.string.hc_odash_top_registrations, event.registrations));

@@ -81,8 +81,75 @@ public final class SampleReviewData {
                 .build();
     }
 
-    public static int[] distribution(List<ReviewUiModel> reviews) {
-        int[] values = new int[5];
+    /**
+     * Đánh giá của chính người dùng đang đăng nhập, trải trên nhiều sự kiện và đủ ba trạng thái
+     * VISIBLE / HELD / HIDDEN để kiểm thử màn "Đánh giá của tôi" (FR-U20).
+     */
+    public static List<ReviewUiModel> myReviews() {
+        long now = System.currentTimeMillis();
+        List<ReviewUiModel> reviews = new ArrayList<>();
+        reviews.add(new ReviewUiModel.Builder()
+                .id(7001)
+                .eventId(1)
+                .eventTitle("Đêm nhạc Indie Sài Gòn 2026")
+                .authorName("Minh Anh")
+                .rating(5)
+                .comment("Sân khấu và âm thanh rất ổn, ban tổ chức chuẩn bị chu đáo. "
+                        + "Check-in bằng QR mất chưa đến một phút.")
+                .createdAt(now - 3 * DAY)
+                .status(ReviewUiModel.Status.VISIBLE)
+                .mine(true)
+                .build());
+        reviews.add(new ReviewUiModel.Builder()
+                .id(7002)
+                .eventId(2)
+                .eventTitle("Hội thảo AI & Tương lai 2026")
+                .authorName("Minh Anh")
+                .rating(4)
+                .comment("Nội dung tốt nhưng phần hỏi đáp hơi ngắn. Mình cần thêm tài liệu, "
+                        + "liên hệ 0909 123 456 để xin slide.")
+                .createdAt(now - 1 * DAY)
+                .status(ReviewUiModel.Status.HELD)
+                .mine(true)
+                .build());
+        reviews.add(new ReviewUiModel.Builder()
+                .id(7003)
+                .eventId(4)
+                .eventTitle("Triển lãm Sắc màu Đương đại")
+                .authorName("Minh Anh")
+                .rating(2)
+                .comment("Không gian chật và thiếu lối đi, trải nghiệm không như mô tả.")
+                .createdAt(now - 12 * DAY)
+                .status(ReviewUiModel.Status.HIDDEN)
+                .mine(true)
+                .build());
+        reviews.add(new ReviewUiModel.Builder()
+                .id(7004)
+                .eventId(6)
+                .eventTitle("Workshop Nhiếp ảnh Đường phố")
+                .authorName("Minh Anh")
+                .rating(4)
+                .comment("Giảng viên nhiệt tình, phần thực hành ngoài trời là điểm cộng lớn.")
+                .createdAt(now - 20 * DAY)
+                .status(ReviewUiModel.Status.VISIBLE)
+                .editCount(1)
+                .mine(true)
+                .build());
+        reviews.add(new ReviewUiModel.Builder()
+                .id(7005)
+                .eventId(8)
+                .eventTitle("Marathon Đêm Sài Gòn")
+                .authorName("Minh Anh")
+                .rating(5)
+                .comment("Cung đường đẹp, nước uống đầy đủ. Sẽ đăng ký mùa sau.")
+                .createdAt(now - 40 * DAY)
+                .status(ReviewUiModel.Status.VISIBLE)
+                .mine(true)
+                .build());
+        return reviews;
+    }
+
+    public static int[] distribution(List<ReviewUiModel> reviews) {        int[] values = new int[5];
         if (reviews == null) {
             return values;
         }

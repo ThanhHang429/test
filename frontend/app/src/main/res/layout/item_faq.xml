@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dòng nội dung hướng dẫn (FR-A09). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/ds_content_margin"
+    android:layout_marginEnd="@dimen/ds_content_margin"
+    android:layout_marginBottom="@dimen/ds_space_8"
+    android:background="@drawable/bg_ds_list_card"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/ds_space_12"
+    android:paddingTop="@dimen/ds_space_8"
+    android:paddingEnd="@dimen/ds_space_12"
+    android:paddingBottom="@dimen/ds_space_8">
+
+    <TextView
+        android:id="@+id/tvFaqOrder"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.LabelSmall" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_space_8"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvFaqTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label" />
+
+        <TextView
+            android:id="@+id/tvFaqPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_2"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption" />
+    </LinearLayout>
+
+    <com.eventapp.app.ui.common.view.StatusChip
+        android:id="@+id/chipFaqStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/ds_space_8" />
+
+    <ImageView
+        android:layout_width="@dimen/ds_icon_20"
+        android:layout_height="@dimen/ds_icon_20"
+        android:layout_marginStart="@dimen/ds_space_4"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_ds_chevron_right"
+        app:tint="@color/ds_outline" />
+</LinearLayout>

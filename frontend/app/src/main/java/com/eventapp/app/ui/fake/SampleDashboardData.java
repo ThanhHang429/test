@@ -59,6 +59,16 @@ public final class SampleDashboardData {
                 21_148_050L, 564_681_950L, 24, DashboardUiModel.BlockStatus.OK);
     }
 
+    /** Tra cứu một sự kiện cho màn chi tiết; trả {@code null} nếu id không có trong fixture. */
+    public static DashboardUiModel.TopEvent findTopEvent(long id) {
+        for (DashboardUiModel.TopEvent event : topEvents()) {
+            if (event.id == id) {
+                return event;
+            }
+        }
+        return null;
+    }
+
     private static double registrationsFor(int rangeDays) {
         return rangeDays <= 7 ? 246 : rangeDays <= 30 ? 842 : 2_318;
     }
