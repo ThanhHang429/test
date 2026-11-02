@@ -4,29 +4,40 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.eventapp.app.R;
-import com.eventapp.app.core.enums.Role;
-import com.eventapp.app.ui.demo.DemoAccount;
-import com.eventapp.app.ui.demo.DemoAuthStore;
-import com.eventapp.app.ui.demo.DemoRouter;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+import com.eventapp.app.core.session.AuthSession;
+import com.eventapp.app.data.remote.dto.auth.DevAccountDto;
+import com.eventapp.app.ui.host.SessionRouter;
 
-/** FR-U02: đăng nhập bằng email/mật khẩu hoặc thẻ tài khoản demo theo vai trò. */
+import java.util.List;
+
+/**
+ * FR-U02: đăng nhập dev bằng tài khoản seed.
+ *
+ * <p>Không có email/mật khẩu. Danh sách lấy từ {@code GET /dev/accounts}; chọn một dòng sẽ đổi
+ * {@code userId} thành JWT thật qua {@code POST /dev/token}. Nhờ vậy các màn còn lại dùng đúng
+ * quyền của backend.</p>
+ */
 public class LoginFragment extends Fragment {
 
-    private TextInputLayout emailLayout;
-    private TextInputLayout passwordLayout;
-    private TextInputEditText emailInput;
-    private TextInputEditText passwordInput;
-    private DemoAuthStore authStore;
+    private LoginViewModel viewModel;
+    private DevAccountAdapter adapter;
+    private ProgressBar progress;
+    private TextView errorView;
+    private View retryButton;
+    private View quickGroup;
+    private boolean navigated;
 
     @Nullable
     @Override
@@ -38,100 +49,85 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        authStore = DemoAuthStore.get(requireContext());
+        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        emailLayout = view.findViewById(R.id.layoutLoginEmail);
-        passwordLayout = view.findViewById(R.id.layoutLoginPassword);
-        emailInput = view.findViewById(R.id.inputLoginEmail);
-        passwordInput = view.findViewById(R.id.inputLoginPassword);
+        progress = view.findViewById(R.id.progressAccounts);
+        errorView = view.findViewById(R.id.textAccountsError);
+        retryButton = view.findViewById(R.id.btnRetryAccounts);
+        quickGroup = view.findViewById(R.id.groupQuickRoles);
 
-        view.findViewById(R.id.btnLogin).setOnClickListener(v -> submitLogin());
-        view.findViewById(R.id.btnForgotPassword).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.forgot_passwordFragment));
-        view.findViewById(R.id.btnRegister).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.registerFragment));
-
-        view.findViewById(R.id.rowDemoUser).setOnClickListener(v -> loginAs(Role.USER));
-        view.findViewById(R.id.rowDemoOrganizer).setOnClickListener(v -> loginAs(Role.ORGANIZER));
-        view.findViewById(R.id.rowDemoAdmin).setOnClickListener(v -> loginAs(Role.ADMIN));
-
-        passwordInput.setOnEditorActionListener((v, actionId, event) -> {
-            submitLogin();
-            return true;
+        RecyclerView list = view.findViewById(R.id.listDevAccounts);
+        list.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new DevAccountAdapter(account -> {
+            if (account != null) {
+                viewModel.login(account);
+            }
         });
+        list.setAdapter(adapter);
 
-        AuthFormUtils.clearErrorOnType(emailInput, emailLayout);
-        AuthFormUtils.clearErrorOnType(passwordInput, passwordLayout);
+        retryButton.setOnClickListener(v -> viewModel.loadAccounts(true));
+        bindQuickRole(view.findViewById(R.id.rowDemoUser), "USER");
+        bindQuickRole(view.findViewById(R.id.rowDemoOrganizer), "ORGANIZER");
+        bindQuickRole(view.findViewById(R.id.rowDemoAdmin), "ADMIN");
+
+        viewModel.getAccounts().observe(getViewLifecycleOwner(), accounts -> {
+            adapter.submit(accounts);
+            boolean empty = accounts == null || accounts.isEmpty();
+            if (empty && !Boolean.TRUE.equals(viewModel.getLoading().getValue())) {
+                showError(getString(R.string.auth_account_empty));
+            }
+        });
+        viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
+            boolean busy = Boolean.TRUE.equals(loading);
+            progress.setVisibility(busy ? View.VISIBLE : View.GONE);
+            retryButton.setVisibility(!busy && errorView.getVisibility() == View.VISIBLE
+                    ? View.VISIBLE : View.GONE);
+            if (busy) {
+                errorView.setVisibility(View.GONE);
+            }
+        });
+        viewModel.getSubmitting().observe(getViewLifecycleOwner(), submitting -> {
+            boolean busy = Boolean.TRUE.equals(submitting);
+            quickGroup.setAlpha(busy ? 0.55f : 1f);
+            quickGroup.setEnabled(!busy);
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), exception -> {
+            if (exception == null) {
+                return;
+            }
+            String message = exception.getUserMessage();
+            if (viewModel.getAccounts().getValue() == null
+                    || viewModel.getAccounts().getValue().isEmpty()) {
+                showError(message);
+            } else {
+                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+            }
+            viewModel.consumeError();
+        });
+        viewModel.getLoggedIn().observe(getViewLifecycleOwner(), this::openHost);
+
+        viewModel.loadAccounts(false);
     }
 
-    private void submitLogin() {
-        String email = AuthFormUtils.textOf(emailInput);
-        String password = AuthFormUtils.textOf(passwordInput);
-        AuthFormUtils.clearErrors(emailLayout, passwordLayout);
-        boolean valid = true;
-
-        if (email.isEmpty()) {
-            emailLayout.setError(getString(R.string.auth_error_email_empty));
-            valid = false;
-        } else if (!AuthFormUtils.isValidEmail(email)) {
-            emailLayout.setError(getString(R.string.auth_error_email));
-            valid = false;
-        }
-        if (password.isEmpty()) {
-            passwordLayout.setError(getString(R.string.auth_error_password_empty));
-            valid = false;
-        } else if (!AuthFormUtils.isValidPassword(password)) {
-            passwordLayout.setError(getString(R.string.auth_error_password));
-            valid = false;
-        }
-        if (!valid) {
+    private void bindQuickRole(@Nullable View view, @NonNull String role) {
+        if (view == null) {
             return;
         }
-
-        AuthFormUtils.hideKeyboard(getView());
-        DemoAuthStore.LoginResult result = authStore.login(email, password);
-        switch (result.status) {
-            case SUCCESS:
-                openHost(result.account);
-                break;
-            case NOT_FOUND:
-                emailLayout.setError(getString(R.string.auth_error_email_not_found));
-                break;
-            case WRONG_PASSWORD:
-                passwordLayout.setError(getString(R.string.auth_error_login));
-                break;
-            case UNVERIFIED:
-                Toast.makeText(requireContext(), R.string.auth_error_unverified,
-                        Toast.LENGTH_SHORT).show();
-                navigateToVerify(email);
-                break;
-        }
+        view.setOnClickListener(v -> viewModel.loginAsRole(role));
     }
 
-    private void loginAs(Role role) {
-        DemoAccount account = authStore.loginAs(role);
-        if (account == null) {
-            Toast.makeText(requireContext(), R.string.auth_error_generic, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        openHost(account);
+    private void showError(@NonNull String message) {
+        errorView.setText(message);
+        errorView.setVisibility(View.VISIBLE);
+        retryButton.setVisibility(View.VISIBLE);
     }
 
-    private void openHost(DemoAccount account) {
-        if (account == null) {
-            Toast.makeText(requireContext(), R.string.auth_error_generic, Toast.LENGTH_SHORT).show();
+    private void openHost(@Nullable AuthSession session) {
+        if (session == null || navigated) {
             return;
         }
-        AuthFormUtils.hideKeyboard(getView());
-        DemoRouter.openHost(requireContext(), account.getRole());
+        navigated = true;
+        SessionRouter.openHost(requireContext(), session);
         requireActivity().finish();
     }
-
-    private void navigateToVerify(String email) {
-        Bundle args = new Bundle();
-        args.putString(VerifyEmailFragment.ARG_EMAIL, email);
-        Navigation.findNavController(requireView())
-                .navigate(R.id.verify_emailFragment, args);
-    }
-
 }

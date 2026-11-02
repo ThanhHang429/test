@@ -3,6 +3,7 @@ package com.eventapp.admin.integration
 import com.eventapp.ai.entity.AiRequest
 import com.eventapp.ai.gateway.AiCircuitBreaker
 import com.eventapp.ai.gateway.AiFeatureFlags
+import com.eventapp.ai.gateway.AiProviderClient
 import com.eventapp.ai.gateway.AiTask
 import com.eventapp.ai.repository.AiRequestRepository
 import com.eventapp.ai.repository.IntegrationHealthLogRepository
@@ -33,8 +34,8 @@ class IntegrationMonitorService(
     private val integrationHealthLogRepository: IntegrationHealthLogRepository,
     private val featureFlags: AiFeatureFlags,
     private val circuitBreaker: AiCircuitBreaker,
+    private val aiProviderClient: AiProviderClient,
     @Value("\${app.ai.api-key:}") private val aiApiKey: String,
-    @Value("\${app.ai.provider:mock}") private val aiProvider: String,
     @Value("\${app.ai.daily-budget-usd:2.0}") private val dailyBudgetUsd: Double,
     @Value("\${app.ai.cost-per-1k-tokens:0.0005}") private val costPer1kTokens: Double,
     @Value("\${app.fcm.credentials-path:}") private val fcmCredentialsPath: String,
@@ -71,7 +72,8 @@ class IntegrationMonitorService(
             else -> "HEALTHY"
         }
         val notes = buildString {
-            append("provider=").append(aiProvider)
+            append("provider=").append(aiProviderClient.providerCode)
+            append(", model=").append(aiProviderClient.modelCode)
             append(", apiKeyConfigured=").append(if (aiApiKey.isNotBlank()) "có" else "không")
             append(", circuit=").append(circuitBreaker.state())
         }

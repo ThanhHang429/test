@@ -26,6 +26,7 @@ class OutputValidator(
         return when (task) {
             AiTask.RECOMMEND -> validateRecommend(root)
             AiTask.DESCRIPTION -> validateDescription(root)
+            AiTask.ANNOUNCEMENT -> validateAnnouncement(root)
             AiTask.ANALYTICS -> validateAnalytics(root)
             AiTask.CHAT -> validateChat(root)
             AiTask.MODERATION -> validateModeration(root)
@@ -50,11 +51,16 @@ class OutputValidator(
         return objectMapper.createObjectNode().set<ArrayNode>("items", cleaned)
     }
 
-    private fun validateDescription(root: JsonNode): JsonNode {
-        val descriptions = root.path("descriptions")
-        if (!descriptions.isArray) throw AiInvalidOutputException("Thiếu mảng descriptions")
+    private fun validateDescription(root: JsonNode): JsonNode = validateVariants(root, "descriptions")
+
+    private fun validateAnnouncement(root: JsonNode): JsonNode = validateVariants(root, "variants")
+
+    /** Mô tả sự kiện và bản nháp thông báo dùng chung khuôn: tối đa 3 phương án. */
+    private fun validateVariants(root: JsonNode, field: String): JsonNode {
+        val variants = root.path(field)
+        if (!variants.isArray) throw AiInvalidOutputException("Thiếu mảng $field")
         val cleaned = objectMapper.createArrayNode()
-        descriptions.take(3).forEach { item ->
+        variants.take(3).forEach { item ->
             val text = item.path("text").asText("").trim()
             if (text.isEmpty()) return@forEach
             val shortSummary = item.path("shortSummary").asText("").trim().take(SHORT_SUMMARY_MAX)
@@ -64,8 +70,8 @@ class OutputValidator(
                     .put("shortSummary", shortSummary)
             )
         }
-        if (cleaned.isEmpty) throw AiInvalidOutputException("descriptions rỗng")
-        return objectMapper.createObjectNode().set<ArrayNode>("descriptions", cleaned)
+        if (cleaned.isEmpty) throw AiInvalidOutputException("$field rỗng")
+        return objectMapper.createObjectNode().set<ArrayNode>(field, cleaned)
     }
 
     private fun validateAnalytics(root: JsonNode): JsonNode {

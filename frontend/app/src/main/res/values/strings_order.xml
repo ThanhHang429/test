@@ -71,6 +71,7 @@
     <string name="hc_pay_order_code">Mã đơn</string>
     <string name="hc_pay_status_pending">Chờ thanh toán</string>
     <string name="hc_pay_status_expired">Đã hết hạn</string>
+    <string name="hc_pay_status_success">Đã thanh toán</string>
     <string name="hc_checkout_form_invalid">Vui lòng kiểm tra lại thông tin đăng ký.</string>
     <string name="hc_order_missing_event">Không tìm thấy sự kiện: %1$s</string>
     <string name="hc_pay_ticket_count">x%1$d</string>
@@ -78,6 +79,7 @@
     <string name="hc_pay_payment_instruction">Quét mã bằng ứng dụng ngân hàng hoặc ví điện tử</string>
     <string name="hc_pay_transfer_info">Thông tin chuyển khoản</string>
     <string name="hc_pay_qr_desc">Mã QR thanh toán cho đơn %1$s</string>
+    <string name="hc_pay_qr_desc_short">Mã QR thanh toán</string>
     <string name="hc_pay_copy_account">Sao chép số tài khoản</string>
     <string name="hc_pay_copy_amount">Sao chép số tiền</string>
     <string name="hc_pay_copy_content">Sao chép nội dung chuyển khoản</string>
@@ -153,4 +155,6 @@
     <string name="hc_status_home">Về trang chủ</string>
     <string name="hc_status_help">Cần hỗ trợ? Liên hệ trung tâm trợ giúp của ETicket.</string>
 
+    <string name="hc_ticket_qr_hint">Mã vé %1$s — đưa mã này cho ban tổ chức khi soát vé.</string>
+    <string name="hc_ticket_qr_failed">Không tải được mã QR, vui lòng thử lại.</string>
 </resources>

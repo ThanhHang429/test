@@ -21,13 +21,24 @@ class AiQuotaService(
     fun limitOf(task: AiTask): Limit = when (task) {
         AiTask.RECOMMEND -> Limit(20, Duration.ofHours(1))
         AiTask.DESCRIPTION -> Limit(10, Duration.ofHours(1))
+        // O06 dùng chung quota với DESCRIPTION (cùng feature_code EVENT_DESCRIPTION).
+        AiTask.ANNOUNCEMENT -> Limit(10, Duration.ofHours(1))
         AiTask.CHAT -> Limit(30, Duration.ofDays(1))
         AiTask.ANALYTICS -> Limit(5, Duration.ofDays(1))
         AiTask.MODERATION -> Limit(100, Duration.ofHours(1))
     }
 
-    /** Ném [AiQuotaExceededException] kèm số giây cần chờ. */
-    fun ensureWithinQuota(task: AiTask, userId: Long?) {
+    /**
+     * Ném [AiQuotaExceededException] kèm số giây cần chờ.
+     *
+     * ANALYTICS đếm theo **sự kiện** (SRS 5.1: 5 lượt/ngày/sự kiện); các tác vụ còn lại
+     * đếm theo người dùng.
+     */
+    fun ensureWithinQuota(task: AiTask, userId: Long?, eventId: Long? = null) {
+        if (task == AiTask.ANALYTICS && eventId != null) {
+            ensureWithinEventQuota(task, eventId)
+            return
+        }
         if (userId == null) return
         val limit = limitOf(task)
         val since = Instant.now().minus(limit.window)
@@ -38,11 +49,27 @@ class AiQuotaService(
         )
         if (used < limit.max) return
 
+        throw quotaExceeded(limit, "Bạn đã dùng hết ${limit.max} lượt AI")
+    }
+
+    private fun ensureWithinEventQuota(task: AiTask, eventId: Long) {
+        val limit = limitOf(task)
+        val used = aiRequestRepository.countByEventIdAndFeatureCodeAndCreatedAtAfter(
+            eventId,
+            task.featureCode,
+            Instant.now().minus(limit.window)
+        )
+        if (used < limit.max) return
+
+        throw quotaExceeded(limit, "Sự kiện này đã dùng hết ${limit.max} lượt AI")
+    }
+
+    private fun quotaExceeded(limit: Limit, prefix: String): AiQuotaExceededException {
         val windowSeconds = limit.window.seconds
         val retryAfter = if (windowSeconds <= 3600) windowSeconds else 3600
-        throw AiQuotaExceededException(
+        return AiQuotaExceededException(
             retryAfterSeconds = retryAfter,
-            message = "Bạn đã dùng hết ${limit.max} lượt AI trong ${humanWindow(limit.window)}. Vui lòng thử lại sau."
+            message = "$prefix trong ${humanWindow(limit.window)}. Vui lòng thử lại sau."
         )
     }
 

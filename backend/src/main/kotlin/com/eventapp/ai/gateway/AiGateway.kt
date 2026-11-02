@@ -29,7 +29,12 @@ class AiGateway(
     private val outputValidator: OutputValidator,
     private val requestLogger: AiRequestLogger,
     private val provider: AiProviderClient,
-    @Value("\${app.ai.timeout-seconds:5}") private val timeoutSeconds: Long
+    // Timeout theo tác vụ (SRS 5.1) — timeout cứng, không phụ thuộc timeout của HTTP client.
+    @Value("\${app.ai.timeout.recommend-seconds:5}") private val recommendTimeoutSeconds: Long,
+    @Value("\${app.ai.timeout.chat-seconds:20}") private val chatTimeoutSeconds: Long,
+    @Value("\${app.ai.timeout.description-seconds:20}") private val descriptionTimeoutSeconds: Long,
+    @Value("\${app.ai.timeout.analytics-seconds:20}") private val analyticsTimeoutSeconds: Long,
+    @Value("\${app.ai.timeout.moderation-seconds:15}") private val moderationTimeoutSeconds: Long
 ) {
 
     private val log = LoggerFactory.getLogger(javaClass)
@@ -47,7 +52,7 @@ class AiGateway(
         if (!featureFlags.isEnabled(task)) {
             throw AiDisabledException("Tính năng AI '${task.code}' đang tạm tắt")
         }
-        quotaService.ensureWithinQuota(task, userId)
+        quotaService.ensureWithinQuota(task, userId, eventId)
 
         if (circuitBreaker.isOpen()) {
             requestLogger.failure(task, userId, eventId, provider.providerCode, provider.modelCode, inputSummary, 0, "AI_CIRCUIT_OPEN")
@@ -57,21 +62,12 @@ class AiGateway(
         val prompt = promptBuilder.build(task, fields)
         val started = System.currentTimeMillis()
 
-        val completion = try {
-            callWithTimeout(prompt)
-        } catch (ex: Exception) {
-            val latency = System.currentTimeMillis() - started
-            circuitBreaker.recordFailure()
-            requestLogger.failure(
-                task, userId, eventId, provider.providerCode, provider.modelCode, inputSummary, latency,
-                if (ex is java.util.concurrent.TimeoutException) "AI_TIMEOUT" else "AI_UNAVAILABLE"
-            )
-            log.warn("Gọi AI {} thất bại sau {} ms: {}", task.code, latency, ex.message)
-            throw AiUnavailableException("Không gọi được dịch vụ AI: ${ex.javaClass.simpleName}")
-        }
-
-        val validated = try {
-            validateWithRetry(task, prompt)
+        val completion: AiCompletion
+        val validated: JsonNode
+        try {
+            val outcome = completeWithValidation(task, prompt)
+            completion = outcome.first
+            validated = outcome.second
         } catch (ex: AiInvalidOutputException) {
             val latency = System.currentTimeMillis() - started
             circuitBreaker.recordSuccess() // nhà cung cấp vẫn sống, chỉ sai định dạng
@@ -81,6 +77,15 @@ class AiGateway(
             )
             log.warn("Đầu ra AI {} không hợp lệ: {}", task.code, ex.message)
             throw ex
+        } catch (ex: Exception) {
+            val latency = System.currentTimeMillis() - started
+            circuitBreaker.recordFailure()
+            requestLogger.failure(
+                task, userId, eventId, provider.providerCode, provider.modelCode, inputSummary, latency,
+                if (ex is java.util.concurrent.TimeoutException) "AI_TIMEOUT" else "AI_UNAVAILABLE"
+            )
+            log.warn("Gọi AI {} thất bại sau {} ms: {}", task.code, latency, ex.message)
+            throw AiUnavailableException("Không gọi được dịch vụ AI: ${ex.javaClass.simpleName}")
         }
 
         val latency = System.currentTimeMillis() - started
@@ -111,19 +116,32 @@ class AiGateway(
     /** true nếu tác vụ đang bật và breaker đóng — dùng để quyết định gọi AI hay đi thẳng luật. */
     fun isAvailable(task: AiTask): Boolean = featureFlags.isEnabled(task) && !circuitBreaker.isOpen()
 
-    private fun callWithTimeout(prompt: AiPrompt): AiCompletion =
+    private fun timeoutOf(task: AiTask): Long = when (task) {
+        AiTask.RECOMMEND -> recommendTimeoutSeconds
+        AiTask.CHAT -> chatTimeoutSeconds
+        AiTask.DESCRIPTION -> descriptionTimeoutSeconds
+        AiTask.ANNOUNCEMENT -> descriptionTimeoutSeconds
+        AiTask.ANALYTICS -> analyticsTimeoutSeconds
+        AiTask.MODERATION -> moderationTimeoutSeconds
+    }
+
+    private fun callWithTimeout(prompt: AiPrompt, task: AiTask): AiCompletion =
         CompletableFuture
             .supplyAsync({ provider.complete(prompt) }, executor)
-            .get(timeoutSeconds, TimeUnit.SECONDS)
+            .get(timeoutOf(task), TimeUnit.SECONDS)
 
-    private fun validateWithRetry(task: AiTask, prompt: AiPrompt): JsonNode {
-        val first = callWithTimeout(prompt)
+    /**
+     * Gọi provider đúng **một** lần cho mỗi lượt; chỉ gọi lại khi đầu ra sai schema
+     * (SRS 5.1: thử lại 1 lần rồi mới trả AI_INVALID_OUTPUT).
+     */
+    private fun completeWithValidation(task: AiTask, prompt: AiPrompt): Pair<AiCompletion, JsonNode> {
+        val first = callWithTimeout(prompt, task)
         return try {
-            outputValidator.validate(task, first.text)
+            first to outputValidator.validate(task, first.text)
         } catch (ex: AiInvalidOutputException) {
             log.info("Đầu ra AI {} sai schema, thử lại 1 lần", task.code)
-            val second = callWithTimeout(prompt)
-            outputValidator.validate(task, second.text)
+            val second = callWithTimeout(prompt, task)
+            second to outputValidator.validate(task, second.text)
         }
     }
 

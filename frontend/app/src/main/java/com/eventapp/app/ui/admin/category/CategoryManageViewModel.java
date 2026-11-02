@@ -1,25 +1,35 @@
 package com.eventapp.app.ui.admin.category;
 
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eventapp.app.ui.fake.SampleCategoryData;
+import com.eventapp.app.R;
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.util.DateTimeUtils;
+import com.eventapp.app.data.remote.dto.admincategory.AdminCategoryDtos;
+import com.eventapp.app.data.repository.CategoryRepository;
 import com.eventapp.app.ui.model.CategoryUiModel;
 import com.eventapp.app.ui.model.ContentRuleUiModel;
 import com.eventapp.app.ui.model.FaqUiModel;
+import com.google.gson.JsonElement;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
- * FR-A09 state holder: category tree, banned keywords/suspicious domains and guidance content.
- * Every action mutates the in-memory catalogue only; the backend contract is not wired yet.
+ * FR-A09 — cây danh mục lấy từ {@code GET /admin/categories?includeInactive=true}.
+ *
+ * <p>Thêm/sửa/ẩn/hiện/sắp xếp đều gọi API thật. Bộ lọc từ khoá và FAQ trong thiết kế cũ không có
+ * API backend nên các danh sách đó luôn rỗng và giao diện đã ẩn hai tab tương ứng.</p>
  */
 public class CategoryManageViewModel extends ViewModel {
 
@@ -43,14 +53,20 @@ public class CategoryManageViewModel extends ViewModel {
     public static class ActionEvent {
         public final Action action;
         public final ContentRuleUiModel deletedRule;
+        public final String message;
 
         ActionEvent(Action action, ContentRuleUiModel deletedRule) {
+            this(action, deletedRule, null);
+        }
+
+        ActionEvent(Action action, ContentRuleUiModel deletedRule, @Nullable String message) {
             this.action = action;
             this.deletedRule = deletedRule;
+            this.message = message;
         }
     }
 
-    private static final long LOAD_DELAY_MS = 320L;
+    private final CategoryRepository repository = ServiceLocator.get(CategoryRepository.class);
 
     private final MutableLiveData<List<CategoryUiModel>> categories =
             new MutableLiveData<>(new ArrayList<>());
@@ -65,11 +81,9 @@ public class CategoryManageViewModel extends ViewModel {
     private final MutableLiveData<Integer> ruleCount = new MutableLiveData<>(0);
     private final MutableLiveData<ActionEvent> actionEvent = new MutableLiveData<>();
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<CategoryUiModel> allCategories = new ArrayList<>();
-    private final List<ContentRuleUiModel> allRules = new ArrayList<>();
-    private final List<FaqUiModel> allFaqs = new ArrayList<>();
-    private long nextId = 1000L;
+    private final Map<Long, Long> versionById = new HashMap<>();
+    private final Map<Long, String> codeById = new HashMap<>();
 
     public CategoryManageViewModel() {
         load();
@@ -114,23 +128,58 @@ public class CategoryManageViewModel extends ViewModel {
     public void load() {
         loading.setValue(true);
         error.setValue(false);
-        handler.postDelayed(() -> {
-            allCategories.clear();
-            allCategories.addAll(SampleCategoryData.categories());
-            allRules.clear();
-            allRules.addAll(SampleCategoryData.rules());
-            allFaqs.clear();
-            allFaqs.addAll(SampleCategoryData.faqs());
-            rebuildCategories();
-            publishRules();
-            faqs.setValue(new ArrayList<>(allFaqs));
-            publishCounts();
-            loading.setValue(false);
-        }, LOAD_DELAY_MS);
+        repository.adminTree(true,
+                new ApiCallback<List<AdminCategoryDtos.Category>>() {
+                    @Override
+                    public void onSuccess(@Nullable List<AdminCategoryDtos.Category> data,
+                                          @Nullable JsonElement meta) {
+                        allCategories.clear();
+                        versionById.clear();
+                        codeById.clear();
+                        if (data != null) {
+                            for (AdminCategoryDtos.Category root : data) {
+                                addCategory(root, 0L);
+                                if (root.children != null) {
+                                    for (AdminCategoryDtos.Category child : root.children) {
+                                        addCategory(child, root.id);
+                                    }
+                                }
+                            }
+                        }
+                        rebuildCategories();
+                        publishCounts();
+                        loading.setValue(false);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        loading.setValue(false);
+                        error.setValue(true);
+                    }
+                });
     }
 
     public void retry() {
         load();
+    }
+
+    private void addCategory(@Nullable AdminCategoryDtos.Category dto, long parentId) {
+        if (dto == null || dto.name == null) {
+            return;
+        }
+        long parent = dto.parentCategoryId == null ? parentId : dto.parentCategoryId;
+        allCategories.add(new CategoryUiModel(
+                dto.id,
+                dto.name,
+                dto.slug,
+                parent,
+                iconFor(dto),
+                colorFor(dto),
+                dto.active ? CategoryUiModel.Status.ACTIVE : CategoryUiModel.Status.HIDDEN,
+                (int) Math.min(Integer.MAX_VALUE, dto.eventCount),
+                (int) (DateTimeUtils.toMillis(dto.updatedAt) % Integer.MAX_VALUE)));
+        versionById.put(dto.id, DateTimeUtils.toMillis(dto.updatedAt));
+        codeById.put(dto.id, dto.code);
     }
 
     public int childCount(long categoryId) {
@@ -146,47 +195,110 @@ public class CategoryManageViewModel extends ViewModel {
     public void saveCategory(long id, String name, long parentId, int iconRes, int colorRes,
                              boolean active) {
         String trimmed = name == null ? "" : name.trim();
-        if (isDuplicate(trimmed, parentId, id)) {
-            actionEvent.setValue(new ActionEvent(Action.DUPLICATE, null));
+        if (trimmed.isEmpty() || trimmed.length() > 120) {
+            actionEvent.setValue(new ActionEvent(Action.DUPLICATE, null,
+                    "Tên danh mục phải có 1–120 ký tự."));
             return;
         }
-        CategoryUiModel.Status status =
-                active ? CategoryUiModel.Status.ACTIVE : CategoryUiModel.Status.HIDDEN;
 
         if (id == 0L) {
-            CategoryUiModel created = new CategoryUiModel(nextId++, trimmed, slugify(trimmed),
-                    parentId, iconRes, colorRes, status, 0, 1);
-            allCategories.add(created);
-            rebuildCategories();
-            publishCounts();
-            actionEvent.setValue(new ActionEvent(
-                    active ? Action.SAVED : Action.HIDDEN, null));
+            AdminCategoryDtos.CreateRequest request = new AdminCategoryDtos.CreateRequest();
+            request.categoryCode = uniqueCode(trimmed);
+            request.categoryName = trimmed;
+            request.slug = slugify(trimmed);
+            request.parentCategoryId = parentId > 0L ? parentId : null;
+            request.sortOrder = nextSortOrder();
+            submitCreate(request);
             return;
         }
 
-        for (int i = 0; i < allCategories.size(); i++) {
-            CategoryUiModel item = allCategories.get(i);
-            if (item.id != id) {
-                continue;
-            }
-            CategoryUiModel updated = item
-                    .withContent(trimmed, parentId, iconRes, colorRes)
-                    .withStatus(status);
-            allCategories.set(i, updated);
-            rebuildCategories();
-            publishCounts();
-            Action action = status == CategoryUiModel.Status.ACTIVE
-                    ? (item.status == status ? Action.SAVED : Action.SHOWN)
-                    : Action.HIDDEN;
-            actionEvent.setValue(new ActionEvent(action, null));
+        CategoryUiModel current = findById(id);
+        if (current == null) {
             return;
         }
+        AdminCategoryDtos.UpdateRequest request = new AdminCategoryDtos.UpdateRequest();
+        request.categoryName = trimmed;
+        request.slug = current.slug;
+        request.version = versionById.get(id);
+        repository.update(id, request, new ApiCallback<AdminCategoryDtos.Category>() {
+            @Override
+            public void onSuccess(@Nullable AdminCategoryDtos.Category data,
+                                  @Nullable JsonElement meta) {
+                if (active == (current.status == CategoryUiModel.Status.ACTIVE)) {
+                    actionEvent.setValue(new ActionEvent(Action.SAVED, null));
+                    load();
+                } else {
+                    changeVisibility(id, active,
+                            current.status == CategoryUiModel.Status.ACTIVE);
+                }
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                actionEvent.setValue(new ActionEvent(
+                        exception.getHttpCode() == 409 ? Action.DUPLICATE : Action.SAVED, null,
+                        exception.getUserMessage()));
+            }
+        });
+    }
+
+    private void submitCreate(@NonNull AdminCategoryDtos.CreateRequest request) {
+        repository.create(request, new ApiCallback<AdminCategoryDtos.Category>() {
+            @Override
+            public void onSuccess(@Nullable AdminCategoryDtos.Category data,
+                                  @Nullable JsonElement meta) {
+                actionEvent.setValue(new ActionEvent(Action.SAVED, null));
+                load();
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                actionEvent.setValue(new ActionEvent(
+                        exception.getHttpCode() == 409 ? Action.DUPLICATE : Action.SAVED, null,
+                        exception.getUserMessage()));
+            }
+        });
+    }
+
+    private void changeVisibility(long id, boolean show, boolean wasActive) {
+        if (show) {
+            repository.unhide(id, new ApiCallback<AdminCategoryDtos.Category>() {
+                @Override
+                public void onSuccess(@Nullable AdminCategoryDtos.Category data,
+                                      @Nullable JsonElement meta) {
+                    actionEvent.setValue(new ActionEvent(
+                            wasActive ? Action.SAVED : Action.SHOWN, null));
+                    load();
+                }
+
+                @Override
+                public void onError(@NonNull ApiException exception) {
+                    actionEvent.setValue(new ActionEvent(Action.SAVED, null,
+                            exception.getUserMessage()));
+                }
+            });
+            return;
+        }
+        repository.hide(id, "Ẩn từ ứng dụng quản trị",
+                new ApiCallback<AdminCategoryDtos.Category>() {
+                    @Override
+                    public void onSuccess(@Nullable AdminCategoryDtos.Category data,
+                                          @Nullable JsonElement meta) {
+                        actionEvent.setValue(new ActionEvent(Action.HIDDEN, null));
+                        load();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        actionEvent.setValue(new ActionEvent(Action.SAVED, null,
+                                exception.getUserMessage()));
+                    }
+                });
     }
 
     public void moveCategory(long fromId, long toId) {
-        List<CategoryUiModel> snapshot = new ArrayList<>(allCategories);
         List<CategoryUiModel> roots = new ArrayList<>();
-        for (CategoryUiModel item : snapshot) {
+        for (CategoryUiModel item : allCategories) {
             if (item.isRoot()) {
                 roots.add(item);
             }
@@ -198,96 +310,51 @@ public class CategoryManageViewModel extends ViewModel {
         }
         roots.add(to, roots.remove(from));
 
-        allCategories.clear();
-        for (CategoryUiModel root : roots) {
-            allCategories.add(root);
-            for (CategoryUiModel child : snapshot) {
-                if (child.parentId == root.id) {
-                    allCategories.add(child);
-                }
-            }
+        List<AdminCategoryDtos.OrderItem> items = new ArrayList<>();
+        for (int i = 0; i < roots.size(); i++) {
+            items.add(new AdminCategoryDtos.OrderItem(roots.get(i).id, i + 1));
         }
-        rebuildCategories();
-        actionEvent.setValue(new ActionEvent(Action.REORDERED, null));
+        repository.reorder(items, new ApiCallback<List<AdminCategoryDtos.Category>>() {
+            @Override
+            public void onSuccess(@Nullable List<AdminCategoryDtos.Category> data,
+                                  @Nullable JsonElement meta) {
+                actionEvent.setValue(new ActionEvent(Action.REORDERED, null));
+                load();
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                actionEvent.setValue(new ActionEvent(Action.REORDERED, null,
+                        exception.getUserMessage()));
+                load();
+            }
+        });
     }
+
+    // Các hàm của tab từ khoá/FAQ giữ lại để không phá vỡ giao diện, nhưng backend chưa có API.
 
     public void addRule(String term, ContentRuleUiModel.Kind kind,
                         ContentRuleUiModel.MatchType matchType, List<String> scopes,
                         ContentRuleUiModel.Severity severity) {
-        String trimmed = term == null ? "" : term.trim();
-        if (trimmed.length() < 2 || trimmed.length() > 50 || isDuplicateRule(trimmed)) {
-            return;
-        }
-        allRules.add(new ContentRuleUiModel(nextId++, trimmed, kind, matchType, scopes,
-                severity, true));
-        publishRules();
-        publishCounts();
-        actionEvent.setValue(new ActionEvent(Action.RULE_ADDED, null));
+        actionEvent.setValue(new ActionEvent(Action.RULE_ADDED, null,
+                "Bộ lọc nội dung chưa có API backend."));
     }
 
     public void toggleRule(long id, boolean active) {
-        for (int i = 0; i < allRules.size(); i++) {
-            ContentRuleUiModel item = allRules.get(i);
-            if (item.id == id) {
-                allRules.set(i, item.withActive(active));
-                publishRules();
-                actionEvent.setValue(new ActionEvent(Action.RULE_TOGGLED, null));
-                return;
-            }
-        }
     }
 
     public void deleteRule(long id) {
-        for (int i = 0; i < allRules.size(); i++) {
-            ContentRuleUiModel item = allRules.get(i);
-            if (item.id == id) {
-                allRules.remove(i);
-                publishRules();
-                publishCounts();
-                actionEvent.setValue(new ActionEvent(Action.RULE_DELETED, item));
-                return;
-            }
-        }
     }
 
     public void restoreRule(ContentRuleUiModel rule) {
-        if (rule == null) {
-            return;
-        }
-        allRules.add(rule);
-        publishRules();
-        publishCounts();
-        actionEvent.setValue(new ActionEvent(Action.RULE_RESTORED, null));
     }
 
     public void saveFaq(long id, String title, String content, boolean visible) {
-        String trimmedTitle = title == null ? "" : title.trim();
-        String trimmedContent = content == null ? "" : content.trim();
-        if (id == 0L) {
-            allFaqs.add(new FaqUiModel(nextId++, trimmedTitle, trimmedContent, visible,
-                    allFaqs.size() + 1));
-        } else {
-            for (int i = 0; i < allFaqs.size(); i++) {
-                FaqUiModel item = allFaqs.get(i);
-                if (item.id == id) {
-                    allFaqs.set(i, item.withContent(trimmedTitle, trimmedContent, visible));
-                    break;
-                }
-            }
-        }
-        faqs.setValue(new ArrayList<>(allFaqs));
-        actionEvent.setValue(new ActionEvent(Action.FAQ_SAVED, null));
+        actionEvent.setValue(new ActionEvent(Action.FAQ_SAVED, null,
+                "FAQ chưa có API backend."));
     }
 
     public void deleteFaq(long id) {
-        for (int i = 0; i < allFaqs.size(); i++) {
-            if (allFaqs.get(i).id == id) {
-                allFaqs.remove(i);
-                faqs.setValue(new ArrayList<>(allFaqs));
-                actionEvent.setValue(new ActionEvent(Action.FAQ_DELETED, null));
-                return;
-            }
-        }
     }
 
     private void rebuildCategories() {
@@ -306,20 +373,6 @@ public class CategoryManageViewModel extends ViewModel {
         categories.setValue(flat);
     }
 
-    private void publishRules() {
-        List<ContentRuleUiModel> keywordItems = new ArrayList<>();
-        List<ContentRuleUiModel> domainItems = new ArrayList<>();
-        for (ContentRuleUiModel rule : allRules) {
-            if (rule.kind == ContentRuleUiModel.Kind.DOMAIN) {
-                domainItems.add(rule);
-            } else {
-                keywordItems.add(rule);
-            }
-        }
-        keywords.setValue(keywordItems);
-        domains.setValue(domainItems);
-    }
-
     private void publishCounts() {
         int active = 0;
         for (CategoryUiModel item : allCategories) {
@@ -328,24 +381,50 @@ public class CategoryManageViewModel extends ViewModel {
             }
         }
         activeCategoryCount.setValue(active);
-        ruleCount.setValue(allRules.size());
+        ruleCount.setValue(0);
     }
 
-    private boolean isDuplicate(String name, long parentId, long ignoreId) {
-        String key = name.toLowerCase(Locale.ROOT);
+    @Nullable
+    private CategoryUiModel findById(long id) {
         for (CategoryUiModel item : allCategories) {
-            if (item.id != ignoreId && item.parentId == parentId
-                    && item.name.toLowerCase(Locale.ROOT).equals(key)) {
-                return true;
+            if (item.id == id) {
+                return item;
             }
         }
-        return false;
+        return null;
     }
 
-    private boolean isDuplicateRule(String term) {
-        String key = term.toLowerCase(Locale.ROOT);
-        for (ContentRuleUiModel rule : allRules) {
-            if (rule.term.toLowerCase(Locale.ROOT).equals(key)) {
+    private int nextSortOrder() {
+        int max = 0;
+        for (CategoryUiModel item : allCategories) {
+            if (item.isRoot()) {
+                max++;
+            }
+        }
+        return max + 1;
+    }
+
+    @NonNull
+    private String uniqueCode(@NonNull String name) {
+        String base = slugify(name).replace('-', '_').toUpperCase(Locale.ROOT);
+        if (base.isEmpty()) {
+            base = "CATEGORY";
+        }
+        if (base.length() > 60) {
+            base = base.substring(0, 60);
+        }
+        String code = base;
+        int suffix = 2;
+        while (codeExists(code)) {
+            code = base + "_" + suffix;
+            suffix++;
+        }
+        return code;
+    }
+
+    private boolean codeExists(@NonNull String code) {
+        for (String existing : codeById.values()) {
+            if (code.equalsIgnoreCase(existing)) {
                 return true;
             }
         }
@@ -361,7 +440,8 @@ public class CategoryManageViewModel extends ViewModel {
         return -1;
     }
 
-    private String slugify(String name) {
+    @NonNull
+    private static String slugify(@NonNull String name) {
         String normalized = Normalizer.normalize(name, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                 .replace('đ', 'd')
@@ -370,9 +450,37 @@ public class CategoryManageViewModel extends ViewModel {
         return normalized.replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
     }
 
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
+    private static int iconFor(AdminCategoryDtos.Category dto) {
+        String code = dto.code == null ? "" : dto.code.toUpperCase(Locale.ROOT);
+        if (code.contains("MUSIC")) {
+            return R.drawable.ic_ds_mic;
+        }
+        if (code.contains("TECH")) {
+            return R.drawable.ic_ds_chart;
+        }
+        if (code.contains("SPORT")) {
+            return R.drawable.ic_ds_ticket;
+        }
+        if (code.contains("ART")) {
+            return R.drawable.ic_ds_image;
+        }
+        if (code.contains("FOOD")) {
+            return R.drawable.ic_ds_payment;
+        }
+        return R.drawable.ic_ds_event;
+    }
+
+    private static int colorFor(AdminCategoryDtos.Category dto) {
+        String code = dto.code == null ? "" : dto.code.toUpperCase(Locale.ROOT);
+        if (code.contains("TECH")) {
+            return R.color.ds_secondary;
+        }
+        if (code.contains("SPORT")) {
+            return R.color.ds_organizer;
+        }
+        if (code.contains("ART")) {
+            return R.color.ds_info;
+        }
+        return R.color.ds_primary;
     }
 }

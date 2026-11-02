@@ -406,8 +406,17 @@ public class EventListFragment extends Fragment {
     }
 
     private void observeData() {
+        final boolean[] loadingSubscribed = {false};
         viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
             boolean isLoading = Boolean.TRUE.equals(loading);
+            // Lần nhận đầu tiên chỉ là giá trị khởi tạo (false) — bỏ qua để không tắt skeleton
+            // trước khi request đầu tiên kịp chạy.
+            if (!loadingSubscribed[0]) {
+                loadingSubscribed[0] = true;
+                if (!isLoading) {
+                    return;
+                }
+            }
             swipeRefresh.setRefreshing(false);
             if (isLoading && firstLoad) {
                 skeleton.setVisibility(View.VISIBLE);

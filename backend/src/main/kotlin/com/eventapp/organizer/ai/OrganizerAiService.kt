@@ -112,7 +112,7 @@ class OrganizerAiService(
                     shortSummary = it.path("shortSummary").asText("")
                 )
             }
-            val warnings = postCheckDescriptions(descriptions, fields)
+            val warnings = postCheckTexts(descriptions.map { it.text }, fields)
             EventDescriptionResponse(
                 descriptions = descriptions,
                 missingInfo = missingInfo,
@@ -146,8 +146,8 @@ class OrganizerAiService(
      * Hậu kiểm O06: bất kỳ số tiền / ngày / SĐT / email / URL nào trong văn bản mà không có
      * trong dữ liệu nhập đều bị cảnh báo (AI không được tự bịa).
      */
-    private fun postCheckDescriptions(
-        descriptions: List<DescriptionVariantDto>,
+    private fun postCheckTexts(
+        texts: List<String>,
         fields: Map<String, Any?>
     ): List<String> {
         val sourceText = fields.values.joinToString(" ") { value ->
@@ -158,9 +158,9 @@ class OrganizerAiService(
         }.lowercase()
 
         val warnings = LinkedHashSet<String>()
-        descriptions.forEach { variant ->
+        texts.forEach { text ->
             SUSPICIOUS_PATTERNS.forEach { (label, regex) ->
-                regex.findAll(variant.text).forEach { match ->
+                regex.findAll(text).forEach { match ->
                     val token = match.value.lowercase()
                     if (!sourceText.contains(token)) {
                         warnings += "Văn bản có $label không nằm trong dữ liệu bạn nhập: ${match.value}"
@@ -179,6 +179,95 @@ class OrganizerAiService(
             missing += "Địa điểm hoặc thông tin tham dự trực tuyến"
         }
         if (request.audience.isNullOrBlank()) missing += "Đối tượng tham dự"
+        return missing
+    }
+
+    // ------------------------------------------------------------------
+    // FR-O06 — bản nháp thông báo gửi người tham dự
+    // ------------------------------------------------------------------
+
+    /**
+     * Organizer gõ vài từ khóa (VD «Đổi phòng B1 sang B3 lúc 10h»), AI viết thành thông báo
+     * hoàn chỉnh. Chỉ trả bản nháp — Organizer phải tự xác nhận và gửi (O06-R01).
+     */
+    @Transactional
+    fun composeAnnouncement(userId: Long, request: AnnouncementDraftRequest): AnnouncementDraftResponse {
+        requireApprovedOrganizer(userId)
+        request.eventId?.let { eventId ->
+            val event = requireOwnedEvent(userId, eventId)
+            if (event.lifecycleStatus == EventLifecycleStatus.CANCELLED) {
+                throw ForbiddenException(ErrorCode.CONFLICT, "Sự kiện đã huỷ, không thể soạn thông báo")
+            }
+        }
+
+        val tone = (request.tone ?: "PROFESSIONAL").uppercase()
+        if (tone !in TONES) throw validationError("tone", "tone phải là PROFESSIONAL | FRIENDLY | FORMAL")
+        val length = (request.length ?: "MEDIUM").uppercase()
+        if (length !in LENGTHS) throw validationError("length", "length phải là SHORT | MEDIUM | LONG")
+        val variants = (request.variants ?: 1).coerceIn(1, 3)
+
+        val keyPoints = request.keyPoints.map { it.trim() }.filter { it.isNotEmpty() }
+
+        val fields = mapOf(
+            "topic" to request.topic.trim(),
+            "eventTitle" to (request.eventTitle?.trim() ?: ""),
+            "audience" to (request.audience?.trim() ?: ""),
+            "keyPoints" to keyPoints,
+            "tone" to tone,
+            "length" to length,
+            "variants" to variants
+        )
+
+        val missingInfo = buildAnnouncementMissingInfo(request)
+        return try {
+            val result = aiGateway.execute(
+                task = AiTask.ANNOUNCEMENT,
+                userId = userId,
+                eventId = request.eventId,
+                fields = fields,
+                inputSummary = "announcement:${request.topic.take(60)}"
+            )
+            val drafts = result.data.path("variants").map {
+                DescriptionVariantDto(
+                    text = it.path("text").asText(""),
+                    shortSummary = it.path("shortSummary").asText("")
+                )
+            }
+            val warnings = postCheckTexts(drafts.map { it.text }, fields)
+            AnnouncementDraftResponse(
+                variants = drafts,
+                missingInfo = missingInfo,
+                warnings = warnings,
+                source = "AI",
+                aiRequestId = result.aiRequestId,
+                correlationId = result.correlationId
+            )
+        } catch (ex: AiQuotaExceededException) {
+            throw BusinessException(
+                ErrorCode.RATE_LIMITED,
+                ex.message ?: ErrorCode.RATE_LIMITED.defaultMessage,
+                emptyList(),
+                mapOf("retryAfterSeconds" to ex.retryAfterSeconds)
+            )
+        } catch (ex: Exception) {
+            log.info("AI soạn thông báo không dùng được ({}), trả về thông báo để Organizer nhập tay", ex.message)
+            AnnouncementDraftResponse(
+                variants = emptyList(),
+                missingInfo = missingInfo,
+                warnings = listOf("Không soạn được thông báo bằng AI, bạn vẫn có thể nhập tay bình thường."),
+                source = "RULE_UNAVAILABLE",
+                aiRequestId = null,
+                correlationId = null
+            )
+        }
+    }
+
+    private fun buildAnnouncementMissingInfo(request: AnnouncementDraftRequest): List<String> {
+        val missing = mutableListOf<String>()
+        if (request.audience.isNullOrBlank()) missing += "Đối tượng nhận thông báo"
+        if (request.keyPoints.isEmpty()) {
+            missing += "Chi tiết cần truyền đạt (thời gian, địa điểm, thay đổi cụ thể)"
+        }
         return missing
     }
 

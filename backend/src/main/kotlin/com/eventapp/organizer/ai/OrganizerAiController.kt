@@ -23,6 +23,13 @@ class OrganizerAiController(
     fun describe(@Valid @RequestBody request: EventDescriptionRequest): ApiResponse<EventDescriptionResponse> =
         ApiResponse.ok(organizerAiService.describe(CurrentUser.requireUserId(), request))
 
+    @Operation(summary = "API-14b — AI soạn thông báo gửi người tham dự (bản nháp, không tự gửi)")
+    @PostMapping("/ai/announcement")
+    fun composeAnnouncement(
+        @Valid @RequestBody request: AnnouncementDraftRequest
+    ): ApiResponse<AnnouncementDraftResponse> =
+        ApiResponse.ok(organizerAiService.composeAnnouncement(CurrentUser.requireUserId(), request))
+
     @Operation(summary = "API-18 — AI phân tích và gợi ý vận hành cho một sự kiện")
     @PostMapping("/events/{eventId}/ai-analysis")
     fun analyze(@PathVariable eventId: Long): ApiResponse<EventAnalysisResponse> =

@@ -115,6 +115,7 @@ public class AiInsightFragment extends Fragment {
         if (eventTitle != null && !eventTitle.isEmpty()) {
             eventSubtitle.setText(eventTitle);
         }
+        viewModel.setEventTitle(eventTitle);
         applyEmbedded(args != null && args.getBoolean(ARG_EMBEDDED, false));
         viewModel.selectEvent(eventId);
         observe();
@@ -125,6 +126,7 @@ public class AiInsightFragment extends Fragment {
             return;
         }
         requireView().findViewById(R.id.barInsight).setVisibility(View.GONE);
+        // Phân tích chạy cho đúng sự kiện được chọn từ Dashboard, không có danh sách riêng.
         requireView().findViewById(R.id.tilInsightEvent).setVisibility(View.GONE);
     }
 
@@ -408,24 +410,8 @@ public class AiInsightFragment extends Fragment {
         if (action == null || action == AiInsightUiModel.ActionTarget.NONE) {
             return;
         }
-        int destination;
-        switch (action) {
-            case EDIT_TICKETS:
-                destination = R.id.ticket_type_listFragment;
-                break;
-            case VIEW_ORDERS:
-                destination = R.id.order_listFragment;
-                break;
-            case EDIT_EVENT:
-            default:
-                destination = R.id.event_formFragment;
-                break;
-        }
-        try {
-            Navigation.findNavController(requireView()).navigate(destination);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            Snackbar.make(requireView(), R.string.hc_coming_soon, Snackbar.LENGTH_SHORT).show();
-        }
+        // API-18 chỉ gợi ý, không tự sửa dữ liệu; các màn quản trị sự kiện/vé chưa có API backend.
+        Snackbar.make(requireView(), R.string.hc_coming_soon, Snackbar.LENGTH_SHORT).show();
     }
 
     private String oneDecimal(double value) {

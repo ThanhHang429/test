@@ -22,7 +22,16 @@ app:
     # Bộ dữ liệu demo quy mô lớn (chạy sau DevDataSeeder, idempotent, không sửa dữ liệu cũ).
     demo-enabled: true
   ai:
-    provider: mock
+    # Dev mặc định dùng mock; đặt AI_PROVIDER=gemini|deepseek|openrouter trong .env để gọi model thật.
+    provider: ${AI_PROVIDER:mock}
+  payment:
+    # Dev cho phép bấm "Tôi đã chuyển khoản" để xác nhận, vì chưa nối cổng thanh toán thật.
+    simulated-confirm-enabled: ${PAYMENT_SIMULATED_CONFIRM:true}
+    bank-code: ${PAYMENT_BANK_CODE:VCB}
+    bank-account: ${PAYMENT_BANK_ACCOUNT:0123456789}
+    account-name: ${PAYMENT_ACCOUNT_NAME:ETICKET DEMO}
+  ticketing:
+    payment-window-minutes: ${TICKETING_PAYMENT_WINDOW_MINUTES:15}
 
 logging:
   level:

@@ -1,33 +1,34 @@
 package com.eventapp.app.ui.organizer.event;
 
-
-import com.eventapp.app.ui.fake.SampleAiDescriptionData;
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.data.remote.dto.organizerai.OrganizerAiDtos;
+import com.eventapp.app.data.repository.OrganizerRepository;
+import com.google.gson.JsonElement;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
- * FR-O06 state holder: tone, length, variant count, request lifecycle and the undo stack.
+ * FR-O06 — AI viết bản nháp mô tả qua {@code POST /organizer/ai/event-description}.
  *
- * <p>The assistant only produces text — this view model never mutates event data (O06-R01) and
- * never keeps the input or output beyond the screen (O06-R07). Quota mirrors the documented
- * limit of 10 requests per organizer per hour; exceeding it surfaces a wait time instead of
- * another call.</p>
+ * <p>AI chỉ sinh văn bản, không lưu vào sự kiện (O06-R01). Kết quả có thể kèm {@code warnings} do
+ * server hậu kiểm (số tiền/ngày/SĐT/link không có trong dữ liệu nhập).</p>
  */
 public class AiDescriptionViewModel extends ViewModel {
 
-    private static final long GENERATE_DELAY_MS = 1600L;
-    private static final long TIMEOUT_MS = 25_000L;
-    private static final long HOUR_MS = 60L * 60L * 1000L;
     public static final int MAX_PER_HOUR = 10;
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final OrganizerRepository repository = ServiceLocator.get(OrganizerRepository.class);
+
     private final MutableLiveData<AiDescriptionUiModel.Result> result = new MutableLiveData<>();
     private final MutableLiveData<AiDescriptionUiModel.Status> status =
             new MutableLiveData<>(AiDescriptionUiModel.Status.IDLE);
@@ -46,8 +47,6 @@ public class AiDescriptionViewModel extends ViewModel {
     private List<String> keyPoints = new ArrayList<>();
 
     private boolean initialized;
-    private int requestsThisHour;
-    private long hourWindowStart;
     private final List<AiDescriptionUiModel.Result> undoStack = new ArrayList<>();
 
     public void init(long categoryId, String title, String format, String audience,
@@ -60,7 +59,7 @@ public class AiDescriptionViewModel extends ViewModel {
         this.title = title == null ? "" : title;
         this.format = format == null ? "" : format;
         this.audience = audience == null ? "" : audience;
-        this.keyPoints = keyPoints == null ? new ArrayList<>(new ArrayList<>()) : keyPoints;
+        this.keyPoints = keyPoints == null ? new ArrayList<>() : new ArrayList<>(keyPoints);
         generate();
     }
 
@@ -124,58 +123,113 @@ public class AiDescriptionViewModel extends ViewModel {
         return !undoStack.isEmpty();
     }
 
-    /** Generates (or regenerates) variants; refused input and quota are handled client-side. */
+    /** Gửi yêu cầu sinh mô tả; dữ liệu thiếu được chặn ở client trước khi gọi API. */
     public void generate() {
         if (isRequesting()) {
             return;
         }
-        long now = System.currentTimeMillis();
-        if (hourWindowStart == 0L || now - hourWindowStart > HOUR_MS) {
-            hourWindowStart = now;
-            requestsThisHour = 0;
-        }
-        if (requestsThisHour >= MAX_PER_HOUR) {
-            remainingMinutes.setValue(minutesLeft(now));
-            status.setValue(AiDescriptionUiModel.Status.QUOTA);
-            return;
-        }
-        if (SampleAiDescriptionData.isBlocked(title, keyPoints)) {
+        if (title.trim().length() < 5) {
             status.setValue(AiDescriptionUiModel.Status.BLOCKED);
             return;
         }
-        requestsThisHour++;
+        if (categoryId <= 0L || keyPoints.size() < 3) {
+            status.setValue(AiDescriptionUiModel.Status.BLOCKED);
+            return;
+        }
+
+        OrganizerAiDtos.DescriptionRequest request = new OrganizerAiDtos.DescriptionRequest();
+        request.title = title.trim();
+        request.categoryId = categoryId;
+        request.format = format.isEmpty() ? "OFFLINE" : format;
+        request.audience = audience.trim();
+        request.keyPoints = new ArrayList<>(keyPoints);
+        request.tone = tone.name();
+        request.length = length.name();
+        request.variants = variantCount;
 
         status.setValue(AiDescriptionUiModel.Status.REQUESTING);
-        handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(() -> {
-            AiDescriptionUiModel.Result previous = result.getValue();
-            if (previous != null) {
-                undoStack.add(previous);
-                if (undoStack.size() > 3) {
-                    undoStack.remove(0);
-                }
-            }
-            result.setValue(SampleAiDescriptionData.create(
-                    tone, length, variantCount, categoryId, title, format, audience, keyPoints));
-            selectedVariant.setValue(0);
-            generation.setValue((generation.getValue() == null ? 0 : generation.getValue()) + 1);
-            status.setValue(AiDescriptionUiModel.Status.SUCCESS);
-        }, GENERATE_DELAY_MS);
+        repository.describe(request,
+                new ApiCallback<OrganizerAiDtos.DescriptionResponse>() {
+                    @Override
+                    public void onSuccess(@Nullable OrganizerAiDtos.DescriptionResponse data,
+                                          @Nullable JsonElement meta) {
+                        if (data == null || data.descriptions == null
+                                || data.descriptions.isEmpty()) {
+                            status.setValue(AiDescriptionUiModel.Status.ERROR);
+                            return;
+                        }
+                        AiDescriptionUiModel.Result previous = result.getValue();
+                        if (previous != null) {
+                            undoStack.add(previous);
+                            if (undoStack.size() > 3) {
+                                undoStack.remove(0);
+                            }
+                        }
+                        result.setValue(map(data));
+                        selectedVariant.setValue(0);
+                        generation.setValue(
+                                (generation.getValue() == null ? 0 : generation.getValue()) + 1);
+                        status.setValue(AiDescriptionUiModel.Status.SUCCESS);
+                    }
 
-        // 25s guard: a hung request must never leave the screen spinning.
-        handler.postDelayed(() -> {
-            if (status.getValue() == AiDescriptionUiModel.Status.REQUESTING) {
-                status.setValue(AiDescriptionUiModel.Status.ERROR);
-            }
-        }, TIMEOUT_MS);
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        if (exception.getHttpCode() == 429) {
+                            remainingMinutes.setValue(60);
+                            status.setValue(AiDescriptionUiModel.Status.QUOTA);
+                        } else {
+                            status.setValue(AiDescriptionUiModel.Status.ERROR);
+                        }
+                    }
+                });
     }
 
-    /** Aborts an in-flight request and keeps whatever the screen already showed. */
+    @NonNull
+    private AiDescriptionUiModel.Result map(@NonNull OrganizerAiDtos.DescriptionResponse dto) {
+        List<AiDescriptionUiModel.Variant> variants = new ArrayList<>();
+        for (OrganizerAiDtos.DescriptionVariant item : dto.descriptions) {
+            if (item == null) {
+                continue;
+            }
+            variants.add(new AiDescriptionUiModel.Variant(item.text, item.shortSummary));
+        }
+        List<AiDescriptionUiModel.Warning> warnings = new ArrayList<>();
+        if (dto.warnings != null) {
+            for (String warning : dto.warnings) {
+                if (warning == null || warning.trim().isEmpty()) {
+                    continue;
+                }
+                warnings.add(new AiDescriptionUiModel.Warning(warningKind(warning), warning));
+            }
+        }
+        return new AiDescriptionUiModel.Result(
+                dto.aiRequestId == null ? "" : String.valueOf(dto.aiRequestId),
+                System.currentTimeMillis(),
+                variants,
+                dto.missingInfo,
+                warnings);
+    }
+
+    @NonNull
+    private static AiDescriptionUiModel.WarningKind warningKind(@NonNull String warning) {
+        String lower = warning.toLowerCase(Locale.ROOT);
+        if (lower.contains("http") || lower.contains("link") || lower.contains("www")) {
+            return AiDescriptionUiModel.WarningKind.LINK;
+        }
+        if (lower.contains("điện thoại") || lower.contains("sđt")) {
+            return AiDescriptionUiModel.WarningKind.PHONE;
+        }
+        if (lower.contains("ngày") || lower.contains("tháng")) {
+            return AiDescriptionUiModel.WarningKind.DATE;
+        }
+        return AiDescriptionUiModel.WarningKind.NUMBER;
+    }
+
+    /** Huỷ yêu cầu đang chạy và giữ nội dung đang hiển thị. */
     public void cancel() {
         if (!isRequesting()) {
             return;
         }
-        handler.removeCallbacksAndMessages(null);
         status.setValue(result.getValue() == null
                 ? AiDescriptionUiModel.Status.IDLE
                 : AiDescriptionUiModel.Status.SUCCESS);
@@ -201,23 +255,11 @@ public class AiDescriptionViewModel extends ViewModel {
         return true;
     }
 
-    /** Minutes left in the hourly quota window (for the 429-style message). */
     public int getQuotaWaitMinutes() {
         return remainingMinutes.getValue() == null ? 60 : remainingMinutes.getValue();
     }
 
     public int getQuotaUsed() {
-        return requestsThisHour;
-    }
-
-    private int minutesLeft(long now) {
-        long left = HOUR_MS - (now - hourWindowStart);
-        return (int) Math.max(1L, (left + 59_999L) / 60_000L);
-    }
-
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
+        return 0;
     }
 }

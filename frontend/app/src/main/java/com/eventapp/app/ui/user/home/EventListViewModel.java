@@ -1,43 +1,47 @@
 package com.eventapp.app.ui.user.home;
 
-
-import com.eventapp.app.data.model.EventFilterCriteria;
-import com.eventapp.app.ui.fake.SampleEventData;
-import com.eventapp.app.ui.model.EventUiModel;
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.text.Normalizer;
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.network.Paged;
+import com.eventapp.app.core.util.DateTimeUtils;
+import com.eventapp.app.data.model.EventFilterCriteria;
+import com.eventapp.app.data.remote.dto.discovery.DiscoveryDtos;
+import com.eventapp.app.data.repository.EventRepository;
+import com.eventapp.app.ui.mapper.EventMapper;
+import com.eventapp.app.ui.model.EventUiModel;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 /**
- * Search/filter/pagination state for FR-U04. The API integration will replace the sample list
- * and the simulated delay while keeping this public contract for the screen.
+ * Tìm kiếm/lọc/phân trang FR-U04 — mọi trạng thái lấy từ {@code GET /events}.
+ *
+ * <p>Bộ lọc trên UI được chuyển nguyên sang tham số backend; app không lọc lại danh sách đã
+ * phân trang (sẽ sai khi có nhiều trang).</p>
  */
 public class EventListViewModel extends ViewModel {
 
-    private static final int PAGE_SIZE = 6;
+    private static final int PAGE_SIZE = 10;
 
-    private final MutableLiveData<List<EventUiModel>> events = new MutableLiveData<>();
+    private final EventRepository repository = ServiceLocator.get(EventRepository.class);
+
+    private final MutableLiveData<List<EventUiModel>> events = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> loadingMore = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> error = new MutableLiveData<>(false);
+    private final MutableLiveData<ApiException> error = new MutableLiveData<>();
     private final MutableLiveData<Boolean> hasMore = new MutableLiveData<>(false);
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private EventFilterCriteria criteria = new EventFilterCriteria();
     private String query = "";
-    private List<EventUiModel> filtered = new ArrayList<>();
     private int page;
+    private boolean firstPageLoaded;
 
     public LiveData<List<EventUiModel>> getEvents() {
         return events;
@@ -51,7 +55,7 @@ public class EventListViewModel extends ViewModel {
         return loadingMore;
     }
 
-    public LiveData<Boolean> getError() {
+    public LiveData<ApiException> getError() {
         return error;
     }
 
@@ -74,17 +78,11 @@ public class EventListViewModel extends ViewModel {
     }
 
     public void refresh() {
-        error.setValue(false);
+        page = 0;
+        firstPageLoaded = false;
+        error.setValue(null);
         loading.setValue(true);
-        handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(() -> {
-            List<EventUiModel> all = SampleEventData.createEvents();
-            filtered = filter(all);
-            page = 0;
-            events.setValue(pageItems());
-            hasMore.setValue(filtered.size() > events.getValue().size());
-            loading.setValue(false);
-        }, 280L);
+        loadPage(0, false);
     }
 
     public void retry() {
@@ -98,227 +96,122 @@ public class EventListViewModel extends ViewModel {
             return;
         }
         loadingMore.setValue(true);
-        handler.postDelayed(() -> {
-            page++;
-            List<EventUiModel> current = events.getValue() == null
-                    ? new ArrayList<>()
-                    : new ArrayList<>(events.getValue());
-            int from = page * PAGE_SIZE;
-            int to = Math.min(from + PAGE_SIZE, filtered.size());
-            if (from < to && from >= 0) {
-                current.addAll(filtered.subList(from, to));
-            }
-            events.setValue(current);
-            hasMore.setValue(to < filtered.size());
-            loadingMore.setValue(false);
-        }, 240L);
+        loadPage(page + 1, true);
     }
 
-    private List<EventUiModel> pageItems() {
-        int to = Math.min(PAGE_SIZE, filtered.size());
-        return new ArrayList<>(filtered.subList(0, to));
+    private void loadPage(int targetPage, boolean append) {
+        EventRepository.SearchQuery request = toQuery(targetPage);
+        repository.search(request, new ApiCallback<Paged<DiscoveryDtos.EventCard>>() {
+            @Override
+            public void onSuccess(Paged<DiscoveryDtos.EventCard> data, com.google.gson.JsonElement meta) {
+                List<EventUiModel> mapped = new ArrayList<>();
+                if (data != null) {
+                    for (DiscoveryDtos.EventCard card : data.items) {
+                        mapped.add(EventMapper.fromCard(card));
+                    }
+                }
+                if (append) {
+                    List<EventUiModel> merged = events.getValue() == null
+                            ? new ArrayList<>() : new ArrayList<>(events.getValue());
+                    merged.addAll(mapped);
+                    events.setValue(merged);
+                } else {
+                    events.setValue(mapped);
+                    firstPageLoaded = true;
+                }
+                page = targetPage;
+                hasMore.setValue(data != null && data.hasNext());
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                error.setValue(exception);
+                if (!append) {
+                    events.setValue(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                loading.setValue(false);
+                loadingMore.setValue(false);
+            }
+        });
     }
 
-    private List<EventUiModel> filter(List<EventUiModel> all) {
-        List<EventUiModel> result = new ArrayList<>();
-        long now = System.currentTimeMillis();
-        for (EventUiModel event : all) {
-            // U04-R03: cancelled events never appear in search results.
-            if (event.availability == EventUiModel.Availability.CANCELLED) {
-                continue;
-            }
-            // includePast=false is the public catalogue default.
-            if (event.endAt > 0L && event.endAt < now) {
-                continue;
-            }
-            if (!matchesQuery(event)) {
-                continue;
-            }
-            if (!matchesCategory(event)
-                    || !matchesTime(event)
-                    || !matchesCity(event)
-                    || !matchesFormat(event)
-                    || !matchesPrice(event)
-                    || !matchesAvailability(event)) {
-                continue;
-            }
-            result.add(event);
+    @NonNull
+    private EventRepository.SearchQuery toQuery(int targetPage) {
+        EventRepository.SearchQuery request = new EventRepository.SearchQuery();
+        request.q = query;
+        request.categoryIds = new ArrayList<>(criteria.categoryIds);
+        request.city = criteria.city;
+        request.format = criteria.format == EventFilterCriteria.Format.ONSITE ? "OFFLINE"
+                : criteria.format == EventFilterCriteria.Format.ONLINE ? "ONLINE" : null;
+        request.priceType = criteria.priceType == EventFilterCriteria.PriceType.FREE ? "FREE"
+                : criteria.priceType == EventFilterCriteria.PriceType.PAID ? "PAID" : null;
+        if (criteria.priceRangeSet) {
+            request.priceMin = criteria.priceMin > 0 ? criteria.priceMin : null;
+            request.priceMax = criteria.priceMax > 0
+                    && criteria.priceMax < EventFilterCriteria.MAX_PRICE
+                    ? criteria.priceMax : null;
         }
-        sort(result);
-        return result;
+        request.availableOnly = criteria.availableOnly;
+        request.sort = sortKey(criteria.sort);
+        request.page = targetPage;
+        request.size = PAGE_SIZE;
+        applyTimeRange(request);
+        return request;
     }
 
-    private boolean matchesQuery(EventUiModel event) {
-        String needle = normalize(query);
-        if (needle.length() < 2) {
-            return true;
-        }
-        if (contains(event.title, needle)
-                || contains(event.description, needle)
-                || contains(event.organizer, needle)
-                || contains(event.venue, needle)
-                || contains(event.city, needle)) {
-            return true;
-        }
-        for (String tag : event.tags) {
-            if (contains(tag, needle)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean matchesCategory(EventUiModel event) {
-        return criteria.categoryIds.isEmpty()
-                || criteria.categoryIds.contains(event.categoryId());
-    }
-
-    private boolean matchesTime(EventUiModel event) {
-        if (criteria.timePreset == EventFilterCriteria.TimePreset.ANY) {
-            return true;
-        }
-        long from;
-        long to;
+    private void applyTimeRange(@NonNull EventRepository.SearchQuery request) {
         Calendar calendar = Calendar.getInstance();
         switch (criteria.timePreset) {
             case TODAY:
-                from = startOfDay(calendar);
-                to = from + 24L * 60L * 60L * 1000L - 1L;
+                request.dateFrom = isoDay(calendar.getTimeInMillis());
+                request.dateTo = request.dateFrom;
                 break;
             case THIS_WEEK:
-                from = startOfWeek(calendar);
-                to = from + 7L * 24L * 60L * 60L * 1000L - 1L;
+                request.dateFrom = isoDay(calendar.getTimeInMillis());
+                calendar.add(Calendar.DAY_OF_MONTH, 7);
+                request.dateTo = isoDay(calendar.getTimeInMillis());
                 break;
             case THIS_MONTH:
-                from = startOfMonth(calendar);
-                Calendar monthEnd = Calendar.getInstance();
-                monthEnd.setTimeInMillis(from);
-                monthEnd.add(Calendar.MONTH, 1);
-                to = monthEnd.getTimeInMillis() - 1L;
+                request.dateFrom = isoDay(calendar.getTimeInMillis());
+                calendar.add(Calendar.MONTH, 1);
+                request.dateTo = isoDay(calendar.getTimeInMillis());
                 break;
             case CUSTOM:
-                from = criteria.dateFrom;
-                to = criteria.dateTo;
+                request.dateFrom = isoDay(criteria.dateFrom);
+                request.dateTo = isoDay(criteria.dateTo);
                 break;
             case ANY:
             default:
-                return true;
-        }
-        if (from > 0L && event.startAt < from) {
-            return false;
-        }
-        return to <= 0L || event.startAt <= to;
-    }
-
-    private boolean matchesCity(EventUiModel event) {
-        return criteria.city.trim().isEmpty()
-                || event.city.equalsIgnoreCase(criteria.city.trim());
-    }
-
-    private boolean matchesFormat(EventUiModel event) {
-        switch (criteria.format) {
-            case ONSITE:
-                return !event.online;
-            case ONLINE:
-                return event.online;
-            case ANY:
-            default:
-                return true;
+                break;
         }
     }
 
-    private boolean matchesPrice(EventUiModel event) {
-        if (criteria.priceType == EventFilterCriteria.PriceType.FREE && !event.free) {
-            return false;
+    private String isoDay(long millis) {
+        if (millis <= 0L) {
+            return null;
         }
-        if (criteria.priceType == EventFilterCriteria.PriceType.PAID && event.free) {
-            return false;
-        }
-        if (criteria.priceRangeSet) {
-            return event.priceFrom >= criteria.priceMin && event.priceFrom <= criteria.priceMax;
-        }
-        return true;
+        String iso = DateTimeUtils.toIso(millis);
+        return iso == null ? null : iso.substring(0, 10);
     }
 
-    private boolean matchesAvailability(EventUiModel event) {
-        if (!criteria.availableOnly) {
-            return true;
-        }
-        return event.availability == EventUiModel.Availability.AVAILABLE
-                || event.availability == EventUiModel.Availability.FEW_LEFT;
-    }
-
-    private void sort(List<EventUiModel> result) {
-        switch (criteria.sort) {
+    @NonNull
+    private static String sortKey(@NonNull EventFilterCriteria.Sort sort) {
+        switch (sort) {
             case NEWEST:
-                Collections.sort(result, (left, right) -> Long.compare(right.id, left.id));
-                break;
+                return "NEWEST";
             case PRICE_ASC:
-                Collections.sort(result, (left, right) -> Long.compare(left.priceFrom, right.priceFrom));
-                break;
+                return "PRICE_ASC";
             case PRICE_DESC:
-                Collections.sort(result, (left, right) -> Long.compare(right.priceFrom, left.priceFrom));
-                break;
+                return "PRICE_DESC";
             case POPULAR:
-                Collections.sort(result, (left, right) ->
-                        Integer.compare(right.reviewCount, left.reviewCount));
-                break;
+                return "POPULAR";
             case START_TIME_ASC:
             default:
-                Collections.sort(result, (left, right) ->
-                        Long.compare(left.startAt, right.startAt));
-                break;
+                return "START_TIME_ASC";
         }
-    }
-
-    private static boolean contains(String value, String needle) {
-        return value != null && normalize(value).contains(needle);
-    }
-
-    private static String normalize(String value) {
-        if (value == null) {
-            return "";
-        }
-        String decomposed = Normalizer.normalize(value, Normalizer.Form.NFD);
-        decomposed = decomposed.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-        return decomposed.toLowerCase(Locale.ROOT).replace('đ', 'd').trim();
-    }
-
-    private static long startOfDay(Calendar calendar) {
-        Calendar copy = Calendar.getInstance();
-        copy.setTimeInMillis(calendar.getTimeInMillis());
-        copy.set(Calendar.HOUR_OF_DAY, 0);
-        copy.set(Calendar.MINUTE, 0);
-        copy.set(Calendar.SECOND, 0);
-        copy.set(Calendar.MILLISECOND, 0);
-        return copy.getTimeInMillis();
-    }
-
-    private static long startOfWeek(Calendar calendar) {
-        Calendar copy = Calendar.getInstance();
-        copy.setTimeInMillis(calendar.getTimeInMillis());
-        copy.set(Calendar.HOUR_OF_DAY, 0);
-        copy.set(Calendar.MINUTE, 0);
-        copy.set(Calendar.SECOND, 0);
-        copy.set(Calendar.MILLISECOND, 0);
-        copy.set(Calendar.DAY_OF_WEEK, copy.getFirstDayOfWeek());
-        return copy.getTimeInMillis();
-    }
-
-    private static long startOfMonth(Calendar calendar) {
-        Calendar copy = Calendar.getInstance();
-        copy.setTimeInMillis(calendar.getTimeInMillis());
-        copy.set(Calendar.DAY_OF_MONTH, 1);
-        copy.set(Calendar.HOUR_OF_DAY, 0);
-        copy.set(Calendar.MINUTE, 0);
-        copy.set(Calendar.SECOND, 0);
-        copy.set(Calendar.MILLISECOND, 0);
-        return copy.getTimeInMillis();
-    }
-
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
     }
 }

@@ -58,6 +58,13 @@ public class EventGalleryAdapter extends RecyclerView.Adapter<EventGalleryAdapte
         EventDetailViewModel.GalleryItem item = items.get(position);
         Context context = holder.itemView.getContext();
         EventCoverRenderer.showPlaceholder(holder.image, category, 16);
+        if (item.url != null && !item.url.trim().isEmpty()) {
+            com.bumptech.glide.Glide.with(holder.image)
+                    .load(item.url)
+                    .thumbnail(0.25f)
+                    .centerCrop()
+                    .into(holder.image);
+        }
         holder.label.setText(item.label);
         holder.itemView.setContentDescription(context.getString(
                 R.string.hc_detail_gallery_item, position + 1));

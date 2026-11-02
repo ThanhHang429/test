@@ -20,6 +20,8 @@ import com.eventapp.app.ui.common.view.BudgetInputView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
 import com.eventapp.app.ui.common.view.SectionHeaderView;
 import com.eventapp.app.ui.common.view.SkeletonLayout;
+import com.eventapp.app.data.remote.dto.catalog.CatalogDtos;
+import com.eventapp.app.ui.mapper.EventMapper;
 import com.eventapp.app.ui.model.EventCategoryUi;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -239,47 +241,36 @@ public class PreferencesFragment extends Fragment {
         });
     }
 
-    private void bindCategories(List<EventCategory> categories) {
+    /** Danh mục thật từ {@code /categories}: id, tên và icon đều do backend quyết định. */
+    private void bindCategories(List<CatalogDtos.CategoryNode> categories) {
         if (categories == null) {
             return;
         }
-        List<EventCategory> hidden = viewModel.getHiddenCategories().getValue();
-        List<EventCategory> all = new ArrayList<>(categories);
-        if (hidden != null) {
-            all.addAll(hidden);
-        }
-
         categoryGroup.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (EventCategory category : all) {
-            boolean isHidden = hidden != null && hidden.contains(category);
+        for (CatalogDtos.CategoryNode category : flatten(categories)) {
             Chip chip = (Chip) inflater.inflate(R.layout.view_ds_filter_chip, categoryGroup,
                     false);
             chip.setId(View.generateViewId());
-            chip.setText(EventCategoryUi.label(requireContext(), category));
-            chip.setChipIconResource(EventCategoryUi.iconRes(category));
+            chip.setText(category.name);
+            chip.setChipIconResource(EventCategoryUi.iconRes(
+                    EventMapper.categoryOf(java.util.Collections.singletonList(category.name),
+                            null)));
             chip.setChipIconVisible(true);
             chip.setChipIconSize(dp(16));
-            chip.setTag(category);
-            if (isHidden) {
-                chip.setEnabled(false);
-                chip.setAlpha(0.45f);
-                chip.setPaintFlags(chip.getPaintFlags()
-                        | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
-            } else {
-                chip.setOnCheckedChangeListener((button, checked) -> {
-                    if (binding) {
-                        return;
-                    }
-                    if (!viewModel.toggleCategory(category)) {
-                        binding = true;
-                        chip.setChecked(false);
-                        binding = false;
-                        Snackbar.make(requireView(), R.string.hc_pref_categories_limit,
-                                Snackbar.LENGTH_SHORT).show();
-                    }
-                });
-            }
+            chip.setTag(category.id);
+            chip.setOnCheckedChangeListener((button, checked) -> {
+                if (binding) {
+                    return;
+                }
+                if (!viewModel.toggleCategory(category.id)) {
+                    binding = true;
+                    chip.setChecked(false);
+                    binding = false;
+                    Snackbar.make(requireView(), R.string.hc_pref_categories_limit,
+                            Snackbar.LENGTH_SHORT).show();
+                }
+            });
             categoryGroup.addView(chip);
         }
         PreferencesForm form = viewModel.getForm().getValue();
@@ -288,20 +279,29 @@ public class PreferencesFragment extends Fragment {
         }
     }
 
-    private void bindHiddenNote(List<EventCategory> hidden) {
-        if (hidden == null || hidden.isEmpty()) {
-            hiddenNote.setVisibility(View.GONE);
-            return;
-        }
-        StringBuilder names = new StringBuilder();
-        for (EventCategory category : hidden) {
-            if (names.length() > 0) {
-                names.append(", ");
+    @NonNull
+    private static List<CatalogDtos.CategoryNode> flatten(
+            @NonNull List<CatalogDtos.CategoryNode> nodes) {
+        List<CatalogDtos.CategoryNode> values = new ArrayList<>();
+        for (CatalogDtos.CategoryNode node : nodes) {
+            if (node == null || node.name == null) {
+                continue;
             }
-            names.append(EventCategoryUi.label(requireContext(), category));
+            values.add(node);
+            if (node.children != null) {
+                for (CatalogDtos.CategoryNode child : node.children) {
+                    if (child != null && child.name != null) {
+                        values.add(child);
+                    }
+                }
+            }
         }
-        hiddenNote.setText(getString(R.string.hc_pref_hidden_note, names.toString()));
-        hiddenNote.setVisibility(View.VISIBLE);
+        return values;
+    }
+
+    private void bindHiddenNote(List<CatalogDtos.CategoryNode> hidden) {
+        // Cây công khai chỉ có danh mục đang hoạt động nên không còn ghi chú danh mục bị ẩn.
+        hiddenNote.setVisibility(View.GONE);
     }
 
     private void buildCityChips() {
@@ -343,10 +343,8 @@ public class PreferencesFragment extends Fragment {
                     form.categoryIds.size()));
             for (int i = 0; i < categoryGroup.getChildCount(); i++) {
                 View child = categoryGroup.getChildAt(i);
-                if (child instanceof Chip && child.getTag() instanceof EventCategory) {
-                    EventCategory category = (EventCategory) child.getTag();
-                    ((Chip) child).setChecked(
-                            form.categoryIds.contains(EventCategoryUi.id(category)));
+                if (child instanceof Chip && child.getTag() instanceof Long) {
+                    ((Chip) child).setChecked(form.categoryIds.contains((Long) child.getTag()));
                 }
             }
 
@@ -404,12 +402,7 @@ public class PreferencesFragment extends Fragment {
     }
 
     private boolean isHiddenCategoryChip(ChipGroup group, int index) {
-        if (group != categoryGroup) {
-            return false;
-        }
-        List<EventCategory> hidden = viewModel.getHiddenCategories().getValue();
-        View child = group.getChildAt(index);
-        return hidden != null && child != null && hidden.contains(child.getTag());
+        return false;
     }
 
     private void save() {

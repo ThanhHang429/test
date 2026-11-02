@@ -3,8 +3,8 @@
     <!-- Auth brand / common -->
     <string name="auth_brand_name">ETicket</string>
     <string name="auth_brand_tagline">Sự kiện quanh bạn</string>
-    <string name="auth_demo_badge">DEMO</string>
-    <string name="auth_demo_banner">Chế độ demo: không dùng thông tin thật.</string>
+    <string name="auth_demo_badge">DEV</string>
+    <string name="auth_demo_banner">Chế độ dev: đăng nhập bằng tài khoản seed, không cần mật khẩu.</string>
     <string name="auth_or">hoặc</string>
 
     <!-- Login -->
@@ -17,15 +17,28 @@
     <string name="auth_forgot_password">Quên mật khẩu?</string>
     <string name="auth_no_account">Chưa có tài khoản?</string>
     <string name="auth_register_action">Đăng ký ngay</string>
-    <string name="auth_demo_title">Tài khoản demo</string>
-    <string name="auth_demo_subtitle">Chọn vai trò để vào nhanh. Mật khẩu demo chung: 123456.</string>
+    <string name="auth_demo_title">Vào nhanh theo vai trò</string>
+    <string name="auth_demo_subtitle">Lấy tài khoản seed đầu tiên của vai trò đó từ backend dev.</string>
     <string name="auth_demo_user">Người dùng</string>
-    <string name="auth_demo_user_desc">user@eticket.demo · Khám phá, mua vé, check-in</string>
+    <string name="auth_demo_user_desc">user1@eticket.local · Khám phá, đánh giá, yêu thích</string>
     <string name="auth_demo_organizer">Nhà tổ chức</string>
-    <string name="auth_demo_organizer_desc">organizer@eticket.demo · Tạo sự kiện, bán vé</string>
+    <string name="auth_demo_organizer_desc">organizer1@eticket.local · Dashboard, AI, phân loại</string>
     <string name="auth_demo_admin">Quản trị viên</string>
-    <string name="auth_demo_admin_desc">admin@eticket.demo · Duyệt nội dung, vận hành</string>
+    <string name="auth_demo_admin_desc">admin@eticket.local · Kiểm duyệt, danh mục, tích hợp</string>
     <string name="auth_demo_open">Vào ngay</string>
+
+    <!-- Chọn tài khoản dev -->
+    <string name="auth_account_title">Chọn tài khoản</string>
+    <string name="auth_account_subtitle">Danh sách lấy từ backend dev. Bấm một dòng để đăng nhập.</string>
+    <string name="auth_account_retry">Tải lại danh sách</string>
+    <string name="auth_account_empty">Chưa có tài khoản nào. Chạy backend với profile dev để seed dữ liệu.</string>
+    <string name="auth_account_error">Không tải được danh sách tài khoản.</string>
+    <string name="auth_account_signing_in">Đang đăng nhập…</string>
+    <string name="auth_account_login_failed">Đăng nhập thất bại</string>
+    <string name="auth_cd_account_item">Đăng nhập bằng tài khoản %1$s</string>
+    <string name="auth_role_admin">Quản trị</string>
+    <string name="auth_role_organizer">Tổ chức</string>
+    <string name="auth_role_user">Người dùng</string>
 
     <!-- Register -->
     <string name="auth_register_topbar">Đăng ký</string>

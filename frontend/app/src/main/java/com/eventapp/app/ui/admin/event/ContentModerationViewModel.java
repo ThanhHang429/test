@@ -1,25 +1,34 @@
 package com.eventapp.app.ui.admin.event;
 
-
-import com.eventapp.app.ui.fake.SampleModerationData;
-import com.eventapp.app.ui.model.ModerationUiModel;
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.network.Paged;
+import com.eventapp.app.core.util.DateTimeUtils;
+import com.eventapp.app.data.remote.dto.review.ReviewDtos;
+import com.eventapp.app.data.repository.ReviewRepository;
+import com.eventapp.app.ui.mapper.ReviewMapper;
+import com.eventapp.app.ui.model.ModerationUiModel;
 import com.eventapp.app.ui.model.ReviewUiModel;
-import com.eventapp.app.ui.fake.SampleReviewData;
+import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
- * FR-A07 + FR-A14 state holder. Both lanes share one screen: flags keep their status locally,
- * review rows leave the queue after an action and can be restored from the Snackbar undo.
+ * FR-A07 + FR-A14 — cờ kiểm duyệt và hàng chờ đánh giá, dữ liệu từ API thật.
+ *
+ * <p>Cờ được backend suy ra từ đánh giá PENDING và báo cáo trong audit log; mọi thao tác duyệt/ẩn
+ * đều ghi audit phía server. Sau thao tác màn hình tải lại để phản ánh trạng thái chính thức.</p>
  */
 public class ContentModerationViewModel extends ViewModel {
 
@@ -45,16 +54,24 @@ public class ContentModerationViewModel extends ViewModel {
         public final Action action;
         public final long itemId;
         public final boolean undoable;
+        public final String message;
 
         ActionEvent(Action action, long itemId, boolean undoable) {
+            this(action, itemId, undoable, null);
+        }
+
+        ActionEvent(Action action, long itemId, boolean undoable, @Nullable String message) {
             this.action = action;
             this.itemId = itemId;
             this.undoable = undoable;
+            this.message = message;
         }
     }
 
-    private static final long LOAD_DELAY_MS = 320L;
-    private static final int MAX_UNDO = 20;
+    private static final int PAGE_SIZE = 50;
+    private static final String DEFAULT_REASON = "OFFENSIVE";
+
+    private final ReviewRepository repository = ServiceLocator.get(ReviewRepository.class);
 
     private final MutableLiveData<List<ModerationUiModel>> flags =
             new MutableLiveData<>(new ArrayList<>());
@@ -68,10 +85,9 @@ public class ContentModerationViewModel extends ViewModel {
     private final MutableLiveData<Integer> handledToday = new MutableLiveData<>(0);
     private final MutableLiveData<ActionEvent> actionEvent = new MutableLiveData<>();
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<ModerationUiModel> allFlags = new ArrayList<>();
     private final List<ReviewUiModel> allReviews = new ArrayList<>();
-    private final List<UndoEntry> undoStack = new ArrayList<>();
+    private final Map<Long, String> flagIds = new HashMap<>();
 
     private ModerationUiModel.TargetType targetFilter;
     private ModerationUiModel.Severity severityFilter;
@@ -172,8 +188,8 @@ public class ContentModerationViewModel extends ViewModel {
     public void load() {
         loading.setValue(true);
         error.setValue(false);
-        handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(this::bindSampleData, LOAD_DELAY_MS);
+        loadFlags();
+        loadReviews();
     }
 
     public void refresh() {
@@ -184,17 +200,104 @@ public class ContentModerationViewModel extends ViewModel {
         load();
     }
 
+    private void loadFlags() {
+        repository.flags("ALL", 0, PAGE_SIZE,
+                new ApiCallback<Paged<ReviewDtos.ModerationFlag>>() {
+                    @Override
+                    public void onSuccess(@Nullable Paged<ReviewDtos.ModerationFlag> data,
+                                          @Nullable JsonElement meta) {
+                        allFlags.clear();
+                        flagIds.clear();
+                        if (data != null) {
+                            for (ReviewDtos.ModerationFlag dto : data.items) {
+                                ModerationUiModel mapped = mapFlag(dto);
+                                if (mapped != null) {
+                                    allFlags.add(mapped);
+                                    if (dto.id != null) {
+                                        flagIds.put(mapped.id, dto.id);
+                                    }
+                                }
+                            }
+                        }
+                        publishAll();
+                        loading.setValue(false);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        loading.setValue(false);
+                        error.setValue(true);
+                    }
+                });
+    }
+
+    private void loadReviews() {
+        repository.adminReviews(null, null, null, 0, PAGE_SIZE,
+                new ApiCallback<Paged<ReviewDtos.AdminReview>>() {
+                    @Override
+                    public void onSuccess(@Nullable Paged<ReviewDtos.AdminReview> data,
+                                          @Nullable JsonElement meta) {
+                        allReviews.clear();
+                        if (data != null) {
+                            for (ReviewDtos.AdminReview dto : data.items) {
+                                allReviews.add(ReviewMapper.fromAdmin(dto));
+                            }
+                        }
+                        publishReviews();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        // Tab cờ vẫn dùng được khi hàng chờ đánh giá lỗi.
+                    }
+                });
+    }
+
+    @Nullable
+    private ModerationUiModel mapFlag(@Nullable ReviewDtos.ModerationFlag dto) {
+        if (dto == null) {
+            return null;
+        }
+        return new ModerationUiModel.Builder()
+                .id(dto.targetId)
+                .targetId(dto.targetId)
+                .targetType(ModerationUiModel.TargetType.REVIEW)
+                .targetName(dto.eventTitle)
+                .severity(severity(dto.severity))
+                .status(ModerationUiModel.Status.OPEN)
+                .source("REPORTED".equalsIgnoreCase(dto.reasonCode)
+                        ? ModerationUiModel.Source.AI : ModerationUiModel.Source.RULE)
+                .confidence(0)
+                .reason(dto.reasonLabel == null ? dto.reasonCode : dto.reasonLabel)
+                .evidence(dto.evidence)
+                .createdAt(DateTimeUtils.toMillis(dto.createdAt))
+                .build();
+    }
+
     public void confirmFlag(long id) {
         ModerationUiModel flag = findFlag(id);
         if (flag == null || !flag.isOpen()) {
             return;
         }
-        pushFlagUndo(flag);
-        flag.status = ModerationUiModel.Status.CONFIRMED;
-        flag.reviewedAt = System.currentTimeMillis();
-        handledTodayValue++;
-        publishAll();
-        actionEvent.setValue(new ActionEvent(Action.CONFIRM, id, true));
+        repository.confirmFlag(flagIdOf(id),
+                new ReviewDtos.ModerationAction(DEFAULT_REASON),
+                new ApiCallback<ReviewDtos.AdminReview>() {
+                    @Override
+                    public void onSuccess(@Nullable ReviewDtos.AdminReview data,
+                                          @Nullable JsonElement meta) {
+                        flag.status = ModerationUiModel.Status.CONFIRMED;
+                        flag.reviewedAt = System.currentTimeMillis();
+                        handledTodayValue++;
+                        publishAll();
+                        actionEvent.setValue(new ActionEvent(Action.CONFIRM, id, true));
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        actionEvent.setValue(new ActionEvent(Action.CONFIRM, id, false,
+                                exception.getUserMessage()));
+                    }
+                });
     }
 
     public void dismissFlag(long id, String note) {
@@ -202,65 +305,86 @@ public class ContentModerationViewModel extends ViewModel {
         if (flag == null || !flag.isOpen()) {
             return;
         }
-        pushFlagUndo(flag);
-        flag.status = ModerationUiModel.Status.DISMISSED;
-        flag.reviewedAt = System.currentTimeMillis();
-        flag.reviewNote = note == null ? "" : note;
-        handledTodayValue++;
-        publishAll();
-        actionEvent.setValue(new ActionEvent(Action.DISMISS, id, true));
+        repository.dismissFlag(flagIdOf(id),
+                new ReviewDtos.ModerationAction("OTHER", note),
+                new ApiCallback<ReviewDtos.AdminReview>() {
+                    @Override
+                    public void onSuccess(@Nullable ReviewDtos.AdminReview data,
+                                          @Nullable JsonElement meta) {
+                        flag.status = ModerationUiModel.Status.DISMISSED;
+                        flag.reviewedAt = System.currentTimeMillis();
+                        flag.reviewNote = note == null ? "" : note;
+                        handledTodayValue++;
+                        publishAll();
+                        actionEvent.setValue(new ActionEvent(Action.DISMISS, id, true));
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        actionEvent.setValue(new ActionEvent(Action.DISMISS, id, false,
+                                exception.getUserMessage()));
+                    }
+                });
     }
 
+    /** Quét lại nội dung 30 ngày gần nhất theo bộ lọc hiện tại của server. */
     public void rescanFlag(long id) {
-        ModerationUiModel flag = findFlag(id);
-        if (flag == null) {
-            return;
-        }
-        flag.unchecked = false;
-        flag.contentChanged = false;
-        if (flag.confidence < 80) {
-            flag.confidence = 80;
-        }
-        publishFlags();
-        actionEvent.setValue(new ActionEvent(Action.RESCAN, id, false));
+        repository.rescan(30, new ApiCallback<ReviewDtos.RescanResult>() {
+            @Override
+            public void onSuccess(@Nullable ReviewDtos.RescanResult data,
+                                  @Nullable JsonElement meta) {
+                actionEvent.setValue(new ActionEvent(Action.RESCAN, id, false,
+                        data == null ? null : "Đã quét " + data.scanned + " đánh giá, phát hiện "
+                                + data.flagged + " nội dung."));
+                loadFlags();
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                actionEvent.setValue(new ActionEvent(Action.RESCAN, id, false,
+                        exception.getUserMessage()));
+            }
+        });
     }
 
     public void hideReview(long id, String reasonCode, String note) {
-        removeReview(id, Action.HIDE);
+        applyReviewAction(id, reasonCode, note, Action.HIDE, true);
     }
 
     public void keepReview(long id, String note) {
-        removeReview(id, Action.KEEP);
+        repository.approve(id, new ReviewDtos.ModerationAction(reasonOr(note, "OTHER"), note),
+                new ApiCallback<ReviewDtos.AdminReview>() {
+                    @Override
+                    public void onSuccess(@Nullable ReviewDtos.AdminReview data,
+                                          @Nullable JsonElement meta) {
+                        handledTodayValue++;
+                        removeReviewLocally(id);
+                        actionEvent.setValue(new ActionEvent(Action.KEEP, id, false));
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        actionEvent.setValue(new ActionEvent(Action.KEEP, id, false,
+                                exception.getUserMessage()));
+                    }
+                });
     }
 
     public void requestEditReview(long id, String reasonCode, String note) {
-        removeReview(id, Action.REQUEST_EDIT);
+        applyReviewAction(id, reasonCode, note, Action.REQUEST_EDIT, true);
     }
 
     public void undoLast() {
-        if (undoStack.isEmpty()) {
-            return;
-        }
-        UndoEntry entry = undoStack.remove(undoStack.size() - 1);
-        if (entry.flag != null) {
-            entry.flag.status = entry.previousFlagStatus;
-            entry.flag.reviewedAt = entry.previousReviewedAt;
-            entry.flag.reviewNote = entry.previousNote;
-        } else if (entry.review != null) {
-            int index = Math.min(entry.reviewIndex, allReviews.size());
-            allReviews.add(index, entry.review);
-        }
-        if (entry.countedHandled && handledTodayValue > 0) {
-            handledTodayValue--;
-        }
-        publishAll();
-        actionEvent.setValue(new ActionEvent(Action.UNDO, entry.itemId, false));
+        // Backend không có API hoàn tác; tải lại để hiển thị trạng thái chính thức.
+        actionEvent.setValue(new ActionEvent(Action.UNDO, 0L, false));
+        load();
     }
 
     public void consumeActionEvent() {
         actionEvent.setValue(null);
     }
 
+    @Nullable
     public ModerationUiModel findFlag(long id) {
         for (ModerationUiModel flag : allFlags) {
             if (flag.id == id) {
@@ -270,6 +394,7 @@ public class ContentModerationViewModel extends ViewModel {
         return null;
     }
 
+    @Nullable
     public ReviewUiModel findReview(long id) {
         for (ReviewUiModel review : allReviews) {
             if (review.id == id) {
@@ -279,27 +404,54 @@ public class ContentModerationViewModel extends ViewModel {
         return null;
     }
 
-    private void bindSampleData() {
-        allFlags.clear();
-        allFlags.addAll(SampleModerationData.createFlags());
-        allReviews.clear();
-        allReviews.addAll(SampleReviewData.moderationQueue());
-        undoStack.clear();
-        handledTodayValue = SampleModerationData.handledTodayBase() + countHandledToday();
-        publishAll();
-        loading.setValue(false);
+    private void applyReviewAction(long id, @Nullable String reasonCode, @Nullable String note,
+                                   @NonNull Action action, boolean hide) {
+        ReviewDtos.ModerationAction request =
+                new ReviewDtos.ModerationAction(reasonOr(note, reasonCode), note);
+        ApiCallback<ReviewDtos.AdminReview> callback = new ApiCallback<ReviewDtos.AdminReview>() {
+            @Override
+            public void onSuccess(@Nullable ReviewDtos.AdminReview data,
+                                  @Nullable JsonElement meta) {
+                handledTodayValue++;
+                removeReviewLocally(id);
+                actionEvent.setValue(new ActionEvent(action, id, false));
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                actionEvent.setValue(new ActionEvent(action, id, false,
+                        exception.getUserMessage()));
+            }
+        };
+        if (hide) {
+            repository.hide(id, request, callback);
+        } else {
+            repository.restore(id, request, callback);
+        }
     }
 
-    private void removeReview(long id, Action action) {
-        int index = indexOfReview(id);
-        if (index < 0) {
-            return;
+    @NonNull
+    private static String reasonOr(@Nullable String note, @Nullable String reasonCode) {
+        if (reasonCode != null && !reasonCode.trim().isEmpty()) {
+            return reasonCode.trim().toUpperCase(Locale.ROOT);
         }
-        ReviewUiModel review = allReviews.remove(index);
-        pushReviewUndo(review, index);
-        handledTodayValue++;
+        return DEFAULT_REASON;
+    }
+
+    @NonNull
+    private String flagIdOf(long id) {
+        String raw = flagIds.get(id);
+        return raw == null ? "review:" + id : raw;
+    }
+
+    private void removeReviewLocally(long id) {
+        for (int i = 0; i < allReviews.size(); i++) {
+            if (allReviews.get(i).id == id) {
+                allReviews.remove(i);
+                break;
+            }
+        }
         publishAll();
-        actionEvent.setValue(new ActionEvent(action, id, true));
     }
 
     private void publishAll() {
@@ -368,85 +520,19 @@ public class ContentModerationViewModel extends ViewModel {
         handledToday.setValue(handledTodayValue);
     }
 
-    private int countHandledToday() {
-        int count = 0;
-        for (ModerationUiModel flag : allFlags) {
-            if (flag.status != ModerationUiModel.Status.OPEN && isToday(flag.reviewedAt)) {
-                count++;
-            }
+    @NonNull
+    private static ModerationUiModel.Severity severity(@Nullable String raw) {
+        if (raw == null) {
+            return ModerationUiModel.Severity.LOW;
         }
-        return count;
-    }
-
-    private boolean isToday(long timestamp) {
-        if (timestamp <= 0L) {
-            return false;
-        }
-        Calendar now = Calendar.getInstance();
-        Calendar then = Calendar.getInstance();
-        then.setTimeInMillis(timestamp);
-        return now.get(Calendar.YEAR) == then.get(Calendar.YEAR)
-                && now.get(Calendar.DAY_OF_YEAR) == then.get(Calendar.DAY_OF_YEAR);
-    }
-
-    private void pushFlagUndo(ModerationUiModel flag) {
-        UndoEntry entry = new UndoEntry(flag);
-        entry.previousFlagStatus = flag.status;
-        entry.previousReviewedAt = flag.reviewedAt;
-        entry.previousNote = flag.reviewNote;
-        entry.countedHandled = true;
-        addUndo(entry);
-    }
-
-    private void pushReviewUndo(ReviewUiModel review, int index) {
-        UndoEntry entry = new UndoEntry(review);
-        entry.reviewIndex = index;
-        entry.countedHandled = true;
-        addUndo(entry);
-    }
-
-    private void addUndo(UndoEntry entry) {
-        undoStack.add(entry);
-        while (undoStack.size() > MAX_UNDO) {
-            undoStack.remove(0);
-        }
-    }
-
-    private int indexOfReview(long id) {
-        for (int i = 0; i < allReviews.size(); i++) {
-            if (allReviews.get(i).id == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
-    }
-
-    private static class UndoEntry {
-        final long itemId;
-        final ModerationUiModel flag;
-        final ReviewUiModel review;
-        ModerationUiModel.Status previousFlagStatus;
-        long previousReviewedAt;
-        String previousNote = "";
-        int reviewIndex;
-        boolean countedHandled;
-
-        UndoEntry(ModerationUiModel flag) {
-            this.flag = flag;
-            this.review = null;
-            this.itemId = flag.id;
-        }
-
-        UndoEntry(ReviewUiModel review) {
-            this.flag = null;
-            this.review = review;
-            this.itemId = review.id;
+        switch (raw.toUpperCase(Locale.ROOT)) {
+            case "HIGH":
+                return ModerationUiModel.Severity.HIGH;
+            case "MEDIUM":
+                return ModerationUiModel.Severity.MEDIUM;
+            case "LOW":
+            default:
+                return ModerationUiModel.Severity.LOW;
         }
     }
 }

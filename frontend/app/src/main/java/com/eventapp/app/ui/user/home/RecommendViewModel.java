@@ -1,16 +1,21 @@
 package com.eventapp.app.ui.user.home;
 
-
-import com.eventapp.app.ui.fake.SampleRecommendationData;
-import com.eventapp.app.ui.model.RecommendationUiModel;
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.eventapp.app.core.di.ServiceLocator;
 import com.eventapp.app.core.enums.EventCategory;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.util.DateTimeUtils;
+import com.eventapp.app.data.remote.dto.recommendation.RecommendationDtos;
+import com.eventapp.app.data.repository.AiRepository;
+import com.eventapp.app.ui.mapper.PageMappers;
+import com.eventapp.app.ui.model.RecommendationUiModel;
+import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -18,8 +23,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * FR-U07 state holder. Suggestions are independent from the event list: a failure here must not
- * block discovery, so error state is local to this screen.
+ * FR-U07 — gợi ý lấy từ {@code GET /recommendations}.
+ *
+ * <p>Lý do gợi ý do backend viết (AI hoặc rule), màn hình không tự suy luận. Nút làm mới bị giới
+ * hạn 1 lần/phút ở server; chặn sớm ở client để tránh 429.</p>
  */
 public class RecommendViewModel extends ViewModel {
 
@@ -37,6 +44,9 @@ public class RecommendViewModel extends ViewModel {
 
     private static final long REFRESH_INTERVAL_MS = 60_000L;
     private static final int MAX_PREFERENCE_CHIPS = 4;
+    private static final int LIMIT = 20;
+
+    private final AiRepository repository = ServiceLocator.get(AiRepository.class);
 
     private final MutableLiveData<List<RecommendationUiModel>> items =
             new MutableLiveData<>(new ArrayList<>());
@@ -46,14 +56,13 @@ public class RecommendViewModel extends ViewModel {
     private final MutableLiveData<List<EventCategory>> preferences =
             new MutableLiveData<>(new ArrayList<>());
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
-
     private long lastRefreshAt;
     private RecommendationUiModel dismissed;
     private int dismissedIndex = -1;
+    private boolean loadedOnce;
 
     public RecommendViewModel() {
-        load();
+        load(false);
     }
 
     public LiveData<List<RecommendationUiModel>> getItems() {
@@ -77,10 +86,7 @@ public class RecommendViewModel extends ViewModel {
     }
 
     public void load() {
-        loading.setValue(true);
-        error.setValue(false);
-        handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(this::bindSampleData, 320L);
+        load(false);
     }
 
     /**
@@ -93,10 +99,47 @@ public class RecommendViewModel extends ViewModel {
             return false;
         }
         lastRefreshAt = now;
-        load();
+        load(true);
         return true;
     }
 
+    private void load(boolean refresh) {
+        if (!loadedOnce) {
+            loading.setValue(true);
+        }
+        error.setValue(false);
+        repository.recommendations(LIMIT, refresh,
+                new ApiCallback<RecommendationDtos.ListResult>() {
+                    @Override
+                    public void onSuccess(@Nullable RecommendationDtos.ListResult data,
+                                          @Nullable JsonElement envelopeMeta) {
+                        List<RecommendationUiModel> values = new ArrayList<>();
+                        if (data != null && data.items != null) {
+                            for (RecommendationDtos.Item item : data.items) {
+                                if (item == null || item.event == null) {
+                                    continue;
+                                }
+                                values.add(PageMappers.recommendation(item));
+                            }
+                        }
+                        items.setValue(values);
+                        preferences.setValue(collectCategories(values));
+                        meta.setValue(toMeta(data == null ? null : data.meta));
+                        loadedOnce = true;
+                        loading.setValue(false);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        loading.setValue(false);
+                        if (!loadedOnce) {
+                            error.setValue(true);
+                        }
+                    }
+                });
+    }
+
+    /** "Không quan tâm": backend loại sự kiện khỏi gợi ý 30 ngày. */
     public void dismiss(RecommendationUiModel item) {
         List<RecommendationUiModel> current = copyOf(items.getValue());
         int index = current.indexOf(item);
@@ -106,6 +149,19 @@ public class RecommendViewModel extends ViewModel {
         dismissed = current.remove(index);
         dismissedIndex = index;
         items.setValue(current);
+        repository.dismiss(item.event.id, new ApiCallback<RecommendationDtos.DismissResult>() {
+            @Override
+            public void onSuccess(@Nullable RecommendationDtos.DismissResult data,
+                                  @Nullable JsonElement meta) {
+                dismissed = null;
+                dismissedIndex = -1;
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                // Không khôi phục để tránh nhấp nháy; người dùng có thể tải lại.
+            }
+        });
     }
 
     public void undoDismiss() {
@@ -120,12 +176,13 @@ public class RecommendViewModel extends ViewModel {
         dismissedIndex = -1;
     }
 
-    private void bindSampleData() {
-        List<RecommendationUiModel> values = SampleRecommendationData.create();
-        items.setValue(values);
-        meta.setValue(new Meta(System.currentTimeMillis(), true, false));
-        preferences.setValue(collectCategories(values));
-        loading.setValue(false);
+    @NonNull
+    private static Meta toMeta(@Nullable RecommendationDtos.Meta source) {
+        if (source == null) {
+            return new Meta(System.currentTimeMillis(), false, false);
+        }
+        return new Meta(DateTimeUtils.toMillis(source.generatedAt),
+                source.personalized, source.isFallback);
     }
 
     private List<EventCategory> collectCategories(List<RecommendationUiModel> values) {
@@ -141,11 +198,5 @@ public class RecommendViewModel extends ViewModel {
 
     private List<RecommendationUiModel> copyOf(List<RecommendationUiModel> source) {
         return source == null ? new ArrayList<>() : new ArrayList<>(source);
-    }
-
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
     }
 }

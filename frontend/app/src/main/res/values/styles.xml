@@ -74,6 +74,8 @@
         <item name="android:letterSpacing">-0.01</item>
     </style>
 
+    <style name="TextAppearance.EventApp.Ds.Body" parent="TextAppearance.EventApp.Ds.BodyM" />
+
     <style name="TextAppearance.EventApp.Ds.BodyM" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">@font/be_vietnam_pro</item>
         <item name="android:textSize">14sp</item>

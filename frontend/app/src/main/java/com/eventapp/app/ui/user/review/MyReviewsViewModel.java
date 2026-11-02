@@ -1,21 +1,27 @@
 package com.eventapp.app.ui.user.review;
 
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.eventapp.app.ui.fake.SampleReviewData;
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.network.Paged;
+import com.eventapp.app.data.remote.dto.review.ReviewDtos;
+import com.eventapp.app.data.repository.ReviewRepository;
+import com.eventapp.app.ui.mapper.ReviewMapper;
 import com.eventapp.app.ui.model.ReviewUiModel;
+import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * FR-U20 "Đánh giá của tôi": danh sách đánh giá của chính người dùng, lọc theo trạng thái và
- * đếm theo từng trạng thái. Dữ liệu lấy từ {@link SampleReviewData} cho tới khi nối ReviewApi.
+ * FR-U20 "Đánh giá của tôi" — mọi trạng thái (VISIBLE/PENDING/HIDDEN/REMOVED) lấy từ
+ * {@code GET /me/reviews} kèm số lần sửa và hạn sửa.
  */
 public class MyReviewsViewModel extends ViewModel {
 
@@ -41,7 +47,9 @@ public class MyReviewsViewModel extends ViewModel {
         }
     }
 
-    private static final long LOAD_DELAY_MS = 320L;
+    private static final int PAGE_SIZE = 50;
+
+    private final ReviewRepository repository = ServiceLocator.get(ReviewRepository.class);
 
     private final MutableLiveData<List<ReviewUiModel>> allReviews =
             new MutableLiveData<>(new ArrayList<>());
@@ -51,8 +59,6 @@ public class MyReviewsViewModel extends ViewModel {
     private final MutableLiveData<Counts> counts = new MutableLiveData<>(new Counts(0, 0, 0, 0));
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(true);
     private final MutableLiveData<Boolean> error = new MutableLiveData<>(false);
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     public MyReviewsViewModel() {
         load();
@@ -94,12 +100,28 @@ public class MyReviewsViewModel extends ViewModel {
     private void load() {
         loading.setValue(true);
         error.setValue(false);
-        handler.postDelayed(() -> {
-            allReviews.setValue(SampleReviewData.myReviews());
-            counts.setValue(buildCounts(allReviews.getValue()));
-            applyFilter();
-            loading.setValue(false);
-        }, LOAD_DELAY_MS);
+        repository.mine(0, PAGE_SIZE, new ApiCallback<Paged<ReviewDtos.MyReview>>() {
+            @Override
+            public void onSuccess(@Nullable Paged<ReviewDtos.MyReview> data,
+                                  @Nullable JsonElement meta) {
+                List<ReviewUiModel> mapped = new ArrayList<>();
+                if (data != null) {
+                    for (ReviewDtos.MyReview dto : data.items) {
+                        mapped.add(ReviewMapper.fromMine(dto));
+                    }
+                }
+                allReviews.setValue(mapped);
+                counts.setValue(buildCounts(mapped));
+                applyFilter();
+                loading.setValue(false);
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                loading.setValue(false);
+                error.setValue(true);
+            }
+        });
     }
 
     private void applyFilter() {
@@ -151,11 +173,5 @@ public class MyReviewsViewModel extends ViewModel {
             }
         }
         return new Counts(visible + held + hidden, visible, held, hidden);
-    }
-
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
     }
 }

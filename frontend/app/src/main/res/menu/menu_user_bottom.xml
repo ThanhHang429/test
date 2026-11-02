@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Bottom navigation khu vực người dùng - id của menu phải trùng id đích điều hướng trong nav_user.xml.
-     "Thông báo" không đặt ở đây vì đã có chuông trên header trang Khám phá.
-     "Lịch của tôi" đã gộp vào "Vé của tôi" (tab con Sắp diễn ra / Đã qua).
-     "Yêu thích" là tab cấp 1 (trước đây chỉ mở được từ trái tim ở header Khám phá). -->
+     Chỉ giữ các màn đã có API thật: Khám phá, Yêu thích, Sở thích, Tài khoản. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_home"
         android:title="@string/nav_home" />
     <item
-        android:id="@+id/my_ticketsFragment"
-        android:icon="@drawable/ic_ticket"
-        android:title="@string/nav_my_tickets" />
-    <item
         android:id="@+id/favoritesFragment"
         android:icon="@drawable/ic_ds_heart_outline"
         android:title="@string/nav_favorites" />
     <item
-        android:id="@+id/profileFragment"
+        android:id="@+id/preferencesFragment"
+        android:icon="@drawable/ic_ds_tune"
+        android:title="@string/nav_preferences" />
+    <item
+        android:id="@+id/accountFragment"
         android:icon="@drawable/ic_profile"
-        android:title="@string/nav_profile" />
+        android:title="@string/account_nav" />
 </menu>

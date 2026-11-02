@@ -166,8 +166,8 @@ public class OrganizerDashboardFragment extends Fragment {
     private void setupHeaders() {
         statusHeader.setTitle(R.string.hc_odash_status_title);
         statusHeader.setSubtitle(R.string.hc_odash_status_subtitle);
-        statusHeader.setActionText(R.string.hc_odash_events_action);
-        statusHeader.setOnActionClickListener(v -> navigate(R.id.my_eventsFragment, null));
+        // Chưa có API danh sách sự kiện của organizer nên không mở màn danh sách rỗng.
+        statusHeader.showAction(false);
 
         tasksHeader.setTitle(R.string.hc_odash_tasks_title);
         tasksHeader.setSubtitle(R.string.hc_odash_tasks_subtitle);
@@ -184,7 +184,7 @@ public class OrganizerDashboardFragment extends Fragment {
 
     private void setupLists() {
         taskAdapter = new DashboardTaskAdapter();
-        taskAdapter.setOnTaskClickListener(task -> openTask(task.kind));
+        taskAdapter.setOnTaskClickListener(this::openTask);
         taskList.setLayoutManager(new LinearLayoutManager(requireContext()));
         taskList.setItemAnimator(null);
         taskList.setAdapter(taskAdapter);
@@ -228,8 +228,8 @@ public class OrganizerDashboardFragment extends Fragment {
         emptyState.setIcon(R.drawable.ic_ds_event);
         emptyState.setTitle(R.string.hc_odash_empty_title);
         emptyState.setMessage(R.string.hc_odash_empty_message);
-        emptyState.setActionText(R.string.hc_odash_empty_action);
-        emptyState.setOnActionClickListener(v -> navigate(R.id.event_formFragment, null));
+        emptyState.setActionText(R.string.org_tools_retry);
+        emptyState.setOnActionClickListener(v -> viewModel.refresh());
 
         errorState.setTitle(R.string.hc_odash_error_title);
         errorState.setMessage(R.string.hc_odash_error_message);
@@ -463,23 +463,16 @@ public class OrganizerDashboardFragment extends Fragment {
                 : getString(R.string.hc_odash_range_to_any));
     }
 
-    private void openTask(DashboardUiModel.TaskKind kind) {
-        int destination;
-        switch (kind) {
-            case REFUND_PENDING:
-                destination = R.id.organizer_refundsFragment;
-                break;
-            case TICKET_SALE_ENDING:
-                destination = R.id.ticket_type_listFragment;
-                break;
-            case EVENT_STARTING_SOON:
-            case EVENT_REVISION:
-            case EVENT_REJECTED:
-            default:
-                destination = R.id.my_eventsFragment;
-                break;
+    /**
+     * Việc cần làm chỉ mở được sự kiện đã có trong tổng quan; các màn quản lý chi tiết
+     * (hoàn tiền, loại vé, danh sách sự kiện) chưa có API backend nên không điều hướng tới.
+     */
+    private void openTask(@Nullable DashboardUiModel.Task task) {
+        if (task == null || task.eventId <= 0L) {
+            Snackbar.make(requireView(), R.string.hc_coming_soon, Snackbar.LENGTH_SHORT).show();
+            return;
         }
-        navigate(destination, null);
+        openEventDetail(task.eventId, task.title);
     }
 
     private void openFirstEventInsight() {
@@ -487,19 +480,17 @@ public class OrganizerDashboardFragment extends Fragment {
             return;
         }
         DashboardUiModel.TopEvent event = current.topEvents.get(0);
-        openEventDetail(event.id, event.title, OrganizerEventDetailFragment.TAB_ANALYSIS);
+        openEventDetail(event.id, event.title);
     }
 
     private void openEventOverview(long eventId, String eventTitle) {
-        openEventDetail(eventId, eventTitle, OrganizerEventDetailFragment.TAB_OVERVIEW);
+        openEventDetail(eventId, eventTitle);
     }
 
-    /** O27 không còn là màn riêng: mở chi tiết sự kiện và chọn sẵn tab cần xem. */
-    private void openEventDetail(long eventId, String eventTitle, int tab) {
+    private void openEventDetail(long eventId, String eventTitle) {
         Bundle args = new Bundle();
         args.putLong(OrganizerEventDetailFragment.ARG_EVENT_ID, eventId);
         args.putString(OrganizerEventDetailFragment.ARG_EVENT_TITLE, eventTitle);
-        args.putInt(OrganizerEventDetailFragment.ARG_TAB, tab);
         navigate(R.id.organizer_event_detailFragment, args);
     }
 

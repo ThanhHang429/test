@@ -91,12 +91,16 @@ public class AiDescriptionFragment extends Fragment {
         observe();
 
         Bundle args = getArguments();
+        // Nav arg khai báo string[] nên phải đọc bằng getStringArray, không phải ArrayList.
+        String[] points = args == null ? null : args.getStringArray("arg_key_points");
+        List<String> keyPoints = points == null
+                ? new ArrayList<>() : new ArrayList<>(java.util.Arrays.asList(points));
         viewModel.init(
                 args == null ? 0L : args.getLong("arg_category_id", 0L),
                 args == null ? "" : args.getString("arg_event_title", ""),
                 args == null ? "" : args.getString("arg_format", ""),
                 args == null ? "" : args.getString("arg_audience", ""),
-                args == null ? new ArrayList<>() : args.getStringArrayList("arg_key_points"));
+                keyPoints);
     }
 
     private void bindViews(View view) {

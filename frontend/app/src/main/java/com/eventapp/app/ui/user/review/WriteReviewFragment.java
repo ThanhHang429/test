@@ -37,6 +37,8 @@ public class WriteReviewFragment extends Fragment {
     public static final String ARG_COMMENT = "arg_review_comment";
     public static final String ARG_RATING = "arg_review_rating";
     public static final String ARG_EDIT_COUNT = "arg_review_edit_count";
+    /** Khoá lạc quan = {@code updatedAt} của đánh giá dạng epoch millis. */
+    public static final String ARG_EDIT_VERSION = "arg_review_edit_version";
 
     private static final long DAY = 24L * 60L * 60L * 1000L;
 
@@ -58,6 +60,7 @@ public class WriteReviewFragment extends Fragment {
     private long eventEndAt;
     private boolean editMode;
     private boolean canReview;
+    private long editVersion;
 
     @Nullable
     @Override
@@ -88,6 +91,7 @@ public class WriteReviewFragment extends Fragment {
         eventEndAt = args.getLong(ARG_EVENT_END_AT, 0L);
         editMode = args.getBoolean(ARG_EDIT_MODE, false);
         canReview = args.getBoolean(ARG_CAN_REVIEW, true);
+        editVersion = args.getLong(ARG_EDIT_VERSION, 0L);
     }
 
     private void bindViews(View view) {
@@ -161,7 +165,8 @@ public class WriteReviewFragment extends Fragment {
             if (!canReview) {
                 return;
             }
-            viewModel.submit(stars.getRating(), textOf(commentInput), editMode);
+            viewModel.submit(eventId, stars.getRating(), textOf(commentInput), editMode,
+                    editVersion > 0L ? editVersion : null);
         });
     }
 

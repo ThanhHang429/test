@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.stereotype.Component
 
 /**
  * Nhà cung cấp giả lập — chạy hoàn toàn cục bộ, không cần API key, kết quả **xác định**
@@ -15,10 +13,8 @@ import org.springframework.stereotype.Component
  * thật của hệ thống. Mock đọc đúng JSON đó rồi sinh đầu ra theo khuôn schema của từng tác vụ,
  * nhờ vậy toàn bộ luồng hậu kiểm/ghép dữ liệu vẫn được kiểm thử thật.
  *
- * Đổi sang nhà cung cấp thật: đặt `AI_PROVIDER=gemini` và thêm bean tương ứng.
+ * Bean được tạo trong [AiProviderConfiguration] khi `app.ai.provider=mock`.
  */
-@Component
-@ConditionalOnProperty(name = ["app.ai.provider"], havingValue = "mock", matchIfMissing = true)
 class MockAiProviderClient(
     private val objectMapper: ObjectMapper
 ) : AiProviderClient {
@@ -36,6 +32,7 @@ class MockAiProviderClient(
         val output: JsonNode = when (task) {
             AiTask.RECOMMEND.code -> recommend(payload)
             AiTask.DESCRIPTION.code -> describe(payload)
+            AiTask.ANNOUNCEMENT.code -> announce(payload)
             AiTask.ANALYTICS.code -> analyze(payload)
             else -> objectMapper.createObjectNode().put("unsupported", true)
         }
@@ -146,6 +143,54 @@ class MockAiProviderClient(
         }
 
         return objectMapper.createObjectNode().set<ObjectNode>("descriptions", descriptions)
+    }
+
+    // ------------------------------------------------------------------
+    // ANNOUNCEMENT
+    // ------------------------------------------------------------------
+
+    private fun announce(payload: JsonNode): ObjectNode {
+        val topic = payload.path("topic").asText("Thông báo").trim()
+        val eventTitle = payload.path("eventTitle").asText("").trim()
+        val audience = payload.path("audience").asText("").trim()
+        val tone = payload.path("tone").asText("PROFESSIONAL")
+        val length = payload.path("length").asText("MEDIUM")
+        val variants = payload.path("variants").asInt(1).coerceIn(1, 3)
+        val keyPoints = payload.path("keyPoints").map { it.asText() }.filter { it.isNotBlank() }
+
+        val opening = when (tone) {
+            "FRIENDLY" -> "Xin chào, Ban tổ chức có một cập nhật dành cho bạn."
+            "FORMAL" -> "Ban tổ chức trân trọng thông báo tới quý vị."
+            else -> "Thông báo từ Ban tổ chức."
+        }
+        val heading = if (eventTitle.isNotBlank()) "$eventTitle — $topic" else topic
+        val body = if (keyPoints.isEmpty()) {
+            "[Cần bổ sung: chi tiết cụ thể của thông báo]"
+        } else {
+            keyPoints.joinToString(separator = "\n") { "• $it" }
+        }
+        val closing = when (length) {
+            "SHORT" -> "Trân trọng."
+            "LONG" -> "Vui lòng theo dõi trang sự kiện để cập nhật các thay đổi tiếp theo. " +
+                "Ban tổ chức trân trọng cảm ơn."
+            else -> "Vui lòng theo dõi trang sự kiện để cập nhật thông tin mới nhất."
+        }
+        val audienceLine = if (audience.isNotBlank()) "Kính gửi: $audience." else ""
+
+        val items = objectMapper.createArrayNode()
+        repeat(variants) { index ->
+            val header = if (index == 0) heading else "$heading (phương án ${index + 1})"
+            val text = listOf(opening, audienceLine, header, body, closing)
+                .filter { it.isNotBlank() }
+                .joinToString(separator = "\n\n")
+            items.add(
+                objectMapper.createObjectNode()
+                    .put("text", text)
+                    .put("shortSummary", heading.take(SHORT_SUMMARY_MAX))
+            )
+        }
+
+        return objectMapper.createObjectNode().set<ObjectNode>("variants", items)
     }
 
     // ------------------------------------------------------------------

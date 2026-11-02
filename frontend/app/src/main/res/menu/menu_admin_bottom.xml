@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Bottom navigation khu vực quản trị - id của menu phải trùng id đích điều hướng trong nav_admin.xml.
-     Bốn mục đầu trỏ tới các màn đang chạy được của module Khám phá/AI; mục "Duyệt" vẫn là màn của
-     thành viên khác (FR-A05) nên chưa có giao diện. -->
+<!-- Bottom navigation khu vực quản trị - chỉ các màn đã có API thật. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/admin_dashboardFragment"
-        android:icon="@drawable/ic_dashboard"
-        android:title="@string/nav_admin_dashboard" />
     <item
         android:id="@+id/content_moderationFragment"
         android:icon="@drawable/ic_ds_flag"
@@ -20,7 +14,7 @@
         android:icon="@drawable/ic_ds_chart"
         android:title="@string/nav_admin_integrations" />
     <item
-        android:id="@+id/review_queueFragment"
-        android:icon="@drawable/ic_review"
-        android:title="@string/nav_review_queue" />
+        android:id="@+id/accountFragment"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/account_nav" />
 </menu>

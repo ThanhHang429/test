@@ -1,25 +1,35 @@
 package com.eventapp.app.ui.user.favorite;
 
-
-import com.eventapp.app.ui.fake.SampleFavoriteData;
-import com.eventapp.app.ui.model.FavoriteUiModel;
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.network.Paged;
+import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
+import com.eventapp.app.data.remote.dto.recommendation.RecommendationDtos;
+import com.eventapp.app.data.repository.AiRepository;
+import com.eventapp.app.data.repository.FavoriteRepository;
+import com.eventapp.app.ui.mapper.EventMapper;
+import com.eventapp.app.ui.mapper.PageMappers;
 import com.eventapp.app.ui.model.EventUiModel;
-import com.eventapp.app.ui.fake.SampleEventData;
+import com.eventapp.app.ui.model.FavoriteUiModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * FR-U06 state holder. Favourites are read-only when offline and removal is the only local
- * mutation; availability labels always come from the event snapshot.
+ * FR-U06 — danh sách đã lưu lấy từ {@code GET /me/favorites} và thao tác thêm/bỏ qua
+ * {@code PUT/DELETE /me/favorites/{eventId}}.
+ *
+ * <p>Bộ lọc Sắp diễn ra / Đã qua do backend quyết định (tham số {@code filter}) để không lệch
+ * khi danh sách dài hơn một trang.</p>
  */
 public class FavoritesViewModel extends ViewModel {
 
@@ -30,6 +40,10 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     private static final int MAX_SUGGESTIONS = 8;
+    private static final int PAGE_SIZE = 50;
+
+    private final FavoriteRepository favorites = ServiceLocator.get(FavoriteRepository.class);
+    private final AiRepository ai = ServiceLocator.get(AiRepository.class);
 
     private final MutableLiveData<List<FavoriteUiModel>> items =
             new MutableLiveData<>(new ArrayList<>());
@@ -38,11 +52,11 @@ public class FavoritesViewModel extends ViewModel {
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(true);
     private final MutableLiveData<Boolean> error = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> alertsEnabled = new MutableLiveData<>(true);
+    private final MutableLiveData<String> message = new MutableLiveData<>();
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<FavoriteUiModel> saved = new ArrayList<>();
-    private List<EventUiModel> catalogue = new ArrayList<>();
     private Filter filter = Filter.ALL;
+    private boolean listLoaded;
 
     public FavoritesViewModel() {
         load();
@@ -68,20 +82,28 @@ public class FavoritesViewModel extends ViewModel {
         return alertsEnabled;
     }
 
+    public LiveData<String> getMessage() {
+        return message;
+    }
+
     public Filter getFilter() {
         return filter;
     }
 
     public void setFilter(Filter filter) {
-        this.filter = filter == null ? Filter.ALL : filter;
-        publish();
+        Filter next = filter == null ? Filter.ALL : filter;
+        if (next == this.filter) {
+            return;
+        }
+        this.filter = next;
+        load();
     }
 
     public void load() {
         loading.setValue(true);
         error.setValue(false);
-        handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(this::bindSampleData, 320L);
+        loadList();
+        loadSuggestions();
     }
 
     public void refresh() {
@@ -92,33 +114,81 @@ public class FavoritesViewModel extends ViewModel {
         alertsEnabled.setValue(enabled);
     }
 
-    public void remove(FavoriteUiModel item) {
-        int index = indexOf(item);
+    /** Bỏ yêu thích: cập nhật lạc quan rồi gọi API, lỗi thì hoàn tác. */
+    public void remove(@NonNull FavoriteUiModel item) {
+        final int index = indexOf(item);
         if (index < 0) {
             return;
         }
-        saved.remove(index);
+        final FavoriteUiModel removed = saved.remove(index);
         publish();
+        favorites.remove(removed.eventId,
+                new ApiCallback<FavoriteDtos.ToggleResult>() {
+                    @Override
+                    public void onSuccess(@Nullable FavoriteDtos.ToggleResult data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        message.setValue("Đã bỏ khỏi yêu thích");
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        saved.add(Math.min(index, saved.size()), removed);
+                        publish();
+                        message.setValue(exception.getUserMessage());
+                    }
+                });
     }
 
-    public void restore(FavoriteUiModel item) {
-        if (item == null) {
+    /** Hoàn tác thao tác xoá (nút UNDO trên Snackbar). */
+    public void restore(@Nullable FavoriteUiModel item) {
+        if (item == null || item.event == null) {
             return;
         }
-        if (item.event != null && findSaved(item.event.id) != null) {
+        if (findSaved(item.event.id) != null) {
             return;
         }
+        item.event.favorite = true;
         saved.add(0, item);
         publish();
+        favorites.add(item.event.id, new ApiCallback<FavoriteDtos.ToggleResult>() {
+            @Override
+            public void onSuccess(@Nullable FavoriteDtos.ToggleResult data,
+                                  @Nullable com.google.gson.JsonElement meta) {
+                message.setValue("Đã khôi phục yêu thích");
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                saved.remove(item);
+                publish();
+                message.setValue(exception.getUserMessage());
+            }
+        });
     }
 
-    public void addToFavorites(EventUiModel event) {
+    public void addToFavorites(@Nullable EventUiModel event) {
         if (event == null || findSaved(event.id) != null) {
             return;
         }
         event.favorite = true;
-        saved.add(0, FavoriteUiModel.from(event, System.currentTimeMillis()));
+        FavoriteUiModel item = FavoriteUiModel.from(event, System.currentTimeMillis());
+        saved.add(0, item);
         publish();
+        favorites.add(event.id, new ApiCallback<FavoriteDtos.ToggleResult>() {
+            @Override
+            public void onSuccess(@Nullable FavoriteDtos.ToggleResult data,
+                                  @Nullable com.google.gson.JsonElement meta) {
+                message.setValue("Đã lưu sự kiện");
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                event.favorite = false;
+                saved.remove(item);
+                publish();
+                message.setValue(favoriteMessage(exception));
+            }
+        });
     }
 
     public void removeEvent(long eventId) {
@@ -128,55 +198,71 @@ public class FavoritesViewModel extends ViewModel {
         }
     }
 
-    private void bindSampleData() {
-        catalogue = SampleEventData.createEvents();
-        saved.clear();
-        saved.addAll(SampleFavoriteData.create(catalogue));
-        loading.setValue(false);
-        publish();
+    private void loadList() {
+        favorites.list(filter.name(), 0, PAGE_SIZE,
+                new ApiCallback<Paged<FavoriteDtos.Item>>() {
+                    @Override
+                    public void onSuccess(@Nullable Paged<FavoriteDtos.Item> data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        saved.clear();
+                        Set<Long> seen = new HashSet<>();
+                        if (data != null) {
+                            for (FavoriteDtos.Item dto : data.items) {
+                                if (dto == null || !seen.add(dto.eventId)) {
+                                    continue;
+                                }
+                                saved.add(PageMappers.favorite(dto));
+                            }
+                        }
+                        listLoaded = true;
+                        loading.setValue(false);
+                        publish();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        loading.setValue(false);
+                        error.setValue(!listLoaded);
+                        message.setValue(exception.getUserMessage());
+                    }
+                });
+    }
+
+    private void loadSuggestions() {
+        ai.recommendations(MAX_SUGGESTIONS, false,
+                new ApiCallback<RecommendationDtos.ListResult>() {
+                    @Override
+                    public void onSuccess(@Nullable RecommendationDtos.ListResult data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        List<EventUiModel> result = new ArrayList<>();
+                        if (data != null && data.items != null) {
+                            for (RecommendationDtos.Item item : data.items) {
+                                if (item == null || item.event == null
+                                        || findSaved(item.event.id) != null) {
+                                    continue;
+                                }
+                                EventUiModel event = EventMapper.fromCard(item.event);
+                                if (event.availability == EventUiModel.Availability.CANCELLED) {
+                                    continue;
+                                }
+                                result.add(event);
+                            }
+                        }
+                        suggestions.setValue(result);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        suggestions.setValue(new ArrayList<>());
+                    }
+                });
     }
 
     private void publish() {
-        long now = System.currentTimeMillis();
-        List<FavoriteUiModel> visible = new ArrayList<>();
-        for (FavoriteUiModel item : saved) {
-            if (matchesFilter(item, now)) {
-                visible.add(item);
-            }
-        }
-        items.setValue(visible);
-        suggestions.setValue(buildSuggestions());
+        items.setValue(new ArrayList<>(saved));
     }
 
-    private boolean matchesFilter(FavoriteUiModel item, long now) {
-        if (filter == Filter.ALL) {
-            return true;
-        }
-        boolean ended = item.state == FavoriteUiModel.State.ENDED
-                || (item.event != null && item.event.endAt > 0L && item.event.endAt < now);
-        if (filter == Filter.PAST) {
-            return ended;
-        }
-        return !ended && item.state != FavoriteUiModel.State.UNAVAILABLE;
-    }
-
-    private List<EventUiModel> buildSuggestions() {
-        List<EventUiModel> result = new ArrayList<>();
-        for (EventUiModel event : catalogue) {
-            if (event.availability == EventUiModel.Availability.CANCELLED || findSaved(event.id) != null) {
-                continue;
-            }
-            result.add(event);
-        }
-        Collections.sort(result, (left, right) -> Integer.compare(
-                right.aiScore == null ? -1 : right.aiScore,
-                left.aiScore == null ? -1 : left.aiScore));
-        if (result.size() > MAX_SUGGESTIONS) {
-            return new ArrayList<>(result.subList(0, MAX_SUGGESTIONS));
-        }
-        return result;
-    }
-
+    @Nullable
     private FavoriteUiModel findSaved(long eventId) {
         for (FavoriteUiModel item : saved) {
             if (item.event != null && item.event.id == eventId) {
@@ -186,14 +272,10 @@ public class FavoritesViewModel extends ViewModel {
         return null;
     }
 
-    private int indexOf(FavoriteUiModel item) {
+    private int indexOf(@NonNull FavoriteUiModel item) {
         for (int i = 0; i < saved.size(); i++) {
             FavoriteUiModel current = saved.get(i);
             if (current == item) {
-                return i;
-            }
-            if (current.event == null && item.event == null
-                    && current.savedAt == item.savedAt) {
                 return i;
             }
             if (current.event != null && item.event != null
@@ -204,9 +286,12 @@ public class FavoritesViewModel extends ViewModel {
         return -1;
     }
 
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
+    @NonNull
+    private static String favoriteMessage(@NonNull ApiException exception) {
+        if (exception.getHttpCode() == 409
+                || "FAVORITE_LIMIT_REACHED".equalsIgnoreCase(exception.getErrorCode())) {
+            return "Bạn đã đạt giới hạn sự kiện yêu thích.";
+        }
+        return exception.getUserMessage();
     }
 }

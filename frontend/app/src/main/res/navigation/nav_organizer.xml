@@ -194,4 +194,38 @@
         android:name="com.eventapp.app.ui.organizer.promotion.PromoManageFragment"
         tools:layout="@layout/fragment_organizer_promotion_promo_manage" />
 
+    <fragment
+        android:id="@+id/organizer_toolsFragment"
+        android:name="com.eventapp.app.ui.organizer.tools.OrganizerToolsFragment"
+        tools:layout="@layout/fragment_organizer_tools" />
+
+    <fragment
+        android:id="@+id/classificationFragment"
+        android:name="com.eventapp.app.ui.organizer.classification.ClassificationFragment"
+        tools:layout="@layout/fragment_organizer_classification">
+        <argument
+            android:name="arg_event_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ai_insightFragment"
+        android:name="com.eventapp.app.ui.organizer.report.AiInsightFragment"
+        tools:layout="@layout/fragment_organizer_report_ai_insight">
+        <argument
+            android:name="arg_event_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <argument
+            android:name="arg_event_title"
+            android:defaultValue="@null"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.eventapp.app.ui.host.AccountFragment"
+        tools:layout="@layout/fragment_account" />
+
 </navigation>

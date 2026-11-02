@@ -4,12 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_admin"
-    app:startDestination="@id/admin_dashboardFragment">
-
-    <fragment
-        android:id="@+id/admin_dashboardFragment"
-        android:name="com.eventapp.app.ui.admin.dashboard.AdminDashboardFragment"
-        tools:layout="@layout/fragment_admin_dashboard" />
+    app:startDestination="@id/content_moderationFragment">
 
     <fragment
         android:id="@+id/user_manageFragment"
@@ -131,6 +126,11 @@
         android:id="@+id/role_manageFragment"
         android:name="com.eventapp.app.ui.admin.system.RoleManageFragment"
         tools:layout="@layout/fragment_admin_system_role_manage" />
+
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.eventapp.app.ui.host.AccountFragment"
+        tools:layout="@layout/fragment_account" />
 
     <fragment
         android:id="@+id/integration_healthFragment"

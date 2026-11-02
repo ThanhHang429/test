@@ -88,8 +88,8 @@ public class MyReviewsFragment extends Fragment {
 
         emptyState.setIcon(R.drawable.ic_ds_star);
         emptyState.setActionText(R.string.hc_myreviews_empty_action);
-        emptyState.setOnActionClickListener(v ->
-                Navigation.findNavController(requireView()).navigate(R.id.my_ticketsFragment));
+        emptyState.setOnActionClickListener(v -> Navigation.findNavController(requireView())
+                .navigate(R.id.homeFragment));
 
         errorState.setOnRetryClickListener(v -> viewModel.retry());
     }
@@ -203,6 +203,7 @@ public class MyReviewsFragment extends Fragment {
         args.putString(WriteReviewFragment.ARG_COMMENT, review.comment);
         args.putFloat(WriteReviewFragment.ARG_RATING, review.rating);
         args.putInt(WriteReviewFragment.ARG_EDIT_COUNT, review.editCount);
+        args.putLong(WriteReviewFragment.ARG_EDIT_VERSION, review.editedAt);
         Navigation.findNavController(requireView())
                 .navigate(R.id.write_reviewFragment, args);
     }

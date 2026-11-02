@@ -1,28 +1,41 @@
 package com.eventapp.app.ui.user.home;
 
-
-import com.eventapp.app.ui.fake.SampleEventData;
-import com.eventapp.app.ui.model.EventUiModel;
-import com.eventapp.app.ui.model.EventCategoryUi;
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.eventapp.app.R;
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.network.Paged;
+import com.eventapp.app.core.util.DateTimeUtils;
+import com.eventapp.app.data.remote.dto.discovery.DiscoveryDtos;
+import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
+import com.eventapp.app.data.remote.dto.review.ReviewDtos;
+import com.eventapp.app.data.repository.EventRepository;
+import com.eventapp.app.data.repository.FavoriteRepository;
+import com.eventapp.app.data.repository.ReviewRepository;
+import com.eventapp.app.ui.mapper.EventMapper;
+import com.eventapp.app.ui.mapper.ReviewMapper;
+import com.eventapp.app.ui.model.EventCategoryUi;
+import com.eventapp.app.ui.model.EventUiModel;
 import com.eventapp.app.ui.model.ReviewUiModel;
-import com.eventapp.app.ui.fake.SampleReviewData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
- * State holder for FR-U05. Allowed actions and ticket availability are represented explicitly so
- * the screen never derives purchase actions from cached values. Dummy data is used until API-04
- * is available.
+ * State holder cho FR-U05.
+ *
+ * <p>Dữ liệu lấy từ {@code GET /events/{id}} và {@code GET /events/{id}/reviews}. Chỉ những hành
+ * động thật sự có API mới được bật: yêu thích và viết đánh giá. Mua vé / đăng ký / xem vé đã được
+ * ẩn khỏi giao diện vì module thanh toán chưa nằm trong phạm vi backend hiện tại.</p>
  */
 public class EventDetailViewModel extends ViewModel {
 
@@ -47,11 +60,18 @@ public class EventDetailViewModel extends ViewModel {
         @DrawableRes
         public final int iconRes;
         public final int index;
+        @Nullable
+        public final String url;
 
         public GalleryItem(String label, @DrawableRes int iconRes, int index) {
+            this(label, iconRes, index, null);
+        }
+
+        public GalleryItem(String label, @DrawableRes int iconRes, int index, @Nullable String url) {
             this.label = label;
             this.iconRes = iconRes;
             this.index = index;
+            this.url = url;
         }
     }
 
@@ -95,19 +115,29 @@ public class EventDetailViewModel extends ViewModel {
         public int selectedTicketIndex;
         public PrimaryAction primaryAction = PrimaryAction.NONE;
         public String disabledReason;
+        /** Nhãn trạng thái ngắn (Sắp mở bán / Đang mở bán / Hết vé...) do backend trả. */
+        public String statusText;
         public String conditions;
         public String cancelPolicy;
         public boolean onlineLinkAvailable;
+        public long organizerEventCount;
     }
+
+    private static final int REVIEW_PAGE_SIZE = 20;
+
+    private final EventRepository eventRepository = ServiceLocator.get(EventRepository.class);
+    private final FavoriteRepository favoriteRepository = ServiceLocator.get(FavoriteRepository.class);
+    private final ReviewRepository reviewRepository = ServiceLocator.get(ReviewRepository.class);
 
     private final MutableLiveData<DetailState> state = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(true);
     private final MutableLiveData<Boolean> error = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> unavailable = new MutableLiveData<>(false);
+    private final MutableLiveData<String> message = new MutableLiveData<>();
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
     private long eventId = -1L;
     private DetailState current;
+    private boolean favoriteBusy;
 
     public LiveData<DetailState> getState() {
         return state;
@@ -125,6 +155,11 @@ public class EventDetailViewModel extends ViewModel {
         return unavailable;
     }
 
+    /** Thông báo ngắn cho Snackbar (lỗi thao tác, kết quả yêu thích...). */
+    public LiveData<String> getMessage() {
+        return message;
+    }
+
     public void load(long eventId) {
         this.eventId = eventId;
         loadInternal(true);
@@ -140,31 +175,15 @@ public class EventDetailViewModel extends ViewModel {
     }
 
     public void retryTickets() {
-        if (current == null) {
-            return;
-        }
-        current.ticketsError = false;
-        state.setValue(current);
-        handler.postDelayed(() -> {
-            if (current != null) {
-                current.ticketsError = false;
-                state.setValue(current);
-            }
-        }, 300L);
+        loadInternal(false);
     }
 
     public void retryReviews() {
-        if (current == null) {
-            return;
+        if (current != null) {
+            current.reviewsError = false;
+            state.setValue(current);
         }
-        current.reviewsError = false;
-        state.setValue(current);
-        handler.postDelayed(() -> {
-            if (current != null) {
-                current.reviewsError = false;
-                state.setValue(current);
-            }
-        }, 300L);
+        loadReviews();
     }
 
     public void selectTicket(int index) {
@@ -175,15 +194,37 @@ public class EventDetailViewModel extends ViewModel {
         state.setValue(current);
     }
 
+    /** Bật/tắt yêu thích qua đúng API {@code PUT/DELETE /me/favorites/{eventId}}. */
     public void toggleFavorite() {
-        if (current == null || current.event == null) {
+        if (current == null || current.event == null || favoriteBusy) {
             return;
         }
-        if (current.cancelled) {
-            return;
+        favoriteBusy = true;
+        final boolean wasFavorite = current.event.favorite;
+        ApiCallback<FavoriteDtos.ToggleResult> callback = new ApiCallback<FavoriteDtos.ToggleResult>() {
+            @Override
+            public void onSuccess(@Nullable FavoriteDtos.ToggleResult data,
+                                  @Nullable com.google.gson.JsonElement meta) {
+                favoriteBusy = false;
+                if (current == null || current.event == null) {
+                    return;
+                }
+                boolean value = data == null ? !wasFavorite : data.isFavorite;
+                current.event.favorite = value;
+                state.setValue(current);
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                favoriteBusy = false;
+                message.setValue(favoriteMessage(exception));
+            }
+        };
+        if (wasFavorite) {
+            favoriteRepository.remove(eventId, callback);
+        } else {
+            favoriteRepository.add(eventId, callback);
         }
-        current.event.favorite = !current.event.favorite;
-        state.setValue(current);
     }
 
     private void loadInternal(boolean showSkeleton) {
@@ -191,162 +232,201 @@ public class EventDetailViewModel extends ViewModel {
             loading.setValue(true);
         }
         error.setValue(false);
-        handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(() -> {
-            EventUiModel event = findEvent(eventId);
-            if (event == null) {
-                unavailable.setValue(true);
-                loading.setValue(false);
-                return;
-            }
-            unavailable.setValue(false);
-            current = buildState(event);
-            state.setValue(current);
+        unavailable.setValue(false);
+
+        if (eventId <= 0L) {
             loading.setValue(false);
-        }, showSkeleton ? 360L : 280L);
-    }
-
-    private EventUiModel findEvent(long id) {
-        List<EventUiModel> events = SampleEventData.createEvents();
-        if (id <= 0L) {
-            return events.isEmpty() ? null : events.get(0);
+            unavailable.setValue(true);
+            return;
         }
-        for (EventUiModel event : events) {
-            if (event.id == id) {
-                return event;
+
+        eventRepository.detail(eventId, new ApiCallback<DiscoveryDtos.EventDetail>() {
+            @Override
+            public void onSuccess(@Nullable DiscoveryDtos.EventDetail data,
+                                  @Nullable com.google.gson.JsonElement meta) {
+                loading.setValue(false);
+                if (data == null) {
+                    unavailable.setValue(true);
+                    return;
+                }
+                current = buildState(data);
+                state.setValue(current);
+                loadReviews();
             }
-        }
-        return null;
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                loading.setValue(false);
+                if (exception.getHttpCode() == 404) {
+                    unavailable.setValue(true);
+                } else {
+                    error.setValue(true);
+                    message.setValue(exception.getUserMessage());
+                }
+            }
+        });
     }
 
-    private DetailState buildState(EventUiModel event) {
+    private void loadReviews() {
+        if (current == null) {
+            return;
+        }
+        reviewRepository.list(eventId, "NEWEST", 0, REVIEW_PAGE_SIZE,
+                new ApiCallback<Paged<ReviewDtos.Review>>() {
+                    @Override
+                    public void onSuccess(@Nullable Paged<ReviewDtos.Review> data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        if (current == null) {
+                            return;
+                        }
+                        List<ReviewUiModel> mapped = new ArrayList<>();
+                        if (data != null) {
+                            for (ReviewDtos.Review review : data.items) {
+                                mapped.add(ReviewMapper.fromPublic(review));
+                            }
+                        }
+                        current.reviews = mapped;
+                        current.reviewsError = false;
+                        if (current.reviewAverage <= 0f && !mapped.isEmpty()) {
+                            float sum = 0f;
+                            for (ReviewUiModel review : mapped) {
+                                sum += review.rating;
+                            }
+                            current.reviewAverage = sum / mapped.size();
+                        }
+                        state.setValue(current);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        if (current != null) {
+                            current.reviewsError = true;
+                            state.setValue(current);
+                        }
+                    }
+                });
+    }
+
+    @NonNull
+    private DetailState buildState(@NonNull DiscoveryDtos.EventDetail dto) {
         DetailState detail = new DetailState();
-        detail.event = event;
+        detail.event = EventMapper.fromDetail(dto);
         detail.asOf = System.currentTimeMillis();
-        detail.cancelled = event.availability == EventUiModel.Availability.CANCELLED;
-        detail.completed = event.endAt > 0L && event.endAt < System.currentTimeMillis();
+        detail.cancelled = "CANCELLED".equalsIgnoreCase(dto.lifecycleStatus)
+                || "CANCELLED".equalsIgnoreCase(dto.registrationStatus);
+        detail.completed = "COMPLETED".equalsIgnoreCase(dto.lifecycleStatus)
+                || detail.event.endAt > 0L && detail.event.endAt < System.currentTimeMillis();
         detail.offline = false;
-        detail.onlineLinkAvailable = event.online && event.favorite;
+        detail.statusText = null;
+        detail.conditions = dto.participationConditions;
+        detail.cancelPolicy = dto.cancellationPolicy;
+        detail.onlineLinkAvailable = !isBlank(dto.onlineUrl);
+        detail.organizerEventCount = dto.organizer == null ? 0L : dto.organizer.organizedEventCount;
 
-        long saleStart = event.startAt - 20L * 24L * 60L * 60L * 1000L;
-        long saleEnd = event.startAt - 2L * 60L * 60L * 1000L;
-        detail.tickets = buildTickets(event, saleStart, saleEnd);
-        detail.gallery = buildGallery(event);
-        detail.reviews = SampleReviewData.forEvent(event.id, event.title);
-        detail.reviewDistribution = SampleReviewData.distribution(detail.reviews);
-        detail.reviewAverage = SampleReviewData.average(detail.reviews);
-        detail.conditions = "Người tham dự cần mang theo vé QR hoặc giấy tờ tùy thân. "
-                + "Trẻ em dưới 12 tuổi phải đi cùng người giám hộ. "
-                + "Không mang theo vật dụng nguy hiểm hoặc thức uống có cồn từ bên ngoài.";
-        detail.cancelPolicy = "Vé có thể hủy trước thời điểm bắt đầu 48 giờ và được hoàn 100% "
-                + "giá trị vé. Trong vòng 48 giờ trước sự kiện, vé không được hoàn. "
-                + "Trường hợp sự kiện bị hủy bởi nhà tổ chức, toàn bộ vé sẽ được hoàn trong 7 ngày "
-                + "làm việc theo phương thức thanh toán ban đầu.";
-        detail.canReview = detail.completed;
+        detail.gallery = buildGallery(dto);
+        detail.tickets = buildTickets(dto, detail.event);
         detail.selectedTicketIndex = firstBookableTicket(detail.tickets);
+        detail.canReview = dto.canReview || contains(dto.allowedActions, "WRITE_REVIEW");
+        detail.reviewAverage = dto.reviewSummary == null
+                ? detail.event.rating : (float) dto.reviewSummary.averageRating;
+        detail.reviewDistribution = distribution(dto.reviewSummary);
+        detail.reviews = mapHighlights(dto.reviewSummary);
+        detail.reviewsError = false;
 
+        detail.primaryAction = detail.canReview ? PrimaryAction.WRITE_REVIEW : PrimaryAction.NONE;
+        detail.disabledReason = firstNonNull(dto.disabledReason, null);
         if (detail.cancelled) {
             detail.primaryAction = PrimaryAction.NONE;
-            detail.disabledReason = null;
-        } else if (detail.completed) {
-            detail.primaryAction = detail.canReview ? PrimaryAction.WRITE_REVIEW
-                    : PrimaryAction.NONE;
-            detail.disabledReason = detail.canReview ? null : "Sự kiện đã kết thúc";
-        } else if (event.availability == EventUiModel.Availability.SOLD_OUT) {
-            detail.primaryAction = PrimaryAction.BUY_TICKET;
-            detail.disabledReason = "Hết vé";
-        } else if (event.availability == EventUiModel.Availability.UNKNOWN) {
-            detail.primaryAction = PrimaryAction.NONE;
-            detail.disabledReason = "Hiện chưa thể đăng ký";
-        } else if (event.free) {
-            detail.primaryAction = PrimaryAction.REGISTER_FREE;
-            detail.disabledReason = null;
-        } else {
-            detail.primaryAction = PrimaryAction.BUY_TICKET;
-            detail.disabledReason = null;
         }
-
-        TicketOption selected = selectedTicket(detail);
-        if (selected != null && selected.status == TicketSaleStatus.NOT_STARTED
-                && detail.primaryAction != PrimaryAction.NONE) {
-            detail.disabledReason = "Chưa mở bán";
-        } else if (selected != null && selected.status == TicketSaleStatus.ENDED
-                && detail.primaryAction != PrimaryAction.NONE) {
-            detail.disabledReason = "Đã kết thúc bán";
-        } else if (selected != null && selected.status == TicketSaleStatus.SOLD_OUT
-                && detail.primaryAction != PrimaryAction.NONE) {
-            detail.disabledReason = "Hết vé";
+        if (detail.primaryAction == PrimaryAction.NONE && isBlank(detail.statusText)) {
+            detail.statusText = detail.completed
+                    ? "Sự kiện đã kết thúc"
+                    : "Thông tin vé chỉ để tham khảo";
         }
         return detail;
     }
 
-    private List<TicketOption> buildTickets(EventUiModel event, long saleStart, long saleEnd) {
-        List<TicketOption> tickets = new ArrayList<>();
-        long now = System.currentTimeMillis();
-        boolean soldOut = event.availability == EventUiModel.Availability.SOLD_OUT
-                || event.availability == EventUiModel.Availability.CANCELLED;
-        if (event.free) {
-            TicketSaleStatus status;
-            if (soldOut) {
-                status = TicketSaleStatus.SOLD_OUT;
-            } else if (saleStart > now) {
-                status = TicketSaleStatus.NOT_STARTED;
-            } else if (saleEnd < now) {
-                status = TicketSaleStatus.ENDED;
-            } else {
-                status = TicketSaleStatus.ON_SALE;
+    @NonNull
+    private List<GalleryItem> buildGallery(@NonNull DiscoveryDtos.EventDetail dto) {
+        List<GalleryItem> gallery = new ArrayList<>();
+        int icon = EventCategoryUi.iconRes(EventMapper.categoryOf(dto.categoryNames, dto.tags));
+        if (dto.mediaUrls != null && !dto.mediaUrls.isEmpty()) {
+            for (int i = 0; i < dto.mediaUrls.size(); i++) {
+                gallery.add(new GalleryItem("Ảnh " + (i + 1), icon, i, dto.mediaUrls.get(i)));
             }
-            tickets.add(new TicketOption(1L, "Vé miễn phí", "Mỗi tài khoản đăng ký tối đa 2 vé.",
-                    0L, soldOut ? 0 : 120, saleStart, saleEnd, status));
-            return tickets;
+            return gallery;
         }
+        boolean online = "ONLINE".equalsIgnoreCase(dto.eventFormat);
+        int count = online ? 3 : 5;
+        String[] labels = online
+                ? new String[]{"Sảnh chờ trực tuyến", "Phòng trình bày", "Khu vực hỏi đáp"}
+                : new String[]{"Sân khấu chính", "Khu vực check-in", "Không gian giao lưu",
+                "Sân khấu phụ", "Khu vực triển lãm"};
+        for (int i = 0; i < count; i++) {
+            gallery.add(new GalleryItem(labels[i], icon, i, null));
+        }
+        return gallery;
+    }
 
-        long basePrice = Math.max(event.priceFrom, 100_000L);
-        tickets.add(new TicketOption(1L, "Vé Standard",
-                "Bao gồm quyền tham dự toàn bộ chương trình.",
-                basePrice, soldOut ? 0 : 48, saleStart, saleEnd,
-                ticketStatus(soldOut, saleStart, saleEnd, now)));
-        tickets.add(new TicketOption(2L, "Vé Premium",
-                "Khu vực ghế gần sân khấu, nước uống và quà tặng.",
-                basePrice + 250_000L, soldOut ? 0 : 8, saleStart, saleEnd,
-                ticketStatus(soldOut, saleStart, saleEnd, now)));
-        if (event.rating >= 4.7f) {
-            tickets.add(new TicketOption(3L, "Vé VIP",
-                    "Phòng chờ riêng, check-in ưu tiên và gặp gỡ diễn giả.",
-                    basePrice + 600_000L, soldOut ? 0 : 4, saleStart, saleEnd,
-                    ticketStatus(soldOut, saleStart, saleEnd, now)));
+    @NonNull
+    private List<TicketOption> buildTickets(@NonNull DiscoveryDtos.EventDetail dto,
+                                            @NonNull EventUiModel event) {
+        List<TicketOption> tickets = new ArrayList<>();
+        long fallbackStart = event.startAt > 0L
+                ? event.startAt - 20L * 24L * 60L * 60L * 1000L : 0L;
+        long fallbackEnd = event.startAt > 0L
+                ? event.startAt - 2L * 60L * 60L * 1000L : 0L;
+        if (dto.ticketTypes != null) {
+            for (DiscoveryDtos.TicketType type : dto.ticketTypes) {
+                long saleStart = DateTimeUtils.toMillis(type.saleStartAt);
+                long saleEnd = DateTimeUtils.toMillis(type.saleEndAt);
+                tickets.add(new TicketOption(
+                        type.id,
+                        type.name == null ? "Vé" : type.name,
+                        type.description,
+                        type.price == null ? 0L : Math.round(type.price),
+                        type.remaining == null ? -1 : type.remaining,
+                        saleStart > 0L ? saleStart : fallbackStart,
+                        saleEnd > 0L ? saleEnd : fallbackEnd,
+                        ticketStatus(type.saleStatus, saleStart, saleEnd)));
+            }
+        }
+        if (tickets.isEmpty()) {
+            tickets.add(new TicketOption(0L, event.free ? "Vé miễn phí" : "Vé tham dự",
+                    "Thông tin vé do nhà tổ chức cung cấp.",
+                    event.free ? 0L : event.priceFrom, -1,
+                    fallbackStart, fallbackEnd, ticketStatus(null, fallbackStart, fallbackEnd)));
         }
         return tickets;
     }
 
-    private TicketSaleStatus ticketStatus(boolean soldOut, long saleStart, long saleEnd, long now) {
-        if (soldOut) {
-            return TicketSaleStatus.SOLD_OUT;
+    @NonNull
+    private static TicketSaleStatus ticketStatus(@Nullable String raw, long saleStart, long saleEnd) {
+        if (raw != null) {
+            switch (raw.toUpperCase(Locale.ROOT)) {
+                case "NOT_STARTED":
+                    return TicketSaleStatus.NOT_STARTED;
+                case "ENDED":
+                    return TicketSaleStatus.ENDED;
+                case "SOLD_OUT":
+                    return TicketSaleStatus.SOLD_OUT;
+                case "ON_SALE":
+                    return TicketSaleStatus.ON_SALE;
+                default:
+                    break;
+            }
         }
+        long now = System.currentTimeMillis();
         if (saleStart > now) {
             return TicketSaleStatus.NOT_STARTED;
         }
-        if (saleEnd < now) {
+        if (saleEnd > 0L && saleEnd < now) {
             return TicketSaleStatus.ENDED;
         }
         return TicketSaleStatus.ON_SALE;
     }
 
-    private List<GalleryItem> buildGallery(EventUiModel event) {
-        List<GalleryItem> gallery = new ArrayList<>();
-        int icon = EventCategoryUi.iconRes(event.category);
-        int count = event.online ? 3 : 5;
-        String[] labels = event.online
-                ? new String[]{"Sảnh chờ trực tuyến", "Phòng trình bày", "Khu vực hỏi đáp"}
-                : new String[]{"Sân khấu chính", "Khu vực check-in", "Không gian giao lưu",
-                "Sân khấu phụ", "Khu vực triển lãm"};
-        for (int i = 0; i < count; i++) {
-            gallery.add(new GalleryItem(labels[i], icon, i));
-        }
-        return gallery;
-    }
-
-    private int firstBookableTicket(List<TicketOption> tickets) {
+    private int firstBookableTicket(@NonNull List<TicketOption> tickets) {
         for (int i = 0; i < tickets.size(); i++) {
             if (tickets.get(i).status == TicketSaleStatus.ON_SALE) {
                 return i;
@@ -355,17 +435,72 @@ public class EventDetailViewModel extends ViewModel {
         return 0;
     }
 
-    private TicketOption selectedTicket(DetailState detail) {
-        if (detail.tickets.isEmpty()) {
-            return null;
+    @NonNull
+    private static int[] distribution(@Nullable DiscoveryDtos.ReviewSummary summary) {
+        int[] values = new int[5];
+        if (summary == null || summary.distribution == null) {
+            return values;
         }
-        int index = Math.max(0, Math.min(detail.selectedTicketIndex, detail.tickets.size() - 1));
-        return detail.tickets.get(index);
+        for (Map.Entry<String, Long> entry : summary.distribution.entrySet()) {
+            try {
+                int star = Integer.parseInt(entry.getKey());
+                if (star >= 1 && star <= 5 && entry.getValue() != null) {
+                    values[star - 1] = (int) Math.min(Integer.MAX_VALUE, entry.getValue());
+                }
+            } catch (NumberFormatException ignored) {
+                // Bỏ qua khoá lạ.
+            }
+        }
+        return values;
     }
 
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
+    @NonNull
+    private static List<ReviewUiModel> mapHighlights(@Nullable DiscoveryDtos.ReviewSummary summary) {
+        List<ReviewUiModel> reviews = new ArrayList<>();
+        if (summary == null || summary.highlights == null) {
+            return reviews;
+        }
+        for (DiscoveryDtos.ReviewBrief brief : summary.highlights) {
+            reviews.add(new ReviewUiModel.Builder()
+                    .id(brief.id)
+                    .authorName(brief.authorName)
+                    .rating(brief.rating)
+                    .comment(brief.text)
+                    .createdAt(DateTimeUtils.toMillis(brief.createdAt))
+                    .status(ReviewUiModel.Status.VISIBLE)
+                    .source(ReviewUiModel.Source.USER)
+                    .build());
+        }
+        return reviews;
+    }
+
+    private static boolean contains(@Nullable List<String> values, @NonNull String key) {
+        if (values == null) {
+            return false;
+        }
+        for (String value : values) {
+            if (key.equalsIgnoreCase(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isBlank(@Nullable String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    @Nullable
+    private static String firstNonNull(@Nullable String value, @Nullable String fallback) {
+        return isBlank(value) ? fallback : value;
+    }
+
+    @NonNull
+    private static String favoriteMessage(@NonNull ApiException exception) {
+        if (exception.getHttpCode() == 409
+                || "FAVORITE_LIMIT_REACHED".equalsIgnoreCase(exception.getErrorCode())) {
+            return "Bạn đã đạt giới hạn sự kiện yêu thích. Hãy bỏ bớt một sự kiện trước.";
+        }
+        return exception.getUserMessage();
     }
 }

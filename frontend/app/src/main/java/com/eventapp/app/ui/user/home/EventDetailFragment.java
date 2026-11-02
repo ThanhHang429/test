@@ -296,17 +296,13 @@ public class EventDetailFragment extends Fragment {
                 return;
             }
             switch (state.primaryAction) {
-                case BUY_TICKET:
-                    navigateTo(R.id.checkoutFragment, eventArgs(state));
-                    break;
-                case REGISTER_FREE:
-                    navigateTo(R.id.free_registerFragment, eventArgs(state));
-                    break;
-                case VIEW_MY_TICKET:
-                    navigateTo(R.id.my_ticketsFragment, null);
-                    break;
                 case WRITE_REVIEW:
                     navigateTo(R.id.write_reviewFragment, reviewArgs(state.event, false));
+                    break;
+                case BUY_TICKET:
+                case REGISTER_FREE:
+                case VIEW_MY_TICKET:
+                    Snackbar.make(requireView(), R.string.hc_coming_soon, Snackbar.LENGTH_SHORT).show();
                     break;
                 case NONE:
                 default:
@@ -324,7 +320,10 @@ public class EventDetailFragment extends Fragment {
         requireView().findViewById(R.id.btnDetailSeeReviews).setOnClickListener(v -> {
             EventDetailViewModel.DetailState state = viewModel.getState().getValue();
             if (state != null && state.event != null) {
-                navigateTo(R.id.event_reviewsFragment, reviewArgs(state.event, false));
+                Bundle args = reviewArgs(state.event, false);
+                // Chỉ hiện nút viết đánh giá khi server cho phép (đã kết thúc + đã check-in).
+                args.putBoolean(WriteReviewFragment.ARG_CAN_REVIEW, state.canReview);
+                navigateTo(R.id.event_reviewsFragment, args);
             }
         });
 
@@ -370,6 +369,11 @@ public class EventDetailFragment extends Fragment {
             }
         });
         viewModel.getState().observe(getViewLifecycleOwner(), this::bindState);
+        viewModel.getMessage().observe(getViewLifecycleOwner(), text -> {
+            if (text != null && !text.trim().isEmpty() && isAdded()) {
+                Snackbar.make(requireView(), text, Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void bindState(EventDetailViewModel.DetailState state) {
@@ -484,7 +488,7 @@ public class EventDetailFragment extends Fragment {
         galleryAdapter.submitList(state.gallery);
         organizerName.setText(event.organizer);
         organizerMeta.setText(getString(R.string.hc_detail_organizer_events,
-                24 + (int) (event.id % 12)));
+                (int) state.organizerEventCount));
         organizerVerified.setStatus(getString(R.string.hc_detail_organizer_verified),
                 StatusChip.Tone.SUCCESS);
         organizerVerified.setVisibility(View.VISIBLE);
@@ -550,7 +554,9 @@ public class EventDetailFragment extends Fragment {
         }
 
         String statusText;
-        if (state.disabledReason != null) {
+        if (state.statusText != null && !state.statusText.trim().isEmpty()) {
+            statusText = state.statusText;
+        } else if (state.disabledReason != null) {
             statusText = state.disabledReason;
         } else {
             switch (state.primaryAction) {
@@ -594,8 +600,10 @@ public class EventDetailFragment extends Fragment {
                 break;
         }
         ((TextView) primaryButton).setText(text);
+        boolean hasAction = state.primaryAction != EventDetailViewModel.PrimaryAction.NONE;
+        primaryButton.setVisibility(hasAction ? View.VISIBLE : View.GONE);
         boolean enabled = state.disabledReason == null
-                && state.primaryAction != EventDetailViewModel.PrimaryAction.NONE
+                && hasAction
                 && !state.offline;
         primaryButton.setEnabled(enabled);
         primaryButton.setAlpha(enabled ? 1f : 0.6f);
@@ -637,8 +645,7 @@ public class EventDetailFragment extends Fragment {
         return args;
     }
 
-    private Bundle reviewArgs(EventUiModel event, boolean editMode) {
-        Bundle args = new Bundle();
+    private Bundle reviewArgs(EventUiModel event, boolean editMode) {        Bundle args = new Bundle();
         args.putLong(WriteReviewFragment.ARG_EVENT_ID, event.id);
         args.putString(WriteReviewFragment.ARG_EVENT_TITLE, event.title);
         args.putBoolean(WriteReviewFragment.ARG_EDIT_MODE, editMode);

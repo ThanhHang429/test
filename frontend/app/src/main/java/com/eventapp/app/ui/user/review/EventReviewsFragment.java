@@ -65,7 +65,7 @@ public class EventReviewsFragment extends Fragment {
     private long eventId;
     private String eventTitle = "";
     private boolean canReview = true;
-    private boolean hasMine = true;
+    private boolean hasMine;
     private long eventEndAt;
     private boolean bindingSort;
 
@@ -98,7 +98,8 @@ public class EventReviewsFragment extends Fragment {
         eventId = args.getLong(ARG_EVENT_ID, -1L);
         eventTitle = args.getString(ARG_EVENT_TITLE, "");
         canReview = args.getBoolean(ARG_CAN_REVIEW, true);
-        hasMine = args.getBoolean(ARG_HAS_MY_REVIEW, true);
+        // Cờ này chỉ là giá trị khởi tạo; ViewModel cập nhật lại ngay khi API trả về đánh giá
+        // của chính người dùng (trường mine).
         eventEndAt = args.getLong(ARG_EVENT_END_AT, 0L);
     }
 
@@ -256,6 +257,7 @@ public class EventReviewsFragment extends Fragment {
             args.putString(WriteReviewFragment.ARG_COMMENT, review.comment);
             args.putFloat(WriteReviewFragment.ARG_RATING, review.rating);
             args.putInt(WriteReviewFragment.ARG_EDIT_COUNT, review.editCount);
+            args.putLong(WriteReviewFragment.ARG_EDIT_VERSION, review.editedAt);
         }
         Navigation.findNavController(requireView())
                 .navigate(R.id.write_reviewFragment, args);

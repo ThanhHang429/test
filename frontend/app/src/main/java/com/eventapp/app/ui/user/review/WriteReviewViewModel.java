@@ -1,13 +1,27 @@
 package com.eventapp.app.ui.user.review;
 
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-/** Submission state for FR-U20 write/edit review. */
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.data.remote.dto.review.ReviewDtos;
+import com.eventapp.app.data.repository.ReviewRepository;
+import com.google.gson.JsonElement;
+
+import java.util.UUID;
+
+/**
+ * FR-U20 — gửi/sửa đánh giá qua {@code POST /events/{id}/reviews} và
+ * {@code PUT /events/{id}/reviews/me}.
+ *
+ * <p>Nội dung có từ khoá cấm/link/SĐT sẽ được backend giữ ở trạng thái chờ duyệt; client chỉ phản
+ * ánh lại bằng cờ {@code held} trong kết quả.</p>
+ */
 public class WriteReviewViewModel extends ViewModel {
 
     public static class Result {
@@ -20,10 +34,15 @@ public class WriteReviewViewModel extends ViewModel {
         }
     }
 
+    private static final int MAX_TEXT = 2000;
+
+    private final ReviewRepository repository = ServiceLocator.get(ReviewRepository.class);
+
     private final MutableLiveData<Boolean> submitting = new MutableLiveData<>(false);
     private final MutableLiveData<Result> result = new MutableLiveData<>();
     private final MutableLiveData<String> error = new MutableLiveData<>();
-    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private String idempotencyKey;
 
     public LiveData<Boolean> getSubmitting() {
         return submitting;
@@ -37,54 +56,70 @@ public class WriteReviewViewModel extends ViewModel {
         return error;
     }
 
-    public void submit(float rating, String comment, boolean editMode) {
+    public void submit(long eventId, float rating, String comment, boolean editMode,
+                       @Nullable Long version) {
         if (Boolean.TRUE.equals(submitting.getValue())) {
             return;
         }
         error.setValue(null);
         result.setValue(null);
-        submitting.setValue(true);
-        handler.postDelayed(() -> {
-            submitting.setValue(false);
-            if (rating < 1f) {
-                error.setValue("Vui lòng chọn số sao");
-                return;
-            }
-            String normalized = comment == null ? "" : comment.trim();
-            if (!normalized.isEmpty() && normalized.length() < 10) {
-                error.setValue("Nhận xét phải có ít nhất 10 ký tự");
-                return;
-            }
-            if (normalized.length() > 1000) {
-                error.setValue("Nhận xét tối đa 1000 ký tự");
-                return;
-            }
-            boolean held = containsLinkOrPhone(normalized);
-            result.setValue(new Result(true, held));
-        }, 650L);
-    }
+        int stars = Math.round(rating);
+        if (stars < 1 || stars > 5) {
+            error.setValue("Vui lòng chọn số sao");
+            return;
+        }
+        String normalized = comment == null ? "" : comment.trim();
+        if (normalized.length() > MAX_TEXT) {
+            error.setValue("Nhận xét tối đa " + MAX_TEXT + " ký tự");
+            return;
+        }
+        if (eventId <= 0L) {
+            error.setValue("Không xác định được sự kiện");
+            return;
+        }
 
-    /** Mirrors the backend moderation filter for the dummy flow. */
-    private boolean containsLinkOrPhone(String text) {
-        if (text == null) {
-            return false;
+        submitting.setValue(true);
+        ApiCallback<ReviewDtos.Mutation> callback = new ApiCallback<ReviewDtos.Mutation>() {
+            @Override
+            public void onSuccess(@Nullable ReviewDtos.Mutation data,
+                                  @Nullable JsonElement meta) {
+                boolean held = data == null || data.review == null
+                        || !"VISIBLE".equalsIgnoreCase(data.review.status);
+                result.setValue(new Result(true, held));
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                error.setValue(exception.getUserMessage());
+            }
+
+            @Override
+            public void onFinish() {
+                submitting.setValue(false);
+            }
+        };
+
+        if (editMode) {
+            ReviewDtos.UpdateRequest request = new ReviewDtos.UpdateRequest();
+            request.rating = stars;
+            request.text = normalized;
+            request.version = version;
+            repository.update(eventId, request, callback);
+            return;
         }
-        String lower = text.toLowerCase();
-        if (lower.contains("http://") || lower.contains("https://")
-                || lower.contains("www.") || lower.contains("zalo")) {
-            return true;
+
+        if (idempotencyKey == null) {
+            idempotencyKey = UUID.randomUUID().toString();
         }
-        return text.matches(".*(0\\d{9}|\\+84\\d{9}).*");
+        ReviewDtos.CreateRequest request = new ReviewDtos.CreateRequest();
+        request.rating = stars;
+        request.text = normalized;
+        repository.create(eventId, idempotencyKey, request, callback);
     }
 
     public void resetResult() {
         result.setValue(null);
         error.setValue(null);
-    }
-
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
+        idempotencyKey = null;
     }
 }

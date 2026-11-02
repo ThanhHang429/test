@@ -80,9 +80,36 @@ Script chỉ đọc và tạo dữ liệu nháp, chạy lại nhiều lần khô
 ## Cấu hình AI
 
 Mặc định dùng **provider giả lập** (`app.ai.provider=mock`) — không cần API key,
-kết quả tất định, phù hợp demo và test. Đổi sang provider thật bằng cách đặt
-`AI_PROVIDER`, `AI_API_KEY`, `AI_BASE_URL`, `AI_MODEL` trong `.env`.
+kết quả tất định, phù hợp demo và test. Chuyển sang mô hình bên thứ ba bằng cách
+đặt `AI_PROVIDER` + `AI_API_KEY` trong `.env` (key chỉ nằm ở backend):
+
+| `AI_PROVIDER` | Nhà cung cấp | `AI_BASE_URL` mặc định | `AI_MODEL` mặc định |
+|---|---|---|---|
+| `mock` | Giả lập cục bộ | — | `mock-rules-v1` |
+| `gemini` | Google Gemini (native REST) | `https://generativelanguage.googleapis.com` | `gemini-2.0-flash` |
+| `deepseek` | DeepSeek (chuẩn OpenAI) | `https://api.deepseek.com/v1` | `deepseek-chat` |
+| `openrouter` | OpenRouter (chuẩn OpenAI) | `https://openrouter.ai/api/v1` | `deepseek/deepseek-chat` |
+| `openai` | OpenAI (chuẩn OpenAI) | `https://api.openai.com/v1` | `gpt-4o-mini` |
+| `openai-compatible` | Endpoint tự chọn | bắt buộc đặt `AI_BASE_URL` | bắt buộc đặt `AI_MODEL` |
+
+Để trống `AI_BASE_URL`/`AI_MODEL` thì dùng giá trị mặc định ở bảng trên.
+Provider thật yêu cầu `AI_API_KEY`; thiếu key thì ứng dụng báo lỗi ngay lúc khởi động
+thay vì âm thầm rơi về mock.
 
 Mọi lần gọi AI đều ghi `ai_requests` + `integration_health_logs`, có quota theo
 tác vụ, circuit breaker và cờ bật/tắt khẩn cấp cho admin
 (`PUT /api/v1/admin/integrations/ai/features/{taskType}`).
+
+### Chức năng AI theo vai trò
+
+| Vai trò | Chức năng | Mã | Endpoint / nơi dùng |
+|---|---|---|---|
+| User | Gợi ý sự kiện (rule chấm điểm + AI xếp hạng lại và viết lý do) | FR-U07 | `GET /api/v1/recommendations` |
+| Organizer | AI viết mô tả sự kiện (bản nháp, hậu kiểm thông tin bịa) | FR-O06 | `POST /api/v1/organizer/ai/event-description` |
+| Organizer | AI soạn thông báo gửi người tham dự (bản nháp, không tự gửi) | FR-O06 | `POST /api/v1/organizer/ai/announcement` |
+| Organizer | AI phân tích và gợi ý vận hành | FR-O27 | `POST /api/v1/organizer/events/{eventId}/ai-analysis` |
+| Admin | Giám sát tích hợp AI / thanh toán / FCM | FR-A20 | `GET /api/v1/admin/integrations` |
+
+Nguyên tắc chung: AI chỉ tạo đề xuất, không quyết định trạng thái tài chính, duyệt
+sự kiện, phát hành vé hay check-in (BR-017). Mọi con số hiển thị lấy từ Backend;
+AI lỗi/timeout/bị tắt thì chức năng chính vẫn chạy bằng luật (NFR-03).

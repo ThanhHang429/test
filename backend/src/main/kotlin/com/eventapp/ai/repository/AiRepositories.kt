@@ -19,6 +19,7 @@ interface AiRequestRepository : JpaRepository<AiRequest, Long> {
     fun findByCorrelationIdOrderByCreatedAtDesc(correlationId: String): List<AiRequest>
     fun findByCreatedAtAfterOrderByCreatedAtDesc(since: Instant, pageable: Pageable): Page<AiRequest>
     fun countByUserIdAndFeatureCodeAndCreatedAtAfter(userId: Long, featureCode: AiFeatureCode, since: Instant): Long
+    fun countByEventIdAndFeatureCodeAndCreatedAtAfter(eventId: Long, featureCode: AiFeatureCode, since: Instant): Long
     fun findByFeatureCodeAndCreatedAtAfter(featureCode: AiFeatureCode, since: Instant): List<AiRequest>
 }
 

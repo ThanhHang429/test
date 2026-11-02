@@ -8,6 +8,8 @@ enum class AiTask(val featureCode: AiFeatureCode, val code: String) {
     RECOMMEND(AiFeatureCode.EVENT_RECOMMENDATION, "RECOMMEND"),
     CHAT(AiFeatureCode.CHATBOT, "CHAT"),
     DESCRIPTION(AiFeatureCode.EVENT_DESCRIPTION, "DESCRIPTION"),
+    /** FR-O06 — AI soạn thông báo gửi người tham dự; dùng chung feature_code với DESCRIPTION. */
+    ANNOUNCEMENT(AiFeatureCode.EVENT_DESCRIPTION, "ANNOUNCEMENT"),
     ANALYTICS(AiFeatureCode.ORGANIZER_ANALYTICS, "ANALYTICS"),
     MODERATION(AiFeatureCode.OTHER, "MODERATION")
 }

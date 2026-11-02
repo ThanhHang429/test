@@ -238,7 +238,7 @@
     <string-array name="hc_cities">
         <item>@string/hc_filter_city_any</item>
         <item>Hà Nội</item>
-        <item>TP. Hồ Chí Minh</item>
+        <item>Hồ Chí Minh</item>
         <item>Đà Nẵng</item>
         <item>Hải Phòng</item>
         <item>Cần Thơ</item>

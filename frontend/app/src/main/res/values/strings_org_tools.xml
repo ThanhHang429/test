@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Màn Công cụ của organizer -->
+    <string name="org_tools_title">Công cụ nhà tổ chức</string>
+    <string name="org_tools_subtitle">Trợ lý AI và phân loại sự kiện — dùng trực tiếp dữ liệu từ máy chủ.</string>
+    <string name="org_tools_ai_section">Trợ lý AI</string>
+    <string name="org_tools_ai_write_title">Viết mô tả sự kiện</string>
+    <string name="org_tools_ai_write_desc">Nhập thông tin tóm tắt, AI soạn 1–3 phiên bản mô tả và tự kiểm tra dữ liệu bịa.</string>
+    <string name="org_tools_ai_write_action">Soạn mô tả</string>
+    <string name="org_tools_events_section">Chọn sự kiện để phân tích</string>
+    <string name="org_tools_events_desc">Số liệu lấy từ tổng quan 30 ngày gần nhất.</string>
+    <string name="org_tools_events_empty">Chưa có sự kiện nào trong tổng quan 30 ngày gần nhất.</string>
+    <string name="org_tools_error">Không tải được dữ liệu công cụ.</string>
+    <string name="org_tools_retry">Thử lại</string>
+    <string name="org_tools_event_meta">%1$s đăng ký</string>
+
+    <!-- Hộp thoại nhập thông tin cho AI -->
+    <string name="org_ai_brief_title">Thông tin cho trợ lý AI</string>
+    <string name="org_ai_brief_subtitle">Càng chi tiết, mô tả càng sát. Không cần nhập giá vé hay ngày — AI không được bịa số liệu.</string>
+    <string name="org_ai_brief_event_title">Tên sự kiện</string>
+    <string name="org_ai_brief_event_title_hint">Ví dụ: Đêm nhạc Acoustic mùa đông</string>
+    <string name="org_ai_brief_category">Danh mục chính</string>
+    <string name="org_ai_brief_key_points">3–10 điểm nổi bật</string>
+    <string name="org_ai_brief_key_points_hint">Mỗi dòng một ý, tối thiểu 3 dòng</string>
+    <string name="org_ai_brief_audience">Khán giả mục tiêu</string>
+    <string name="org_ai_brief_audience_hint">Ví dụ: Sinh viên và người yêu nhạc</string>
+    <string name="org_ai_brief_generate">Soạn mô tả</string>
+    <string name="org_ai_brief_cancel">Huỷ</string>
+    <string name="org_ai_brief_missing_title">Cần nhập thêm</string>
+    <string name="org_ai_brief_missing_title_value">Tên sự kiện tối thiểu 5 ký tự.</string>
+    <string name="org_ai_brief_missing_category">Chọn một danh mục chính.</string>
+    <string name="org_ai_brief_missing_points">Cần ít nhất 3 điểm nổi bật (mỗi dòng một ý).</string>
+
+    <!-- Chi tiết sự kiện của organizer -->
+    <string name="org_event_title">Sự kiện của tôi</string>
+    <string name="org_event_subtitle">Phân tích hiệu quả và cập nhật cách sự kiện được phân loại.</string>
+    <string name="org_event_analysis_title">Phân tích AI</string>
+    <string name="org_event_analysis_desc">Điểm đăng ký, tỷ lệ lấp đầy, doanh thu, check-in và gợi ý vận hành.</string>
+    <string name="org_event_classification_title">Phân loại &amp; nhãn</string>
+    <string name="org_event_classification_desc">Danh mục chính, tối đa 2 danh mục phụ và 5 nhãn phụ.</string>
+    <string name="org_event_note">AI chỉ gợi ý — mọi thay đổi vẫn do bạn quyết định và thực hiện.</string>
+
+    <!-- Phân loại sự kiện (O09) -->
+    <string name="org_classification_title">Phân loại sự kiện</string>
+    <string name="org_classification_subtitle">Giúp sự kiện hiển thị đúng nhóm và được gợi ý tới người dùng phù hợp.</string>
+    <string name="org_classification_primary">Danh mục chính</string>
+    <string name="org_classification_primary_hint">Bắt buộc · chọn một</string>
+    <string name="org_classification_secondary">Danh mục phụ</string>
+    <string name="org_classification_secondary_hint">Tuỳ chọn · tối đa 2 · không trùng danh mục chính</string>
+    <string name="org_classification_tags">Nhãn phụ</string>
+    <string name="org_classification_tags_hint">Tuỳ chọn · tối đa 5 · mỗi nhãn 2–30 ký tự</string>
+    <string name="org_classification_tag_input_hint">Thêm nhãn mới</string>
+    <string name="org_classification_tag_add">Thêm</string>
+    <string name="org_classification_suggestions">Nhãn đang dùng nhiều</string>
+    <string name="org_classification_save">Lưu phân loại</string>
+    <string name="org_classification_saving">Đang lưu…</string>
+    <string name="org_classification_saved">Đã lưu phân loại sự kiện.</string>
+    <string name="org_classification_requires_review">Đã đổi danh mục chính của sự kiện đã duyệt — sự kiện sẽ phải duyệt lại.</string>
+    <string name="org_classification_locked">Sự kiện đã kết thúc hoặc đã huỷ nên phân loại bị khoá.</string>
+    <string name="org_classification_error">Không tải được phân loại sự kiện.</string>
+    <string name="org_classification_tag_limit">Chỉ chọn tối đa %1$d nhãn.</string>
+    <string name="org_classification_secondary_limit">Chỉ chọn tối đa 2 danh mục phụ.</string>
+    <string name="org_classification_tag_invalid">Nhãn phải có từ 2 đến 30 ký tự.</string>
+</resources>

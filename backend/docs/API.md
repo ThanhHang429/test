@@ -539,6 +539,46 @@ Sinh bản nháp mô tả, **không tự lưu** vào sự kiện.
   không có trong dữ liệu nhập sẽ bị cảnh báo.
 - Quota **10 lượt/giờ** → **429** với `extra.retryAfterSeconds`.
 
+#### `POST /api/v1/organizer/ai/announcement`
+Soạn **bản nháp thông báo** gửi người tham dự (VD: «Đổi phòng B1 sang B3 lúc 10h»).
+Không tự gửi, không tự công khai — organizer phải xác nhận (O06-R01).
+
+```json
+{
+  "topic": "Đổi phòng B1 sang B3 lúc 10h",
+  "eventId": 14,
+  "eventTitle": "Hội thảo AI ứng dụng",
+  "audience": "Người đã đăng ký tham dự",
+  "keyPoints": ["Phòng mới B3, tầng 3", "Giờ bắt đầu không đổi"],
+  "tone": "FRIENDLY",
+  "length": "SHORT",
+  "variants": 2
+}
+```
+
+| Trường | Ràng buộc |
+|---|---|
+| `topic` | 5…500 ký tự |
+| `eventId` | tuỳ chọn; nếu có phải thuộc organizer (403 nếu không) |
+| `eventTitle` | ≤ 120 |
+| `audience` | ≤ 200 |
+| `keyPoints` | ≤ 5 ý, mỗi ý 3…200 ký tự |
+| `tone` / `length` / `variants` | như mục mô tả ở trên |
+
+```json
+{ "success": true, "data": {
+  "variants": [ { "text": "...", "shortSummary": "..." } ],
+  "missingInfo": ["Đối tượng nhận thông báo"],
+  "warnings": [],
+  "source": "AI",
+  "aiRequestId": 5,
+  "correlationId": "..."
+}}
+```
+
+- Dùng chung quota O06 với `event-description` (**10 lượt/giờ**).
+- `source: RULE_UNAVAILABLE` khi AI lỗi/tắt → `variants` rỗng, organizer nhập tay.
+
 #### `POST /api/v1/organizer/events/{eventId}/ai-analysis`
 Chỉ sự kiện của chính organizer (403 nếu không).
 
@@ -562,7 +602,7 @@ Chỉ sự kiện của chính organizer (403 nếu không).
 
 - `insufficientData: true` khi mở bán < 7 ngày **và** < 20 đăng ký → AI trả phân tích
   dè dặt, kèm cảnh báo.
-- Quota **5 lượt/ngày**; hết quota → trả phân tích rule-based kèm ghi chú
+- Quota **5 lượt/ngày cho mỗi sự kiện**; hết quota → trả phân tích rule-based kèm ghi chú
   (không lỗi 429, vì dashboard cần số liệu).
 - `confidence`: `LOW` | `MEDIUM` | `HIGH`.
 
@@ -658,22 +698,26 @@ Trạng thái 3 dịch vụ ngoài: `AI`, `PAYMENT`, `FCM`.
 [ { "name": "AI", "status": "HEALTHY", "errorRate": 0.0, "requestCount": 20,
     "lastSuccessAt": "2026-11-01T02:00:00Z", "lastErrorAt": null,
     "lastErrorCode": null, "p95LatencyMs": 14,
-    "notes": "provider=mock, apiKeyConfigured=không, circuit=CLOSED" },
+    "notes": "provider=mock, model=mock-rules-v1, apiKeyConfigured=không, circuit=CLOSED" },
   { "name": "PAYMENT", "status": "UNKNOWN", "...": "..." } ]
 ```
 
 `status`: `HEALTHY` | `DEGRADED` (lỗi ≥ 20% hoặc p95 > 10s) | `DOWN` (lỗi ≥ 50%) | `UNKNOWN` (0 request).
 
+`notes` cho biết cấu hình đang chạy: `provider` (`mock` | `gemini` | `deepseek` |
+`openrouter` | `openai` | `openai-compatible`), `model` hiệu lực, đã cấu hình API key
+hay chưa và trạng thái circuit breaker. Không bao giờ trả khoá bí mật (A20-R01).
+
 #### `GET /admin/integrations/ai/requests?range=1h|24h|7d`
 ```json
 { "range": "24h", "total": 20, "success": 20, "errors": 0, "successRate": 1.0,
-  "byTaskType": { "RECOMMEND": 8, "DESCRIPTION": 10, "ANALYTICS": 2 },
+  "byTaskType": { "EVENT_RECOMMENDATION": 8, "EVENT_DESCRIPTION": 12, "ORGANIZER_ANALYTICS": 2 },
   "errorBreakdown": {},
   "inputTokens": 1200, "outputTokens": 2400, "estimatedCostUsd": 0.0011,
   "dailyBudgetUsd": 2.0, "budgetUsedRatio": 0.0005,
   "p95LatencyMs": 14, "circuitState": "CLOSED",
   "features": { "RECOMMEND": true, "CHAT": true, "DESCRIPTION": true,
-                "ANALYTICS": true, "MODERATION": true } }
+                "ANNOUNCEMENT": true, "ANALYTICS": true, "MODERATION": true } }
 ```
 
 #### `GET /admin/integrations/ai/requests/errors?limit=20`
@@ -684,7 +728,7 @@ dạng `1*0`.
 Tra toàn bộ lần gọi AI theo `correlationId`; không có → 404.
 
 #### `PUT /admin/integrations/ai/features/{taskType}`
-`taskType`: `RECOMMEND` \| `CHAT` \| `DESCRIPTION` \| `ANALYTICS` \| `MODERATION`.
+`taskType`: `RECOMMEND` \| `CHAT` \| `DESCRIPTION` \| `ANNOUNCEMENT` \| `ANALYTICS` \| `MODERATION`.
 
 ```json
 { "enabled": false, "reason": "Provider lỗi liên tục, tắt tạm" }

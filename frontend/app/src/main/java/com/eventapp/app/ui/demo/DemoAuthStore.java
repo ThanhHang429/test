@@ -29,16 +29,19 @@ public final class DemoAuthStore {
 
     private static final String PREFS_NAME = "eticket_demo_auth";
     private static final String KEY_ACCOUNTS = "accounts";
-    private static final String KEY_SESSION_EMAIL = "session_email";
     private static final String PASSWORD_SALT = "eticket-demo-v1";
 
     private static volatile DemoAuthStore instance;
 
     private final SharedPreferences prefs;
+    /** Phiên demo chỉ nằm trong RAM — không ghi xuống đĩa để mỗi lần mở app phải chọn lại. */
+    private volatile String sessionEmail;
 
     private DemoAuthStore(Context context) {
         prefs = context.getApplicationContext()
                 .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        // Dọn khoá remember của phiên bản cũ.
+        prefs.edit().remove("session_email").apply();
         seedIfNeeded();
     }
 
@@ -166,7 +169,7 @@ public final class DemoAuthStore {
     }
 
     public synchronized DemoAccount currentAccount() {
-        String email = prefs.getString(KEY_SESSION_EMAIL, null);
+        String email = sessionEmail;
         if (email == null || email.isEmpty()) {
             return null;
         }
@@ -205,11 +208,11 @@ public final class DemoAuthStore {
     }
 
     private void setSession(String email) {
-        prefs.edit().putString(KEY_SESSION_EMAIL, normalizeEmail(email)).apply();
+        sessionEmail = normalizeEmail(email);
     }
 
     private void clearSession() {
-        prefs.edit().remove(KEY_SESSION_EMAIL).apply();
+        sessionEmail = null;
     }
 
     private List<DemoAccount> createSeedAccounts() {

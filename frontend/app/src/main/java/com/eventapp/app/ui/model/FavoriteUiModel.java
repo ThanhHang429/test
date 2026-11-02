@@ -18,8 +18,15 @@ public class FavoriteUiModel {
     public final EventUiModel event;
     public final State state;
     public final long savedAt;
+    /** Id sự kiện backend trả về, giữ lại cả khi {@code event == null} để còn bỏ yêu thích được. */
+    public final long eventId;
 
     public FavoriteUiModel(EventUiModel event, State state, long savedAt) {
+        this(event == null ? -1L : event.id, event, state, savedAt);
+    }
+
+    public FavoriteUiModel(long eventId, EventUiModel event, State state, long savedAt) {
+        this.eventId = eventId > 0L ? eventId : (event == null ? -1L : event.id);
         this.event = event;
         this.state = state == null ? State.UNAVAILABLE : state;
         this.savedAt = savedAt;

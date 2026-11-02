@@ -26,6 +26,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.eventapp.app.R;
 import com.eventapp.app.core.enums.EventCategory;
 import com.eventapp.app.data.model.EventFilterCriteria;
+import com.eventapp.app.data.remote.dto.catalog.CatalogDtos;
+import com.eventapp.app.ui.mapper.EventMapper;
 import com.eventapp.app.ui.common.adapter.EventAdapter;
 import com.eventapp.app.ui.common.view.EmptyStateView;
 import com.eventapp.app.ui.common.view.ErrorStateView;
@@ -76,7 +78,7 @@ public class HomeFragment extends Fragment {
     private int headerHeight;
     private boolean headerHidden;
     private boolean searchCompact;
-    private EventCategory selectedCategory;
+    private Long selectedCategoryId;
 
     private boolean bindingQuick;
     private boolean firstLoad = true;
@@ -124,8 +126,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupHeader(View view) {
-        view.findViewById(R.id.btnHomeNotifications).setOnClickListener(v ->
-                navigate(R.id.notification_listFragment));
+        // Thông báo chưa có API → ẩn; tài khoản/đăng xuất nằm ở tab "Tài khoản".
+        view.findViewById(R.id.btnHomeNotifications).setVisibility(View.GONE);
         view.findViewById(R.id.btnHomeLocation).setOnClickListener(v -> showComingSoon());
         view.findViewById(R.id.btnHomeSearchVoice).setOnClickListener(v -> showComingSoon());
     }
@@ -177,40 +179,52 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    /** Danh mục hiển thị thành hàng icon tròn, mỗi danh mục một màu riêng. */
+    /** Danh mục lấy từ backend (id 9–24) thay vì danh sách hardcode cũ. */
     private void setupCategories() {
+        viewModel.getCategories().observe(getViewLifecycleOwner(), this::renderCategories);
+    }
+
+    private void renderCategories(@Nullable List<CatalogDtos.CategoryNode> nodes) {
+        categoryRow.removeAllViews();
+        if (nodes == null) {
+            return;
+        }
         LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (EventCategory category : EventCategory.values()) {
+        for (CatalogDtos.CategoryNode node : nodes) {
+            EventCategory category = EventMapper.categoryOf(
+                    Collections.singletonList(node.name), null);
             View item = inflater.inflate(R.layout.item_home_category, categoryRow, false);
             ImageView icon = item.findViewById(R.id.ivCategoryIcon);
             TextView label = item.findViewById(R.id.tvCategoryLabel);
             View circle = item.findViewById(R.id.layoutCategoryCircle);
 
             icon.setImageResource(EventCategoryUi.iconRes(category));
-            label.setText(EventCategoryUi.label(requireContext(), category));
-            item.setContentDescription(EventCategoryUi.label(requireContext(), category));
-            item.setTag(category);
-            circle.setBackground(categoryCircle(category, false));
+            label.setText(node.name);
+            item.setContentDescription(node.name);
+            item.setTag(node.id);
+            boolean selected = selectedCategoryId != null && selectedCategoryId == node.id;
+            circle.setBackground(categoryCircle(category, selected));
 
             ViewGroup.MarginLayoutParams params =
                     (ViewGroup.MarginLayoutParams) item.getLayoutParams();
             params.setMarginEnd(dp(8));
             item.setLayoutParams(params);
 
-            item.setOnClickListener(v -> onCategoryClick(category));
+            item.setOnClickListener(v -> onCategoryClick(node.id));
             categoryRow.addView(item);
         }
     }
 
-    private void onCategoryClick(EventCategory category) {
-        selectedCategory = selectedCategory == category ? null : category;
+    private void onCategoryClick(long categoryId) {
+        selectedCategoryId = selectedCategoryId != null && selectedCategoryId == categoryId
+                ? null : categoryId;
         refreshCategorySelection();
         updateFilterBadge();
-        if (selectedCategory == null) {
+        if (selectedCategoryId == null) {
             return;
         }
         Bundle args = new Bundle();
-        args.putLong(EventListFragment.ARG_CATEGORY_ID, EventCategoryUi.id(selectedCategory));
+        args.putLong(EventListFragment.ARG_CATEGORY_ID, selectedCategoryId);
         openEventList(args);
     }
 
@@ -218,12 +232,15 @@ public class HomeFragment extends Fragment {
         for (int i = 0; i < categoryRow.getChildCount(); i++) {
             View child = categoryRow.getChildAt(i);
             Object tag = child.getTag();
-            if (!(tag instanceof EventCategory)) {
+            if (!(tag instanceof Long)) {
                 continue;
             }
             View circle = child.findViewById(R.id.layoutCategoryCircle);
-            boolean selected = tag == selectedCategory;
-            circle.setBackground(categoryCircle((EventCategory) tag, selected));
+            boolean selected = selectedCategoryId != null && selectedCategoryId.equals(tag);
+            EventCategory category = EventMapper.categoryOf(
+                    Collections.singletonList(((TextView) child.findViewById(R.id.tvCategoryLabel))
+                            .getText().toString()), null);
+            circle.setBackground(categoryCircle(category, selected));
             child.setSelected(selected);
         }
     }
@@ -371,6 +388,9 @@ public class HomeFragment extends Fragment {
             upcomingAdapter.submitList(events);
             updateEmptyState();
         });
+
+        viewModel.getError().observe(getViewLifecycleOwner(), exception ->
+                errorState.setVisibility(exception == null ? View.GONE : View.VISIBLE));
     }
 
     /**
@@ -473,7 +493,7 @@ public class HomeFragment extends Fragment {
                 && quickGroup.getCheckedChipId() != R.id.chipHomeQuickAll) {
             count++;
         }
-        if (selectedCategory != null) {
+        if (selectedCategoryId != null) {
             count++;
         }
         if (count == 0) {

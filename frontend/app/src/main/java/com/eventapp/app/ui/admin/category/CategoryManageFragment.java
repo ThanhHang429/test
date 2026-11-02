@@ -130,9 +130,12 @@ public class CategoryManageFragment extends Fragment {
     }
 
     private void setupTabs() {
+        // Backend chỉ có API danh mục; tab bộ lọc nội dung và FAQ không có dữ liệu nên ẩn.
+        tabs.setVisibility(View.GONE);
+        groupRules.setVisibility(View.GONE);
+        groupFaqs.setVisibility(View.GONE);
+        groupCategories.setVisibility(View.VISIBLE);
         tabs.addTab(tabs.newTab().setText(R.string.hc_cat_tab_categories));
-        tabs.addTab(tabs.newTab().setText(R.string.hc_cat_tab_rules));
-        tabs.addTab(tabs.newTab().setText(R.string.hc_cat_tab_faq));
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -463,6 +466,10 @@ public class CategoryManageFragment extends Fragment {
 
     private void showActionMessage(CategoryManageViewModel.ActionEvent event) {
         if (event == null || event.action == null) {
+            return;
+        }
+        if (event.message != null && !event.message.isEmpty()) {
+            snackbar(event.message);
             return;
         }
         switch (event.action) {

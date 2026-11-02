@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -89,12 +90,56 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.selectedCity = selectedCity;
     }
 
+    /**
+     * Cập nhật danh sách bằng DiffUtil để chỉ rebind đúng thẻ đã đổi.
+     *
+     * <p>Trước đây mỗi lần đổi dữ liệu đều `notifyDataSetChanged()` khiến toàn bộ danh sách bị
+     * bind lại và mất vị trí cuộn — đây là nguồn giật chính khi trang chủ nhận dữ liệu theo từng
+     * khối.</p>
+     */
     public void submitList(List<EventUiModel> events) {
+        final List<EventUiModel> next = events == null
+                ? new ArrayList<>()
+                : new ArrayList<>(events);
+        final List<EventUiModel> previous = new ArrayList<>(items);
+        DiffUtil.DiffResult diff = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return previous.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return next.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldPosition, int newPosition) {
+                return previous.get(oldPosition).id == next.get(newPosition).id;
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldPosition, int newPosition) {
+                return sameContent(previous.get(oldPosition), next.get(newPosition));
+            }
+        }, false);
+
         items.clear();
-        if (events != null) {
-            items.addAll(events);
-        }
-        notifyDataSetChanged();
+        items.addAll(next);
+        diff.dispatchUpdatesTo(this);
+    }
+
+    /** So sánh đúng các trường mà [onBindViewHolder] dùng để vẽ thẻ. */
+    private static boolean sameContent(@NonNull EventUiModel left, @NonNull EventUiModel right) {
+        return left.id == right.id
+                && left.favorite == right.favorite
+                && left.availability == right.availability
+                && left.priceFrom == right.priceFrom
+                && left.rating == right.rating
+                && left.startAt == right.startAt
+                && TextUtils.equals(left.title, right.title)
+                && TextUtils.equals(left.coverUrl, right.coverUrl)
+                && TextUtils.equals(left.aiReason, right.aiReason);
     }
 
     public List<EventUiModel> getItems() {
@@ -336,6 +381,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             cover.setScaleType(ImageView.ScaleType.CENTER_CROP);
             Glide.with(cover)
                     .load(event.coverUrl)
+                    // Ảnh mờ 25% hiện ngay để thẻ không trống khi mạng chậm.
+                    .thumbnail(0.25f)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .centerCrop()
                     .into(cover);

@@ -1,49 +1,46 @@
 package com.eventapp.app.ui.host;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.eventapp.app.R;
-import com.eventapp.app.ui.demo.DemoAccount;
-import com.eventapp.app.ui.demo.DemoAuthStore;
-import com.eventapp.app.ui.demo.DemoRouter;
+import com.eventapp.app.core.session.AuthSession;
+import com.eventapp.app.core.session.SessionManager;
 
 /**
  * FR-U01, FR-U02: màn hình khởi động.
  *
- * <p>Trong giai đoạn UI-only, phiên đăng nhập được đọc từ {@link DemoAuthStore}. Có phiên thì mở
- * host theo vai trò; chưa có thì mở luồng đăng nhập demo.</p>
+ * <p>Phiên đăng nhập chỉ nằm trong bộ nhớ nên mở lại app luôn phải đăng nhập. Nếu vì lý do nào
+ * đó vẫn còn phiên (xoay màn hình, quay lại từ host), mở đúng host theo vai trò JWT.</p>
+ *
+ * <p>Không còn delay cứng: chuyển màn ngay sau khi splash vẽ xong frame đầu. Trước đây chờ cố
+ * định 600 ms khiến mọi lần mở app chậm thêm đúng ngần ấy mà không đổi lại được gì — trên
+ * Android 12+ hệ thống đã có splash riêng trong lúc tiến trình khởi động.</p>
  */
 public class SplashActivity extends AppCompatActivity {
-
-    private static final long SPLASH_DELAY_MS = 600L;
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        handler.postDelayed(this::openNextScreen, SPLASH_DELAY_MS);
+
+        View root = findViewById(android.R.id.content);
+        root.post(this::openNextScreen);
     }
 
     private void openNextScreen() {
-        DemoAccount account = DemoAuthStore.get(this).currentAccount();
-        if (account == null) {
-            DemoRouter.openAuth(this);
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        AuthSession session = SessionManager.get().getSession();
+        if (session == null) {
+            SessionRouter.openAuth(this);
         } else {
-            DemoRouter.openHost(this, account.getRole());
+            SessionRouter.openHost(this, session);
         }
         finish();
-    }
-
-    @Override
-    protected void onDestroy() {
-        handler.removeCallbacksAndMessages(null);
-        super.onDestroy();
     }
 }

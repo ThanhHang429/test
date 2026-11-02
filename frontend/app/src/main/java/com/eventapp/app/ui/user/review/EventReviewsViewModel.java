@@ -1,20 +1,32 @@
 package com.eventapp.app.ui.user.review;
 
-
-import com.eventapp.app.ui.fake.SampleReviewData;
-import com.eventapp.app.ui.model.ReviewUiModel;
-import android.os.Handler;
-import android.os.Looper;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.network.Paged;
+import com.eventapp.app.data.remote.dto.discovery.DiscoveryDtos;
+import com.eventapp.app.data.remote.dto.review.ReviewDtos;
+import com.eventapp.app.data.repository.ReviewRepository;
+import com.eventapp.app.ui.mapper.ReviewMapper;
+import com.eventapp.app.ui.model.ReviewUiModel;
+import com.google.gson.JsonElement;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-/** Sort and pagination state for the public event review list (FR-U20). */
+/**
+ * FR-U20 — danh sách đánh giá công khai của một sự kiện.
+ *
+ * <p>Sắp xếp và phân trang do backend quyết định ({@code GET /events/{id}/reviews}) để đánh giá
+ * của chính người dùng luôn được ghim đầu danh sách (U20-R03). Phần tổng hợp (điểm trung bình,
+ * phân bố) lấy từ {@code /reviews/summary}.</p>
+ */
 public class EventReviewsViewModel extends ViewModel {
 
     public enum Sort {
@@ -40,24 +52,28 @@ public class EventReviewsViewModel extends ViewModel {
         }
     }
 
-    private static final int PAGE_SIZE = 4;
+    private static final int PAGE_SIZE = 10;
+
+    private final ReviewRepository repository = ServiceLocator.get(ReviewRepository.class);
 
     private final MutableLiveData<List<ReviewUiModel>> reviews = new MutableLiveData<>();
     private final MutableLiveData<Summary> summary = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(true);
     private final MutableLiveData<Boolean> error = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> hasMore = new MutableLiveData<>(false);
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
-    private long eventId;
-    private String eventTitle;
-    private boolean canWrite;
+    private final List<ReviewUiModel> all = new ArrayList<>();
+
+    private long eventId = -1L;
+    private String eventTitle = "";
+    private boolean canWrite = true;
     private boolean hasMine;
-    private ReviewUiModel myReview;
-    private List<ReviewUiModel> all = new ArrayList<>();
-    private List<ReviewUiModel> sorted = new ArrayList<>();
     private Sort sort = Sort.NEWEST;
     private int page;
+    private boolean loadingPage;
+    private float summaryAverage;
+    private int summaryTotal;
+    private int[] summaryDistribution = new int[5];
 
     public LiveData<List<ReviewUiModel>> getReviews() {
         return reviews;
@@ -88,85 +104,140 @@ public class EventReviewsViewModel extends ViewModel {
         this.eventTitle = eventTitle == null ? "" : eventTitle;
         this.canWrite = canWrite;
         this.hasMine = hasMine;
-        loadInternal();
+        loadSummary();
+        loadPage(0);
     }
 
     public void refresh() {
-        loadInternal();
+        loadSummary();
+        loadPage(0);
     }
 
     public void retry() {
         error.setValue(false);
-        loadInternal();
+        refresh();
     }
 
     public void setSort(Sort sort) {
-        this.sort = sort == null ? Sort.NEWEST : sort;
-        sortAll();
-        page = 0;
-        reviews.setValue(pageItems());
-        hasMore.setValue(sorted.size() > PAGE_SIZE);
+        Sort next = sort == null ? Sort.NEWEST : sort;
+        if (next == this.sort) {
+            return;
+        }
+        this.sort = next;
+        loadPage(0);
     }
 
     public void loadMore() {
-        if (!Boolean.TRUE.equals(hasMore.getValue())) {
+        if (!Boolean.TRUE.equals(hasMore.getValue()) || loadingPage) {
             return;
         }
-        page++;
-        reviews.setValue(pageItems());
-        hasMore.setValue(Math.min((page + 1) * PAGE_SIZE, sorted.size()) < sorted.size());
+        loadPage(page + 1);
     }
 
-    private void loadInternal() {
-        loading.setValue(true);
-        error.setValue(false);
-        handler.removeCallbacksAndMessages(null);
-        handler.postDelayed(() -> {
-            all = SampleReviewData.forEvent(eventId, eventTitle);
-            myReview = hasMine
-                    ? SampleReviewData.mine(eventId, eventTitle, ReviewUiModel.Status.VISIBLE)
-                    : null;
-            sortAll();
-            page = 0;
-            reviews.setValue(pageItems());
-            hasMore.setValue(sorted.size() > PAGE_SIZE);
-            float average = SampleReviewData.average(all);
-            summary.setValue(new Summary(average, all.size(),
-                    SampleReviewData.distribution(all), canWrite, hasMine));
-            loading.setValue(false);
-        }, 340L);
-    }
-
-    private void sortAll() {
-        sorted = new ArrayList<>();
-        if (myReview != null) {
-            sorted.add(myReview);
+    private void loadPage(int target) {
+        if (eventId <= 0L || loadingPage) {
+            return;
         }
-        List<ReviewUiModel> copy = new ArrayList<>(all);
+        loadingPage = true;
+        boolean firstPage = target == 0;
+        if (firstPage) {
+            loading.setValue(true);
+            error.setValue(false);
+        }
+        repository.list(eventId, sortParam(), target, PAGE_SIZE,
+                new ApiCallback<Paged<ReviewDtos.Review>>() {
+                    @Override
+                    public void onSuccess(@Nullable Paged<ReviewDtos.Review> data,
+                                          @Nullable JsonElement meta) {
+                        page = target;
+                        if (firstPage) {
+                            all.clear();
+                        }
+                        if (data != null && data.items != null) {
+                            for (ReviewDtos.Review dto : data.items) {
+                                ReviewUiModel mapped = ReviewMapper.fromPublic(dto);
+                                all.add(mapped);
+                                if (mapped.mine) {
+                                    hasMine = true;
+                                }
+                            }
+                        }
+                        reviews.setValue(new ArrayList<>(all));
+                        hasMore.setValue(data != null && data.hasNext());
+                        if (firstPage && summaryTotal <= 0 && data != null) {
+                            summaryTotal = (int) Math.min(Integer.MAX_VALUE, data.totalItems());
+                        }
+                        loading.setValue(false);
+                        publishSummary();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        loading.setValue(false);
+                        if (firstPage) {
+                            error.setValue(true);
+                        }
+                        publishSummary();
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        loadingPage = false;
+                    }
+                });
+    }
+
+    private void loadSummary() {
+        if (eventId <= 0L) {
+            return;
+        }
+        repository.summary(eventId, new ApiCallback<DiscoveryDtos.ReviewSummary>() {
+            @Override
+            public void onSuccess(@Nullable DiscoveryDtos.ReviewSummary data,
+                                  @Nullable JsonElement meta) {
+                if (data == null) {
+                    return;
+                }
+                summaryAverage = (float) data.averageRating;
+                summaryTotal = (int) Math.min(Integer.MAX_VALUE, data.totalReviews);
+                summaryDistribution = distribution(data);
+                publishSummary();
+            }
+
+            @Override
+            public void onError(@NonNull ApiException exception) {
+                // Tổng hợp lỗi không chặn danh sách đánh giá.
+            }
+        });
+    }
+
+    private void publishSummary() {
+        summary.setValue(new Summary(summaryAverage, summaryTotal, summaryDistribution,
+                canWrite, hasMine));
+    }
+
+    @NonNull
+    private static int[] distribution(@Nullable DiscoveryDtos.ReviewSummary data) {
+        int[] values = new int[5];
+        if (data != null && data.distribution != null) {
+            for (int star = 1; star <= 5; star++) {
+                Long count = data.distribution.get(String.valueOf(star));
+                values[star - 1] = count == null ? 0 : count.intValue();
+            }
+        }
+        return values;
+    }
+
+    @NonNull
+    private String sortParam() {
         switch (sort) {
             case RATING_HIGH:
-                Collections.sort(copy, (left, right) -> Float.compare(right.rating, left.rating));
-                break;
+                return "RATING_DESC";
             case RATING_LOW:
-                Collections.sort(copy, (left, right) -> Float.compare(left.rating, right.rating));
-                break;
+                return "RATING_ASC";
             case NEWEST:
             default:
-                Collections.sort(copy, (left, right) ->
-                        Long.compare(right.createdAt, left.createdAt));
-                break;
+                return "NEWEST";
         }
-        sorted.addAll(copy);
-    }
-
-    private List<ReviewUiModel> pageItems() {
-        int to = Math.min((page + 1) * PAGE_SIZE, sorted.size());
-        return new ArrayList<>(sorted.subList(0, to));
-    }
-
-    @Override
-    protected void onCleared() {
-        handler.removeCallbacksAndMessages(null);
-        super.onCleared();
     }
 }
