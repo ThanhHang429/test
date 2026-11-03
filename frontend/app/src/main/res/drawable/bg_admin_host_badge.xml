@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Nhãn "HOST" ở header khu quản trị: nền secondary-container, chữ trắng, bo viên thuốc. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/ds_secondary_container" />
-    <corners android:radius="@dimen/ds_radius_pill" />
-</shape>

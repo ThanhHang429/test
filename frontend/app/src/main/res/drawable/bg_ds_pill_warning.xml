@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Nhãn đếm mục chờ xử lý mức trung bình: nền warning-soft, chữ warning-dark. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/ds_warning_soft" />
-    <corners android:radius="@dimen/ds_radius_pill" />
-</shape>

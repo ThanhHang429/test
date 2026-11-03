@@ -67,22 +67,24 @@ Chạy lại sau khi sửa code: chỉ cần `./gradlew :app:installDebug` (Grad
 
 ## 3. Trạng thái hiện tại — đọc trước khi chạy
 
-Đây là **khung (skeleton)**, chưa phải app hoàn chỉnh, nhưng đã chạy được luồng chính:
+Toàn bộ **tầng màn hình cũ đã được xoá để dựng lại giao diện từ đầu** (2026-11-04):
 
-- **Luồng khởi động:** `SplashActivity` (600 ms) → `UserHostActivity` → `HomeFragment`.
-  Vào thẳng khu người dùng vì tầng `core/session` còn là stub, chưa có kiểm tra đăng nhập.
-- `AuthActivity`, `OrganizerHostActivity`, `AdminHostActivity` đã nạp layout + nav graph tương ứng
-  nhưng **chưa có đường vào** từ UI (chưa có màn đăng nhập và chưa có chuyển role).
-- 4 nav graph (`nav_auth`, `nav_user`, `nav_organizer`, `nav_admin`) và 86 màn hình đã khai báo đủ,
-  nhưng phần lớn Fragment/ViewModel còn là stub — bấm vào tab khác có thể ra màn trắng.
-- Phần đã có giao diện + logic thật: `ui/user/home/*`, `ui/user/review/*`, `ui/user/favorite/*`,
-  `ui/user/profile/*`, `ui/admin/event/*`, `ui/organizer/{event,dashboard,report}/*`, `ui/common/*`.
-  Dữ liệu là dữ liệu mẫu trong `ui/fake/` — **chưa gọi API thật** (tầng `data/` còn rỗng).
-- Màn đăng nhập (`fragment_auth_login.xml`) vẫn là placeholder rỗng.
+- Đã xoá: `ui/auth`, `ui/user`, `ui/organizer`, `ui/admin`, `ui/demo`, `ui/common/adapter`,
+  `ui/common/nav`, `ui/common/PlaceholderContent`, `ui/host/AccountFragment`, `ui/host/AccountSheet`,
+  `ui/host/RolePickerActivity`, `ui/common/view/NavBarSpacing`.
+- Đã xoá tài nguyên màn hình: `res/layout` (chỉ còn `view_ds_*`), `res/menu`, `res/navigation`,
+  và 87 drawable không còn tham chiếu.
+- Giữ nguyên: `ui/common/view` (design system `ds_*`), `ui/model`, `ui/mapper`, `data/`, `core/`, `fcm/`.
+- **Luồng chạy hiện tại:** `SplashActivity` → `UserHostActivity` (hoặc host theo vai trò nếu có phiên)
+  → `PlaceholderFragment` báo "Giao diện đang được dựng lại".
+- `UserHostActivity`, `OrganizerHostActivity`, `AdminHostActivity` đều kế thừa `BaseHostActivity`;
+  giao diện mới chỉ cần gắn Fragment/nav graph vào đây.
+- Chưa có màn đăng nhập: khi không có phiên, app vào thẳng khu người dùng.
+
+Bản giao diện cũ vẫn khôi phục được từ tag git `pre-ui-reset`.
 
 Ghi chú kỹ thuật: `targetSdk 37` nên Android 15+ vẽ edge-to-edge, `statusBarColor` bị hệ thống bỏ qua.
-Layout `activity_*` đã đặt `android:fitsSystemWindows="true"` và theme đặt `windowLightStatusBar`
-để nội dung không bị status bar đè.
+Theme vẫn đặt `windowLightStatusBar` để nội dung không bị status bar đè.
 
 ---
 
@@ -127,11 +129,11 @@ Fragment/Activity  →  ViewModel  →  Repository  →  Retrofit Api (remote)
 
 | Thư mục | Nội dung |
 |---|---|
-| `ui/<role>/<area>/` | Một feature = một package (`auth`, `user`, `organizer`, `admin`) |
-| `ui/common/` | `adapter/`, `view/`, `nav/`, `notification/` — dùng chung, không phụ thuộc feature |
+| `ui/<role>/<area>/` | Feature sẽ được dựng lại (hiện đã xoá sạch) |
+| `ui/common/view/` | Design system dùng chung (`ds_*`), không phụ thuộc feature |
 | `ui/model/` | `*UiModel` dùng chung giữa nhiều feature |
-| `ui/fake/` | Dữ liệu mẫu cho màn hình chưa nối API |
-| `ui/host/`, `ui/auth/` | Activity host của 3 vùng chức năng + luồng xác thực |
+| `ui/mapper/` | Chuyển DTO → UiModel |
+| `ui/host/` | Activity host của 3 vùng chức năng + `PlaceholderFragment` |
 | `data/remote/` | Api (Retrofit) + DTO |
 | `data/repository/` | Repository — nơi duy nhất biết mạng và cache |
 | `data/local/` | Cache Room (`entity/`, `dao/`, `prefs/`) |
@@ -191,7 +193,7 @@ node scripts/verify-skeleton.mjs     # kiểm tra tính nhất quán khung + quy
 | `Failed to find target with hash string 'android-37'` | Chưa cài SDK Platform 37 — cài qua SDK Manager hoặc `sdkmanager "platforms;android-37"` |
 | `Unsupported class file major version` | JDK quá cũ — dùng JDK 17+ |
 | `adb devices` rỗng | Chưa bật emulator, hoặc máy thật chưa bật USB debugging / chưa authorize |
-| Build ra APK nhưng mở app chỉ thấy một màu xanh dương đặc | App đứng ở `SplashActivity`. Kiểm tra `adb shell dumpsys activity activities \| grep topResumedActivity` — nếu là `SplashActivity` thì handler chuyển màn chưa chạy (xem `SplashActivity.openUserArea`) |
+| Build ra APK nhưng mở app chỉ thấy một màu xanh dương đặc | App đứng ở `SplashActivity`. Kiểm tra `adb shell dumpsys activity activities \| grep topResumedActivity` — nếu là `SplashActivity` thì handler chuyển màn chưa chạy (xem `SplashActivity.openNextScreen`) |
 | Status bar đè lên nội dung, icon status bar gần như vô hình | Thiếu `android:fitsSystemWindows="true"` trên root layout của Activity, hoặc thiếu `windowLightStatusBar` trong theme (Android 15+ bỏ qua `statusBarColor`) |
 | Gọi API bị `CLEARTEXT communication not permitted` | Đang dùng IP không nằm trong danh sách cho phép của `network_security_config.xml` (debug) |
 | `verify-skeleton.mjs` báo lỗi phụ thuộc tầng | `ui/common` hoặc `ui/model` đang import `ui/user|organizer|admin`, hoặc `data`/`core` import `ui` |
@@ -200,11 +202,12 @@ node scripts/verify-skeleton.mjs     # kiểm tra tính nhất quán khung + quy
 
 ## 9. Tài liệu
 
+Tài liệu màn hình cũ (`docs/00-overview.md`, `docs/01-screen-map.md`, …) đã được xoá cùng giao diện.
+Sẽ được viết lại khi các màn hình mới hoàn thành.
+
+Tham chiếu còn hiệu lực:
+
 | File | Nội dung |
 |---|---|
-| [`docs/00-overview.md`](docs/00-overview.md) | Kiến trúc, cây package, quy ước đặt tên, giả định A01–A20 |
-| [`docs/01-screen-map.md`](docs/01-screen-map.md) | Bản đồ 86 màn hình ↔ package ↔ layout ↔ nav id |
-| [`docs/02-api-contract.md`](docs/02-api-contract.md) | Hợp đồng REST phía app |
-| [`docs/03-state-display.md`](docs/03-state-display.md) | Quy tắc 4 trạng thái LOADING/SUCCESS/EMPTY/ERROR |
-| [`docs/04-ui-design-plan.md`](docs/04-ui-design-plan.md) | Kế hoạch UI, design token `ds_*`, các phase P1–P6 |
-| [`docs/SRS-huucanh.pdf`](docs/SRS-huucanh.pdf) | SRS module khám phá sự kiện, AI & tích hợp nâng cao |
+| [`README.md`](README.md) | Hướng dẫn build, chạy, cấu hình API, kiến trúc |
+| [`../README.md`](../README.md) | Tổng quan repo ETicket (frontend + backend) |

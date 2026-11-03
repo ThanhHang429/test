@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Nhãn cảnh báo dạng viên thuốc: nền error-container, chữ on-error-container (palette Stitch). -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/ds_danger_soft" />
-    <corners android:radius="@dimen/ds_radius_pill" />
-</shape>

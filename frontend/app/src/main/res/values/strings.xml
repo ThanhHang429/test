@@ -49,4 +49,8 @@
     <string name="account_role_organizer">Nhà tổ chức</string>
     <string name="account_role_user">Người dùng</string>
     <string name="account_nav">Tài khoản</string>
+
+    <!-- Khung tạm trong lúc dựng lại giao diện -->
+    <string name="ui_reset_title">ETicket</string>
+    <string name="ui_reset_message">Giao diện đang được dựng lại.</string>
 </resources>

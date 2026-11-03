@@ -76,7 +76,9 @@ for (const f of xmlFiles) {
 if (!xmlBad) ok(`${xmlFiles.length} file XML hợp lệ`);
 
 /* ---- 2. Đọc nav graph và menu ---------------------------------------- */
-const navGraphs = walk(join(RES, 'navigation'), '.xml');
+// Giao diện đang được dựng lại nên res/navigation và res/menu có thể chưa tồn tại.
+const navDir = join(RES, 'navigation');
+const navGraphs = existsSync(navDir) ? walk(navDir, '.xml') : [];
 const navData = new Map(); // file -> { id -> {cls, layout} }
 
 for (const f of navGraphs) {
@@ -133,8 +135,10 @@ const menus = [
 ];
 for (const [menu, nav, expected] of menus) {
   const mf = join(menuDir, menu + '.xml');
-  const nf = join(RES, 'navigation', nav + '.xml');
+  const nf = join(navDir, nav + '.xml');
   if (!existsSync(mf) || !existsSync(nf)) {
+    // Bỏ qua khi giao diện đang được dựng lại (chưa có menu/nav graph).
+    if (!existsSync(navDir) && !existsSync(menuDir)) continue;
     fail(`Thiếu ${menu}.xml hoặc ${nav}.xml`);
     continue;
   }
@@ -232,7 +236,6 @@ ok('Tên Api/Repository đúng chuẩn PascalCase');
 const manifest = readFileSync(join(APP, 'AndroidManifest.xml'), 'utf8');
 const componentRefs = [
   ['.ui.host.SplashActivity', `${PKG}.ui.host.SplashActivity`],
-  ['.ui.auth.AuthActivity', `${PKG}.ui.auth.AuthActivity`],
   ['.ui.host.UserHostActivity', `${PKG}.ui.host.UserHostActivity`],
   ['.ui.host.OrganizerHostActivity', `${PKG}.ui.host.OrganizerHostActivity`],
   ['.ui.host.AdminHostActivity', `${PKG}.ui.host.AdminHostActivity`],
