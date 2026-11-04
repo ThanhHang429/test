@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="org_brand">NEXUS CONSOLE</string>
+    <string name="org_role">Nhà tổ chức</string>
+    <string name="org_cd_notifications">Thông báo</string>
+    <string name="org_cd_account">Tài khoản nhà tổ chức</string>
+    <string name="org_cd_back">Quay lại</string>
+    <string name="org_cd_more">Tùy chọn khác</string>
+    <string name="org_cd_filter">Bộ lọc</string>
+    <string name="org_cd_share">Chia sẻ sự kiện</string>
+
+    <!-- Tab -->
+    <string name="org_tab_dashboard">Tổng quan</string>
+    <string name="org_tab_events">Sự kiện</string>
+    <string name="org_tab_checkin">Check-in</string>
+    <string name="org_tab_orders">Đơn hàng</string>
+    <string name="org_tab_settings">Cài đặt</string>
+
+    <!-- Tổng quan -->
+    <string name="org_greeting">Chào buổi sáng,</string>
+    <string name="org_greeting_name">Nguyễn Văn A</string>
+    <string name="org_greeting_sub">Hôm nay bạn có 2 sự kiện đang mở bán và 18 đơn cần xử lý.</string>
+    <string name="org_verified">Đã xác minh</string>
+    <string name="org_tier">Hạng Vàng</string>
+    <string name="org_live">ĐANG DIỄN RA</string>
+    <string name="org_revenue_today">Doanh thu hôm nay</string>
+    <string name="org_revenue_value">45.000.000 đ</string>
+    <string name="org_revenue_trend">+24,5%</string>
+    <string name="org_revenue_note">So với hôm qua</string>
+    <string name="org_tickets_sold">Vé đã bán</string>
+    <string name="org_checkin_count">Check-in</string>
+    <string name="org_kpi_events">Sự kiện đang bán</string>
+    <string name="org_kpi_events_value">3</string>
+    <string name="org_kpi_events_note">1 sắp kết thúc</string>
+    <string name="org_kpi_tickets">Vé đã bán</string>
+    <string name="org_kpi_tickets_value">1.842</string>
+    <string name="org_kpi_tickets_note">+18,2% tuần này</string>
+    <string name="org_kpi_checkin">Đã check-in</string>
+    <string name="org_kpi_checkin_value">1.240</string>
+    <string name="org_kpi_checkin_note">72,1% tổng vé</string>
+    <string name="org_kpi_pending">Đơn chờ xử lý</string>
+    <string name="org_kpi_pending_value">18</string>
+    <string name="org_kpi_pending_note">Cần xác nhận hôm nay</string>
+    <string name="org_section_live_events">Sự kiện đang diễn ra</string>
+    <string name="org_see_all">Xem tất cả</string>
+    <string name="org_section_activity">Hoạt động gần đây</string>
+    <string name="org_section_todo">Cần bạn xử lý</string>
+    <string name="org_todo_1">2 sự kiện đang chờ duyệt nội dung</string>
+    <string name="org_todo_1_sub">Gửi từ 09:40 · Hạn phản hồi 24 giờ</string>
+    <string name="org_todo_2">3 yêu cầu hoàn tiền mới</string>
+    <string name="org_todo_2_sub">Tổng giá trị 1.450.000 đ</string>
+    <string name="org_activity_1">Đơn #ORD-2025-98412 đã thanh toán</string>
+    <string name="org_activity_1_sub">Vé VIP All-Access · 3.700.000 đ</string>
+    <string name="org_activity_2">Check-in vé VIP tại cổng A</string>
+    <string name="org_activity_2_sub">Nguyễn Văn A · 10:42</string>
+    <string name="org_activity_3">Sự kiện mới đã được duyệt</string>
+    <string name="org_activity_3_sub">Workshop GenAI for Developers · 09:15</string>
+
+    <!-- Sự kiện -->
+    <string name="org_events_title">Sự kiện của tôi</string>
+    <string name="org_events_sub">5 sự kiện · 2 đang mở bán</string>
+    <string name="org_search_events">Tìm sự kiện, mã sự kiện…</string>
+    <string name="org_create_event">Tạo sự kiện</string>
+    <string name="org_filter_all">Tất cả</string>
+    <string name="org_filter_on_sale">Đang bán</string>
+    <string name="org_filter_pending">Chờ duyệt</string>
+    <string name="org_filter_draft">Nháp</string>
+    <string name="org_filter_ended">Đã kết thúc</string>
+    <string name="org_status_on_sale">ĐANG BÁN</string>
+    <string name="org_status_pending">CHỜ DUYỆT</string>
+    <string name="org_status_draft">BẢN NHÁP</string>
+    <string name="org_status_ended">ĐÃ KẾT THÚC</string>
+    <string name="org_sold_label">Đã bán</string>
+    <string name="org_revenue_label">Doanh thu</string>
+    <string name="org_view_detail">Chi tiết</string>
+    <string name="org_manage_tickets">Quản lý vé</string>
+    <string name="org_events_empty">Không có sự kiện phù hợp</string>
+
+    <!-- Chi tiết sự kiện -->
+    <string name="org_event_detail_title">Chi tiết sự kiện</string>
+    <string name="org_event_overview">Tổng quan</string>
+    <string name="org_review_status">Trạng thái duyệt</string>
+    <string name="org_lifecycle_status">Trạng thái vận hành</string>
+    <string name="org_approved">Đã duyệt</string>
+    <string name="org_ticket_types">Hạng vé</string>
+    <string name="org_ticket_types_sub">3 hạng vé · 1.900 vé phát hành</string>
+    <string name="org_send_broadcast">Gửi thông báo</string>
+    <string name="org_cancel_event">Yêu cầu hủy sự kiện</string>
+    <string name="org_checkin_rate">Tỷ lệ check-in</string>
+    <string name="org_capacity">Sức chứa</string>
+
+    <!-- Check-in -->
+    <string name="org_checkin_title">Check-in</string>
+    <string name="org_checkin_sub">Quét mã QR trên vé để xác thực</string>
+    <string name="org_scan_hint">Đưa mã QR vào khung</string>
+    <string name="org_scan_sub">Tự động nhận diện trong vòng 2 giây</string>
+    <string name="org_flash">Đèn</string>
+    <string name="org_manual">Nhập mã</string>
+    <string name="org_manual_hint">Nhập mã vé, ví dụ VE-123456</string>
+    <string name="org_confirm">Xác nhận</string>
+    <string name="org_checkin_today">Đã check-in hôm nay</string>
+    <string name="org_checkin_total">1.240 / 1.720 vé</string>
+    <string name="org_remaining">Còn lại 480 vé</string>
+    <string name="org_recent_checkin">Check-in gần đây</string>
+    <string name="org_result_success">Check-in thành công</string>
+    <string name="org_result_duplicate">Vé đã được check-in</string>
+    <string name="org_result_invalid">Mã vé không hợp lệ</string>
+    <string name="org_result_success_sub">Vé VIP All-Access · Cổng A</string>
+    <string name="org_result_duplicate_sub">Lần quét trước 10:42 · Cổng A</string>
+    <string name="org_result_invalid_sub">Vui lòng kiểm tra lại mã và thử lại</string>
+
+    <!-- Đơn hàng -->
+    <string name="org_orders_title">Đơn hàng</string>
+    <string name="org_orders_sub">1.720 đơn · cập nhật 2 phút trước</string>
+    <string name="org_search_orders">Tìm mã đơn, khách hàng…</string>
+    <string name="org_order_all">Tất cả</string>
+    <string name="org_order_paid">Đã thanh toán</string>
+    <string name="org_order_pending">Chờ xử lý</string>
+    <string name="org_order_refund">Hoàn tiền</string>
+    <string name="org_order_total">Tổng đơn</string>
+    <string name="org_order_paid_count">Đã thanh toán</string>
+    <string name="org_order_pending_count">Chờ xử lý</string>
+    <string name="org_order_refund_count">Hoàn tiền</string>
+    <string name="org_order_detail_title">Chi tiết đơn hàng</string>
+    <string name="org_order_code">Mã đơn</string>
+    <string name="org_order_time">Thời gian</string>
+    <string name="org_order_event">Sự kiện</string>
+    <string name="org_order_buyer">Người mua</string>
+    <string name="org_order_ticket">Hạng vé</string>
+    <string name="org_order_payment">Thanh toán</string>
+    <string name="org_order_timeline">Tiến trình đơn</string>
+    <string name="org_order_t1">Đơn được tạo</string>
+    <string name="org_order_t2">Thanh toán xác nhận</string>
+    <string name="org_order_t3">Vé đã phát hành</string>
+    <string name="org_resend_ticket">Gửi lại vé</string>
+    <string name="org_refund_action">Hoàn tiền</string>
+    <string name="org_status_paid">ĐÃ THANH TOÁN</string>
+    <string name="org_status_waiting">CHỜ XỬ LÝ</string>
+    <string name="org_status_refunded">HOÀN TIỀN</string>
+
+    <!-- Cài đặt -->
+    <string name="org_settings_title">Cài đặt</string>
+    <string name="org_settings_sub">Quản lý tổ chức và vận hành</string>
+    <string name="org_org_name">NextGen Ventures Việt Nam</string>
+    <string name="org_org_type">Công ty TNHH Công nghệ &amp; Truyền thông</string>
+    <string name="org_org_email">contact@nextgenventures.vn</string>
+    <string name="org_group_org">Tổ chức</string>
+    <string name="org_group_ops">Vận hành</string>
+    <string name="org_group_system">Hệ thống &amp; bảo mật</string>
+    <string name="org_set_profile">Hồ sơ nhà tổ chức</string>
+    <string name="org_set_profile_sub">Logo, thương hiệu và thông tin liên hệ</string>
+    <string name="org_set_legal">Xác minh &amp; pháp lý</string>
+    <string name="org_set_legal_sub">Giấy phép kinh doanh · Đã xác minh</string>
+    <string name="org_set_bank">Ngân hàng &amp; thanh toán</string>
+    <string name="org_set_bank_sub">VietQR · Nhận tiền tự động</string>
+    <string name="org_set_notify">Thông báo vận hành</string>
+    <string name="org_set_notify_sub">Đơn mới, check-in, hoàn tiền</string>
+    <string name="org_set_team">Đội ngũ &amp; phân quyền</string>
+    <string name="org_set_team_sub">4 thành viên · 4 vai trò</string>
+    <string name="org_set_devices">Thiết bị check-in</string>
+    <string name="org_set_devices_sub">2 thiết bị đang hoạt động</string>
+    <string name="org_set_2fa">Bảo mật 2 lớp (2FA)</string>
+    <string name="org_set_2fa_sub">Đang bật · Google Authenticator</string>
+    <string name="org_set_language">Ngôn ngữ</string>
+    <string name="org_set_language_sub">Tiếng Việt</string>
+    <string name="org_set_help">Trợ giúp &amp; hỗ trợ</string>
+    <string name="org_set_help_sub">Câu hỏi thường gặp, liên hệ</string>
+    <string name="org_logout">Đăng xuất</string>
+    <string name="org_version">Nexus Console · v1.0.0</string>
+    <string name="org_edit">Chỉnh sửa</string>
+
+    <!-- Tạo sự kiện -->
+    <string name="org_create_title">Tạo sự kiện</string>
+    <string name="org_create_step">Bước 1/3 · Thông tin cơ bản</string>
+    <string name="org_create_name">Tên sự kiện</string>
+    <string name="org_create_name_hint">Ví dụ: Vietnam Tech Expo 2025</string>
+    <string name="org_create_category">Danh mục</string>
+    <string name="org_create_desc">Mô tả ngắn</string>
+    <string name="org_create_desc_hint">Giới thiệu nội dung, điểm nổi bật của sự kiện…</string>
+    <string name="org_create_place">Địa điểm</string>
+    <string name="org_create_place_hint">Tên địa điểm, quận, thành phố</string>
+    <string name="org_create_time">Thời gian</string>
+    <string name="org_create_time_hint">Chọn ngày và giờ bắt đầu</string>
+    <string name="org_create_capacity">Sức chứa dự kiến</string>
+    <string name="org_create_capacity_hint">Số lượng vé tối đa</string>
+    <string name="org_save_draft">Lưu nháp</string>
+    <string name="org_continue">Tiếp tục</string>
+    <string name="org_create_saved">Đã lưu bản nháp sự kiện</string>
+
+    <!-- Phản hồi ngắn -->
+    <string name="org_soon">Tính năng đang được hoàn thiện</string>
+    <string name="org_logged_out">Đã đăng xuất</string>
+    <string name="org_copied">Đã sao chép</string>
+</resources>

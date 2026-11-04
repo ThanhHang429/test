@@ -16,6 +16,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.ActivityAuthBinding;
+import com.eventapp.app.ui.host.AdminHostActivity;
+import com.eventapp.app.ui.host.OrganizerHostActivity;
 import com.eventapp.app.ui.host.UserHostActivity;
 
 /**
@@ -66,7 +68,11 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void openOtp(String email, String mode) {
-        replace(OtpFragment.newInstance(email, mode), true);
+        openOtp(email, mode, "USER");
+    }
+
+    public void openOtp(String email, String mode, String role) {
+        replace(OtpFragment.newInstance(email, mode, role), true);
     }
 
     /** Xoá toàn bộ stack phụ và quay về màn đăng nhập gốc. */
@@ -79,8 +85,17 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
-    public void openHost() {
-        Intent intent = new Intent(this, UserHostActivity.class);
+    /** Mở đúng khu chức năng theo vai trò suy ra từ tài khoản đăng nhập. */
+    public void openHost(String role) {
+        Class<?> target;
+        if ("ORGANIZER".equals(role)) {
+            target = OrganizerHostActivity.class;
+        } else if ("ADMIN".equals(role)) {
+            target = AdminHostActivity.class;
+        } else {
+            target = UserHostActivity.class;
+        }
+        Intent intent = new Intent(this, target);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

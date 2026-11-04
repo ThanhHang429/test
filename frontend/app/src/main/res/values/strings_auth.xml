@@ -51,6 +51,11 @@
     <string name="auth_new_password_hint">Mật khẩu mới</string>
     <string name="auth_confirm_new_hint">Nhập lại mật khẩu</string>
     <string name="auth_demo_hint">Mã demo: 123456</string>
+    <string name="auth_demo_user_label">Người dùng</string>
+    <string name="auth_demo_user_value">demo@nexus.vn</string>
+    <string name="auth_demo_org_label">Nhà tổ chức</string>
+    <string name="auth_demo_org_value">organizer@nexus.vn</string>
+    <string name="auth_demo_password">Mật khẩu chung: 123456 · OTP: 123456</string>
     <string name="auth_2fa">2FA</string>
 
     <!-- Lỗi -->

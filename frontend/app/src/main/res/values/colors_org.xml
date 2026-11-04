@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Palette khu Nhà tổ chức — lấy từ design system "Serene Operational Console" (Stitch).
+    Tông mint/eucalyptus, nền sáng, viền hairline; đồng bộ cấu trúc với palette khu User
+    để hai khu dùng chung ngôn ngữ thị giác, chỉ khác sắc thái nhận diện.
+-->
+<resources>
+    <!-- Nền / bề mặt -->
+    <color name="org_canvas">#FFF5FAF6</color>
+    <color name="org_canvas_top">#FFF9FCFA</color>
+    <color name="org_surface">#FFFFFFFF</color>
+    <color name="org_surface_alt">#FFEDF7F1</color>
+    <color name="org_surface_mint">#FFE4F2EB</color>
+    <color name="org_surface_mint_strong">#FFD5EBDD</color>
+
+    <!-- Chữ -->
+    <color name="org_text">#FF18352B</color>
+    <color name="org_text_muted">#FF3D5B50</color>
+    <color name="org_text_dim">#FF6C8B7F</color>
+    <color name="org_text_on_dark">#FFF3FBF7</color>
+    <color name="org_text_on_dark_muted">#FFBFDCCD</color>
+
+    <!-- Thương hiệu -->
+    <color name="org_primary">#FF3F8F70</color>
+    <color name="org_primary_dark">#FF2F755A</color>
+    <color name="org_primary_deep">#FF215843</color>
+    <color name="org_primary_soft">#FFE4F2EB</color>
+    <color name="org_primary_container">#FF79B99A</color>
+    <color name="org_mint">#FFA7E3C6</color>
+    <color name="org_mint_bright">#FF6EE7B7</color>
+
+    <!-- Hero (thẻ doanh thu / scanner) -->
+    <color name="org_hero_start">#FF0F3D2E</color>
+    <color name="org_hero_mid">#FF1C5E46</color>
+    <color name="org_hero_end">#FF2E8B68</color>
+    <color name="org_hero_glow">#1FFFFFFF</color>
+    <color name="org_hero_line">#33FFFFFF</color>
+
+    <!-- Viền / đường kẻ -->
+    <color name="org_border">#FFD9E8DF</color>
+    <color name="org_border_strong">#FFC3D8CC</color>
+    <color name="org_divider">#FFE6F0EA</color>
+
+    <!-- Trạng thái -->
+    <color name="org_success">#FF10B981</color>
+    <color name="org_success_soft">#FFDCFCE7</color>
+    <color name="org_success_text">#FF15803D</color>
+    <color name="org_warning">#FFF59E0B</color>
+    <color name="org_warning_soft">#FFFEF3C7</color>
+    <color name="org_warning_text">#FFB45309</color>
+    <color name="org_danger">#FFEF4444</color>
+    <color name="org_danger_soft">#FFFEE2E2</color>
+    <color name="org_danger_text">#FFB91C1C</color>
+    <color name="org_info">#FF0EA5E9</color>
+    <color name="org_info_soft">#FFE0F2FE</color>
+    <color name="org_info_text">#FF0369A1</color>
+    <color name="org_neutral_soft">#FFEBF3EE</color>
+    <color name="org_neutral_text">#FF4B6358</color>
+
+    <!-- Ảnh bìa sự kiện (gradient theo danh mục) -->
+    <color name="org_cover_forest_start">#FF14532D</color>
+    <color name="org_cover_forest_end">#FF2F855A</color>
+    <color name="org_cover_navy_start">#FF1E3A5F</color>
+    <color name="org_cover_navy_end">#FF2B6CB0</color>
+    <color name="org_cover_violet_start">#FF3C1A5B</color>
+    <color name="org_cover_violet_end">#FF7C5CD6</color>
+    <color name="org_cover_amber_start">#FF7B341E</color>
+    <color name="org_cover_amber_end">#FFD97706</color>
+    <color name="org_cover_teal_start">#FF0F3D3E</color>
+    <color name="org_cover_teal_end">#FF2C7A7B</color>
+
+    <!-- Khác -->
+    <color name="org_ripple">#1A3F8F70</color>
+    <color name="org_scrim">#66000000</color>
+    <color name="org_white_12">#1FFFFFFF</color>
+    <color name="org_white_20">#33FFFFFF</color>
+    <color name="org_white_70">#B3FFFFFF</color>
+</resources>

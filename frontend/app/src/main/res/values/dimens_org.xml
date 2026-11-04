@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nhịp 4/8dp cho khu Nhà tổ chức -->
+    <dimen name="org_gutter">20dp</dimen>
+    <dimen name="org_gap">12dp</dimen>
+    <dimen name="org_section_gap">24dp</dimen>
+
+    <dimen name="org_radius_card">18dp</dimen>
+    <dimen name="org_radius_control">14dp</dimen>
+    <dimen name="org_radius_pill">999dp</dimen>
+
+    <dimen name="org_control_height">52dp</dimen>
+    <dimen name="org_touch">48dp</dimen>
+    <dimen name="org_top_bar_height">64dp</dimen>
+    <dimen name="org_nav_height">68dp</dimen>
+
+    <dimen name="org_cover_height">104dp</dimen>
+    <dimen name="org_avatar">38dp</dimen>
+    <dimen name="org_icon_tile">40dp</dimen>
+    <dimen name="org_icon_tile_sm">34dp</dimen>
+</resources>

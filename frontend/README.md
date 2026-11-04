@@ -75,15 +75,21 @@ Toàn bộ **tầng màn hình cũ đã được xoá để dựng lại giao di
 - Đã xoá tài nguyên màn hình: `res/layout` (chỉ còn `view_ds_*`), `res/menu`, `res/navigation`,
   và 87 drawable không còn tham chiếu.
 - Giữ nguyên: `ui/common/view` (design system `ds_*`), `ui/model`, `ui/mapper`, `data/`, `core/`, `fcm/`.
-- **Luồng chạy hiện tại:** `SplashActivity` → `AuthActivity` (đăng nhập → OTP 2 lớp) → `UserHostActivity`
-  (khu người dùng có thanh điều hướng thật). Khu nhà tổ chức / quản trị vẫn là `PlaceholderFragment`.
-- `OrganizerHostActivity`, `AdminHostActivity` kế thừa `BaseHostActivity`; giao diện mới chỉ cần gắn
-  Fragment/nav graph vào đây. `UserHostActivity` đã tách khỏi `BaseHostActivity` để dùng layout riêng.
+- **Luồng chạy hiện tại:** `SplashActivity` → `AuthActivity` (đăng nhập → OTP 2 lớp) → host theo vai trò:
+  `UserHostActivity` (khu người dùng) hoặc `OrganizerHostActivity` (khu nhà tổ chức). Khu quản trị vẫn là
+  `PlaceholderFragment`.
+- **Đăng nhập dùng chung cho cả hai vai trò**, vai trò suy ra từ email trong `LoginFragment`:
+  - Người dùng: `demo@nexus.vn` / `123456`
+  - Nhà tổ chức: `organizer@nexus.vn` / `123456`
+  - OTP demo ở build debug: `123456`. Google/Facebook vẫn hiện "Sắp ra mắt".
+- Khu nhà tổ chức nằm ở `ui/organizer` + `OrganizerHostActivity`: dock 5 tab
+  (Tổng quan, Sự kiện, Check-in, Đơn hàng, Cài đặt), màn chi tiết sự kiện/đơn hàng và form tạo sự kiện
+  bước 1. Dữ liệu mẫu nằm trong `ui/organizer/data/OrgDemo`; chưa gọi API.
 - Luồng xác thực mới nằm ở `ui/auth` với 4 màn: đăng nhập, đăng ký 2 bước, quên mật khẩu, OTP/2FA.
   Giao diện dùng theme tối riêng `Theme.EventApp.Auth` (navy + glass + gradient Blue→Green).
   OTP demo ở build debug là `123456`; release sẽ ẩn gợi ý này khi nối API thật.
 - Khu người dùng mới nằm ở `ui/user`: `UserBottomNavView` (dock nổi 5 tab, viên gradient trượt theo tab
-  đang chọn) + `UserTabFragment` (nội dung tạm theo tab). Luồng thanh toán vé **chưa** làm.
+  đang chọn) + 5 fragment tab (Khám phá, Đã lưu, Vé của tôi, Lịch, Tài khoản). Luồng thanh toán vé **chưa** làm.
 
 Bản giao diện cũ vẫn khôi phục được từ tag git `pre-ui-reset`.
 
@@ -133,13 +139,13 @@ Fragment/Activity  →  ViewModel  →  Repository  →  Retrofit Api (remote)
 
 | Thư mục | Nội dung |
 |---|---|
-| `ui/<role>/<area>/` | Feature sẽ được dựng lại (hiện đã xoá sạch) |
+| `ui/user/` | 5 tab khu người dùng + adapter + dữ liệu mẫu |
 | `ui/auth/` | 4 màn xác thực + `AuthUi` (validate, strength, snack pill) |
-| `ui/user/` | `UserBottomNavView` (dock 5 tab) + `UserTabFragment` |
+| `ui/organizer/` | 5 tab khu nhà tổ chức, chi tiết sự kiện/đơn, form tạo sự kiện, `OrgDemo` |
 | `ui/common/view/` | Design system dùng chung (`ds_*`), không phụ thuộc feature |
 | `ui/model/` | `*UiModel` dùng chung giữa nhiều feature |
 | `ui/mapper/` | Chuyển DTO → UiModel |
-| `ui/host/` | Activity host của 3 vùng chức năng + `PlaceholderFragment` |
+| `ui/host/` | Activity host của 3 vùng chức năng (`UserHostActivity`, `OrganizerHostActivity`, `AdminHostActivity`) |
 | `data/remote/` | Api (Retrofit) + DTO |
 | `data/repository/` | Repository — nơi duy nhất biết mạng và cache |
 | `data/local/` | Cache Room (`entity/`, `dao/`, `prefs/`) |

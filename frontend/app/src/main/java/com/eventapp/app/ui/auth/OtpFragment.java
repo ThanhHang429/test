@@ -32,20 +32,27 @@ public class OtpFragment extends Fragment {
 
     private static final String ARG_EMAIL = "email";
     private static final String ARG_MODE = "mode";
+    private static final String ARG_ROLE = "role";
     private static final String DEMO_CODE = "123456";
 
     private FragmentAuthOtpBinding binding;
     private EditText[] cells;
     private String email;
     private String mode;
+    private String role;
     private CountDownTimer timer;
     private boolean verifying;
 
     public static OtpFragment newInstance(String email, String mode) {
+        return newInstance(email, mode, "USER");
+    }
+
+    public static OtpFragment newInstance(String email, String mode, String role) {
         OtpFragment fragment = new OtpFragment();
         Bundle args = new Bundle();
         args.putString(ARG_EMAIL, email);
         args.putString(ARG_MODE, mode);
+        args.putString(ARG_ROLE, role);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,6 +63,7 @@ public class OtpFragment extends Fragment {
         Bundle args = getArguments();
         email = args == null ? "" : args.getString(ARG_EMAIL, "");
         mode = args == null ? MODE_LOGIN : args.getString(ARG_MODE, MODE_LOGIN);
+        role = args == null ? "USER" : args.getString(ARG_ROLE, "USER");
     }
 
     @Nullable
@@ -211,7 +219,7 @@ public class OtpFragment extends Fragment {
                 auth().backToLogin();
                 auth().showMessage(R.string.auth_reset_success);
             } else {
-                auth().openHost();
+                auth().openHost(role);
             }
         }, 550);
     }

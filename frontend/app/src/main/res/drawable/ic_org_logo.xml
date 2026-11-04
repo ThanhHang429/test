@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo Event Nexus bản đơn sắc dùng trên nền tile xanh đậm của khu Organizer. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillAlpha="0.95"
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8.5,2.5a5,5 0,1 0,0 10a5,5 0,1 0,0 -10z" />
+    <path
+        android:fillAlpha="0.75"
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M15.5,2.5a5,5 0,1 0,0 10a5,5 0,1 0,0 -10z" />
+    <path
+        android:fillAlpha="0.9"
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,9.5a5,5 0,1 0,0 10a5,5 0,1 0,0 -10z" />
+</vector>

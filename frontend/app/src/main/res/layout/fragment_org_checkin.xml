@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="28dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/org_gutter"
+            android:paddingTop="8dp"
+            android:paddingEnd="@dimen/org_gutter">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/org_checkin_title"
+                android:textAppearance="@style/TextAppearance.EventApp.Org.Headline" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/org_checkin_sub"
+                android:textAppearance="@style/TextAppearance.EventApp.Org.Caption" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_org_search"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingEnd="12dp">
+
+                <FrameLayout
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_org_icon_tile">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_user_calendar"
+                        android:tint="@color/org_primary_dark" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:maxLines="1"
+                        android:text="Vietnam Tech Expo 2025"
+                        android:textColor="@color/org_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/be_vietnam_pro"
+                        android:text="15–18/11/2025 · SECC, Quận 7"
+                        android:textColor="@color/org_text_dim"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_org_pill_success"
+                    android:fontFamily="@font/plus_jakarta_sans"
+                    android:paddingStart="8dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="3dp"
+                    android:text="@string/org_live"
+                    android:textColor="@color/org_success_text"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="4dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_org_chevron_down"
+                    android:tint="@color/org_text_dim" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Khung quét -->
+        <FrameLayout
+            android:id="@+id/scanPanel"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_marginStart="@dimen/org_gutter"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="@dimen/org_gutter"
+            android:background="@drawable/bg_org_hero_dark"
+            android:clickable="true"
+            android:focusable="true"
+            android:outlineProvider="background">
+
+            <View
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="-80dp"
+                android:layout_marginEnd="-60dp"
+                android:background="@drawable/bg_org_glow" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_org_pill_glass"
+                    android:drawableStart="@drawable/ic_org_camera"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@color/org_mint"
+                    android:fontFamily="@font/plus_jakarta_sans"
+                    android:paddingStart="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="4dp"
+                    android:text="Camera sau · Tự động"
+                    android:textColor="@color/org_mint"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_org_qr_frame">
+
+                    <ImageView
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_user_qr"
+                        android:tint="@color/org_white_70" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/bg_org_scan_line" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/plus_jakarta_sans"
+                    android:text="@string/org_scan_hint"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/be_vietnam_pro"
+                    android:text="@string/org_scan_sub"
+                    android:textColor="@color/org_text_on_dark_muted"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- Nút phụ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/org_gutter"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="@dimen/org_gutter"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btnFlash"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_org_btn_secondary"
+                android:drawableStart="@drawable/ic_org_flash"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/org_primary_dark"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:text="@string/org_flash"
+                android:textColor="@color/org_primary_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <TextView
+                android:id="@+id/btnFocusManual"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_org_btn_secondary"
+                android:drawableStart="@drawable/ic_org_keyboard"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/org_primary_dark"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:text="@string/org_manual"
+                android:textColor="@color/org_primary_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Nhập mã thủ công -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/org_gutter"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="@dimen/org_gutter"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:text="@string/org_manual"
+                android:textColor="@color/org_text"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etCode"
+                    style="@style/Widget.EventApp.Org.Input"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/org_control_height"
+                    android:layout_weight="1"
+                    android:hint="@string/org_manual_hint"
+                    android:imeOptions="actionDone"
+                    android:inputType="textCapCharacters"
+                    android:maxLines="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnConfirmCode"
+                    style="@style/Widget.EventApp.Org.Button.Primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/org_control_height"
+                    android:layout_marginStart="8dp"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:text="@string/org_confirm" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/be_vietnam_pro"
+                android:text="Thử VE-123456 (OK) · VE-654321 (đã dùng) · mã khác (lỗi)"
+                android:textColor="@color/org_text_dim"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Kết quả -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardResult"
+            style="@style/Widget.EventApp.Org.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/org_gutter"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="@dimen/org_gutter"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <FrameLayout
+                    android:id="@+id/resultIconTile"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_org_pill_success">
+
+                    <ImageView
+                        android:id="@+id/ivResultIcon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_org_check_circle"
+                        android:tint="@color/org_success_text" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvResultTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:textColor="@color/org_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvResultSub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/be_vietnam_pro"
+                        android:textColor="@color/org_text_dim"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Thống kê -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.EventApp.Org.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/org_gutter"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="@dimen/org_gutter">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:text="@string/org_checkin_today"
+                        android:textColor="@color/org_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_org_pill_primary"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:paddingStart="8dp"
+                        android:paddingTop="3dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="3dp"
+                        android:text="72%"
+                        android:textColor="@color/org_primary_dark"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/plus_jakarta_sans"
+                    android:fontFeatureSettings="tnum"
+                    android:text="@string/org_checkin_total"
+                    android:textColor="@color/org_text"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:progress="72"
+                    app:indicatorColor="@color/org_primary"
+                    app:trackColor="@color/org_surface_mint"
+                    app:trackCornerRadius="3dp"
+                    app:trackStopIndicatorSize="0dp"
+                    app:trackThickness="6dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:fontFamily="@font/be_vietnam_pro"
+                    android:text="@string/org_remaining"
+                    android:textColor="@color/org_text_dim"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Gần đây -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/org_gutter"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="@dimen/org_gutter"
+            android:text="@string/org_recent_checkin"
+            android:textAppearance="@style/TextAppearance.EventApp.Org.Title" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.EventApp.Org.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/org_gutter"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="@dimen/org_gutter">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:background="@drawable/bg_org_avatar">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:text="NA"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:text="Nguyễn Văn A"
+                            android:textColor="@color/org_text"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:fontFamily="@font/be_vietnam_pro"
+                            android:text="VIP All-Access · Cổng A"
+                            android:textColor="@color/org_text_dim"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/be_vietnam_pro"
+                        android:text="10:42"
+                        android:textColor="@color/org_text_dim"
+                        android:textSize="10sp" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="8dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_org_check_circle"
+                        android:tint="@color/org_success" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginBottom="11dp"
+                    android:background="@color/org_divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:background="@drawable/bg_org_pill_info">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:text="TB"
+                            android:textColor="@color/org_info_text"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:text="Trần Thị B"
+                            android:textColor="@color/org_text"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:fontFamily="@font/be_vietnam_pro"
+                            android:text="Standard Entry · Cổng B"
+                            android:textColor="@color/org_text_dim"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/be_vietnam_pro"
+                        android:text="10:38"
+                        android:textColor="@color/org_text_dim"
+                        android:textSize="10sp" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="8dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_org_check_circle"
+                        android:tint="@color/org_success" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginBottom="11dp"
+                    android:background="@color/org_divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:background="@drawable/bg_org_pill_warning">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:text="LC"
+                            android:textColor="@color/org_warning_text"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:text="Lê Hoàng C"
+                            android:textColor="@color/org_text"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:fontFamily="@font/be_vietnam_pro"
+                            android:text="VIP All-Access · Cổng A"
+                            android:textColor="@color/org_text_dim"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/be_vietnam_pro"
+                        android:text="10:35"
+                        android:textColor="@color/org_text_dim"
+                        android:textSize="10sp" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="8dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_org_check_circle"
+                        android:tint="@color/org_success" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

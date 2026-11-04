@@ -21,9 +21,16 @@ public class LoginFragment extends Fragment {
     private static final String PREFS = "auth_ui";
     private static final String KEY_EMAIL = "remembered_email";
 
-    /** Tài khoản dùng thử cho giai đoạn test giao diện, khớp với hồ sơ mẫu ở khu người dùng. */
-    private static final String DEMO_EMAIL = "demo@nexus.vn";
+    /**
+     * Tài khoản dùng thử cho giai đoạn test giao diện. Hai vai trò dùng chung màn đăng nhập;
+     * vai trò được suy ra từ email để mở đúng khu sau khi xác thực OTP.
+     */
+    private static final String USER_EMAIL = "demo@nexus.vn";
+    private static final String ORGANIZER_EMAIL = "organizer@nexus.vn";
     private static final String DEMO_PASSWORD = "123456";
+
+    private static final String ROLE_USER = "USER";
+    private static final String ROLE_ORGANIZER = "ORGANIZER";
 
     private FragmentAuthLoginBinding binding;
 
@@ -60,13 +67,8 @@ public class LoginFragment extends Fragment {
 
         if (BuildConfig.DEBUG) {
             binding.demoCard.setVisibility(View.VISIBLE);
-            binding.btnDemoFill.setOnClickListener(v -> {
-                binding.etEmail.setText(DEMO_EMAIL);
-                binding.etPassword.setText(DEMO_PASSWORD);
-                binding.cbRemember.setChecked(true);
-                binding.tvEmailError.setVisibility(View.GONE);
-                binding.tvPasswordError.setVisibility(View.GONE);
-            });
+            binding.btnDemoUser.setOnClickListener(v -> fillDemo(USER_EMAIL));
+            binding.btnDemoOrganizer.setOnClickListener(v -> fillDemo(ORGANIZER_EMAIL));
         }
 
         binding.etPassword.setOnEditorActionListener((v, actionId, event) -> {
@@ -102,7 +104,12 @@ public class LoginFragment extends Fragment {
             return;
         }
 
-        if (!DEMO_EMAIL.equalsIgnoreCase(email) || !DEMO_PASSWORD.equals(password)) {
+        String role;
+        if (USER_EMAIL.equalsIgnoreCase(email) && DEMO_PASSWORD.equals(password)) {
+            role = ROLE_USER;
+        } else if (ORGANIZER_EMAIL.equalsIgnoreCase(email) && DEMO_PASSWORD.equals(password)) {
+            role = ROLE_ORGANIZER;
+        } else {
             AuthUi.markError(binding.etPassword, binding.tvPasswordError,
                     getString(R.string.auth_err_credentials));
             AuthUi.shake(binding.btnLogin);
@@ -117,7 +124,15 @@ public class LoginFragment extends Fragment {
         }
 
         AuthUi.hideKeyboard(binding.getRoot());
-        auth().openOtp(email, OtpFragment.MODE_LOGIN);
+        auth().openOtp(email, OtpFragment.MODE_LOGIN, role);
+    }
+
+    private void fillDemo(String email) {
+        binding.etEmail.setText(email);
+        binding.etPassword.setText(DEMO_PASSWORD);
+        binding.cbRemember.setChecked(true);
+        binding.tvEmailError.setVisibility(View.GONE);
+        binding.tvPasswordError.setVisibility(View.GONE);
     }
 
     private void comingSoon() {
