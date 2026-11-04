@@ -55,6 +55,8 @@
     <string name="auth_demo_user_value">demo@nexus.vn</string>
     <string name="auth_demo_org_label">Nhà tổ chức</string>
     <string name="auth_demo_org_value">organizer@nexus.vn</string>
+    <string name="auth_demo_admin_label">Quản trị viên</string>
+    <string name="auth_demo_admin_value">admin@nexus.vn</string>
     <string name="auth_demo_password">Mật khẩu chung: 123456 · OTP: 123456</string>
     <string name="auth_2fa">2FA</string>
 

@@ -76,12 +76,19 @@ Toàn bộ **tầng màn hình cũ đã được xoá để dựng lại giao di
   và 87 drawable không còn tham chiếu.
 - Giữ nguyên: `ui/common/view` (design system `ds_*`), `ui/model`, `ui/mapper`, `data/`, `core/`, `fcm/`.
 - **Luồng chạy hiện tại:** `SplashActivity` → `AuthActivity` (đăng nhập → OTP 2 lớp) → host theo vai trò:
-  `UserHostActivity` (khu người dùng) hoặc `OrganizerHostActivity` (khu nhà tổ chức). Khu quản trị vẫn là
-  `PlaceholderFragment`.
-- **Đăng nhập dùng chung cho cả hai vai trò**, vai trò suy ra từ email trong `LoginFragment`:
+  `UserHostActivity` (khu người dùng), `OrganizerHostActivity` (khu nhà tổ chức) hoặc
+  `AdminHostActivity` (khu quản trị).
+- **Đăng nhập dùng chung cho cả ba vai trò**, vai trò suy ra từ email trong `LoginFragment`:
   - Người dùng: `demo@nexus.vn` / `123456`
   - Nhà tổ chức: `organizer@nexus.vn` / `123456`
+  - Quản trị: `admin@nexus.vn` / `123456`
   - OTP demo ở build debug: `123456`. Google/Facebook vẫn hiện "Sắp ra mắt".
+- Khu quản trị nằm ở `ui/admin` + `AdminHostActivity`: menu điều hướng bên trái (drawer) với 8 màn
+  (Tổng quan, Kiểm duyệt, Giám sát sự kiện, Tài khoản, Thông báo, Soạn thông báo, Phí nền tảng, Hệ thống),
+  kèm 3 màn chi tiết (hồ sơ duyệt, chi tiết sự kiện, chi tiết tài khoản). Dữ liệu mẫu ở
+  `ui/admin/data/AdminDemo`; chưa gọi API.
+  Quản trị chỉ hưởng phí nền tảng và quản lý danh tính/trạng thái tài khoản — tiền vé, hoàn tiền và
+  công nợ do nhà tổ chức tự xử lý, admin chỉ xem doanh thu (read-only).
 - Khu nhà tổ chức nằm ở `ui/organizer` + `OrganizerHostActivity`: dock 5 tab
   (Tổng quan, Sự kiện, Check-in, Đơn hàng, Cài đặt), màn chi tiết sự kiện/đơn hàng và form tạo sự kiện
   bước 1. Dữ liệu mẫu nằm trong `ui/organizer/data/OrgDemo`; chưa gọi API.

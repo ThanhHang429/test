@@ -27,10 +27,12 @@ public class LoginFragment extends Fragment {
      */
     private static final String USER_EMAIL = "demo@nexus.vn";
     private static final String ORGANIZER_EMAIL = "organizer@nexus.vn";
+    private static final String ADMIN_EMAIL = "admin@nexus.vn";
     private static final String DEMO_PASSWORD = "123456";
 
     private static final String ROLE_USER = "USER";
     private static final String ROLE_ORGANIZER = "ORGANIZER";
+    private static final String ROLE_ADMIN = "ADMIN";
 
     private FragmentAuthLoginBinding binding;
 
@@ -69,6 +71,7 @@ public class LoginFragment extends Fragment {
             binding.demoCard.setVisibility(View.VISIBLE);
             binding.btnDemoUser.setOnClickListener(v -> fillDemo(USER_EMAIL));
             binding.btnDemoOrganizer.setOnClickListener(v -> fillDemo(ORGANIZER_EMAIL));
+            binding.btnDemoAdmin.setOnClickListener(v -> fillDemo(ADMIN_EMAIL));
         }
 
         binding.etPassword.setOnEditorActionListener((v, actionId, event) -> {
@@ -109,6 +112,8 @@ public class LoginFragment extends Fragment {
             role = ROLE_USER;
         } else if (ORGANIZER_EMAIL.equalsIgnoreCase(email) && DEMO_PASSWORD.equals(password)) {
             role = ROLE_ORGANIZER;
+        } else if (ADMIN_EMAIL.equalsIgnoreCase(email) && DEMO_PASSWORD.equals(password)) {
+            role = ROLE_ADMIN;
         } else {
             AuthUi.markError(binding.etPassword, binding.tvPasswordError,
                     getString(R.string.auth_err_credentials));

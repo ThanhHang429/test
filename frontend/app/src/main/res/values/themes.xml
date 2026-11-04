@@ -36,6 +36,29 @@
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
+    <!-- Theme riêng cho khu Quản trị: nền slate lạnh, primary navy mực. -->
+    <style name="Theme.EventApp.Admin" parent="Theme.EventApp">
+        <item name="colorPrimary">@color/admin_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/admin_primary_soft</item>
+        <item name="colorOnPrimaryContainer">@color/admin_primary_dark</item>
+        <item name="colorSecondary">@color/admin_accent</item>
+        <item name="colorSurface">@color/admin_surface</item>
+        <item name="colorOnSurface">@color/admin_text</item>
+        <item name="colorSurfaceContainer">@color/admin_surface</item>
+        <item name="colorSurfaceContainerLow">@color/admin_surface_alt</item>
+        <item name="colorSurfaceContainerHigh">@color/admin_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/admin_surface_slate</item>
+        <item name="colorOnSurfaceVariant">@color/admin_text_muted</item>
+        <item name="colorOutline">@color/admin_border_strong</item>
+        <item name="colorControlActivated">@color/admin_primary</item>
+        <item name="android:windowBackground">@color/admin_canvas</item>
+        <item name="android:statusBarColor">@color/admin_canvas</item>
+        <item name="android:navigationBarColor">@color/admin_canvas</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
     <style name="Theme.EventApp" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/white</item>
