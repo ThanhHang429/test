@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/auth_screen_pad"
+        android:paddingTop="8dp"
+        android:paddingEnd="@dimen/auth_screen_pad"
+        android:paddingBottom="24dp">
+
+        <include
+            android:id="@+id/topBar"
+            layout="@layout/view_auth_top_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/auth_top_bar" />
+
+        <FrameLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="28dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_auth_glow_blue" />
+
+            <ImageView
+                android:layout_width="@dimen/auth_logo_tile"
+                android:layout_height="@dimen/auth_logo_tile"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_auth_hero_circle"
+                android:contentDescription="@string/auth_cd_logo"
+                android:padding="20dp"
+                android:src="@drawable/ic_auth_shield"
+                android:tint="@color/auth_mint" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="@string/auth_otp_title"
+            android:textAppearance="@style/TextAppearance.EventApp.Auth.Title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auth_otp_sent_to"
+                android:textAppearance="@style/TextAppearance.EventApp.Auth.Subtitle" />
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.EventApp.Auth.Body"
+                android:textColor="@color/auth_text"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/otpRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/otp1"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_auth_otp_cell"
+                android:digits="0123456789"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="number"
+                android:maxLength="1"
+                android:padding="0dp"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/auth_text"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/otp2"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_auth_otp_cell"
+                android:digits="0123456789"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="number"
+                android:maxLength="1"
+                android:padding="0dp"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/auth_text"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/otp3"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_auth_otp_cell"
+                android:digits="0123456789"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="number"
+                android:maxLength="1"
+                android:padding="0dp"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/auth_text"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/otp4"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_auth_otp_cell"
+                android:digits="0123456789"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="number"
+                android:maxLength="1"
+                android:padding="0dp"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/auth_text"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/otp5"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_auth_otp_cell"
+                android:digits="0123456789"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="number"
+                android:maxLength="1"
+                android:padding="0dp"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/auth_text"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/otp6"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_auth_otp_cell"
+                android:digits="0123456789"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:includeFontPadding="false"
+                android:inputType="number"
+                android:maxLength="1"
+                android:padding="0dp"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/auth_text"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvOtpError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="@color/auth_error"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvDemoHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/auth_demo_hint"
+            android:textAppearance="@style/TextAppearance.EventApp.Auth.Caption"
+            android:textColor="@color/auth_text_dim"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvResend"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/auth_resend"
+                android:textAppearance="@style/TextAppearance.EventApp.Auth.Link" />
+
+            <TextView
+                android:id="@+id/tvCountdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:textAppearance="@style/TextAppearance.EventApp.Auth.Caption" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/groupReset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/auth_input_height">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etNewPassword"
+                    style="@style/Widget.EventApp.Auth.Input.Password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:autofillHints="newPassword"
+                    android:hint="@string/auth_new_password_hint"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
+
+                <ImageView
+                    android:layout_width="@dimen/auth_icon_sm"
+                    android:layout_height="@dimen/auth_icon_sm"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_auth_lock"
+                    android:tint="@color/auth_text_dim" />
+
+                <ImageButton
+                    android:id="@+id/btnToggleNew"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="6dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/auth_cd_toggle_password"
+                    android:padding="11dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_auth_eye"
+                    android:tint="@color/auth_text_dim" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/strength1"
+                    android:layout_width="0dp"
+                    android:layout_height="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_auth_step_inactive" />
+
+                <Space
+                    android:layout_width="6dp"
+                    android:layout_height="1dp" />
+
+                <View
+                    android:id="@+id/strength2"
+                    android:layout_width="0dp"
+                    android:layout_height="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_auth_step_inactive" />
+
+                <Space
+                    android:layout_width="6dp"
+                    android:layout_height="1dp" />
+
+                <View
+                    android:id="@+id/strength3"
+                    android:layout_width="0dp"
+                    android:layout_height="4dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_auth_step_inactive" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvNewPasswordError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/auth_error"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/auth_input_height"
+                android:layout_marginTop="12dp">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etConfirmNew"
+                    style="@style/Widget.EventApp.Auth.Input.Password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:autofillHints="newPassword"
+                    android:hint="@string/auth_confirm_new_hint"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
+
+                <ImageView
+                    android:layout_width="@dimen/auth_icon_sm"
+                    android:layout_height="@dimen/auth_icon_sm"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_auth_lock"
+                    android:tint="@color/auth_text_dim" />
+
+                <ImageButton
+                    android:id="@+id/btnToggleConfirmNew"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="6dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/auth_cd_toggle_password"
+                    android:padding="11dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_auth_eye"
+                    android:tint="@color/auth_text_dim" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvConfirmError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/auth_error"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnVerify"
+            style="@style/Widget.EventApp.Auth.Cta"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/auth_cta_height"
+            android:layout_marginTop="24dp"
+            android:drawableEnd="@drawable/ic_auth_arrow_right"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/white"
+            android:text="@string/auth_verify" />
+
+        <TextView
+            android:id="@+id/tvBackLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:drawableStart="@drawable/ic_auth_back"
+            android:drawablePadding="6dp"
+            android:drawableTint="@color/auth_mint"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/auth_back_login"
+            android:textAppearance="@style/TextAppearance.EventApp.Auth.Link" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

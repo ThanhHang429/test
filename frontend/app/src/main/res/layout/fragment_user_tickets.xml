@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="28dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/user_gutter"
+            android:paddingTop="10dp"
+            android:paddingEnd="@dimen/user_gutter">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/user_tickets_title"
+                android:textAppearance="@style/TextAppearance.EventApp.User.Headline" />
+
+            <TextView
+                android:id="@+id/tvTicketsSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/user_tickets_sub"
+                android:textAppearance="@style/TextAppearance.EventApp.User.Sub" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/user_gutter"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/user_gutter"
+            android:background="@drawable/bg_user_soft_card"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <FrameLayout
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_user_icon_circle">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_user_shield"
+                    android:tint="@color/user_primary" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_qr_banner_title"
+                    android:textAppearance="@style/TextAppearance.EventApp.User.CardTitle"
+                    android:textColor="@color/user_primary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/user_qr_banner_body"
+                    android:textAppearance="@style/TextAppearance.EventApp.User.Micro" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/user_gutter"
+            android:paddingEnd="@dimen/user_gutter">
+
+            <TextView
+                android:id="@+id/chipUpcoming"
+                style="@style/Widget.EventApp.User.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/user_filter_upcoming" />
+
+            <TextView
+                android:id="@+id/chipUsed"
+                style="@style/Widget.EventApp.User.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/user_filter_used" />
+
+            <TextView
+                android:id="@+id/chipCancelled"
+                style="@style/Widget.EventApp.User.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="@string/user_filter_cancelled" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTickets"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            android:paddingStart="@dimen/user_gutter"
+            android:paddingEnd="@dimen/user_gutter" />
+
+        <LinearLayout
+            android:id="@+id/emptyState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/user_gutter"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="@dimen/user_gutter"
+            android:background="@drawable/bg_user_card_20"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="28dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_user_icon_soft_circle">
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_user_ticket"
+                    android:tint="@color/user_primary" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/user_ticket_empty_title"
+                android:textAppearance="@style/TextAppearance.EventApp.User.CardTitle"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/user_ticket_empty_body"
+                android:textAppearance="@style/TextAppearance.EventApp.User.Caption" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnExplore"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_user_btn_primary"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:minHeight="44dp"
+                android:minWidth="0dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:stateListAnimator="@null"
+                android:text="@string/user_explore_now"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

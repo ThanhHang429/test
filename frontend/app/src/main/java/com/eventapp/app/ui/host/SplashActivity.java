@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.eventapp.app.core.session.AuthSession;
 import com.eventapp.app.core.session.SessionManager;
+import com.eventapp.app.ui.auth.AuthActivity;
 
 /**
  * FR-U01, FR-U02: màn hình khởi động.
@@ -16,8 +17,7 @@ import com.eventapp.app.core.session.SessionManager;
  * <p>Phiên đăng nhập chỉ nằm trong bộ nhớ nên mở lại app luôn phải đăng nhập. Nếu vì lý do nào
  * đó vẫn còn phiên (xoay màn hình, quay lại từ host), mở đúng host theo vai trò JWT.</p>
  *
- * <p>Giao diện đang được dựng lại: khi chưa có phiên, app vào thẳng khu người dùng để giữ luồng
- * chạy được. Màn đăng nhập mới sẽ được thêm lại sau.</p>
+ * <p>Chưa có phiên → mở luồng xác thực (đăng nhập / đăng ký / quên mật khẩu / OTP).</p>
  */
 public class SplashActivity extends AppCompatActivity {
 
@@ -35,7 +35,7 @@ public class SplashActivity extends AppCompatActivity {
         }
         AuthSession session = SessionManager.get().getSession();
         if (session == null) {
-            startActivity(new Intent(this, UserHostActivity.class));
+            startActivity(new Intent(this, AuthActivity.class));
         } else {
             SessionRouter.openHost(this, session);
         }

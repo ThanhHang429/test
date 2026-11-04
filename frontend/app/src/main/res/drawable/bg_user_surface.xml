@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền khu người dùng: trắng ngà + 2 quầng sáng rất nhẹ để tạo chiều sâu. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:centerColor="#FFF7F8FC"
+                android:endColor="#FFF3F6FF"
+                android:startColor="#FFFFFFFF" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.08"
+                android:centerY="0.02"
+                android:gradientRadius="320dp"
+                android:type="radial"
+                android:startColor="#1A2F5BFF"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.96"
+                android:centerY="0.98"
+                android:gradientRadius="260dp"
+                android:type="radial"
+                android:startColor="#1422C55E"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+</layer-list>

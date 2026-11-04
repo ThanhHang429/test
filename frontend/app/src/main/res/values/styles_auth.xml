@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Typography & widget cho luồng auth dark. -->
+<resources>
+    <style name="TextAppearance.EventApp.Auth.Title" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/auth_text</item>
+        <item name="android:letterSpacing">-0.025</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.Auth.Subtitle" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/auth_text_muted</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.Auth.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/auth_text</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.Auth.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/auth_text_dim</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.Auth.Link" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/auth_mint</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.Auth.Brand" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/auth_text_dim</item>
+        <item name="android:letterSpacing">0.16</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Ô nhập: không label, chỉ placeholder -->
+    <style name="Widget.EventApp.Auth.Input" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_auth_input</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/auth_text</item>
+        <item name="android:textColorHint">@color/auth_text_dim</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">@dimen/auth_input_height</item>
+        <item name="android:maxHeight">@dimen/auth_input_height</item>
+        <item name="android:paddingStart">46dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Widget.EventApp.Auth.Input.Password" parent="Widget.EventApp.Auth.Input">
+        <item name="android:paddingEnd">48dp</item>
+    </style>
+
+    <style name="Widget.EventApp.Auth.Cta" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_auth_cta</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:minHeight">@dimen/auth_cta_height</item>
+        <item name="android:maxHeight">@dimen/auth_cta_height</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+    </style>
+
+    <style name="Widget.EventApp.Auth.Social" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_auth_social</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/auth_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">@dimen/auth_social_height</item>
+        <item name="android:maxHeight">@dimen/auth_social_height</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Widget.EventApp.Auth.IconButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@drawable/bg_auth_icon_button</item>
+        <item name="android:minWidth">@dimen/auth_touch</item>
+        <item name="android:minHeight">@dimen/auth_touch</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+</resources>

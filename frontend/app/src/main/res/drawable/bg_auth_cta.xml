@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CTA chính: gradient Blue → Teal → Green, bo 16dp, ripple giới hạn trong mask. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/auth_ripple">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="0"
+                android:centerColor="@color/auth_teal"
+                android:endColor="@color/auth_green"
+                android:startColor="@color/auth_blue" />
+            <corners android:radius="@dimen/auth_radius_cta" />
+        </shape>
+    </item>
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFFFF" />
+            <corners android:radius="@dimen/auth_radius_cta" />
+        </shape>
+    </item>
+</ripple>

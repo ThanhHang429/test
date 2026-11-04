@@ -42,11 +42,26 @@
         <activity
             android:name=".ui.auth.AuthActivity"
             android:exported="false"
+            android:theme="@style/Theme.EventApp.Auth"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- 3 vùng chức năng sau khi đăng nhập | FR-U03, FR-O02, FR-A01 -->
         <activity
             android:name=".ui.host.UserHostActivity"
+            android:exported="false" />
+
+        <!-- Màn hình khu người dùng (dữ liệu mẫu, chưa nối API) -->
+        <activity
+            android:name=".ui.user.EventDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.user.CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.user.TicketDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.user.NotificationsActivity"
             android:exported="false" />
         <activity
             android:name=".ui.host.OrganizerHostActivity"

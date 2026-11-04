@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/authRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_auth_backdrop">
+
+    <View
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="-120dp"
+        android:layout_marginTop="-150dp"
+        android:background="@drawable/bg_auth_glow_blue" />
+
+    <View
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="-110dp"
+        android:layout_marginBottom="-120dp"
+        android:background="@drawable/bg_auth_glow_green" />
+
+    <FrameLayout
+        android:id="@+id/authContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

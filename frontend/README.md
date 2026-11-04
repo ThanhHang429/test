@@ -75,11 +75,15 @@ Toàn bộ **tầng màn hình cũ đã được xoá để dựng lại giao di
 - Đã xoá tài nguyên màn hình: `res/layout` (chỉ còn `view_ds_*`), `res/menu`, `res/navigation`,
   và 87 drawable không còn tham chiếu.
 - Giữ nguyên: `ui/common/view` (design system `ds_*`), `ui/model`, `ui/mapper`, `data/`, `core/`, `fcm/`.
-- **Luồng chạy hiện tại:** `SplashActivity` → `UserHostActivity` (hoặc host theo vai trò nếu có phiên)
-  → `PlaceholderFragment` báo "Giao diện đang được dựng lại".
-- `UserHostActivity`, `OrganizerHostActivity`, `AdminHostActivity` đều kế thừa `BaseHostActivity`;
-  giao diện mới chỉ cần gắn Fragment/nav graph vào đây.
-- Chưa có màn đăng nhập: khi không có phiên, app vào thẳng khu người dùng.
+- **Luồng chạy hiện tại:** `SplashActivity` → `AuthActivity` (đăng nhập → OTP 2 lớp) → `UserHostActivity`
+  (khu người dùng có thanh điều hướng thật). Khu nhà tổ chức / quản trị vẫn là `PlaceholderFragment`.
+- `OrganizerHostActivity`, `AdminHostActivity` kế thừa `BaseHostActivity`; giao diện mới chỉ cần gắn
+  Fragment/nav graph vào đây. `UserHostActivity` đã tách khỏi `BaseHostActivity` để dùng layout riêng.
+- Luồng xác thực mới nằm ở `ui/auth` với 4 màn: đăng nhập, đăng ký 2 bước, quên mật khẩu, OTP/2FA.
+  Giao diện dùng theme tối riêng `Theme.EventApp.Auth` (navy + glass + gradient Blue→Green).
+  OTP demo ở build debug là `123456`; release sẽ ẩn gợi ý này khi nối API thật.
+- Khu người dùng mới nằm ở `ui/user`: `UserBottomNavView` (dock nổi 5 tab, viên gradient trượt theo tab
+  đang chọn) + `UserTabFragment` (nội dung tạm theo tab). Luồng thanh toán vé **chưa** làm.
 
 Bản giao diện cũ vẫn khôi phục được từ tag git `pre-ui-reset`.
 
@@ -130,6 +134,8 @@ Fragment/Activity  →  ViewModel  →  Repository  →  Retrofit Api (remote)
 | Thư mục | Nội dung |
 |---|---|
 | `ui/<role>/<area>/` | Feature sẽ được dựng lại (hiện đã xoá sạch) |
+| `ui/auth/` | 4 màn xác thực + `AuthUi` (validate, strength, snack pill) |
+| `ui/user/` | `UserBottomNavView` (dock 5 tab) + `UserTabFragment` |
 | `ui/common/view/` | Design system dùng chung (`ds_*`), không phụ thuộc feature |
 | `ui/model/` | `*UiModel` dùng chung giữa nhiều feature |
 | `ui/mapper/` | Chuyển DTO → UiModel |

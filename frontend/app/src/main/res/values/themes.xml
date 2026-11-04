@@ -36,6 +36,23 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <!-- Luồng xác thực: dark navy + glass. Chỉ áp cho AuthActivity, không đổi theme sáng toàn app. -->
+    <style name="Theme.EventApp.Auth" parent="Theme.EventApp">
+        <item name="android:windowBackground">@color/auth_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="colorPrimary">@color/auth_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/auth_mint</item>
+        <item name="colorSurface">@color/auth_bg</item>
+        <item name="colorOnSurface">@color/auth_text</item>
+        <item name="colorOutline">@color/auth_stroke_strong</item>
+        <item name="colorControlActivated">@color/auth_mint</item>
+    </style>
+
     <style name="Theme.EventApp.Dialog" parent="Theme.Material3.Light.Dialog.Alert" />
 
     <style name="Widget.EventApp.Toolbar" parent="Widget.Material3.Toolbar.Surface" />

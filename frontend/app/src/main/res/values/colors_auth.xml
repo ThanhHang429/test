@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Palette riêng cho luồng xác thực: dark navy + glass + gradient Blue→Green.
+     Không thay palette sáng ds_* của phần còn lại để tránh ảnh hưởng màn hình khác. -->
+<resources>
+    <!-- Nền -->
+    <color name="auth_bg">#FF060A12</color>
+
+    <!-- Bề mặt kính -->
+    <color name="auth_glass">#14FFFFFF</color>
+    <color name="auth_glass_strong">#1FFFFFFF</color>
+    <color name="auth_stroke">#26FFFFFF</color>
+    <color name="auth_stroke_strong">#3DFFFFFF</color>
+    <color name="auth_stroke_focus">#B34F6BFF</color>
+    <color name="auth_track">#FF26303F</color>
+
+    <!-- Chữ -->
+    <color name="auth_text">#FFF6F8FC</color>
+    <color name="auth_text_muted">#FF9AA7BA</color>
+    <color name="auth_text_dim">#FF8695A8</color>
+
+    <!-- Thương hiệu / gradient -->
+    <color name="auth_blue">#FF2F5BFF</color>
+    <color name="auth_teal">#FF0B7F73</color>
+    <color name="auth_green">#FF15803D</color>
+    <color name="auth_mint">#FF6EE7B7</color>
+    <color name="auth_success">#FF34D399</color>
+    <color name="auth_error">#FFFB7185</color>
+    <color name="auth_warning">#FFFBBF24</color>
+
+    <!-- Lớp phủ / ripple -->
+    <color name="auth_ripple">#33FFFFFF</color>
+</resources>

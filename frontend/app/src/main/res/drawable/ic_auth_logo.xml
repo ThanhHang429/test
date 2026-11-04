@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo Event Nexus: 3 vòng tròn đại diện User / Organizer / Admin. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#FF2F5BFF"
+        android:fillAlpha="0.95"
+        android:pathData="M16,10a9,9 0,1 0,0 18a9,9 0,1 0,0 -18z" />
+    <path
+        android:fillColor="#FF22C55E"
+        android:fillAlpha="0.9"
+        android:pathData="M32,10a9,9 0,1 0,0 18a9,9 0,1 0,0 -18z" />
+    <path
+        android:fillColor="#FF0E8B7E"
+        android:fillAlpha="0.95"
+        android:pathData="M24,24a9,9 0,1 0,0 18a9,9 0,1 0,0 -18z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M24,20.5a3.5,3.5 0,1 0,0 7a3.5,3.5 0,1 0,0 -7z" />
+</vector>
