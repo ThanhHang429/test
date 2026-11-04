@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentOrgCheckinBinding;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.organizer.model.OrgTone;
 import com.eventapp.app.ui.organizer.util.OrgUi;
 import com.google.android.material.snackbar.Snackbar;
@@ -36,6 +37,7 @@ public class OrgCheckinFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         binding.scanPanel.setOnClickListener(v -> {
             binding.etCode.setText("VE-123456");
             verify();

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentUserSavedBinding;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.host.UserHostActivity;
 import com.eventapp.app.ui.user.adapter.EventAdapter;
@@ -40,6 +41,7 @@ public class SavedFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         adapter = new EventAdapter(false, new EventAdapter.Listener() {
             @Override
             public void onOpen(@NonNull DemoEvent event) {

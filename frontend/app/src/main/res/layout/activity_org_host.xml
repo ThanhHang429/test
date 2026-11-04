@@ -125,6 +125,7 @@
         </FrameLayout>
     </LinearLayout>
 
+    <!-- Dock kính mờ: nội dung tab chạy xuyên qua; các tab vẫn nhận tap. -->
     <com.eventapp.app.ui.organizer.OrgBottomNavView
         android:id="@+id/orgBottomNav"
         android:layout_width="match_parent"
@@ -134,6 +135,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/bg_org_nav_dock"
-        android:elevation="14dp"
+        android:elevation="10dp"
         android:outlineProvider="background" />
 </FrameLayout>

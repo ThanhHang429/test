@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.eventapp.app.databinding.FragmentOrgDashboardBinding;
+import com.eventapp.app.ui.common.view.NavContentInset;
 
 /** Tab Tổng quan của nhà tổ chức. */
 public class OrgDashboardFragment extends Fragment {
@@ -28,6 +29,7 @@ public class OrgDashboardFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         binding.cardFeaturedEvent.setOnClickListener(v -> openEvent("VTE-2025"));
         binding.tvSeeAllEvents.setOnClickListener(v -> {
             if (requireActivity() instanceof com.eventapp.app.ui.host.OrganizerHostActivity) {

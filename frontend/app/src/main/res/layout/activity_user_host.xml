@@ -114,6 +114,7 @@
         </FrameLayout>
     </LinearLayout>
 
+    <!-- Dock kính mờ: nội dung tab chạy xuyên qua; các tab vẫn nhận tap. -->
     <com.eventapp.app.ui.user.UserBottomNavView
         android:id="@+id/userBottomNav"
         android:layout_width="match_parent"
@@ -123,6 +124,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/bg_user_nav_dock"
-        android:elevation="14dp"
+        android:elevation="10dp"
         android:outlineProvider="background" />
 </FrameLayout>

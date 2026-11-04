@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentUserDiscoveryBinding;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.user.adapter.EventAdapter;
 import com.eventapp.app.ui.user.data.DemoContent;
@@ -46,6 +47,7 @@ public class DiscoveryFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         binding.tvGreeting.setText(greeting());
         binding.tvSub.setText(getString(R.string.user_discovery_sub,
                 DemoContent.get().events().size()));

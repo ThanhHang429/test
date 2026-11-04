@@ -16,6 +16,7 @@ import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentUserCalendarBinding;
 import com.eventapp.app.databinding.ItemUserCalendarEventBinding;
 import com.eventapp.app.databinding.ItemUserDayBinding;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.host.UserHostActivity;
 import com.eventapp.app.ui.user.data.DemoContent;
@@ -49,6 +50,7 @@ public class CalendarFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         binding.tvMonth.setText(UserFmt.monthYear(System.currentTimeMillis()));
         binding.btnToday.setOnClickListener(v -> scrollToToday());
         binding.btnExplore.setOnClickListener(v -> {

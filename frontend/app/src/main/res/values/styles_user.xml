@@ -120,6 +120,11 @@
         <item name="android:textColor">@color/user_nav_inactive</item>
         <item name="android:letterSpacing">0.01</item>
         <item name="android:includeFontPadding">false</item>
+        <!-- Quầng sáng nhẹ giúp nhãn đọc được khi nội dung chạy xuyên qua dock trong suốt. -->
+        <item name="android:shadowColor">#CCFFFFFF</item>
+        <item name="android:shadowRadius">2</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
     </style>
 
     <!-- ===== Nút & điều khiển ===== -->

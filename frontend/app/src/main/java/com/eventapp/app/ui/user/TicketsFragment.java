@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentUserTicketsBinding;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.host.UserHostActivity;
 import com.eventapp.app.ui.user.adapter.TicketAdapter;
 import com.eventapp.app.ui.user.data.DemoContent;
@@ -38,6 +39,7 @@ public class TicketsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         adapter = new TicketAdapter(ticket ->
                 TicketDetailActivity.start(requireContext(), ticket.code));
         binding.rvTickets.setLayoutManager(new LinearLayoutManager(requireContext()));

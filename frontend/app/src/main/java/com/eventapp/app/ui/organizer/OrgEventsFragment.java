@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.databinding.FragmentOrgEventsBinding;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.organizer.adapter.OrgEventAdapter;
 import com.eventapp.app.ui.organizer.data.OrgDemo;
 import com.eventapp.app.ui.organizer.model.OrgEvent;
@@ -44,6 +45,7 @@ public class OrgEventsFragment extends Fragment implements OrgEventAdapter.Liste
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.rvEvents);
         adapter = new OrgEventAdapter(this);
         binding.rvEvents.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvEvents.setAdapter(adapter);

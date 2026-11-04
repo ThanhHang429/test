@@ -15,6 +15,7 @@ import com.eventapp.app.core.session.SessionManager;
 import com.eventapp.app.databinding.FragmentOrgSettingsBinding;
 import com.eventapp.app.databinding.ViewOrgSettingRowBinding;
 import com.eventapp.app.ui.auth.AuthActivity;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -34,6 +35,7 @@ public class OrgSettingsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         bindRow(binding.rowProfile, R.drawable.ic_org_building,
                 getString(R.string.org_set_profile), getString(R.string.org_set_profile_sub),
                 null);

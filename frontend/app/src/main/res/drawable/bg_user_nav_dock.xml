@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Dock kính mờ: nội dung vẫn thấy nhẹ phía sau nhưng icon/nhãn đủ tương phản. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient
         android:angle="270"
-        android:endColor="#FFF4F7FF"
-        android:startColor="#FFFFFFFF" />
+        android:endColor="#CCF4F7FF"
+        android:startColor="#D9FFFFFF" />
     <corners android:radius="28dp" />
     <stroke
         android:width="1dp"

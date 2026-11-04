@@ -165,8 +165,7 @@ public class UserHostActivity extends AppCompatActivity {
                 binding.userBottomNav.setLayoutParams(navParams);
             }
 
-            binding.userContent.setPadding(0, barHeight, 0,
-                    dp(68) + dp(12) + bars.bottom + dp(8));
+            binding.userContent.setPadding(0, barHeight, 0, 0);
             return insets;
         });
     }

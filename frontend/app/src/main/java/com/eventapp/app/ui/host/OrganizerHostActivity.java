@@ -157,8 +157,7 @@ public class OrganizerHostActivity extends AppCompatActivity {
                 binding.orgBottomNav.setLayoutParams(navParams);
             }
 
-            binding.orgContent.setPadding(0, barHeight, 0,
-                    dp(68) + dp(12) + bars.bottom + dp(8));
+            binding.orgContent.setPadding(0, barHeight, 0, 0);
             return insets;
         });
     }

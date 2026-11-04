@@ -16,6 +16,7 @@ import com.eventapp.app.BuildConfig;
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentUserAccountBinding;
 import com.eventapp.app.ui.auth.AuthActivity;
+import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.user.data.DemoContent;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -41,6 +42,7 @@ public class AccountFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        NavContentInset.apply(binding.getRoot());
         prefs = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 
         binding.tvName.setText(DemoContent.USER_NAME);
