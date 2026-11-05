@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -22,7 +23,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.ActivityUserTicketDetailBinding;
 import com.eventapp.app.ui.common.view.SnackPill;
-import com.eventapp.app.ui.user.data.DemoContent;
+import com.eventapp.app.ui.user.viewmodel.TicketDetailViewModel;
 import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.util.UserFmt;
 
@@ -33,6 +34,7 @@ public class TicketDetailActivity extends AppCompatActivity {
 
     private ActivityUserTicketDetailBinding binding;
     private TicketUiModel ticket;
+    private TicketDetailViewModel viewModel;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private int seconds = 60;
     private int tick;
@@ -73,7 +75,8 @@ public class TicketDetailActivity extends AppCompatActivity {
         controller.setAppearanceLightStatusBars(true);
         controller.setAppearanceLightNavigationBars(true);
 
-        ticket = DemoContent.get().ticket(getIntent().getStringExtra(EXTRA_CODE));
+        viewModel = new ViewModelProvider(this).get(TicketDetailViewModel.class);
+        ticket = viewModel.ticket(getIntent().getStringExtra(EXTRA_CODE));
         if (ticket == null) {
             finish();
             return;

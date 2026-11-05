@@ -21,7 +21,6 @@ import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.host.UserHostActivity;
 import com.eventapp.app.ui.model.EventUiModel;
 import com.eventapp.app.ui.model.TicketUiModel;
-import com.eventapp.app.ui.user.data.DemoContent;
 import com.eventapp.app.ui.user.util.UserFmt;
 import com.eventapp.app.ui.user.viewmodel.CalendarViewModel;
 
@@ -254,7 +253,7 @@ public class CalendarFragment extends Fragment {
     private List<CalendarItem> upcomingItems() {
         long now = System.currentTimeMillis();
         List<CalendarItem> result = new ArrayList<>();
-        for (TicketUiModel ticket : DemoContent.get().tickets()) {
+        for (TicketUiModel ticket : viewModel.tickets()) {
             if (ticket.status == TicketUiModel.Status.UPCOMING && ticket.startAt >= now) {
                 result.add(new CalendarItem(ticket.eventId, ticket.eventTitle, ticket.venue,
                         ticket.startAt, ticket.endAt, ticket));

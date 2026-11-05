@@ -14,6 +14,8 @@ import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
 import com.eventapp.app.data.repository.FavoriteRepository;
 import com.eventapp.app.ui.mapper.EventMapper;
 import com.eventapp.app.ui.model.EventUiModel;
+import com.eventapp.app.ui.model.TicketUiModel;
+import com.eventapp.app.ui.user.data.DemoContent;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
@@ -31,6 +33,10 @@ public class CalendarViewModel extends ViewModel {
 
     public LiveData<List<EventUiModel>> getSavedEvents() {
         return savedEvents;
+    }
+
+    public List<TicketUiModel> tickets() {
+        return DemoContent.get().tickets();
     }
 
     public void loadSaved() {

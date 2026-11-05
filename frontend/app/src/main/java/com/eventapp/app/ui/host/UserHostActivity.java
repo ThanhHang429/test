@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -29,7 +30,7 @@ import com.eventapp.app.ui.user.TicketsFragment;
 import com.eventapp.app.ui.user.UserBottomNavView;
 import com.eventapp.app.core.session.AuthSession;
 import com.eventapp.app.core.session.SessionManager;
-import com.eventapp.app.ui.user.data.DemoContent;
+import com.eventapp.app.ui.host.viewmodel.UserHostViewModel;
 
 /**
  * Khu người dùng sau khi đăng nhập: thanh trên cùng + dock điều hướng nổi 5 tab.
@@ -45,6 +46,7 @@ public class UserHostActivity extends AppCompatActivity {
     private static final int TAB_COUNT = 5;
 
     private ActivityUserHostBinding binding;
+    private UserHostViewModel viewModel;
     private int selectedTab = UserBottomNavView.TAB_DISCOVERY;
 
     @Override
@@ -143,8 +145,11 @@ public class UserHostActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (viewModel == null) {
+            viewModel = new ViewModelProvider(this).get(UserHostViewModel.class);
+        }
         binding.viewUnreadDot.setVisibility(
-                DemoContent.get().unreadNotifications() > 0 ? View.VISIBLE : View.GONE);
+                viewModel.unreadNotifications() > 0 ? View.VISIBLE : View.GONE);
     }
 
     private void applyInsets() {

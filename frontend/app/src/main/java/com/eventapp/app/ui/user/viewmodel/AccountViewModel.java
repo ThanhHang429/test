@@ -20,6 +20,7 @@ import com.eventapp.app.data.repository.ReviewRepository;
 import com.eventapp.app.data.repository.UserRepository;
 import com.eventapp.app.ui.mapper.CategoryMapper;
 import com.eventapp.app.ui.model.CategoryNodeUiModel;
+import com.eventapp.app.ui.user.data.DemoContent;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
@@ -65,6 +66,10 @@ public class AccountViewModel extends ViewModel {
 
     public LiveData<ApiException> getError() {
         return error;
+    }
+
+    public int purchasedCount() {
+        return DemoContent.get().purchasedCount();
     }
 
     public void load() {

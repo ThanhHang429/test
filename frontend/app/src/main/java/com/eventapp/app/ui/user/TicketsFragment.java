@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
@@ -15,7 +16,7 @@ import com.eventapp.app.databinding.FragmentUserTicketsBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.host.UserHostActivity;
 import com.eventapp.app.ui.user.adapter.TicketAdapter;
-import com.eventapp.app.ui.user.data.DemoContent;
+import com.eventapp.app.ui.user.viewmodel.TicketsViewModel;
 import com.eventapp.app.ui.model.TicketUiModel;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class TicketsFragment extends Fragment {
     private FragmentUserTicketsBinding binding;
     private TicketAdapter adapter;
     private TicketUiModel.Status filter = TicketUiModel.Status.UPCOMING;
+    private TicketsViewModel viewModel;
 
     private final Runnable dataObserver = this::reload;
 
@@ -55,6 +57,8 @@ public class TicketsFragment extends Fragment {
             }
         });
 
+        viewModel = new ViewModelProvider(this).get(TicketsViewModel.class);
+
         reload();
     }
 
@@ -70,18 +74,17 @@ public class TicketsFragment extends Fragment {
         if (binding == null) {
             return;
         }
-        DemoContent content = DemoContent.get();
         binding.tvTicketsSub.setText(getString(R.string.user_tickets_sub,
-                content.ticketsByStatusCount(TicketUiModel.Status.UPCOMING),
-                content.ticketsByStatusCount(TicketUiModel.Status.USED)));
+                viewModel.count(TicketUiModel.Status.UPCOMING),
+                viewModel.count(TicketUiModel.Status.USED)));
         binding.chipUpcoming.setText(getString(R.string.user_filter_upcoming)
-                + " (" + content.ticketsByStatusCount(TicketUiModel.Status.UPCOMING) + ")");
+                + " (" + viewModel.count(TicketUiModel.Status.UPCOMING) + ")");
         binding.chipUsed.setText(getString(R.string.user_filter_used)
-                + " (" + content.ticketsByStatusCount(TicketUiModel.Status.USED) + ")");
+                + " (" + viewModel.count(TicketUiModel.Status.USED) + ")");
         binding.chipCancelled.setText(getString(R.string.user_filter_cancelled)
-                + " (" + content.ticketsByStatusCount(TicketUiModel.Status.CANCELLED) + ")");
+                + " (" + viewModel.count(TicketUiModel.Status.CANCELLED) + ")");
 
-        List<TicketUiModel> tickets = content.tickets(filter);
+        List<TicketUiModel> tickets = viewModel.tickets(filter);
         adapter.setItems(tickets);
         boolean empty = tickets.isEmpty();
         binding.emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
@@ -91,7 +94,7 @@ public class TicketsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        DemoContent.get().addListener(dataObserver);
+        viewModel.addListener(dataObserver);
     }
 
     @Override
@@ -102,7 +105,7 @@ public class TicketsFragment extends Fragment {
 
     @Override
     public void onStop() {
-        DemoContent.get().removeListener(dataObserver);
+        viewModel.removeListener(dataObserver);
         super.onStop();
     }
 

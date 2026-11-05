@@ -12,11 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentAdminAccountsBinding;
 import com.eventapp.app.databinding.ItemAdminAccountBinding;
-import com.eventapp.app.ui.admin.data.AdminDemo;
+import com.eventapp.app.ui.admin.viewmodel.AdminAccountsViewModel;
 import com.eventapp.app.ui.admin.model.AdminAccount;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class AdminAccountsFragment extends Fragment {
     private FragmentAdminAccountsBinding binding;
     private List<AdminAccount> users;
     private List<AdminAccount> organizers;
+    private AdminAccountsViewModel viewModel;
     private boolean showOrganizers;
     private int filterStatus = -1;
     private String query = "";
@@ -48,8 +50,9 @@ public class AdminAccountsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        users = AdminDemo.users();
-        organizers = AdminDemo.organizers();
+        viewModel = new ViewModelProvider(this).get(AdminAccountsViewModel.class);
+        users = viewModel.users();
+        organizers = viewModel.organizers();
 
         binding.tabUsers.setOnClickListener(v -> selectType(false));
         binding.tabOrgs.setOnClickListener(v -> selectType(true));

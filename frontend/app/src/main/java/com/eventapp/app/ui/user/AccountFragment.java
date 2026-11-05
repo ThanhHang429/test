@@ -56,6 +56,7 @@ public class AccountFragment extends Fragment {
         NavContentInset.apply(binding.getRoot());
         prefs = requireContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 
+        viewModel = new ViewModelProvider(this).get(AccountViewModel.class);
         bindProfile();
         binding.tvVersion.setText(getString(R.string.user_version, BuildConfig.VERSION_NAME));
 
@@ -78,9 +79,8 @@ public class AccountFragment extends Fragment {
         binding.btnLogout.setOnClickListener(v -> confirmLogout());
 
         binding.colReviews.setOnClickListener(v -> MyReviewsActivity.start(requireContext()));
-        binding.tvStatTickets.setText(String.valueOf(DemoContent.get().purchasedCount()));
+        binding.tvStatTickets.setText(String.valueOf(viewModel.purchasedCount()));
 
-        viewModel = new ViewModelProvider(this).get(AccountViewModel.class);
         observe();
         viewModel.load();
     }
