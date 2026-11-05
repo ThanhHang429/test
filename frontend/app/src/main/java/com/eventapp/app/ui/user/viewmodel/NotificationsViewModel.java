@@ -11,6 +11,8 @@ import com.eventapp.app.core.network.ApiException;
 import com.eventapp.app.data.di.ServiceLocator;
 import com.eventapp.app.data.remote.dto.notification.NotificationResponse;
 import com.eventapp.app.data.repository.NotificationRepository;
+import com.eventapp.app.ui.mapper.NotificationMapper;
+import com.eventapp.app.ui.model.NotificationUiModel;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
@@ -22,11 +24,11 @@ public class NotificationsViewModel extends ViewModel {
     private final NotificationRepository repository =
             ServiceLocator.get(NotificationRepository.class);
 
-    private final MutableLiveData<List<NotificationResponse>> items =
+    private final MutableLiveData<List<NotificationUiModel>> items =
             new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<ApiException> error = new MutableLiveData<>();
 
-    public LiveData<List<NotificationResponse>> getItems() {
+    public LiveData<List<NotificationUiModel>> getItems() {
         return items;
     }
 
@@ -40,7 +42,7 @@ public class NotificationsViewModel extends ViewModel {
             @Override
             public void onSuccess(@Nullable List<NotificationResponse> data,
                                   @Nullable JsonElement meta) {
-                items.setValue(data == null ? new ArrayList<>() : data);
+                items.setValue(NotificationMapper.fromList(data));
             }
 
             @Override

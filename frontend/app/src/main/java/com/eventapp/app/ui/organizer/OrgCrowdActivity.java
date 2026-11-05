@@ -9,23 +9,20 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.core.util.DateTimeUtils;
-import com.eventapp.app.data.remote.dto.notification.NotificationResponse;
-import com.eventapp.app.data.remote.dto.organizer.CrowdDtos;
-import com.eventapp.app.data.remote.dto.organizerai.OrganizerAiDtos;
-import com.eventapp.app.data.repository.OrganizerRepository;
 import com.eventapp.app.databinding.ActivityOrgCrowdBinding;
 import com.eventapp.app.databinding.DialogOrgRoomBinding;
 import com.eventapp.app.databinding.ItemOrgNotificationBinding;
 import com.eventapp.app.databinding.ItemOrgOverflowRoomBinding;
+import com.eventapp.app.ui.model.CrowdStatusUiModel;
+import com.eventapp.app.ui.model.NotificationUiModel;
+import com.eventapp.app.ui.model.OverflowRoomUiModel;
 import com.eventapp.app.ui.organizer.model.OrgTone;
 import com.eventapp.app.ui.organizer.util.OrgFormat;
 import com.eventapp.app.ui.organizer.util.OrgUi;
+import com.eventapp.app.ui.organizer.viewmodel.OrgCrowdViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -44,14 +41,10 @@ public class OrgCrowdActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_TITLE = "event_title";
 
     private static final String AUDIENCE_NOT_CHECKED_IN = "REGISTERED_NOT_CHECKED_IN";
-    private static final String SOURCE_AI = "AI";
-    private static final String SOURCE_MANUAL = "MANUAL";
 
     private ActivityOrgCrowdBinding binding;
-    private OrganizerRepository repository;
+    private OrgCrowdViewModel viewModel;
     private long eventId;
-    private String eventTitle = "";
-    private CrowdDtos.CrowdStatus status;
     private boolean composedByAi;
 
     public static void start(@NonNull Context context, long eventId, @Nullable String eventTitle) {
@@ -67,12 +60,13 @@ public class OrgCrowdActivity extends AppCompatActivity {
         binding = ActivityOrgCrowdBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        repository = ServiceLocator.get(OrganizerRepository.class);
         eventId = getIntent().getLongExtra(EXTRA_EVENT_ID, 0L);
-        eventTitle = getIntent().getStringExtra(EXTRA_EVENT_TITLE);
+
+        viewModel = new ViewModelProvider(this).get(OrgCrowdViewModel.class);
+        viewModel.init(eventId, getIntent().getStringExtra(EXTRA_EVENT_TITLE));
+        observe();
 
         binding.btnBack.setOnClickListener(v -> finish());
-        binding.tvEventName.setText(eventTitle == null ? "" : eventTitle);
         binding.tvRecipients.setText(R.string.org_crowd_audience);
         binding.btnAddRoom.setOnClickListener(v -> openRoomDialog());
         binding.btnComposeAi.setOnClickListener(v -> composeWithAi());
@@ -82,83 +76,113 @@ public class OrgCrowdActivity extends AppCompatActivity {
             snack(getString(R.string.org_event_not_found));
             return;
         }
-        loadStatus();
-        loadRooms();
-        loadHistory();
+        viewModel.load();
     }
 
     // ------------------------------------------------------------------ đọc dữ liệu
 
-    private void loadStatus() {
-        binding.progress.setVisibility(View.VISIBLE);
-        repository.crowdStatus(eventId, new ApiCallback<CrowdDtos.CrowdStatus>() {
-            @Override
-            public void onSuccess(@Nullable CrowdDtos.CrowdStatus data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                binding.progress.setVisibility(View.GONE);
-                if (binding == null || data == null) {
-                    return;
-                }
-                status = data;
-                if (eventTitle == null || eventTitle.isEmpty()) {
-                    eventTitle = data.eventTitle;
-                    binding.tvEventName.setText(eventTitle);
-                }
+    private void observe() {
+        viewModel.getEventTitle().observe(this, title -> {
+            if (binding != null) {
+                binding.tvEventName.setText(title == null ? "" : title);
+            }
+        });
+        viewModel.getStatus().observe(this, data -> {
+            if (data != null && binding != null) {
                 bindStatus(data);
             }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                binding.progress.setVisibility(View.GONE);
-                snack(error.getUserMessage());
-            }
         });
-    }
-
-    private void loadRooms() {
-        repository.overflowRooms(eventId, new ApiCallback<List<CrowdDtos.OverflowRoom>>() {
-            @Override
-            public void onSuccess(@Nullable List<CrowdDtos.OverflowRoom> data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                if (binding == null) {
-                    return;
-                }
+        viewModel.getRooms().observe(this, data -> {
+            if (binding != null) {
                 bindRooms(data == null ? new ArrayList<>() : data);
             }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                if (binding != null) {
-                    snack(error.getUserMessage());
-                }
+        });
+        viewModel.getHistory().observe(this, data -> {
+            if (binding != null) {
+                bindHistory(data == null ? new ArrayList<>() : data);
             }
+        });
+        viewModel.getLoading().observe(this, loading -> updateProgress());
+        viewModel.getSending().observe(this, sending -> {
+            updateProgress();
+            if (binding == null) {
+                return;
+            }
+            if (Boolean.TRUE.equals(sending)) {
+                binding.btnSend.setEnabled(false);
+                binding.btnSend.setAlpha(0.5f);
+            } else {
+                applySendState(viewModel.getStatus().getValue());
+            }
+        });
+        viewModel.getError().observe(this, error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            snack(error.getUserMessage());
+        });
+        viewModel.getRoomAdded().observe(this, added -> {
+            if (!Boolean.TRUE.equals(added)) {
+                return;
+            }
+            viewModel.consumeRoomAdded();
+            snack(getString(R.string.org_crowd_room_added));
+        });
+        viewModel.getRoomClosed().observe(this, closed -> {
+            if (!Boolean.TRUE.equals(closed)) {
+                return;
+            }
+            viewModel.consumeRoomClosed();
+            snack(getString(R.string.org_crowd_room_closed_toast));
+        });
+        viewModel.getAiDraft().observe(this, draft -> {
+            if (draft == null || binding == null) {
+                return;
+            }
+            viewModel.consumeAiDraft();
+            String target = draft.roomName == null
+                    ? viewModel.getEventTitle().getValue() : draft.roomName;
+            binding.etTitle.setText(getString(R.string.org_crowd_title_fmt,
+                    target == null ? "" : target));
+            binding.etBody.setText(draft.text);
+            composedByAi = true;
+            snack(getString(R.string.org_crowd_ai_filled));
+        });
+        viewModel.getAiFailed().observe(this, failed -> {
+            if (!Boolean.TRUE.equals(failed)) {
+                return;
+            }
+            viewModel.consumeAiFailed();
+            snack(getString(R.string.org_crowd_ai_failed));
+        });
+        viewModel.getSentCount().observe(this, count -> {
+            if (count == null) {
+                return;
+            }
+            viewModel.consumeSentCount();
+            snack(getString(R.string.org_crowd_sent, count));
+            if (binding != null) {
+                binding.etTitle.setText("");
+                binding.etBody.setText("");
+            }
+            composedByAi = false;
         });
     }
 
-    private void loadHistory() {
-        repository.notifications(eventId, new ApiCallback<List<NotificationResponse>>() {
-            @Override
-            public void onSuccess(@Nullable List<NotificationResponse> data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                if (binding == null) {
-                    return;
-                }
-                bindHistory(data == null ? new ArrayList<>() : data);
-            }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                if (binding != null) {
-                    snack(error.getUserMessage());
-                }
-            }
-        });
+    private void updateProgress() {
+        if (binding == null) {
+            return;
+        }
+        boolean busy = Boolean.TRUE.equals(viewModel.getLoading().getValue())
+                || Boolean.TRUE.equals(viewModel.getSending().getValue());
+        binding.progress.setVisibility(busy ? View.VISIBLE : View.GONE);
     }
 
     // ------------------------------------------------------------------ hiển thị
 
-    private void bindStatus(CrowdDtos.CrowdStatus data) {
-        int percent = (int) Math.round(data.occupancyRate * 100);
+    private void bindStatus(CrowdStatusUiModel data) {
+        int percent = data.occupancyPercent;
         binding.tvPercent.setText(percent + "%");
         binding.progressOccupancy.setProgressCompat(Math.min(percent, 100), true);
 
@@ -171,44 +195,51 @@ public class OrgCrowdActivity extends AppCompatActivity {
         binding.tvCheckedIn.setText(OrgFormat.count(data.checkedIn));
         binding.tvNotCheckedIn.setText(OrgFormat.count(data.notCheckedIn));
 
-        boolean warn = data.warning != null && !data.warning.trim().isEmpty();
+        boolean warn = !data.warning.trim().isEmpty();
         binding.cardWarning.setVisibility(warn ? View.VISIBLE : View.GONE);
         if (warn) {
             binding.tvWarning.setText(data.warning);
             String suggestion = data.suggestion;
-            if (suggestion == null || suggestion.trim().isEmpty()) {
+            if (suggestion.trim().isEmpty()) {
                 suggestion = data.suggestedRoom == null ? "" : data.suggestedRoom.roomName;
             }
             binding.tvSuggestion.setText(suggestion);
             binding.tvSuggestion.setVisibility(suggestion.isEmpty() ? View.GONE : View.VISIBLE);
         }
 
-        boolean hasRecipients = data.notCheckedIn > 0;
-        binding.btnSend.setEnabled(hasRecipients);
-        binding.btnSend.setAlpha(hasRecipients ? 1f : 0.5f);
-        binding.tvRecipients.setText(hasRecipients
+        applySendState(data);
+        binding.tvRecipients.setText(data.notCheckedIn > 0
                 ? getString(R.string.org_crowd_recipients, data.notCheckedIn)
                 : getString(R.string.org_crowd_recipients_empty));
     }
 
-    private void bindRooms(List<CrowdDtos.OverflowRoom> rooms) {
+    private void applySendState(@Nullable CrowdStatusUiModel data) {
+        if (binding == null) {
+            return;
+        }
+        boolean hasRecipients = data != null && data.notCheckedIn > 0;
+        binding.btnSend.setEnabled(hasRecipients);
+        binding.btnSend.setAlpha(hasRecipients ? 1f : 0.5f);
+    }
+
+    private void bindRooms(List<OverflowRoomUiModel> rooms) {
         binding.roomList.removeAllViews();
         binding.tvRoomsEmpty.setVisibility(rooms.isEmpty() ? View.VISIBLE : View.GONE);
 
         LayoutInflater inflater = getLayoutInflater();
         for (int i = 0; i < rooms.size(); i++) {
-            CrowdDtos.OverflowRoom room = rooms.get(i);
+            OverflowRoomUiModel room = rooms.get(i);
             ItemOrgOverflowRoomBinding row = ItemOrgOverflowRoomBinding.inflate(
                     inflater, binding.roomList, false);
             row.tvRoomName.setText(room.roomName);
             row.tvRoomMeta.setText(getString(R.string.org_crowd_room_capacity,
                     OrgFormat.count(room.capacity)));
 
-            boolean note = room.note != null && !room.note.trim().isEmpty();
+            boolean note = !room.note.trim().isEmpty();
             row.tvRoomNote.setText(room.note);
             row.tvRoomNote.setVisibility(note ? View.VISIBLE : View.GONE);
 
-            boolean active = "ACTIVE".equalsIgnoreCase(room.status);
+            boolean active = room.active;
             row.tvRoomStatus.setText(active
                     ? R.string.org_crowd_room_active : R.string.org_crowd_room_closed);
             OrgUi.applyPill(row.tvRoomStatus, active ? OrgTone.SUCCESS : OrgTone.NEUTRAL);
@@ -219,19 +250,19 @@ public class OrgCrowdActivity extends AppCompatActivity {
         }
     }
 
-    private void bindHistory(List<NotificationResponse> items) {
+    private void bindHistory(List<NotificationUiModel> items) {
         binding.historyList.removeAllViews();
         if (items.isEmpty()) {
             binding.historyList.addView(sectionNote(getString(R.string.org_crowd_history_empty)));
             return;
         }
         LayoutInflater inflater = getLayoutInflater();
-        for (NotificationResponse item : items) {
+        for (NotificationUiModel item : items) {
             ItemOrgNotificationBinding row = ItemOrgNotificationBinding.inflate(
                     inflater, binding.historyList, false);
             row.tvNotifTitle.setText(item.title);
             row.tvNotifBody.setText(item.body);
-            row.tvNotifTime.setText(OrgFormat.dateTime(DateTimeUtils.toMillis(item.sentAt)));
+            row.tvNotifTime.setText(OrgFormat.dateTime(item.sentAtMillis));
             row.tvNotifMeta.setText(getString(R.string.org_crowd_history_meta,
                     audienceLabel(item.audience), item.recipientCount));
             binding.historyList.addView(row.getRoot());
@@ -273,32 +304,10 @@ public class OrgCrowdActivity extends AppCompatActivity {
     }
 
     private void addRoom(String name, int capacity, String note) {
-        binding.progress.setVisibility(View.VISIBLE);
-        CrowdDtos.CreateRoomRequest request = new CrowdDtos.CreateRoomRequest(
-                name, capacity, note.isEmpty() ? null : note);
-        repository.addOverflowRoom(eventId, request,
-                new ApiCallback<CrowdDtos.OverflowRoom>() {
-                    @Override
-                    public void onSuccess(@Nullable CrowdDtos.OverflowRoom data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        binding.progress.setVisibility(View.GONE);
-                        if (binding == null) {
-                            return;
-                        }
-                        snack(getString(R.string.org_crowd_room_added));
-                        loadRooms();
-                        loadStatus();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        binding.progress.setVisibility(View.GONE);
-                        snack(error.getUserMessage());
-                    }
-                });
+        viewModel.addRoom(name, capacity, note);
     }
 
-    private void confirmCloseRoom(CrowdDtos.OverflowRoom room) {
+    private void confirmCloseRoom(OverflowRoomUiModel room) {
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.org_crowd_room_close)
                 .setMessage(getString(R.string.org_crowd_room_close_confirm, room.roomName))
@@ -308,74 +317,21 @@ public class OrgCrowdActivity extends AppCompatActivity {
     }
 
     private void closeRoom(long roomId) {
-        repository.closeOverflowRoom(eventId, roomId, new ApiCallback<CrowdDtos.OverflowRoom>() {
-            @Override
-            public void onSuccess(@Nullable CrowdDtos.OverflowRoom data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                if (binding == null) {
-                    return;
-                }
-                snack(getString(R.string.org_crowd_room_closed_toast));
-                loadRooms();
-                loadStatus();
-            }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                if (binding != null) {
-                    snack(error.getUserMessage());
-                }
-            }
-        });
+        viewModel.closeRoom(roomId);
     }
 
     // ------------------------------------------------------------------ thông báo
 
     private void composeWithAi() {
-        binding.progress.setVisibility(View.VISIBLE);
-        OrganizerAiDtos.AnnouncementRequest request = new OrganizerAiDtos.AnnouncementRequest();
-        request.eventId = eventId;
-        request.eventTitle = eventTitle;
-        request.topic = getString(R.string.org_crowd_title);
-        request.audience = getString(R.string.org_crowd_audience);
-        request.tone = "friendly";
-        request.length = "short";
-        request.variants = 1;
-        request.keyPoints.add(status == null || status.warning == null
-                ? getString(R.string.org_crowd_occupancy) : status.warning);
-        CrowdDtos.OverflowRoom room = status == null ? null : status.suggestedRoom;
-        if (room != null) {
-            request.keyPoints.add(room.roomName + " · "
-                    + getString(R.string.org_crowd_room_capacity, OrgFormat.count(room.capacity)));
-        }
-
-        repository.announce(request, new ApiCallback<OrganizerAiDtos.AnnouncementResponse>() {
-            @Override
-            public void onSuccess(@Nullable OrganizerAiDtos.AnnouncementResponse data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                binding.progress.setVisibility(View.GONE);
-                if (binding == null || data == null || data.variants.isEmpty()) {
-                    snack(getString(R.string.org_crowd_ai_failed));
-                    return;
-                }
-                String text = data.variants.get(0).text;
-                if (text == null || text.trim().isEmpty()) {
-                    snack(getString(R.string.org_crowd_ai_failed));
-                    return;
-                }
-                binding.etTitle.setText(getString(R.string.org_crowd_title_fmt,
-                        room == null ? eventTitle : room.roomName));
-                binding.etBody.setText(text.trim());
-                composedByAi = true;
-                snack(getString(R.string.org_crowd_ai_filled));
-            }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                binding.progress.setVisibility(View.GONE);
-                snack(getString(R.string.org_crowd_ai_failed));
-            }
-        });
+        CrowdStatusUiModel status = viewModel.getStatus().getValue();
+        String capacityLabel = status == null || status.suggestedRoom == null ? null
+                : getString(R.string.org_crowd_room_capacity,
+                OrgFormat.count(status.suggestedRoom.capacity));
+        viewModel.composeWithAi(
+                getString(R.string.org_crowd_title),
+                getString(R.string.org_crowd_audience),
+                getString(R.string.org_crowd_occupancy),
+                capacityLabel);
     }
 
     private void send() {
@@ -389,66 +345,31 @@ public class OrgCrowdActivity extends AppCompatActivity {
             snack(getString(R.string.org_crowd_body_required));
             return;
         }
-        binding.progress.setVisibility(View.VISIBLE);
-        binding.btnSend.setEnabled(false);
-
-        CrowdDtos.SendNotificationRequest request = new CrowdDtos.SendNotificationRequest(
-                title, body, AUDIENCE_NOT_CHECKED_IN, composedByAi ? SOURCE_AI : SOURCE_MANUAL);
-        repository.sendNotification(eventId, request,
-                new ApiCallback<CrowdDtos.SendNotificationResponse>() {
-                    @Override
-                    public void onSuccess(@Nullable CrowdDtos.SendNotificationResponse data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        binding.progress.setVisibility(View.GONE);
-                        if (binding == null) {
-                            return;
-                        }
-                        int count = data == null ? 0 : data.recipientCount;
-                        snack(getString(R.string.org_crowd_sent, count));
-                        binding.etTitle.setText("");
-                        binding.etBody.setText("");
-                        composedByAi = false;
-                        loadHistory();
-                        loadStatus();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        binding.progress.setVisibility(View.GONE);
-                        binding.btnSend.setEnabled(true);
-                        snack(error.getUserMessage());
-                    }
-                });
+        viewModel.send(title, body, composedByAi);
     }
 
     // ------------------------------------------------------------------ tiện ích
 
-    private String levelLabel(String level) {
-        if (level == null) {
-            return getString(R.string.org_crowd_level_normal);
-        }
+    private String levelLabel(CrowdStatusUiModel.Level level) {
         switch (level) {
-            case "FULL":
+            case FULL:
                 return getString(R.string.org_crowd_level_full);
-            case "CROWDED":
+            case CROWDED:
                 return getString(R.string.org_crowd_level_crowded);
-            case "WATCH":
+            case WATCH:
                 return getString(R.string.org_crowd_level_watch);
             default:
                 return getString(R.string.org_crowd_level_normal);
         }
     }
 
-    private int levelTone(String level) {
-        if (level == null) {
-            return OrgTone.SUCCESS;
-        }
+    private int levelTone(CrowdStatusUiModel.Level level) {
         switch (level) {
-            case "FULL":
+            case FULL:
                 return OrgTone.DANGER;
-            case "CROWDED":
+            case CROWDED:
                 return OrgTone.WARNING;
-            case "WATCH":
+            case WATCH:
                 return OrgTone.INFO;
             default:
                 return OrgTone.SUCCESS;

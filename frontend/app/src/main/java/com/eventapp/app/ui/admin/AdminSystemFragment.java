@@ -12,23 +12,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.data.remote.dto.integration.IntegrationDtos;
-import com.eventapp.app.data.repository.SystemConfigRepository;
 import com.eventapp.app.databinding.FragmentAdminSystemBinding;
+import com.eventapp.app.ui.admin.viewmodel.AdminSystemViewModel;
 import com.eventapp.app.ui.auth.AuthActivity;
+import com.eventapp.app.ui.model.AdminSystemUiModel;
 import com.eventapp.app.ui.host.AdminHostActivity;
-
-import java.util.List;
 
 /** Tab Hệ thống: tài khoản quản trị, tích hợp, thông báo và nhật ký thao tác. */
 public class AdminSystemFragment extends Fragment {
 
     private FragmentAdminSystemBinding binding;
+    private AdminSystemViewModel viewModel;
 
     @Nullable
     @Override
@@ -53,65 +50,43 @@ public class AdminSystemFragment extends Fragment {
             startActivity(intent);
         });
 
-        loadHealth();
+        viewModel = new ViewModelProvider(this).get(AdminSystemViewModel.class);
+        observe();
+        viewModel.loadHealth();
     }
 
-    private void loadHealth() {
-        ServiceLocator.get(SystemConfigRepository.class).health(
-                new ApiCallback<List<IntegrationDtos.Health>>() {
-                    @Override
-                    public void onSuccess(@Nullable List<IntegrationDtos.Health> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || data == null) {
-                            return;
-                        }
-                        for (IntegrationDtos.Health item : data) {
-                            bindHealth(item);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding == null) {
-                            return;
-                        }
-                        bindUnknown(binding.tvVietqrState, binding.dotVietqr);
-                        bindUnknown(binding.tvFcmState, binding.dotFcm);
-                        bindUnknown(binding.tvAiState, binding.dotAi);
-                    }
-                });
+    private void observe() {
+        viewModel.getHealth().observe(getViewLifecycleOwner(), data -> {
+            if (binding == null) {
+                return;
+            }
+            if (data == null) {
+                bindUnknown(binding.tvVietqrState, binding.dotVietqr);
+                bindUnknown(binding.tvFcmState, binding.dotFcm);
+                bindUnknown(binding.tvAiState, binding.dotAi);
+                return;
+            }
+            bindHealth(data);
+        });
     }
 
-    private void bindHealth(IntegrationDtos.Health item) {
-        if (item == null || item.name == null) {
-            return;
-        }
-        switch (item.name) {
-            case "PAYMENT":
-                bindRow(binding.tvVietqrState, binding.dotVietqr, item.status);
-                break;
-            case "FCM":
-                bindRow(binding.tvFcmState, binding.dotFcm, item.status);
-                break;
-            case "AI":
-                bindRow(binding.tvAiState, binding.dotAi, item.status);
-                break;
-            default:
-                break;
-        }
+    private void bindHealth(AdminSystemUiModel item) {
+        bindRow(binding.tvVietqrState, binding.dotVietqr, item.paymentStatus);
+        bindRow(binding.tvFcmState, binding.dotFcm, item.fcmStatus);
+        bindRow(binding.tvAiState, binding.dotAi, item.aiStatus);
     }
 
-    private void bindRow(TextView label, View dot, String status) {
+    private void bindRow(TextView label, View dot, AdminSystemUiModel.Status status) {
         label.setText(statusLabel(status));
         int color;
-        switch (status == null ? "" : status) {
-            case "HEALTHY":
+        switch (status) {
+            case HEALTHY:
                 color = R.color.admin_success_text;
                 break;
-            case "DEGRADED":
+            case DEGRADED:
                 color = R.color.admin_warning_text;
                 break;
-            case "DOWN":
+            case DOWN:
                 color = R.color.admin_danger_text;
                 break;
             default:
@@ -124,16 +99,16 @@ public class AdminSystemFragment extends Fragment {
     }
 
     private void bindUnknown(TextView label, View dot) {
-        bindRow(label, dot, "UNKNOWN");
+        bindRow(label, dot, AdminSystemUiModel.Status.UNKNOWN);
     }
 
-    private String statusLabel(String status) {
-        switch (status == null ? "" : status) {
-            case "HEALTHY":
+    private String statusLabel(AdminSystemUiModel.Status status) {
+        switch (status) {
+            case HEALTHY:
                 return getString(R.string.admin_sys_state_healthy);
-            case "DEGRADED":
+            case DEGRADED:
                 return getString(R.string.admin_sys_state_degraded);
-            case "DOWN":
+            case DOWN:
                 return getString(R.string.admin_sys_state_down);
             default:
                 return getString(R.string.admin_sys_state_unknown);

@@ -29,6 +29,8 @@ public class ReviewUiModel {
     public final long createdAt;
     public final long editedAt;
     public final int editCount;
+    public final boolean canEdit;
+    public final long editDaysLeft;
     public final Status status;
     public final Source source;
     public final boolean mine;
@@ -49,6 +51,8 @@ public class ReviewUiModel {
         createdAt = builder.createdAt;
         editedAt = builder.editedAt;
         editCount = builder.editCount;
+        canEdit = builder.canEdit;
+        editDaysLeft = builder.editDaysLeft;
         status = builder.status;
         source = builder.source;
         mine = builder.mine;
@@ -70,6 +74,8 @@ public class ReviewUiModel {
         private long createdAt = System.currentTimeMillis();
         private long editedAt;
         private int editCount;
+        private boolean canEdit;
+        private long editDaysLeft;
         private Status status = Status.VISIBLE;
         private Source source = Source.USER;
         private boolean mine;
@@ -126,6 +132,16 @@ public class ReviewUiModel {
 
         public Builder editCount(int editCount) {
             this.editCount = editCount;
+            return this;
+        }
+
+        public Builder canEdit(boolean canEdit) {
+            this.canEdit = canEdit;
+            return this;
+        }
+
+        public Builder editDaysLeft(long editDaysLeft) {
+            this.editDaysLeft = editDaysLeft;
             return this;
         }
 

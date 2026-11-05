@@ -17,75 +17,43 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.core.network.Paged;
 import com.eventapp.app.core.session.SessionManager;
-import com.eventapp.app.data.remote.dto.catalog.CatalogDtos;
-import com.eventapp.app.data.remote.dto.discovery.DiscoveryDtos;
-import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
-import com.eventapp.app.data.repository.CategoryRepository;
-import com.eventapp.app.data.repository.EventRepository;
-import com.eventapp.app.data.repository.FavoriteRepository;
+import com.eventapp.app.ui.model.CategoryNodeUiModel;
 import com.eventapp.app.databinding.FragmentUserDiscoveryBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
-import com.eventapp.app.ui.mapper.EventMapper;
 import com.eventapp.app.ui.model.EventUiModel;
 import com.eventapp.app.ui.user.adapter.EventAdapter;
 import com.eventapp.app.ui.user.model.UserFilters;
+import com.eventapp.app.ui.user.viewmodel.DiscoveryViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /** Tab Khám phá: tìm kiếm, bộ lọc nâng cao, sự kiện nổi bật và danh sách sắp diễn ra. */
 public class DiscoveryFragment extends Fragment {
 
-    private static final int PAGE_SIZE = 20;
     private static final long SEARCH_DEBOUNCE_MS = 320L;
 
     private FragmentUserDiscoveryBinding binding;
     private EventAdapter featuredAdapter;
     private EventAdapter listAdapter;
 
-    private final List<CatalogDtos.CategoryNode> categories = new ArrayList<>();
+    private DiscoveryViewModel viewModel;
+    private final List<CategoryNodeUiModel> categories = new ArrayList<>();
     private final List<String> cities = new ArrayList<>();
-    private final List<EventUiModel> items = new ArrayList<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final UserFilters filters = new UserFilters();
 
     private String query = "";
-    private int page;
-    private boolean loading;
-    private boolean hasNext;
     private boolean firstResume = true;
     private Runnable pendingSearch;
-    private final Set<Long> favoriteRequests = new HashSet<>();
-    private final FavoriteRepository.FavoriteListener favoriteListener =
-            (eventId, favorite) -> {
-                if (binding == null) {
-                    return;
-                }
-                boolean changed = false;
-                for (EventUiModel event : items) {
-                    if (event.id == eventId && event.favorite != favorite) {
-                        event.favorite = favorite;
-                        changed = true;
-                    }
-                }
-                if (changed) {
-                    listAdapter.notifyDataSetChanged();
-                    featuredAdapter.notifyDataSetChanged();
-                }
-            };
 
     @Nullable
     @Override
@@ -121,8 +89,8 @@ public class DiscoveryFragment extends Fragment {
         binding.rvEvents.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvEvents.setAdapter(listAdapter);
 
-        // Đồng bộ trạng thái tim khi thay đổi từ màn chi tiết hoặc tab Đã lưu.
-        ServiceLocator.get(FavoriteRepository.class).addListener(favoriteListener);
+        viewModel = new ViewModelProvider(this).get(DiscoveryViewModel.class);
+        observe();
 
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -149,18 +117,20 @@ public class DiscoveryFragment extends Fragment {
                 (androidx.core.widget.NestedScrollView.OnScrollChangeListener)
                         (v, x, scrollY, oldX, oldY) -> {
                             View child = binding.scroll.getChildAt(0);
-                            if (child == null || !hasNext || loading) {
+                            if (child == null
+                                    || Boolean.TRUE.equals(viewModel.getLoading().getValue())
+                                    || !Boolean.TRUE.equals(viewModel.getHasNext().getValue())) {
                                 return;
                             }
                             if (scrollY >= child.getMeasuredHeight()
                                     - binding.scroll.getMeasuredHeight() - dp(320)) {
-                                loadPage(page + 1, false);
+                                viewModel.loadNextPage();
                             }
                         });
 
-        loadCategories();
-        loadCities();
-        loadPage(0, true);
+        viewModel.loadCategories();
+        viewModel.loadCities();
+        viewModel.search(filters, query);
     }
 
     @Override
@@ -170,59 +140,55 @@ public class DiscoveryFragment extends Fragment {
         if (firstResume) {
             firstResume = false;
         } else if (binding != null) {
-            loadCategories();
+            viewModel.loadCategories();
         }
     }
 
-    // ------------------------------------------------------------- categories
-
-    private void loadCategories() {
-        ServiceLocator.get(CategoryRepository.class).tree(
-                new ApiCallback<List<CatalogDtos.CategoryNode>>() {
-                    @Override
-                    public void onSuccess(@Nullable List<CatalogDtos.CategoryNode> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || data == null) {
-                            return;
-                        }
-                        categories.clear();
-                        categories.addAll(data);
-                        if (filters.categoryId != null && !containsCategory(filters.categoryId)) {
-                            filters.categoryId = null;
-                        }
-                        buildChips();
-                        renderAppliedFilters();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        // Danh mục lỗi không chặn danh sách sự kiện — chỉ còn chip "Tất cả".
-                        buildChips();
-                    }
-                });
-    }
-
-    private void loadCities() {
-        ServiceLocator.get(EventRepository.class).cities(new ApiCallback<List<String>>() {
-            @Override
-            public void onSuccess(@Nullable List<String> data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                if (data == null) {
-                    return;
-                }
-                cities.clear();
-                cities.addAll(data);
+    private void observe() {
+        viewModel.getCategories().observe(getViewLifecycleOwner(), data -> {
+            if (binding == null) {
+                return;
             }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                // Không có danh sách thành phố thì bộ lọc địa điểm chỉ hiện «Toàn quốc».
+            categories.clear();
+            categories.addAll(data);
+            if (filters.categoryId != null && !containsCategory(filters.categoryId)) {
+                filters.categoryId = null;
             }
+            buildChips();
+            renderAppliedFilters();
+        });
+        viewModel.getCities().observe(getViewLifecycleOwner(), data -> {
+            cities.clear();
+            cities.addAll(data);
+        });
+        viewModel.getEvents().observe(getViewLifecycleOwner(), data -> render());
+        viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
+            if (binding == null) {
+                return;
+            }
+            boolean empty = viewModel.getEvents().getValue() == null
+                    || viewModel.getEvents().getValue().isEmpty();
+            binding.progress.setVisibility(Boolean.TRUE.equals(loading) && empty
+                    ? View.VISIBLE : View.GONE);
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (binding == null || error == null) {
+                return;
+            }
+            binding.tvError.setText(error.getUserMessage());
+            binding.tvError.setVisibility(View.VISIBLE);
+        });
+        viewModel.getFavoriteError().observe(getViewLifecycleOwner(), error -> {
+            if (binding == null || error == null) {
+                return;
+            }
+            viewModel.consumeFavoriteError();
+            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(112));
         });
     }
 
     private boolean containsCategory(long id) {
-        for (CatalogDtos.CategoryNode node : categories) {
+        for (CategoryNodeUiModel node : categories) {
             if (node.id == id) {
                 return true;
             }
@@ -233,7 +199,7 @@ public class DiscoveryFragment extends Fragment {
     private void buildChips() {
         binding.chipRow.removeAllViews();
         addChip(getString(R.string.user_cat_all), null, false);
-        for (CatalogDtos.CategoryNode node : categories) {
+        for (CategoryNodeUiModel node : categories) {
             addChip(node.name, node.id, false);
         }
         addChip(getString(R.string.user_cat_free), null, true);
@@ -251,7 +217,7 @@ public class DiscoveryFragment extends Fragment {
             filters.priceMax = null;
             buildChips();
             renderAppliedFilters();
-            loadPage(0, true);
+            refresh();
         });
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, dp(36));
@@ -277,7 +243,7 @@ public class DiscoveryFragment extends Fragment {
             copyInto(filters, applied);
             buildChips();
             renderAppliedFilters();
-            loadPage(0, true);
+            refresh();
         });
         sheet.show();
     }
@@ -354,7 +320,7 @@ public class DiscoveryFragment extends Fragment {
             onRemove.run();
             buildChips();
             renderAppliedFilters();
-            loadPage(0, true);
+            refresh();
         });
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -400,7 +366,7 @@ public class DiscoveryFragment extends Fragment {
     }
 
     private String categoryName(long id) {
-        for (CatalogDtos.CategoryNode node : categories) {
+        for (CategoryNodeUiModel node : categories) {
             if (node.id == id) {
                 return node.name;
             }
@@ -414,7 +380,7 @@ public class DiscoveryFragment extends Fragment {
         binding.etSearch.setText("");
         buildChips();
         renderAppliedFilters();
-        loadPage(0, true);
+        refresh();
     }
 
     // ----------------------------------------------------------------- search
@@ -423,79 +389,26 @@ public class DiscoveryFragment extends Fragment {
         if (pendingSearch != null) {
             handler.removeCallbacks(pendingSearch);
         }
-        pendingSearch = () -> loadPage(0, true);
+        pendingSearch = () -> refresh();
         handler.postDelayed(pendingSearch, SEARCH_DEBOUNCE_MS);
     }
 
-    private void loadPage(int targetPage, boolean replace) {
-        if (binding == null || loading) {
+    private void refresh() {
+        if (binding == null) {
             return;
         }
-        loading = true;
-        binding.progress.setVisibility(replace ? View.VISIBLE : View.GONE);
         binding.tvError.setVisibility(View.GONE);
-
-        EventRepository.SearchQuery request = new EventRepository.SearchQuery();
-        request.q = query.isEmpty() ? null : query;
-        request.categoryIds = filters.categoryId == null
-                ? null : java.util.Collections.singletonList(filters.categoryId);
-        request.dateFrom = filters.dateFrom;
-        request.dateTo = filters.dateTo;
-        request.city = filters.city;
-        request.priceType = filters.priceType;
-        request.priceMin = filters.priceMin;
-        request.priceMax = filters.priceMax;
-        request.sort = filters.sort == null
-                ? (query.isEmpty() ? UserFilters.SORT_UPCOMING : UserFilters.SORT_RELEVANCE)
-                : filters.sort;
-        request.page = targetPage;
-        request.size = PAGE_SIZE;
-
-        ServiceLocator.get(EventRepository.class).search(request,
-                new ApiCallback<Paged<DiscoveryDtos.EventCard>>() {
-                    @Override
-                    public void onSuccess(@Nullable Paged<DiscoveryDtos.EventCard> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null) {
-                            return;
-                        }
-                        loading = false;
-                        binding.progress.setVisibility(View.GONE);
-
-                        List<EventUiModel> mapped = new ArrayList<>();
-                        if (data != null) {
-                            for (DiscoveryDtos.EventCard card : data.items) {
-                                mapped.add(EventMapper.fromCard(card));
-                            }
-                        }
-                        if (replace) {
-                            items.clear();
-                            page = 0;
-                        }
-                        items.addAll(mapped);
-                        page = targetPage;
-                        hasNext = data != null && data.hasNext();
-                        render(replace);
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding == null) {
-                            return;
-                        }
-                        loading = false;
-                        binding.progress.setVisibility(View.GONE);
-                        binding.tvError.setText(error.getUserMessage());
-                        binding.tvError.setVisibility(View.VISIBLE);
-                        if (replace) {
-                            items.clear();
-                            render(true);
-                        }
-                    }
-                });
+        viewModel.search(filters, query);
     }
 
-    private void render(boolean resetFeatured) {
+    private void render() {
+        if (binding == null) {
+            return;
+        }
+        List<EventUiModel> items = viewModel.getEvents().getValue();
+        if (items == null) {
+            items = new ArrayList<>();
+        }
         listAdapter.setItems(items);
         boolean empty = items.isEmpty();
         binding.emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
@@ -503,7 +416,7 @@ public class DiscoveryFragment extends Fragment {
 
         boolean simpleView = !filters.hasAny() && query.isEmpty();
         binding.featuredSection.setVisibility(simpleView ? View.VISIBLE : View.GONE);
-        if (simpleView && resetFeatured) {
+        if (simpleView) {
             List<EventUiModel> featured = new ArrayList<>();
             for (EventUiModel event : items) {
                 if (featured.size() >= 4) {
@@ -516,49 +429,11 @@ public class DiscoveryFragment extends Fragment {
     }
 
     private void toggleFavorite(EventUiModel event) {
-        if (!favoriteRequests.add(event.id)) {
-            return;
-        }
-        final boolean target = !event.favorite;
-        // Đổi icon ngay, không đợi mạng — tránh cảm giác bấm tim bị chậm.
-        event.favorite = target;
-        listAdapter.notifyDataSetChanged();
-        featuredAdapter.notifyDataSetChanged();
+        boolean target = !event.favorite;
+        // ViewModel cập nhật lạc quan và tự hoàn tác nếu server từ chối.
+        viewModel.toggleFavorite(event);
         SnackPill.show(binding.getRoot(), getString(
                 target ? R.string.user_saved_toast : R.string.user_unsaved_toast), dp(112));
-
-        FavoriteRepository repository = ServiceLocator.get(FavoriteRepository.class);
-        ApiCallback<FavoriteDtos.ToggleResult> callback = new ApiCallback<FavoriteDtos.ToggleResult>() {
-            @Override
-            public void onSuccess(@Nullable FavoriteDtos.ToggleResult data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                favoriteRequests.remove(event.id);
-                if (binding == null || data == null) {
-                    return;
-                }
-                event.favorite = data.isFavorite;
-                listAdapter.notifyDataSetChanged();
-                featuredAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                favoriteRequests.remove(event.id);
-                if (binding == null) {
-                    return;
-                }
-                // Trả icon về trạng thái trước đó nếu server từ chối.
-                event.favorite = !target;
-                listAdapter.notifyDataSetChanged();
-                featuredAdapter.notifyDataSetChanged();
-                SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(112));
-            }
-        };
-        if (target) {
-            repository.add(event.id, callback);
-        } else {
-            repository.remove(event.id, callback);
-        }
     }
 
     private String greeting() {
@@ -587,8 +462,6 @@ public class DiscoveryFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        ServiceLocator.get(FavoriteRepository.class).removeListener(favoriteListener);
-        favoriteRequests.clear();
         if (pendingSearch != null) {
             handler.removeCallbacks(pendingSearch);
         }

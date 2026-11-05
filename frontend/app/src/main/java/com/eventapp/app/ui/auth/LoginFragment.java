@@ -12,10 +12,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
 import com.eventapp.app.core.session.AuthSession;
-import com.eventapp.app.data.remote.dto.auth.DevAccountDto;
 import com.eventapp.app.databinding.FragmentAuthLoginBinding;
 import com.eventapp.app.databinding.ItemAuthAccountBinding;
+import com.eventapp.app.ui.auth.viewmodel.LoginViewModel;
 import com.eventapp.app.ui.host.SessionRouter;
+import com.eventapp.app.ui.model.DevAccountUiModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,11 +80,11 @@ public class LoginFragment extends Fragment {
     }
 
     private boolean isEmptyAccounts() {
-        List<DevAccountDto> accounts = viewModel.getAccounts().getValue();
+        List<DevAccountUiModel> accounts = viewModel.getAccounts().getValue();
         return accounts == null || accounts.isEmpty();
     }
 
-    private void render(List<DevAccountDto> accounts) {
+    private void render(List<DevAccountUiModel> accounts) {
         if (binding == null) {
             return;
         }
@@ -100,10 +101,10 @@ public class LoginFragment extends Fragment {
         }
 
         LayoutInflater inflater = LayoutInflater.from(requireContext());
-        for (DevAccountDto account : accounts) {
+        for (DevAccountUiModel account : accounts) {
             ItemAuthAccountBinding row = ItemAuthAccountBinding.inflate(
                     inflater, binding.accountList, false);
-            row.tvName.setText(account.fullName == null ? account.email : account.fullName);
+            row.tvName.setText(account.fullName.isEmpty() ? account.email : account.fullName);
             row.tvEmail.setText(account.email);
             String role = primaryRole(account.roles);
             row.tvRole.setText(role);

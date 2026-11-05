@@ -15,8 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
-import com.eventapp.app.core.util.DateTimeUtils;
-import com.eventapp.app.data.remote.dto.notification.NotificationResponse;
+import com.eventapp.app.ui.model.NotificationUiModel;
 import com.eventapp.app.databinding.ActivityUserNotificationsBinding;
 import com.eventapp.app.ui.user.adapter.NotificationAdapter;
 import com.eventapp.app.ui.user.model.DemoNotification;
@@ -84,14 +83,14 @@ public class NotificationsActivity extends AppCompatActivity {
         });
     }
 
-    private void bind(List<NotificationResponse> data) {
+    private void bind(List<NotificationUiModel> data) {
         List<DemoNotification> items = new ArrayList<>(data.size());
-        for (NotificationResponse item : data) {
+        for (NotificationUiModel item : data) {
             items.add(new DemoNotification(
                     String.valueOf(item.id),
-                    item.title == null ? "" : item.title,
-                    item.body == null ? "" : item.body,
-                    DateTimeUtils.toMillis(item.sentAt),
+                    item.title,
+                    item.body,
+                    item.sentAtMillis,
                     R.drawable.ic_user_bell,
                     R.color.user_primary_soft,
                     R.color.user_primary,

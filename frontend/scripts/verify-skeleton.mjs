@@ -3,12 +3,12 @@
  * verify-skeleton.mjs — Kiểm tra tính nhất quán của khung trước khi commit.
  *
  * Kiểm tra:
- *  1. Mọi file XML hợp lệ (dùng parser XML của PowerShell).
+ *  1. Mọi file XML hợp lệ (parser cân bằng thẻ thuần Node).
  *  2. id trong menu_bottom trùng id đích trong nav graph tương ứng.
  *  3. android:name của mỗi <fragment> trong nav graph trỏ đúng file .java.
  *  4. tools:layout của mỗi <fragment> trỏ đúng file layout.
  *  5. Layout trùng tên, nav id trùng nhau.
- *  6. Đủ 23 Api, 23 Repository, số DTO theo kế hoạch.
+ *  6. Đủ 24 Api, 20 Repository, 101 DTO / 32 package DTO theo kế hoạch.
  *  7. Manifest trỏ đúng Activity/Service/Application/Theme đã khai báo.
  *  8. Không còn placeholder Google (TODO giả) và không có file BOM.
  *
@@ -177,15 +177,16 @@ const dtoDirs = readdirSync(join(JAVA, 'data', 'remote', 'dto'));
 let dtoCount = 0;
 for (const d of dtoDirs) dtoCount += readdirSync(join(JAVA, 'data', 'remote', 'dto', d)).filter((f) => f.endsWith('.java')).length;
 
-if (apis.length !== 23) fail(`Cần 23 Api, tìm thấy ${apis.length}`);
-else ok('23/23 Retrofit Api');
-/* 23 Repository theo module + DeviceTokenRepository (FCM) = 24 */
-if (repos.length !== 24) fail(`Cần 24 Repository, tìm thấy ${repos.length}`);
-else ok('24/24 Repository');
-/* 95 DTO theo module backend + NotificationPayload (FCM) = 96 */
-if (dtoCount !== 96) fail(`Cần 96 DTO, tìm thấy ${dtoCount}`);
-else ok('96/96 DTO');
-if (dtoDirs.length !== 23) fail(`Cần 23 package DTO, tìm thấy ${dtoDirs.length}`);
+if (apis.length !== 24) fail(`Cần 24 Api, tìm thấy ${apis.length}`);
+else ok('24/24 Retrofit Api');
+/* 20 Repository: 10 module chính + các repository phụ trợ. */
+if (repos.length !== 20) fail(`Cần 20 Repository, tìm thấy ${repos.length}`);
+else ok('20/20 Repository');
+/* 101 DTO trải trên 32 package theo module backend + FCM. */
+if (dtoCount !== 101) fail(`Cần 101 DTO, tìm thấy ${dtoCount}`);
+else ok('101/101 DTO');
+if (dtoDirs.length !== 32) fail(`Cần 32 package DTO, tìm thấy ${dtoDirs.length}`);
+else ok('32/32 package DTO');
 
 /* ---- 6b. Quy ước phụ thuộc giữa các tầng ----------------------------- */
 function importsIn(dir) {
@@ -220,10 +221,26 @@ for (const sub of ['common', 'model']) {
   }
 }
 
+// ui/: chỉ ViewModel được dùng repository; screen không được biết DTO.
+// Ngoại lệ có chủ đích: ui/mapper và các util mapper chuyển DTO → UI model.
+for (const { f, imp } of importsIn(join(JAVA, 'ui'))) {
+  const path = f.replaceAll('\\', '/');
+  const inViewModel = /\/ui\/[^/]+\/viewmodel\//.test(path);
+  const dtoAllowed = inViewModel
+      || /\/ui\/mapper\//.test(path)
+      || /\/ui\/[^/]+\/util\/[^/]*Mapper\.java$/.test(path);
+  if (imp.startsWith(`${PKG}.data.repository`) && !inViewModel) {
+    violations.push(`${rel(f)}: chỉ ViewModel được import ${imp}`);
+  }
+  if (imp.startsWith(`${PKG}.data.remote.dto`) && !dtoAllowed) {
+    violations.push(`${rel(f)}: UI screen không được import ${imp}`);
+  }
+}
+
 if (violations.length) {
   for (const v of violations) fail('Vi phạm phụ thuộc tầng — ' + v);
 } else {
-  ok('Quy ước phụ thuộc tầng: core ← data ← ui, ui/common & ui/model độc lập với feature');
+  ok('Quy ước phụ thuộc tầng: core ← data ← ViewModel ← ui; screen không dùng Repository/DTO');
 }
 
 // Tên class Api / Repository phải PascalCase

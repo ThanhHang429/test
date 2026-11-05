@@ -14,19 +14,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.data.remote.dto.organizer.OrganizerEventDtos;
-import com.eventapp.app.data.repository.OrganizerRepository;
 import com.eventapp.app.databinding.FragmentOrgEventsBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.organizer.adapter.OrgEventAdapter;
 import com.eventapp.app.ui.organizer.model.OrgEvent;
-import com.eventapp.app.ui.organizer.util.OrgEventMapper;
+import com.eventapp.app.ui.organizer.viewmodel.OrgEventsViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -36,18 +32,15 @@ import java.util.Locale;
 /** Tab Sự kiện: tải danh sách từ FR-O02, lọc trạng thái và mở chi tiết. */
 public class OrgEventsFragment extends Fragment implements OrgEventAdapter.Listener {
 
-    private static final int PAGE_SIZE = 50;
     private static final long SEARCH_DEBOUNCE_MS = 280L;
 
     private FragmentOrgEventsBinding binding;
     private OrgEventAdapter adapter;
+    private OrgEventsViewModel viewModel;
     private final List<TextView> chips = new ArrayList<>();
-    private final List<OrgEvent> items = new ArrayList<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    private String filter = OrgEvent.FILTER_ALL;
-    private String query = "";
-    private int requestId;
+    private String pendingQuery = "";
     private Runnable pendingSearch;
 
     @Nullable
@@ -95,92 +88,63 @@ public class OrgEventsFragment extends Fragment implements OrgEventAdapter.Liste
 
             @Override
             public void afterTextChanged(Editable s) {
-                query = s == null ? "" : s.toString().trim().toLowerCase(Locale.ROOT);
+                pendingQuery = s == null ? "" : s.toString().trim().toLowerCase(Locale.ROOT);
                 scheduleRender();
             }
         });
 
+        viewModel = new ViewModelProvider(this).get(OrgEventsViewModel.class);
+        observe();
         selectFilter(OrgEvent.FILTER_ALL);
     }
 
+    private void observe() {
+        viewModel.getEvents().observe(getViewLifecycleOwner(), this::render);
+        viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
+            if (binding == null) {
+                return;
+            }
+            boolean busy = Boolean.TRUE.equals(loading);
+            binding.progress.setVisibility(busy ? View.VISIBLE : View.GONE);
+            if (busy) {
+                binding.tvEventsEmpty.setVisibility(View.GONE);
+            }
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            Snackbar.make(binding.getRoot(), error.getUserMessage(),
+                    Snackbar.LENGTH_LONG).show();
+        });
+    }
+
     private void selectFilter(String value) {
-        filter = value;
         chips.get(0).setSelected(OrgEvent.FILTER_ALL.equals(value));
         chips.get(1).setSelected(OrgEvent.FILTER_ON_SALE.equals(value));
         chips.get(2).setSelected(OrgEvent.FILTER_PENDING.equals(value));
         chips.get(3).setSelected(OrgEvent.FILTER_DRAFT.equals(value));
         chips.get(4).setSelected(OrgEvent.FILTER_ENDED.equals(value));
-        load();
-    }
-
-    private void load() {
-        if (binding == null) {
-            return;
-        }
-        final int token = ++requestId;
-        binding.progress.setVisibility(View.VISIBLE);
-        binding.tvEventsEmpty.setVisibility(View.GONE);
-
-        ServiceLocator.get(OrganizerRepository.class).events(filter, 0, PAGE_SIZE,
-                new ApiCallback<List<OrganizerEventDtos.Event>>() {
-                    @Override
-                    public void onSuccess(@Nullable List<OrganizerEventDtos.Event> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || token != requestId) {
-                            return;
-                        }
-                        binding.progress.setVisibility(View.GONE);
-                        items.clear();
-                        if (data != null) {
-                            for (OrganizerEventDtos.Event dto : data) {
-                                items.add(OrgEventMapper.from(dto));
-                            }
-                        }
-                        render();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding == null || token != requestId) {
-                            return;
-                        }
-                        binding.progress.setVisibility(View.GONE);
-                        items.clear();
-                        render();
-                        Snackbar.make(binding.getRoot(), error.getUserMessage(),
-                                Snackbar.LENGTH_LONG).show();
-                    }
-                });
+        viewModel.selectFilter(value);
     }
 
     private void scheduleRender() {
         if (pendingSearch != null) {
             handler.removeCallbacks(pendingSearch);
         }
-        pendingSearch = this::render;
+        pendingSearch = () -> viewModel.setQuery(pendingQuery);
         handler.postDelayed(pendingSearch, SEARCH_DEBOUNCE_MS);
     }
 
-    private void render() {
+    private void render(List<OrgEvent> events) {
         if (binding == null) {
             return;
         }
-        List<OrgEvent> result = new ArrayList<>();
-        for (OrgEvent event : items) {
-            if (query.isEmpty() || matches(event)) {
-                result.add(event);
-            }
-        }
+        List<OrgEvent> result = events == null ? new ArrayList<>() : events;
         adapter.submit(result);
         binding.tvEventsEmpty.setVisibility(result.isEmpty() ? View.VISIBLE : View.GONE);
         binding.tvEventsSub.setText(getString(R.string.org_events_count, result.size()));
-    }
-
-    private boolean matches(OrgEvent event) {
-        return event.title.toLowerCase(Locale.ROOT).contains(query)
-                || event.code.toLowerCase(Locale.ROOT).contains(query)
-                || event.city.toLowerCase(Locale.ROOT).contains(query)
-                || event.venueName.toLowerCase(Locale.ROOT).contains(query);
     }
 
     @Override

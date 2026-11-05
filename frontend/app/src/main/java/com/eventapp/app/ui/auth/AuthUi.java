@@ -20,7 +20,7 @@ import com.eventapp.app.R;
 import com.eventapp.app.ui.common.view.SnackPill;
 
 /** Tiện ích dùng chung cho 4 màn xác thực. */
-final class AuthUi {
+public final class AuthUi {
 
     private AuthUi() {
     }

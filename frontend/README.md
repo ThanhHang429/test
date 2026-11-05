@@ -156,23 +156,29 @@ Fragment/Activity  →  ViewModel  →  Repository  →  Retrofit Api (remote)
 
 | Thư mục | Nội dung |
 |---|---|
-| `ui/user/` | 5 tab khu người dùng + adapter + dữ liệu mẫu |
-| `ui/auth/` | 4 màn xác thực + `AuthUi` (validate, strength, snack pill) |
-| `ui/organizer/` | 5 tab khu nhà tổ chức, chi tiết sự kiện/đơn, form tạo sự kiện, `OrgEventMapper` |
+| `ui/user/` | 5 tab khu người dùng, adapter và `viewmodel/` riêng từng màn |
+| `ui/auth/` | 4 màn xác thực + `AuthUi` (validate, strength, snack pill) + `viewmodel/` |
+| `ui/organizer/` | 5 tab khu nhà tổ chức, chi tiết sự kiện/đơn, form tạo sự kiện + `viewmodel/` |
+| `ui/admin/` | Màn quản trị danh mục, hệ thống và kiểm duyệt + `viewmodel/` |
+| `ui/*/viewmodel/` | ViewModel theo màn hình — nơi duy nhất gọi Repository, giữ trạng thái qua `LiveData` |
 | `ui/common/view/` | Design system dùng chung (`ds_*`), không phụ thuộc feature |
 | `ui/model/` | `*UiModel` dùng chung giữa nhiều feature |
-| `ui/mapper/` | Chuyển DTO → UiModel |
+| `ui/mapper/` | Chuyển DTO → UiModel (được phép biết DTO) |
 | `ui/host/` | Activity host của 3 vùng chức năng (`UserHostActivity`, `OrganizerHostActivity`, `AdminHostActivity`) |
 | `data/remote/` | Api (Retrofit) + DTO |
 | `data/repository/` | Repository — nơi duy nhất biết mạng và cache |
 | `data/local/` | Cache Room (`entity/`, `dao/`, `prefs/`) |
 | `data/model/` | Model nghiệp vụ dùng chung |
+| `data/di/` | `ServiceLocator` — composition root, nơi duy nhất khởi tạo Api/Repository |
 | `core/` | `common`, `enums`, `network`, `session`, `platform`, `util` |
 | `fcm/` | Entry point Firebase Cloud Messaging |
 
 Quy ước phụ thuộc (được `verify-skeleton.mjs` kiểm tra tự động):
 
-`ui → data → core` · `core` không import `data`/`ui` · `ui/common` và `ui/model` không import feature cụ thể.
+`Fragment/Activity → ViewModel → Repository → remote/local` · `core` không import `data`/`ui` ·
+`data` không import `ui` · `ui/common` và `ui/model` không import feature cụ thể ·
+chỉ ViewModel được import `data.repository` · screen không import `data.remote.dto`
+(ngoại lệ: `ui/mapper/` và các `util/*Mapper` chuyển DTO → UI model).
 
 Chi tiết đầy đủ: [`docs/00-overview.md`](docs/00-overview.md).
 

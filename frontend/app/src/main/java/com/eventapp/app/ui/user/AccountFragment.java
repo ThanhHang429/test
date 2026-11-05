@@ -13,31 +13,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.BuildConfig;
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.core.network.Paged;
 import com.eventapp.app.core.session.AuthSession;
 import com.eventapp.app.core.session.SessionManager;
-import com.eventapp.app.data.remote.dto.catalog.CatalogDtos;
-import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
-import com.eventapp.app.data.remote.dto.preference.PreferenceDtos;
-import com.eventapp.app.data.remote.dto.review.ReviewDtos;
-import com.eventapp.app.data.repository.CategoryRepository;
-import com.eventapp.app.data.repository.FavoriteRepository;
-import com.eventapp.app.data.repository.ReviewRepository;
-import com.eventapp.app.data.repository.UserRepository;
+import com.eventapp.app.ui.model.CategoryNodeUiModel;
 import com.eventapp.app.databinding.FragmentUserAccountBinding;
 import com.eventapp.app.ui.auth.AuthActivity;
 import com.eventapp.app.ui.common.AppDialog;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.user.data.DemoContent;
+import com.eventapp.app.ui.user.viewmodel.AccountViewModel;
+import com.eventapp.app.data.di.ServiceLocator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** Tab Tài khoản: hồ sơ, thống kê, sở thích, tuỳ chọn thông báo và đăng xuất. */
@@ -50,9 +41,7 @@ public class AccountFragment extends Fragment {
 
     private FragmentUserAccountBinding binding;
     private SharedPreferences prefs;
-    private PreferenceDtos.Preference preference;
-    private final List<CatalogDtos.CategoryNode> categories = new ArrayList<>();
-    private final List<Long> selectedCategories = new ArrayList<>();
+    private AccountViewModel viewModel;
 
     @Nullable
     @Override
@@ -88,9 +77,34 @@ public class AccountFragment extends Fragment {
         binding.rowTerms.setOnClickListener(v -> comingSoon());
         binding.btnLogout.setOnClickListener(v -> confirmLogout());
 
-        loadCategories();
-        loadPreference();
-        refreshStats();
+        binding.colReviews.setOnClickListener(v -> MyReviewsActivity.start(requireContext()));
+        binding.tvStatTickets.setText(String.valueOf(DemoContent.get().purchasedCount()));
+
+        viewModel = new ViewModelProvider(this).get(AccountViewModel.class);
+        observe();
+        viewModel.load();
+    }
+
+    private void observe() {
+        viewModel.getCategories().observe(getViewLifecycleOwner(), data -> buildChips());
+        viewModel.getSelectedCategories().observe(getViewLifecycleOwner(), data -> buildChips());
+        viewModel.getSavedCount().observe(getViewLifecycleOwner(), count -> {
+            if (binding != null) {
+                binding.tvStatSaved.setText(String.valueOf(count == null ? 0L : count));
+            }
+        });
+        viewModel.getReviewCount().observe(getViewLifecycleOwner(), count -> {
+            if (binding != null) {
+                binding.tvStatReviews.setText(String.valueOf(count == null ? 0L : count));
+            }
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(112));
+        });
     }
 
     private void bindProfile() {
@@ -106,64 +120,23 @@ public class AccountFragment extends Fragment {
 
     // ------------------------------------------------------------ preferences
 
-    private void loadCategories() {
-        ServiceLocator.get(CategoryRepository.class).tree(
-                new ApiCallback<List<CatalogDtos.CategoryNode>>() {
-                    @Override
-                    public void onSuccess(@Nullable List<CatalogDtos.CategoryNode> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || data == null) {
-                            return;
-                        }
-                        categories.clear();
-                        categories.addAll(data);
-                        buildChips();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        // Không có danh mục thì giữ khung sở thích trống.
-                    }
-                });
-    }
-
-    private void loadPreference() {
-        ServiceLocator.get(UserRepository.class).preferences(
-                new ApiCallback<PreferenceDtos.Preference>() {
-                    @Override
-                    public void onSuccess(@Nullable PreferenceDtos.Preference data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || data == null) {
-                            return;
-                        }
-                        preference = data;
-                        selectedCategories.clear();
-                        if (data.categoryIds != null) {
-                            selectedCategories.addAll(data.categoryIds);
-                        }
-                        buildChips();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding != null) {
-                            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(112));
-                        }
-                    }
-                });
-    }
-
     private void buildChips() {
-        if (binding == null) {
+        if (binding == null || viewModel == null) {
             return;
         }
+        List<CategoryNodeUiModel> categories = viewModel.getCategories().getValue();
+        List<Long> selected = viewModel.getSelectedCategories().getValue();
+
         binding.prefChipRow.removeAllViews();
-        for (CatalogDtos.CategoryNode node : categories) {
+        if (categories == null) {
+            return;
+        }
+        for (CategoryNodeUiModel node : categories) {
             TextView chip = new TextView(new ContextThemeWrapper(requireContext(),
                     R.style.Widget_EventApp_User_Chip));
             chip.setText(node.name);
-            chip.setSelected(selectedCategories.contains(node.id));
-            chip.setOnClickListener(v -> toggleCategory(node.id, chip));
+            chip.setSelected(selected != null && selected.contains(node.id));
+            chip.setOnClickListener(v -> toggleCategory(node.id));
             android.widget.LinearLayout.LayoutParams params =
                     new android.widget.LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT, dp(36));
@@ -172,99 +145,11 @@ public class AccountFragment extends Fragment {
         }
     }
 
-    private void toggleCategory(long categoryId, TextView chip) {
-        boolean nowSelected = !selectedCategories.contains(categoryId);
-        if (nowSelected) {
-            if (selectedCategories.size() >= 10) {
-                SnackPill.show(binding.getRoot(),
-                        getString(R.string.user_pref_limit), dp(112));
-                return;
-            }
-            selectedCategories.add(categoryId);
-        } else {
-            selectedCategories.remove(categoryId);
+    private void toggleCategory(long categoryId) {
+        if (!viewModel.toggleCategory(categoryId)) {
+            SnackPill.show(binding.getRoot(),
+                    getString(R.string.user_pref_limit), dp(112));
         }
-        chip.setSelected(nowSelected);
-        savePreferences();
-    }
-
-    private void savePreferences() {
-        PreferenceDtos.UpdateRequest request = new PreferenceDtos.UpdateRequest();
-        request.categoryIds = new ArrayList<>(selectedCategories);
-        request.version = preference == null ? null : preference.version;
-        if (preference != null) {
-            request.eventFormat = preference.eventFormat;
-            request.priceMode = preference.priceMode;
-            request.maxBudgetVnd = preference.maxBudgetVnd;
-            request.preferredCities = preference.preferredCities;
-            request.preferredDays = preference.preferredDays;
-            request.personalizationEnabled = preference.personalizationEnabled;
-            request.onboardingCompleted = true;
-        } else {
-            request.onboardingCompleted = true;
-        }
-
-        ServiceLocator.get(UserRepository.class).savePreferences(request,
-                new ApiCallback<PreferenceDtos.Preference>() {
-                    @Override
-                    public void onSuccess(@Nullable PreferenceDtos.Preference data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (data != null) {
-                            preference = data;
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding == null) {
-                            return;
-                        }
-                        SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(112));
-                        loadPreference();
-                    }
-                });
-    }
-
-    // ------------------------------------------------------------------ stats
-
-    private void refreshStats() {
-        if (binding == null) {
-            return;
-        }
-        binding.colReviews.setOnClickListener(v -> MyReviewsActivity.start(requireContext()));
-        binding.tvStatTickets.setText(String.valueOf(DemoContent.get().purchasedCount()));
-        binding.tvStatSaved.setText("0");
-        binding.tvStatReviews.setText("0");
-
-        ServiceLocator.get(FavoriteRepository.class).list("ALL", 0, 1,
-                new ApiCallback<Paged<FavoriteDtos.Item>>() {
-                    @Override
-                    public void onSuccess(@Nullable Paged<FavoriteDtos.Item> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding != null && data != null) {
-                            binding.tvStatSaved.setText(String.valueOf(data.totalItems()));
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                    }
-                });
-
-        ServiceLocator.get(ReviewRepository.class).mine(0, 1,
-                new ApiCallback<Paged<ReviewDtos.MyReview>>() {
-                    @Override
-                    public void onSuccess(@Nullable Paged<ReviewDtos.MyReview> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding != null && data != null) {
-                            binding.tvStatReviews.setText(String.valueOf(data.totalItems()));
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                    }
-                });
     }
 
     private void comingSoon() {
@@ -307,7 +192,9 @@ public class AccountFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshStats();
+        if (viewModel != null) {
+            viewModel.refreshStats();
+        }
     }
 
     private int dp(int value) {

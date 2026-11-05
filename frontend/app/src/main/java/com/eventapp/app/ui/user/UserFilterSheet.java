@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.remote.dto.catalog.CatalogDtos;
+import com.eventapp.app.ui.model.CategoryNodeUiModel;
 import com.eventapp.app.databinding.SheetUserFilterBinding;
 import com.eventapp.app.ui.user.model.UserFilters;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -44,7 +44,7 @@ public class UserFilterSheet extends BottomSheetDialog {
 
     private final SheetUserFilterBinding binding;
     private final UserFilters draft;
-    private final List<CatalogDtos.CategoryNode> categories;
+    private final List<CategoryNodeUiModel> categories;
     private final List<String> cities;
     private final SimpleDateFormat apiFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private final SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -54,7 +54,7 @@ public class UserFilterSheet extends BottomSheetDialog {
 
     public UserFilterSheet(@NonNull Context context,
                            @NonNull UserFilters current,
-                           @NonNull List<CatalogDtos.CategoryNode> categories,
+                           @NonNull List<CategoryNodeUiModel> categories,
                            @NonNull List<String> cities) {
         super(context);
         this.draft = current.copy();
@@ -145,7 +145,7 @@ public class UserFilterSheet extends BottomSheetDialog {
                     draft.categoryId = null;
                     refresh();
                 });
-        for (CatalogDtos.CategoryNode node : categories) {
+        for (CategoryNodeUiModel node : categories) {
             final long id = node.id;
             addOption(binding.groupCategory, node.name,
                     draft.categoryId != null && draft.categoryId == id,

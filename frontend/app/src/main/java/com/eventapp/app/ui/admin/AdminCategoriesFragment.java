@@ -13,18 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.core.util.DateTimeUtils;
-import com.eventapp.app.data.remote.dto.admincategory.AdminCategoryDtos;
-import com.eventapp.app.data.repository.CategoryRepository;
 import com.eventapp.app.databinding.DialogAdminCategoryBinding;
 import com.eventapp.app.databinding.FragmentAdminCategoriesBinding;
 import com.eventapp.app.databinding.ItemAdminCategoryBinding;
+import com.eventapp.app.ui.admin.viewmodel.AdminCategoriesViewModel;
 import com.eventapp.app.ui.common.AppDialog;
+import com.eventapp.app.ui.model.AdminCategoryUiModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -38,7 +35,7 @@ import java.util.Set;
 public class AdminCategoriesFragment extends Fragment {
 
     private FragmentAdminCategoriesBinding binding;
-    private final List<AdminCategoryDtos.Category> roots = new ArrayList<>();
+    private AdminCategoriesViewModel viewModel;
     private final Set<Long> expanded = new HashSet<>();
 
     @Nullable
@@ -53,51 +50,66 @@ public class AdminCategoriesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         binding.btnAddCategory.setOnClickListener(v -> openEditor(null, null));
-        load();
+
+        viewModel = new ViewModelProvider(this).get(AdminCategoriesViewModel.class);
+        observe();
+        viewModel.load();
     }
 
-    // ------------------------------------------------------------------- tải dữ liệu
+    private void observe() {
+        viewModel.getRoots().observe(getViewLifecycleOwner(), data -> render());
+        viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
+            if (binding == null) {
+                return;
+            }
+            boolean busy = Boolean.TRUE.equals(loading);
+            binding.progress.setVisibility(busy ? View.VISIBLE : View.GONE);
+            if (busy) {
+                binding.tvEmpty.setVisibility(View.GONE);
+            }
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            render();
+            snack(error.getUserMessage());
+        });
+        viewModel.getNotice().observe(getViewLifecycleOwner(), notice -> {
+            if (notice == null) {
+                return;
+            }
+            viewModel.consumeNotice();
+            snack(noticeText(notice));
+        });
+    }
 
-    private void load() {
-        if (binding == null) {
-            return;
+    private String noticeText(AdminCategoriesViewModel.Notice notice) {
+        switch (notice) {
+            case CREATED:
+                return getString(R.string.admin_cat_created);
+            case UPDATED:
+                return getString(R.string.admin_cat_updated);
+            case DELETED:
+                return getString(R.string.admin_cat_deleted);
+            case HIDDEN:
+                return getString(R.string.admin_cat_hidden);
+            case UNHIDDEN:
+            default:
+                return getString(R.string.admin_cat_unhidden);
         }
-        binding.progress.setVisibility(View.VISIBLE);
-        binding.tvEmpty.setVisibility(View.GONE);
-
-        ServiceLocator.get(CategoryRepository.class).adminTree(true,
-                new ApiCallback<List<AdminCategoryDtos.Category>>() {
-                    @Override
-                    public void onSuccess(@Nullable List<AdminCategoryDtos.Category> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null) {
-                            return;
-                        }
-                        binding.progress.setVisibility(View.GONE);
-                        roots.clear();
-                        if (data != null) {
-                            roots.addAll(data);
-                        }
-                        render();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding == null) {
-                            return;
-                        }
-                        binding.progress.setVisibility(View.GONE);
-                        render();
-                        snack(error.getUserMessage());
-                    }
-                });
     }
 
     // ---------------------------------------------------------------------- hiển thị
 
     private void render() {
-        if (binding == null) {
+        if (binding == null || viewModel == null) {
             return;
+        }
+        List<AdminCategoryUiModel> roots = viewModel.getRoots().getValue();
+        if (roots == null) {
+            roots = new ArrayList<>();
         }
         binding.categoryList.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
@@ -105,17 +117,16 @@ public class AdminCategoriesFragment extends Fragment {
         int active = 0;
 
         for (int i = 0; i < roots.size(); i++) {
-            AdminCategoryDtos.Category root = roots.get(i);
+            AdminCategoryUiModel root = roots.get(i);
             total++;
             if (root.active) {
                 active++;
             }
             addRow(inflater, root, 0, roots, i);
             if (expanded.contains(root.id)) {
-                List<AdminCategoryDtos.Category> children = root.children == null
-                        ? new ArrayList<>() : root.children;
+                List<AdminCategoryUiModel> children = root.children;
                 for (int j = 0; j < children.size(); j++) {
-                    AdminCategoryDtos.Category child = children.get(j);
+                    AdminCategoryUiModel child = children.get(j);
                     total++;
                     if (child.active) {
                         active++;
@@ -130,13 +141,13 @@ public class AdminCategoriesFragment extends Fragment {
         binding.tvCategoryCount.setText(getString(R.string.admin_cat_count, active, total));
     }
 
-    private void addRow(LayoutInflater inflater, AdminCategoryDtos.Category category, int depth,
-                        List<AdminCategoryDtos.Category> siblings, int index) {
+    private void addRow(LayoutInflater inflater, AdminCategoryUiModel category, int depth,
+                        List<AdminCategoryUiModel> siblings, int index) {
         ItemAdminCategoryBinding row = ItemAdminCategoryBinding.inflate(
                 inflater, binding.categoryList, false);
         row.getRoot().setPaddingRelative(dp(14 + depth * 18), dp(12), dp(10), dp(10));
 
-        boolean hasChildren = category.children != null && !category.children.isEmpty();
+        boolean hasChildren = category.hasChildren();
         row.ivExpand.setVisibility(hasChildren ? View.VISIBLE : View.GONE);
         if (hasChildren) {
             row.ivExpand.setImageResource(expanded.contains(category.id)
@@ -197,39 +208,11 @@ public class AdminCategoriesFragment extends Fragment {
 
     // ------------------------------------------------------------------------ ghi dữ liệu
 
-    private void move(List<AdminCategoryDtos.Category> siblings, int index, int delta) {
-        int target = index + delta;
-        if (target < 0 || target >= siblings.size()) {
-            return;
-        }
-        AdminCategoryDtos.Category moving = siblings.remove(index);
-        siblings.add(target, moving);
-
-        List<AdminCategoryDtos.OrderItem> items = new ArrayList<>();
-        for (int i = 0; i < siblings.size(); i++) {
-            items.add(new AdminCategoryDtos.OrderItem(siblings.get(i).id, i));
-        }
-        ServiceLocator.get(CategoryRepository.class).reorder(items,
-                new ApiCallback<List<AdminCategoryDtos.Category>>() {
-                    @Override
-                    public void onSuccess(@Nullable List<AdminCategoryDtos.Category> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (data != null) {
-                            roots.clear();
-                            roots.addAll(data);
-                        }
-                        render();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        snack(error.getUserMessage());
-                        load();
-                    }
-                });
+    private void move(List<AdminCategoryUiModel> siblings, int index, int delta) {
+        viewModel.move(siblings, index, delta);
     }
 
-    private void askHideReason(AdminCategoryDtos.Category category) {
+    private void askHideReason(AdminCategoryUiModel category) {
         EditText input = new EditText(requireContext());
         input.setHint(R.string.admin_cat_hide_reason_hint);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -256,7 +239,7 @@ public class AdminCategoriesFragment extends Fragment {
                 .show();
     }
 
-    private void confirmDelete(AdminCategoryDtos.Category category) {
+    private void confirmDelete(AdminCategoryUiModel category) {
         AppDialog.confirm(requireContext(),
                 R.drawable.ic_common_delete,
                 getString(R.string.admin_cat_delete_title, category.name),
@@ -268,60 +251,21 @@ public class AdminCategoriesFragment extends Fragment {
     }
 
     private void delete(long categoryId) {
-        ServiceLocator.get(CategoryRepository.class).delete(categoryId,
-                new ApiCallback<Void>() {
-                    @Override
-                    public void onSuccess(@Nullable Void data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        snack(getString(R.string.admin_cat_deleted));
-                        load();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        snack(error.getUserMessage());
-                    }
-                });
+        viewModel.delete(categoryId);
     }
 
     private void hide(long categoryId, String reason) {
-        ServiceLocator.get(CategoryRepository.class).hide(categoryId, reason,
-                new ApiCallback<AdminCategoryDtos.Category>() {
-                    @Override
-                    public void onSuccess(@Nullable AdminCategoryDtos.Category data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        snack(getString(R.string.admin_cat_hidden));
-                        load();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        snack(error.getUserMessage());
-                    }
-                });
+        viewModel.hide(categoryId, reason);
     }
 
-    private void unhide(AdminCategoryDtos.Category category) {
-        ServiceLocator.get(CategoryRepository.class).unhide(category.id,
-                new ApiCallback<AdminCategoryDtos.Category>() {
-                    @Override
-                    public void onSuccess(@Nullable AdminCategoryDtos.Category data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        snack(getString(R.string.admin_cat_unhidden));
-                        load();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        snack(error.getUserMessage());
-                    }
-                });
+    private void unhide(AdminCategoryUiModel category) {
+        viewModel.unhide(category.id);
     }
 
     // -------------------------------------------------------------------- hộp thoại
 
-    private void openEditor(@Nullable AdminCategoryDtos.Category editing,
-                            @Nullable AdminCategoryDtos.Category parent) {
+    private void openEditor(@Nullable AdminCategoryUiModel editing,
+                            @Nullable AdminCategoryUiModel parent) {
         DialogAdminCategoryBinding dialogBinding = DialogAdminCategoryBinding.inflate(
                 getLayoutInflater());
         boolean isEdit = editing != null;
@@ -331,10 +275,13 @@ public class AdminCategoriesFragment extends Fragment {
         dialogBinding.labelCode.setVisibility(isEdit ? View.GONE : View.VISIBLE);
         dialogBinding.etCode.setVisibility(isEdit ? View.GONE : View.VISIBLE);
 
-        List<AdminCategoryDtos.Category> parents = new ArrayList<>();
+        List<AdminCategoryUiModel> currentRoots = viewModel.getRoots().getValue();
+        final List<AdminCategoryUiModel> roots = currentRoots == null
+                ? new ArrayList<>() : currentRoots;
+        List<AdminCategoryUiModel> parents = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         labels.add(getString(R.string.admin_cat_parent_none));
-        for (AdminCategoryDtos.Category root : roots) {
+        for (AdminCategoryUiModel root : roots) {
             if (isEdit && root.id == editing.id) {
                 continue;
             }
@@ -367,8 +314,7 @@ public class AdminCategoriesFragment extends Fragment {
                     break;
                 }
             }
-            dialogBinding.etSortOrder.setText(String.valueOf(parent.children == null
-                    ? 0 : parent.children.size()));
+            dialogBinding.etSortOrder.setText(String.valueOf(parent.children.size()));
         } else {
             dialogBinding.etSortOrder.setText(String.valueOf(roots.size()));
         }
@@ -401,58 +347,24 @@ public class AdminCategoriesFragment extends Fragment {
 
             dialog.dismiss();
             if (isEdit) {
-                AdminCategoryDtos.UpdateRequest request = new AdminCategoryDtos.UpdateRequest();
-                request.categoryName = name;
-                request.slug = slug.isEmpty() ? null : slug;
-                request.description = description.isEmpty() ? null : description;
-                request.sortOrder = order;
-                request.version = DateTimeUtils.toMillis(editing.updatedAt);
-                update(editing.id, request);
+                update(editing.id, name, slug.isEmpty() ? null : slug,
+                        description.isEmpty() ? null : description, order,
+                        editing.updatedAtMillis);
             } else {
-                AdminCategoryDtos.CreateRequest request = new AdminCategoryDtos.CreateRequest();
-                request.categoryCode = code;
-                request.categoryName = name;
-                request.slug = slug.isEmpty() ? null : slug;
-                request.description = description.isEmpty() ? null : description;
-                request.parentCategoryId = parentId;
-                request.sortOrder = order;
-                create(request);
+                create(code, name, slug.isEmpty() ? null : slug,
+                        description.isEmpty() ? null : description, parentId, order);
             }
         });
     }
 
-    private void create(AdminCategoryDtos.CreateRequest request) {
-        ServiceLocator.get(CategoryRepository.class).create(request,
-                new ApiCallback<AdminCategoryDtos.Category>() {
-                    @Override
-                    public void onSuccess(@Nullable AdminCategoryDtos.Category data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        snack(getString(R.string.admin_cat_created));
-                        load();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        snack(error.getUserMessage());
-                    }
-                });
+    private void create(String code, String name, String slug, String description,
+                        Long parentId, int order) {
+        viewModel.create(code, name, slug, description, parentId, order);
     }
 
-    private void update(long id, AdminCategoryDtos.UpdateRequest request) {
-        ServiceLocator.get(CategoryRepository.class).update(id, request,
-                new ApiCallback<AdminCategoryDtos.Category>() {
-                    @Override
-                    public void onSuccess(@Nullable AdminCategoryDtos.Category data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        snack(getString(R.string.admin_cat_updated));
-                        load();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        snack(error.getUserMessage());
-                    }
-                });
+    private void update(long id, String name, String slug, String description, int order,
+                        long version) {
+        viewModel.update(id, name, slug, description, order, version);
     }
 
     // ----------------------------------------------------------------------- tiện ích

@@ -9,20 +9,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
 import com.eventapp.app.core.session.SessionManager;
-import com.eventapp.app.data.remote.dto.dashboard.DashboardDtos;
-import com.eventapp.app.data.remote.dto.organizer.OrganizerEventDtos;
-import com.eventapp.app.data.repository.OrganizerRepository;
 import com.eventapp.app.databinding.FragmentOrgDashboardBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
+import com.eventapp.app.ui.model.OrgDashboardUiModel;
 import com.eventapp.app.ui.organizer.model.OrgEvent;
-import com.eventapp.app.ui.organizer.util.OrgEventMapper;
 import com.eventapp.app.ui.organizer.util.OrgFormat;
+import com.eventapp.app.ui.organizer.viewmodel.OrgDashboardViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -31,6 +27,7 @@ import java.util.List;
 public class OrgDashboardFragment extends Fragment {
 
     private FragmentOrgDashboardBinding binding;
+    private OrgDashboardViewModel viewModel;
     private OrgEvent featured;
 
     @Nullable
@@ -60,39 +57,47 @@ public class OrgDashboardFragment extends Fragment {
         binding.rowTodoReview.setOnClickListener(v -> snack(getString(R.string.org_soon)));
         binding.rowTodoRefund.setOnClickListener(v -> snack(getString(R.string.org_soon)));
 
-        loadDashboard();
-        loadFeatured();
+        viewModel = new ViewModelProvider(this).get(OrgDashboardViewModel.class);
+        observe();
+        viewModel.load();
     }
 
-    private void loadDashboard() {
-        ServiceLocator.get(OrganizerRepository.class).dashboard("30d", null, null,
-                new ApiCallback<DashboardDtos.Dashboard>() {
-                    @Override
-                    public void onSuccess(@Nullable DashboardDtos.Dashboard data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || data == null) {
-                            return;
-                        }
-                        bind(data);
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding != null) {
-                            snack(error.getUserMessage());
-                        }
-                    }
-                });
+    private void observe() {
+        viewModel.getDashboard().observe(getViewLifecycleOwner(), data -> {
+            if (data != null && binding != null) {
+                bind(data);
+            }
+        });
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            snack(error.getUserMessage());
+        });
+        viewModel.getFeatured().observe(getViewLifecycleOwner(), data -> {
+            if (binding == null) {
+                return;
+            }
+            if (data == null) {
+                featured = null;
+                binding.cardFeaturedEvent.setVisibility(View.GONE);
+                return;
+            }
+            featured = data;
+            binding.cardFeaturedEvent.setVisibility(View.VISIBLE);
+            bindFeatured(data);
+        });
     }
 
-    private void bind(DashboardDtos.Dashboard data) {
-        long onSale = countOf(data.events, "ON_SALE");
-        long pending = countOf(data.events, "PENDING_REVIEW");
-        long sold = data.registrations == null ? 0 : data.registrations.ticketsIssued;
-        long confirmed = data.registrations == null ? 0 : data.registrations.confirmed;
-        long checkedIn = data.checkin == null ? 0 : data.checkin.checkedIn;
-        int rate = data.checkin == null ? 0 : Math.round((float) data.checkin.checkinRate * 100f);
-        long revenue = data.finance == null ? 0L : Math.round(data.finance.verifiedAmount);
+    private void bind(OrgDashboardUiModel data) {
+        long onSale = data.onSaleCount;
+        long pending = data.pendingReviewCount;
+        long sold = data.ticketsIssued;
+        long confirmed = data.confirmedRegistrations;
+        long checkedIn = data.checkedIn;
+        int rate = data.checkinRatePercent;
+        long revenue = data.verifiedRevenue;
 
         binding.tvRevenueTrend.setVisibility(View.GONE);
         binding.tvRevenueValue.setText(OrgFormat.compactMoney(revenue));
@@ -109,50 +114,22 @@ public class OrgDashboardFragment extends Fragment {
         binding.tvGreetingSub.setText(getString(R.string.org_greeting_sub_dynamic,
                 onSale, pending));
 
-        List<DashboardDtos.Task> tasks = data.tasks;
-        binding.tvTodoCount.setText(String.valueOf(tasks == null ? 0 : tasks.size()));
+        List<OrgDashboardUiModel.Task> tasks = data.tasks;
+        binding.tvTodoCount.setText(String.valueOf(tasks.size()));
         bindTask(binding.tvTodo1Title, binding.tvTodo1Sub, binding.rowTodoReview, tasks, 0);
         bindTask(binding.tvTodo2Title, binding.tvTodo2Sub, binding.rowTodoRefund, tasks, 1);
     }
 
     private void bindTask(android.widget.TextView title, android.widget.TextView sub,
-                          View row, List<DashboardDtos.Task> tasks, int index) {
-        if (tasks == null || tasks.size() <= index) {
+                          View row, List<OrgDashboardUiModel.Task> tasks, int index) {
+        if (tasks.size() <= index) {
             row.setVisibility(View.GONE);
             return;
         }
-        DashboardDtos.Task task = tasks.get(index);
+        OrgDashboardUiModel.Task task = tasks.get(index);
         row.setVisibility(View.VISIBLE);
         title.setText(task.title);
         sub.setText(task.detail);
-    }
-
-    private void loadFeatured() {
-        ServiceLocator.get(OrganizerRepository.class).events(OrgEvent.FILTER_ON_SALE, 0, 1,
-                new ApiCallback<List<OrganizerEventDtos.Event>>() {
-                    @Override
-                    public void onSuccess(@Nullable List<OrganizerEventDtos.Event> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null) {
-                            return;
-                        }
-                        if (data == null || data.isEmpty()) {
-                            binding.cardFeaturedEvent.setVisibility(View.GONE);
-                            return;
-                        }
-                        binding.cardFeaturedEvent.setVisibility(View.VISIBLE);
-                        featured = OrgEventMapper.from(data.get(0));
-                        bindFeatured(featured);
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        // Khối sự kiện nổi bật không chặn phần còn lại của dashboard.
-                        if (binding != null) {
-                            binding.cardFeaturedEvent.setVisibility(View.GONE);
-                        }
-                    }
-                });
     }
 
     private void bindFeatured(OrgEvent event) {
@@ -166,14 +143,6 @@ public class OrgDashboardFragment extends Fragment {
         binding.tvFeaturedRevenue.setText(event.revenue > 0
                 ? OrgFormat.compactMoney(event.revenue) : "—");
         binding.tvFeaturedCheckin.setText("—");
-    }
-
-    private long countOf(DashboardDtos.EventStatusBlock block, String key) {
-        if (block == null || block.counts == null) {
-            return 0;
-        }
-        Long value = block.counts.get(key);
-        return value == null ? 0 : value;
     }
 
     private String greetingName() {

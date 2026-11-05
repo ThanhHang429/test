@@ -4,22 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.data.remote.dto.organizer.OrganizerEventDtos;
-import com.eventapp.app.data.repository.OrganizerRepository;
 import com.eventapp.app.databinding.ActivityOrgEventDetailBinding;
 import com.eventapp.app.databinding.ItemOrgTicketTypeBinding;
 import com.eventapp.app.ui.organizer.model.OrgEvent;
-import com.eventapp.app.ui.organizer.util.OrgEventMapper;
 import com.eventapp.app.ui.organizer.util.OrgFormat;
 import com.eventapp.app.ui.organizer.util.OrgUi;
+import com.eventapp.app.ui.organizer.viewmodel.OrgEventDetailViewModel;
 import com.eventapp.app.ui.common.AppDialog;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -31,6 +26,7 @@ public class OrgEventDetailActivity extends AppCompatActivity {
     public static final String EXTRA_EVENT_ID = "event_id";
 
     private ActivityOrgEventDetailBinding binding;
+    private OrgEventDetailViewModel viewModel;
     private OrgEvent event;
 
     @Override
@@ -53,33 +49,32 @@ public class OrgEventDetailActivity extends AppCompatActivity {
         });
         binding.btnCancelEvent.setOnClickListener(v -> confirmCancel());
 
-        load(getIntent().getLongExtra(EXTRA_EVENT_ID, 0L));
-    }
+        viewModel = new ViewModelProvider(this).get(OrgEventDetailViewModel.class);
+        observe();
 
-    private void load(long eventId) {
+        long eventId = getIntent().getLongExtra(EXTRA_EVENT_ID, 0L);
         if (eventId <= 0) {
             snack(getString(R.string.org_event_not_found));
             return;
         }
-        ServiceLocator.get(OrganizerRepository.class).event(eventId,
-                new ApiCallback<OrganizerEventDtos.Event>() {
-                    @Override
-                    public void onSuccess(@Nullable OrganizerEventDtos.Event data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || data == null) {
-                            return;
-                        }
-                        event = OrgEventMapper.from(data);
-                        bind(event);
-                    }
+        viewModel.load(eventId);
+    }
 
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding != null) {
-                            snack(error.getUserMessage());
-                        }
-                    }
-                });
+    private void observe() {
+        viewModel.getEvent().observe(this, data -> {
+            if (data == null || binding == null) {
+                return;
+            }
+            event = data;
+            bind(data);
+        });
+        viewModel.getError().observe(this, error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            snack(error.getUserMessage());
+        });
     }
 
     private void bind(OrgEvent event) {

@@ -10,24 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.core.network.Paged;
-import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
-import com.eventapp.app.data.repository.FavoriteRepository;
 import com.eventapp.app.databinding.FragmentUserCalendarBinding;
 import com.eventapp.app.databinding.ItemUserCalendarEventBinding;
 import com.eventapp.app.databinding.ItemUserDayBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.host.UserHostActivity;
-import com.eventapp.app.ui.mapper.EventMapper;
+import com.eventapp.app.ui.model.EventUiModel;
 import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.data.DemoContent;
 import com.eventapp.app.ui.user.util.UserFmt;
+import com.eventapp.app.ui.user.viewmodel.CalendarViewModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +35,7 @@ import java.util.Map;
 public class CalendarFragment extends Fragment {
 
     private FragmentUserCalendarBinding binding;
+    private CalendarViewModel viewModel;
     private final List<ItemUserDayBinding> dayBindings = new ArrayList<>();
     private final Map<Long, View> headers = new LinkedHashMap<>();
     private long selectedDayKey = -1L;
@@ -81,43 +78,29 @@ public class CalendarFragment extends Fragment {
                 ((UserHostActivity) getActivity()).openTab(UserBottomNavView.TAB_DISCOVERY);
             }
         });
+        viewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
+        viewModel.getSavedEvents().observe(getViewLifecycleOwner(), data -> renderAll());
         build(upcomingItems());
-        loadSaved();
+        viewModel.loadSaved();
     }
 
-    private void loadSaved() {
-        ServiceLocator.get(FavoriteRepository.class).list("UPCOMING", 0, 50,
-                new ApiCallback<Paged<FavoriteDtos.Item>>() {
-                    @Override
-                    public void onSuccess(@Nullable Paged<FavoriteDtos.Item> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null) {
-                            return;
-                        }
-                        List<CalendarItem> items = upcomingItems();
-                        if (data != null) {
-                            for (FavoriteDtos.Item favorite : data.items) {
-                                if (favorite == null || favorite.event == null) {
-                                    continue;
-                                }
-                                com.eventapp.app.ui.model.EventUiModel event =
-                                        EventMapper.fromCard(favorite.event);
-                                if (containsEvent(items, event.id)) {
-                                    continue;
-                                }
-                                items.add(new CalendarItem(event.id, event.title, venue(event),
-                                        event.startAt, event.endAt, null));
-                            }
-                        }
-                        items.sort((a, b) -> Long.compare(a.startAt, b.startAt));
-                        build(items);
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        // Không có mạng thì vẫn hiển thị vé đã mua.
-                    }
-                });
+    private void renderAll() {
+        if (binding == null) {
+            return;
+        }
+        List<CalendarItem> items = upcomingItems();
+        List<EventUiModel> saved = viewModel.getSavedEvents().getValue();
+        if (saved != null) {
+            for (EventUiModel event : saved) {
+                if (containsEvent(items, event.id)) {
+                    continue;
+                }
+                items.add(new CalendarItem(event.id, event.title, venue(event),
+                        event.startAt, event.endAt, null));
+            }
+        }
+        items.sort((a, b) -> Long.compare(a.startAt, b.startAt));
+        build(items);
     }
 
     private boolean containsEvent(List<CalendarItem> items, long eventId) {
@@ -129,7 +112,7 @@ public class CalendarFragment extends Fragment {
         return false;
     }
 
-    private String venue(com.eventapp.app.ui.model.EventUiModel event) {
+    private String venue(EventUiModel event) {
         if (event.venue == null || event.venue.isEmpty()) {
             return event.city == null ? "" : event.city;
         }
@@ -300,8 +283,8 @@ public class CalendarFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (binding != null) {
-            build(upcomingItems());
-            loadSaved();
+            renderAll();
+            viewModel.loadSaved();
         }
     }
 

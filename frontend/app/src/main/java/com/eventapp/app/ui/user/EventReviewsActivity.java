@@ -12,53 +12,42 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.core.network.Paged;
-import com.eventapp.app.core.util.DateTimeUtils;
-import com.eventapp.app.data.remote.dto.discovery.DiscoveryDtos;
-import com.eventapp.app.data.remote.dto.review.ReviewDtos;
-import com.eventapp.app.data.repository.ReviewRepository;
 import com.eventapp.app.databinding.ActivityEventReviewsBinding;
 import com.eventapp.app.databinding.DialogReviewEditorBinding;
 import com.eventapp.app.databinding.ItemEventReviewBinding;
 import com.eventapp.app.databinding.ItemReviewDistributionBinding;
 import com.eventapp.app.ui.common.view.SnackPill;
-import com.eventapp.app.ui.mapper.ReviewMapper;
+import com.eventapp.app.ui.model.ReviewSummaryUiModel;
 import com.eventapp.app.ui.model.ReviewUiModel;
 import com.eventapp.app.ui.user.util.StarText;
 import com.eventapp.app.ui.user.util.UserFmt;
+import com.eventapp.app.ui.user.viewmodel.EventReviewsViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 /** Danh sách đánh giá của một sự kiện: tổng hợp điểm, viết/sửa đánh giá và báo cáo (FR-U20). */
 public class EventReviewsActivity extends AppCompatActivity {
 
     private static final String EXTRA_EVENT_ID = "event_id";
     private static final String EXTRA_EVENT_TITLE = "event_title";
-    private static final int PAGE_SIZE = 10;
 
     private static final String[] REPORT_CODES = {
             "SPAM", "OFFENSIVE", "PERSONAL_DATA", "FAKE_REVIEW", "OFF_TOPIC", "OTHER"
     };
 
     private ActivityEventReviewsBinding binding;
+    private EventReviewsViewModel viewModel;
     private long eventId;
     private String eventTitle;
 
-    private final List<ReviewUiModel> reviews = new ArrayList<>();
-    private String sort = "NEWEST";
-    private int page;
-    private boolean hasNext;
-    private boolean loading;
-    private ReviewDtos.MyReview mine;
+    private ReviewUiModel mine;
+    private AlertDialog editorDialog;
 
     public static void start(@NonNull Context context, long eventId, @Nullable String eventTitle) {
         Intent intent = new Intent(context, EventReviewsActivity.class);
@@ -87,41 +76,102 @@ public class EventReviewsActivity extends AppCompatActivity {
         binding.chipLow.setOnClickListener(v -> selectSort("RATING_ASC"));
         binding.btnWrite.setOnClickListener(v -> openEditor());
         binding.btnEditMine.setOnClickListener(v -> openEditor());
-        binding.btnLoadMore.setOnClickListener(v -> loadReviews(false));
+        binding.btnLoadMore.setOnClickListener(v -> viewModel.loadMore());
 
+        viewModel = new ViewModelProvider(this).get(EventReviewsViewModel.class);
+        observe();
+        viewModel.init(eventId);
         selectSort("NEWEST");
     }
 
+    private void observe() {
+        viewModel.getSummary().observe(this, summary -> {
+            if (summary != null && binding != null) {
+                bindSummary(summary);
+            }
+        });
+        viewModel.getReviews().observe(this, data -> {
+            if (binding != null) {
+                renderReviews();
+            }
+        });
+        viewModel.getLoading().observe(this, loading -> {
+            if (binding != null) {
+                binding.progress.setVisibility(Boolean.TRUE.equals(loading)
+                        ? View.VISIBLE : View.GONE);
+            }
+        });
+        viewModel.getMine().observe(this, data -> {
+            if (binding != null) {
+                mine = data;
+                bindMine();
+            }
+        });
+        viewModel.getError().observe(this, error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
+            renderReviews();
+        });
+        viewModel.getSubmitNotice().observe(this, notice -> {
+            if (notice == null) {
+                return;
+            }
+            viewModel.consumeSubmitNotice();
+            dismissEditor();
+            String message = !notice.isEmpty()
+                    ? notice : getString(R.string.user_reviews_saved);
+            if (binding != null) {
+                SnackPill.show(binding.getRoot(), message, dp(96));
+            }
+        });
+        viewModel.getSubmitError().observe(this, error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeSubmitError();
+            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
+        });
+        viewModel.getReportSent().observe(this, sent -> {
+            if (!Boolean.TRUE.equals(sent)) {
+                return;
+            }
+            viewModel.consumeReportSent();
+            if (binding != null) {
+                SnackPill.show(binding.getRoot(),
+                        getString(R.string.user_reviews_report_sent), dp(96));
+            }
+        });
+        viewModel.getReportError().observe(this, error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeReportError();
+            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
+        });
+    }
+
     private void selectSort(String value) {
-        sort = value;
         binding.chipNewest.setSelected("NEWEST".equals(value));
         binding.chipHigh.setSelected("RATING_DESC".equals(value));
         binding.chipLow.setSelected("RATING_ASC".equals(value));
-        loadReviews(true);
+        viewModel.selectSort(value);
+    }
+
+    private void dismissEditor() {
+        if (editorDialog != null) {
+            if (editorDialog.isShowing()) {
+                editorDialog.dismiss();
+            }
+            editorDialog = null;
+        }
     }
 
     // ------------------------------------------------------------------ tổng hợp
 
-    private void loadSummary() {
-        ServiceLocator.get(ReviewRepository.class).summary(eventId,
-                new ApiCallback<DiscoveryDtos.ReviewSummary>() {
-                    @Override
-                    public void onSuccess(@Nullable DiscoveryDtos.ReviewSummary data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null || data == null) {
-                            return;
-                        }
-                        bindSummary(data);
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        // Khối tổng hợp lỗi không chặn danh sách đánh giá.
-                    }
-                });
-    }
-
-    private void bindSummary(DiscoveryDtos.ReviewSummary summary) {
+    private void bindSummary(ReviewSummaryUiModel summary) {
         binding.tvAverage.setText(String.format(Locale.US, "%.1f", summary.averageRating)
                 .replace('.', ','));
         StarText.apply(binding.tvAverageStars, (float) summary.averageRating);
@@ -148,53 +198,11 @@ public class EventReviewsActivity extends AppCompatActivity {
 
     // -------------------------------------------------------------------- danh sách
 
-    private void loadReviews(boolean reset) {
-        if (loading) {
-            return;
-        }
-        loading = true;
-        binding.progress.setVisibility(View.VISIBLE);
-        final int requestPage = reset ? 0 : page;
-
-        ServiceLocator.get(ReviewRepository.class).list(eventId, sort, requestPage, PAGE_SIZE,
-                new ApiCallback<Paged<ReviewDtos.Review>>() {
-                    @Override
-                    public void onSuccess(@Nullable Paged<ReviewDtos.Review> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null) {
-                            return;
-                        }
-                        loading = false;
-                        binding.progress.setVisibility(View.GONE);
-                        if (reset) {
-                            reviews.clear();
-                        }
-                        if (data != null) {
-                            for (ReviewDtos.Review dto : data.items) {
-                                reviews.add(ReviewMapper.fromPublic(dto));
-                            }
-                            hasNext = data.hasNext();
-                        } else {
-                            hasNext = false;
-                        }
-                        page = requestPage + 1;
-                        renderReviews();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding == null) {
-                            return;
-                        }
-                        loading = false;
-                        binding.progress.setVisibility(View.GONE);
-                        SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
-                        renderReviews();
-                    }
-                });
-    }
-
     private void renderReviews() {
+        List<ReviewUiModel> reviews = viewModel.getReviews().getValue();
+        if (reviews == null) {
+            reviews = new ArrayList<>();
+        }
         binding.reviewList.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
         for (ReviewUiModel review : reviews) {
@@ -205,6 +213,7 @@ public class EventReviewsActivity extends AppCompatActivity {
         }
         boolean empty = reviews.isEmpty();
         binding.tvEmpty.setVisibility(empty ? View.VISIBLE : View.GONE);
+        boolean hasNext = Boolean.TRUE.equals(viewModel.getHasNext().getValue());
         binding.btnLoadMore.setVisibility(hasNext ? View.VISIBLE : View.GONE);
     }
 
@@ -233,36 +242,6 @@ public class EventReviewsActivity extends AppCompatActivity {
 
     // ---------------------------------------------------------------- đánh giá của tôi
 
-    private void loadMine() {
-        ServiceLocator.get(ReviewRepository.class).mine(0, 50,
-                new ApiCallback<Paged<ReviewDtos.MyReview>>() {
-                    @Override
-                    public void onSuccess(@Nullable Paged<ReviewDtos.MyReview> data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding == null) {
-                            return;
-                        }
-                        mine = null;
-                        if (data != null) {
-                            for (ReviewDtos.MyReview dto : data.items) {
-                                if (dto.eventId == eventId) {
-                                    mine = dto;
-                                    break;
-                                }
-                            }
-                        }
-                        bindMine();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding != null) {
-                            bindMine();
-                        }
-                    }
-                });
-    }
-
     private void bindMine() {
         boolean has = mine != null;
         binding.mineCard.setVisibility(has ? View.VISIBLE : View.GONE);
@@ -271,18 +250,17 @@ public class EventReviewsActivity extends AppCompatActivity {
             return;
         }
         StarText.apply(binding.tvMineStars, mine.rating);
-        boolean hasText = mine.text != null && !mine.text.trim().isEmpty();
-        binding.tvMineText.setText(hasText ? mine.text : "");
+        boolean hasText = !mine.comment.trim().isEmpty();
+        binding.tvMineText.setText(hasText ? mine.comment : "");
         binding.tvMineText.setVisibility(hasText ? View.VISIBLE : View.GONE);
 
-        switch (mine.status == null ? "" : mine.status) {
-            case "PENDING":
+        switch (mine.status) {
+            case HELD:
                 binding.tvMineStatus.setText(R.string.user_reviews_status_pending);
                 binding.tvMineStatus.setBackgroundResource(R.drawable.bg_user_badge_warning);
                 binding.tvMineStatus.setTextColor(getColor(R.color.user_warning_text));
                 break;
-            case "HIDDEN":
-            case "REMOVED":
+            case HIDDEN:
                 binding.tvMineStatus.setText(R.string.user_reviews_status_hidden);
                 binding.tvMineStatus.setBackgroundResource(R.drawable.bg_user_badge_danger);
                 binding.tvMineStatus.setTextColor(getColor(R.color.user_danger_text));
@@ -304,7 +282,7 @@ public class EventReviewsActivity extends AppCompatActivity {
         dialogBinding.tvTitle.setText(editing
                 ? R.string.user_reviews_edit : R.string.user_reviews_write);
 
-        int[] selected = {editing ? mine.rating : 0};
+        int[] selected = {editing ? Math.round(mine.rating) : 0};
         renderStarPicker(dialogBinding, selected[0]);
         for (int i = 0; i < 5; i++) {
             final int value = i + 1;
@@ -314,8 +292,8 @@ public class EventReviewsActivity extends AppCompatActivity {
             });
         }
 
-        if (editing && mine.text != null) {
-            dialogBinding.etReview.setText(mine.text);
+        if (editing && !mine.comment.isEmpty()) {
+            dialogBinding.etReview.setText(mine.comment);
             dialogBinding.etReview.setSelection(dialogBinding.etReview.getText().length());
         }
         updateCounter(dialogBinding);
@@ -339,6 +317,12 @@ public class EventReviewsActivity extends AppCompatActivity {
                 .setNegativeButton(R.string.user_close, null)
                 .setPositiveButton(R.string.user_send, null)
                 .create();
+        editorDialog = dialog;
+        dialog.setOnDismissListener(d -> {
+            if (editorDialog == dialog) {
+                editorDialog = null;
+            }
+        });
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             if (selected[0] <= 0) {
@@ -347,9 +331,8 @@ public class EventReviewsActivity extends AppCompatActivity {
                 return;
             }
             dialogBinding.tvError.setVisibility(View.GONE);
-            submitReview(dialog, selected[0],
-                    dialogBinding.etReview.getText() == null
-                            ? "" : dialogBinding.etReview.getText().toString().trim());
+            submitReview(selected[0], dialogBinding.etReview.getText() == null
+                    ? "" : dialogBinding.etReview.getText().toString().trim());
         });
     }
 
@@ -382,41 +365,8 @@ public class EventReviewsActivity extends AppCompatActivity {
         binding.tvCounter.setText(getString(R.string.user_reviews_counter, length));
     }
 
-    private void submitReview(AlertDialog dialog, int rating, String text) {
-        ReviewRepository repository = ServiceLocator.get(ReviewRepository.class);
-        ApiCallback<ReviewDtos.Mutation> callback = new ApiCallback<ReviewDtos.Mutation>() {
-            @Override
-            public void onSuccess(@Nullable ReviewDtos.Mutation data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                dialog.dismiss();
-                String message = data != null && data.notice != null && !data.notice.isEmpty()
-                        ? data.notice : getString(R.string.user_reviews_saved);
-                if (binding != null) {
-                    SnackPill.show(binding.getRoot(), message, dp(96));
-                }
-                reload();
-            }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                if (binding != null) {
-                    SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
-                }
-            }
-        };
-
-        if (mine != null) {
-            ReviewDtos.UpdateRequest request = new ReviewDtos.UpdateRequest();
-            request.rating = rating;
-            request.text = text;
-            request.version = DateTimeUtils.toMillis(mine.updatedAt);
-            repository.update(eventId, request, callback);
-        } else {
-            ReviewDtos.CreateRequest request = new ReviewDtos.CreateRequest();
-            request.rating = rating;
-            request.text = text;
-            repository.create(eventId, UUID.randomUUID().toString(), request, callback);
-        }
+    private void submitReview(int rating, String text) {
+        viewModel.submit(rating, text);
     }
 
     // ---------------------------------------------------------------------- báo cáo
@@ -438,30 +388,7 @@ public class EventReviewsActivity extends AppCompatActivity {
     }
 
     private void report(long reviewId, String reasonCode) {
-        ServiceLocator.get(ReviewRepository.class).report(reviewId, reasonCode, null,
-                new ApiCallback<ReviewDtos.ReportResult>() {
-                    @Override
-                    public void onSuccess(@Nullable ReviewDtos.ReportResult data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (binding != null) {
-                            SnackPill.show(binding.getRoot(),
-                                    getString(R.string.user_reviews_report_sent), dp(96));
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (binding != null) {
-                            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
-                        }
-                    }
-                });
-    }
-
-    private void reload() {
-        loadSummary();
-        loadReviews(true);
-        loadMine();
+        viewModel.report(reviewId, reasonCode);
     }
 
     private static String initials(@Nullable String name) {
@@ -485,8 +412,7 @@ public class EventReviewsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (binding != null) {
-            loadSummary();
-            loadMine();
+            viewModel.refreshDetails();
         }
     }
 }
