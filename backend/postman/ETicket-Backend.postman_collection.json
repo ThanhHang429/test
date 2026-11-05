@@ -140,6 +140,14 @@
       "key": "prefVersion",
       "value": "1",
       "type": "string"
+    },
+    {
+      "key": "crowdEventId",
+      "value": "54"
+    },
+    {
+      "key": "overflowRoomId",
+      "value": "1"
     }
   ],
   "event": [
@@ -3591,7 +3599,374 @@
       ]
     },
     {
-      "name": "09 · FR-O03 — Dashboard Organizer",
+      "name": "09 · FR-O02 — Sự kiện của Organizer",
+      "description": "Danh sách và chi tiết sự kiện do chính organizer1 quản lý. organizerId luôn suy ra từ token.",
+      "item": [
+        {
+          "name": "1. Danh sách sự kiện của tôi",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events?status=ALL&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ALL"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Trả về mọi sự kiện chưa xoá mềm của organizer1, sắp theo startAt giảm dần."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b).to.have.property(\"data\").that.is.an(\"array\");",
+                  "    pm.expect(b).to.have.property(\"meta\");",
+                  "});",
+                  "const b = pm.response.json();",
+                  "pm.test(\"meta phân trang đúng\", () => {",
+                  "    pm.expect(b.meta).to.include.all.keys(\"page\",\"size\",\"totalItems\",\"hasNext\");",
+                  "    pm.expect(b.meta.page).to.eql(0);",
+                  "});",
+                  "pm.test(\"Mỗi sự kiện có 2 vòng đời\", () => b.data.forEach(e => {",
+                  "    pm.expect(e).to.include.all.keys(\"id\",\"code\",\"reviewStatus\",\"lifecycleStatus\",\"ticketTypes\");",
+                  "    pm.expect(e.ticketTypes).to.be.an(\"array\");",
+                  "}));",
+                  "if (b.data.length) { pm.collectionVariables.set(\"organizerEventId\", b.data[0].id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Lọc theo trạng thái vòng đời",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events?status=PUBLISHED&page=0&size=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PUBLISHED"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "status nhận cả tên trạng thái duyệt và trạng thái vòng đời."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Chỉ trả sự kiện PUBLISHED\", () => d.forEach(e => pm.expect(e.lifecycleStatus).to.eql(\"PUBLISHED\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Lọc theo trạng thái duyệt",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events?status=PENDING_REVIEW",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING_REVIEW"
+                }
+              ]
+            },
+            "description": "Lọc theo reviewStatus thay vì lifecycleStatus."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Chỉ trả sự kiện PENDING_REVIEW\", () => d.forEach(e => pm.expect(e.reviewStatus).to.eql(\"PENDING_REVIEW\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. status sai → 400",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events?status=KHONG_TON_TAI",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "KHONG_TON_TAI"
+                }
+              ]
+            },
+            "description": "Giá trị không thuộc hai enum → VALIDATION_ERROR."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Mã lỗi VALIDATION_ERROR\", () => pm.expect(pm.response.json().error.code).to.eql(\"VALIDATION_ERROR\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. size=200 bị hạ về 50",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events?size=200",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "size",
+                  "value": "200"
+                }
+              ]
+            },
+            "description": "size bị coerceIn(1, 50)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"meta.size = 50\", () => pm.expect(pm.response.json().meta.size).to.eql(50));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Chi tiết sự kiện của tôi",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{organizerEventId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{organizerEventId}}"
+              ]
+            },
+            "description": "Cần chạy request 1 trước để có organizerEventId."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const d = pm.response.json().data;",
+                  "pm.test(\"Đúng sự kiện đã chọn\", () => pm.expect(String(d.id)).to.eql(String(pm.collectionVariables.get(\"organizerEventId\"))));",
+                  "pm.test(\"Có hạn vé và doanh thu\", () => pm.expect(d).to.include.all.keys(\"ticketsSold\",\"revenue\",\"currency\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. Sự kiện không tồn tại → 404",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "999999"
+              ]
+            },
+            "description": "Không có sự kiện hoặc đã xoá mềm."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. Organizer PENDING → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer2Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events"
+              ]
+            },
+            "description": "organizer2 có hồ sơ PENDING nên bị chặn."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10 · FR-O03 — Dashboard Organizer",
       "description": "Mỗi khối có `meta.status` = OK/ERROR; một khối lỗi **không** làm hỏng cả dashboard.",
       "item": [
         {
@@ -3913,7 +4288,7 @@
       ]
     },
     {
-      "name": "10 · FR-A20 — Giám sát tích hợp (ADMIN)",
+      "name": "11 · FR-A20 — Giám sát tích hợp (ADMIN)",
       "description": "Trạng thái AI / PAYMENT / FCM, thống kê sử dụng AI và công tắc bật/tắt khẩn cấp.",
       "item": [
         {
@@ -4355,7 +4730,7 @@
       ]
     },
     {
-      "name": "11 · FR-A09 — Quản lý danh mục (ADMIN)",
+      "name": "12 · FR-A09 — Quản lý danh mục (ADMIN)",
       "description": "Không có API xoá cứng — chỉ ẩn để giữ toàn vẹn dữ liệu lịch sử.\n\nMã danh mục sinh tự động mỗi lần chạy (`newCategoryCode`, `newChildCode`, `newLevel3Code`) nên **chạy lại không bị 409**.\n\nLuồng: tạo gốc → tạo con (cấp 2, hợp lệ) → thử tạo cấp 3 (400) → ẩn/bỏ ẩn → dọn dẹp bằng cách ẩn cả 2 danh mục vừa tạo (giữ số danh mục ACTIVE không tăng qua các lần chạy).",
       "item": [
         {
@@ -5106,7 +5481,477 @@
       ]
     },
     {
-      "name": "12 · Hạ tầng chung",
+      "name": "13 · FR-O28 — Điều phối phòng",
+      "description": "Cảnh báo đông phòng, phòng dự phòng và thông báo cho người đã đăng ký nhưng chưa check-in. Ngưỡng tính trên `checkedIn / capacityLimit`: 70% WATCH, 90% CROWDED, 100% FULL.",
+      "item": [
+        {
+          "name": "1. Mức lấp đầy phòng chính",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/crowd-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "crowd-status"
+              ]
+            },
+            "description": "organizerId suy ra từ token. Lưu `crowdEventId` cho các request sau."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test(\"Envelope đúng chuẩn\", () => {",
+                  "    pm.expect(b).to.have.property(\"success\", true);",
+                  "    pm.expect(b.data).to.include.all.keys(\"eventId\",\"capacityLimit\",\"registered\",",
+                  "        \"checkedIn\",\"notCheckedIn\",\"occupancyRate\",\"level\",\"overflowRooms\");",
+                  "});",
+                  "pm.test(\"Mức cảnh báo hợp lệ\", () => pm.expect([\"NORMAL\",\"WATCH\",\"CROWDED\",\"FULL\"])",
+                  "    .to.include(b.data.level));",
+                  "pm.test(\"notCheckedIn = registered - checkedIn\", () => pm.expect(b.data.notCheckedIn)",
+                  "    .to.eql(Math.max(0, b.data.registered - b.data.checkedIn)));",
+                  "pm.collectionVariables.set(\"crowdEventId\", b.data.eventId);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Thêm phòng dự phòng",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/overflow-rooms",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "overflow-rooms"
+              ]
+            },
+            "description": "Tạo phòng dự phòng `ACTIVE`. Lưu `overflowRoomId` để đóng ở request 10.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roomName\": \"Phòng dự phòng B2\",\n  \"capacity\": 120,\n  \"note\": \"Tầng 2, cạnh thang máy\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test(\"Phòng mới ở trạng thái ACTIVE\", () => {",
+                  "    pm.expect(b.data.status).to.eql(\"ACTIVE\");",
+                  "    pm.expect(b.data.roomName).to.eql(\"Phòng dự phòng B2\");",
+                  "    pm.expect(b.data.capacity).to.eql(120);",
+                  "});",
+                  "pm.collectionVariables.set(\"overflowRoomId\", b.data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Danh sách phòng dự phòng",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/overflow-rooms",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "overflow-rooms"
+              ]
+            },
+            "description": "Trả cả phòng `CLOSED` để giữ lịch sử điều phối."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test(\"Là mảng phòng\", () => pm.expect(b.data).to.be.an(\"array\"));",
+                  "pm.test(\"Mỗi phòng đủ trường\", () => b.data.forEach(r =>",
+                  "    pm.expect(r).to.include.all.keys(\"id\",\"roomName\",\"capacity\",\"status\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Gửi thông báo cho người chưa check-in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "notifications"
+              ]
+            },
+            "description": "`audience` mặc định là `REGISTERED_NOT_CHECKED_IN`; người nhận chốt tại thời điểm gửi.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Điều chuyển phòng\",\n  \"body\": \"Phòng chính đã đầy, mời bạn sang phòng dự phòng B2 (tầng 2).\",\n  \"audience\": \"REGISTERED_NOT_CHECKED_IN\",\n  \"source\": \"AI\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test(\"Trả về thông báo + số người nhận\", () => {",
+                  "    pm.expect(b.data).to.include.all.keys(\"notification\",\"recipientCount\");",
+                  "    pm.expect(b.data.recipientCount).to.be.a(\"number\");",
+                  "});",
+                  "pm.test(\"Đúng audience và source\", () => {",
+                  "    pm.expect(b.data.notification.audience).to.eql(\"REGISTERED_NOT_CHECKED_IN\");",
+                  "    pm.expect(b.data.notification.source).to.eql(\"AI\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Lịch sử thông báo của sự kiện",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "notifications"
+              ]
+            },
+            "description": "Mới nhất trước; mỗi bản ghi có `recipientCount` và `sentAt`."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test(\"Có ít nhất 1 thông báo\", () => pm.expect(b.data.length).to.be.above(0));",
+                  "pm.test(\"sentAt không null\", () => b.data.forEach(n =>",
+                  "    pm.expect(n.sentAt).to.be.a(\"string\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Người tham dự đọc thông báo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "notifications"
+              ]
+            },
+            "description": "`/me/notifications` chỉ trả thông báo gửi tới chính người đang đăng nhập."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test(\"Là mảng\", () => pm.expect(b.data).to.be.an(\"array\"));",
+                  "pm.test(\"Không lộ dữ liệu người khác\", () => b.data.forEach(n =>",
+                  "    pm.expect(n).to.include.all.keys(\"id\",\"eventId\",\"title\",\"body\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. Organizer chưa duyệt → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer2Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/crowd-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "crowd-status"
+              ]
+            },
+            "description": "organizer2 đang `PENDING` nên không được điều phối phòng."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Envelope lỗi\", () => pm.expect(pm.response.json().success).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. Thiếu tiêu đề → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "notifications"
+              ]
+            },
+            "description": "`title` bắt buộc → 400 `VALIDATION_ERROR`.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"body\": \"Thiếu tiêu đề nên phải bị chặn.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Mã lỗi VALIDATION_ERROR\", () => {",
+                  "    const b = pm.response.json();",
+                  "    pm.expect(b.success).to.eql(false);",
+                  "    pm.expect(b.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. Sự kiện không tồn tại → 404",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/999999/crowd-status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "999999",
+                "crowd-status"
+              ]
+            },
+            "description": "Không có sự kiện → 404."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Đóng phòng dự phòng",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{organizer1Id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/organizer/events/{{crowdEventId}}/overflow-rooms/{{overflowRoomId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organizer",
+                "events",
+                "{{crowdEventId}}",
+                "overflow-rooms",
+                "{{overflowRoomId}}"
+              ]
+            },
+            "description": "Không xoá cứng — chuyển `status` sang `CLOSED` để giữ lịch sử."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Phòng đã đóng\", () => pm.expect(pm.response.json().data.status).to.eql(\"CLOSED\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "14 · Hạ tầng chung",
       "description": "Envelope, `X-Correlation-Id`, và cách Spring Security xử lý route không tồn tại.",
       "item": [
         {

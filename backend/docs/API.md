@@ -152,9 +152,11 @@ khi bị giới hạn tần suất.
 | 3.8 | Gợi ý AI | U07 | USER (preview: công khai) |
 | 3.9 | AI cho Organizer | O06, O27 | ORGANIZER đã duyệt |
 | 3.10 | Phân loại & nhãn | O09 | ORGANIZER (chủ sự kiện) |
-| 3.11 | Dashboard Organizer | O03 | ORGANIZER |
-| 3.12 | Giám sát tích hợp | A20 | ADMIN |
-| 3.13 | Quản lý danh mục | A09 | ADMIN |
+| 3.11 | Sự kiện của Organizer | O02 | ORGANIZER đã duyệt |
+| 3.12 | Dashboard Organizer | O03 | ORGANIZER |
+| 3.13 | Giám sát tích hợp | A20 | ADMIN |
+| 3.14 | Quản lý danh mục | A09 | ADMIN |
+| 3.15 | Điều phối phòng & thông báo | O28 | ORGANIZER đã duyệt / USER |
 
 ---
 
@@ -643,7 +645,53 @@ Gợi ý nhãn theo mức độ dùng: `[{ "id": 7, "name": "Acoustic", "usageCo
 
 ---
 
-### 3.11 Dashboard Organizer (FR-O03)
+### 3.11 Sự kiện của Organizer (FR-O02)
+
+#### `GET /api/v1/organizer/events?status=ALL&page=0&size=20`
+Danh sách sự kiện do chính Organizer đang đăng nhập quản lý. `organizerId` **không** nhận
+từ client — luôn suy ra từ token (O02-R01).
+
+- `status`: `ALL` (mặc định), hoặc đúng **một** trạng thái duyệt (`DRAFT`,
+  `PENDING_REVIEW`, `REVISION_REQUIRED`, `REJECTED`, `APPROVED`), hoặc đúng **một**
+  trạng thái vòng đời (`UNPUBLISHED`, `PUBLISHED`, `SUSPENDED`, `CANCELLED`, `COMPLETED`).
+  Giá trị khác → 400.
+- `page` ≥ 0, `size` 1–50 (lớn hơn bị cắt về 50).
+- Sắp xếp cố định theo `startAt` giảm dần; sự kiện đã xoá mềm bị loại.
+- Hồ sơ Organizer `PENDING` / `REJECTED` → 403.
+
+```json
+{ "success": true,
+  "data": [
+    { "id": 36, "code": "EVT-DEMO-01", "title": "Vietnam Tech Expo 2025",
+      "slug": "vietnam-tech-expo-2025", "coverUrl": "https://cdn/.../cover.jpg",
+      "reviewStatus": "APPROVED", "lifecycleStatus": "PUBLISHED",
+      "startAt": "2026-11-15T02:00:00Z", "endAt": "2026-11-18T10:00:00Z",
+      "timezone": "Asia/Ho_Chi_Minh", "city": "TP.HCM", "venueName": "SECC",
+      "capacityLimit": 2000,
+      "ticketTypes": [
+        { "id": 12, "name": "Vé Tiêu Chuẩn", "kind": "PAID", "price": 450000,
+          "currency": "VND", "quantityTotal": 1600, "quantitySold": 1200,
+          "quantityReserved": 20, "remaining": 380, "status": "ACTIVE",
+          "saleStartAt": "2026-10-01T00:00:00Z", "saleEndAt": "2026-11-14T17:00:00Z" }
+      ],
+      "ticketsSold": 1200, "revenue": 540000000, "currency": "VND" }
+  ],
+  "meta": { "page": 0, "size": 20, "totalItems": 1, "hasNext": false }
+}
+```
+
+`revenue` chỉ cộng đơn `PAID` (BR-022); đơn `PENDING_PAYMENT` không được tính.
+`ticketTypes[].kind`: `FREE` | `PAID`; `status`: `ACTIVE` | `PAUSED` | `ENDED` | `ARCHIVED`.
+
+#### `GET /api/v1/organizer/events/{eventId}`
+Chi tiết **một** sự kiện — cùng cấu trúc với một phần tử của danh sách.
+
+- 404 nếu không tồn tại hoặc đã xoá mềm.
+- 403 nếu sự kiện không thuộc Organizer đang đăng nhập.
+
+---
+
+### 3.12 Dashboard Organizer (FR-O03)
 
 #### `GET /api/v1/organizer/dashboard?range=7d|30d|custom&from=&to=`
 - `range=7d` \| `30d` (mặc định) \| `custom` (kèm `from`, `to` dạng `yyyy-MM-dd`)
@@ -689,7 +737,7 @@ dashboard (`meta.note` ghi lý do).
 
 ---
 
-### 3.12 Giám sát tích hợp (FR-A20) — `ADMIN`
+### 3.13 Giám sát tích hợp (FR-A20) — `ADMIN`
 
 #### `GET /admin/integrations`
 Trạng thái 3 dịch vụ ngoài: `AI`, `PAYMENT`, `FCM`.
@@ -746,7 +794,7 @@ Tra toàn bộ lần gọi AI theo `correlationId`; không có → 404.
 
 ---
 
-### 3.13 Quản lý danh mục (FR-A09) — `ADMIN`
+### 3.14 Quản lý danh mục (FR-A09) — `ADMIN`
 
 #### `GET /admin/categories?includeInactive=true`
 Cây đầy đủ (kể cả danh mục đã ẩn) kèm `eventCount`.
@@ -786,6 +834,102 @@ Bỏ ẩn; vẫn phải tôn trọng giới hạn 50 danh mục `ACTIVE`.
 { "items": [ { "categoryId": 9, "sortOrder": 1 }, { "categoryId": 10, "sortOrder": 2 } ] }
 ```
 1…200 mục.
+
+---
+
+### 3.15 Điều phối phòng & thông báo (FR-O28)
+
+Mục đích duy nhất của khối AI ở khu Organizer: **phòng chính đông → cảnh báo organizer →
+dựa trên phòng dự phòng đã khai báo để gửi thông báo cho người đã đăng ký nhưng chưa check-in**.
+
+#### Ngưỡng cảnh báo
+
+`occupancy = checkedIn / capacityLimit` (không phải số vé đã bán):
+
+| Mức | Điều kiện | Ý nghĩa |
+|---|---|---|
+| `NORMAL` | < 70% | bình thường |
+| `WATCH` | ≥ 70% | lượng check-in tăng nhanh |
+| `CROWDED` | ≥ 90% | gần đầy, nên mở phòng dự phòng |
+| `FULL` | ≥ 100% | đã đầy, cần điều chuyển ngay |
+
+`capacityLimit = 0` → luôn `NORMAL`.
+
+#### `GET /api/v1/organizer/events/{eventId}/crowd-status`
+
+```json
+{ "success": true, "data": {
+  "eventId": 54, "eventTitle": "Triển lãm Nghệ thuật số #27 — Đà Nẵng",
+  "capacityLimit": 500, "registered": 2, "checkedIn": 0, "notCheckedIn": 2,
+  "occupancyRate": 0.0, "checkinRate": 0.0,
+  "level": "NORMAL", "warning": null,
+  "overflowRooms": [ { "id": 1, "roomName": "Phòng dự phòng B2", "capacity": 120,
+                       "note": "Tầng 2, cạnh thang máy", "status": "ACTIVE",
+                       "createdAt": "2026-11-05T08:17:35.216Z" } ],
+  "suggestedRoom": { "id": 1, "roomName": "Phòng dự phòng B2", "...": "..." },
+  "suggestion": null
+}}
+```
+
+- `registered` = đăng ký `CONFIRMED`; `checkedIn` = vé `CHECKED_IN`;
+  `notCheckedIn = registered - checkedIn` (không âm).
+- `overflowRooms` ở đây chỉ gồm phòng `ACTIVE`; `suggestedRoom` là phòng `ACTIVE` sức chứa lớn nhất.
+- `warning` chỉ có khi level ≠ `NORMAL`; `suggestion` là câu gợi ý điều chuyển (null khi `NORMAL`).
+- Organizer `PENDING` → 403; sự kiện của organizer khác → 403; không tồn tại → 404.
+
+#### `GET /api/v1/organizer/events/{eventId}/overflow-rooms`
+Tất cả phòng dự phòng của sự kiện, **gồm cả** phòng `CLOSED` (giữ lịch sử điều phối).
+
+#### `POST /api/v1/organizer/events/{eventId}/overflow-rooms`
+```json
+{ "roomName": "Phòng dự phòng B2", "capacity": 120, "note": "Tầng 2, cạnh thang máy" }
+```
+
+| Ràng buộc | Lỗi |
+|---|---|
+| `roomName` bắt buộc, ≤ 120 | 400 `VALIDATION_ERROR` |
+| `capacity` 1…100.000 | 400 `VALIDATION_ERROR` |
+| `note` ≤ 500 (tuỳ chọn) | 400 `VALIDATION_ERROR` |
+
+#### `DELETE /api/v1/organizer/events/{eventId}/overflow-rooms/{roomId}`
+Đóng phòng (`status = CLOSED`), **không xoá** bản ghi. Trả về phòng sau khi đóng.
+Phòng thuộc sự kiện khác → 403; không tồn tại → 404.
+
+#### `GET /api/v1/organizer/events/{eventId}/notifications`
+Lịch sử thông báo đã gửi của sự kiện, mới nhất trước.
+
+```json
+[ { "id": 1, "eventId": 54, "eventTitle": "...", "title": "Điều chuyển phòng",
+    "body": "Phòng chính đã đầy, mời bạn sang phòng dự phòng B2 (tầng 2).",
+    "audience": "REGISTERED_NOT_CHECKED_IN", "recipientCount": 2,
+    "source": "AI", "sentAt": "2026-11-05T08:17:45.856Z" } ]
+```
+
+#### `POST /api/v1/organizer/events/{eventId}/notifications`
+```json
+{ "title": "Điều chuyển phòng",
+  "body": "Phòng chính đã đầy, mời bạn sang phòng dự phòng B2 (tầng 2).",
+  "audience": "REGISTERED_NOT_CHECKED_IN", "source": "AI" }
+```
+
+- `audience`: `REGISTERED_NOT_CHECKED_IN` (mặc định) | `ALL_REGISTERED`.
+- `source`: `AI` | `MANUAL` (mặc định) — chỉ để phân loại trong lịch sử.
+- `title` ≤ 200, `body` ≤ 2000, đều bắt buộc → thiếu thì 400.
+- Người nhận được chốt **tại thời điểm gửi**: đăng ký `CONFIRMED` trừ những người đã có vé
+  `CHECKED_IN`. Không có người nhận vẫn tạo bản ghi với `recipientCount = 0`.
+- Response: `{ "notification": {...}, "recipientCount": 2 }`.
+
+#### `GET /api/v1/me/notifications`
+Thông báo organizer đã gửi tới **chính người đang đăng nhập**, mới nhất trước.
+Cùng cấu trúc `NotificationDto` như trên.
+
+#### Bảng dữ liệu (migration `V11__organizer_crowd.sql`)
+
+| Bảng | Vai trò |
+|---|---|
+| `event_overflow_rooms` | phòng dự phòng (`ACTIVE` / `CLOSED`) |
+| `event_notifications` | một lần gửi: tiêu đề, nội dung, audience, source, `recipientCount` |
+| `event_notification_recipients` | ai đã nhận, thời điểm gửi |
 
 ---
 

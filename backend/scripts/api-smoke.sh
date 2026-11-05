@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # ETicket backend — smoke test toàn bộ API của module Cảnh
-# (FR-U03, U04, U05, U06, U07, U20, O03, O06, O09, O27, A07, A09, A14, A20)
+# (FR-U03, U04, U05, U06, U07, U20, O02, O03, O06, O09, O27, O28, A07, A09, A14, A20)
 #
 # Cách dùng:
 #   backend/scripts/api-smoke.sh                      # mặc định http://localhost:8080
@@ -306,7 +306,43 @@ if [[ -n "$OWN_EVENT" && "$OWN_EVENT" != "null" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-section "9. FR-O03 — dashboard"
+section "9. FR-O02 — sự kiện của organizer"
+# ---------------------------------------------------------------------------
+st=$(call GET "/organizer/events" "$ORG1")
+expect "GET /organizer/events" 200 "$st"
+
+EVENT_OF_ORG=$(jqv '.data[0].id')
+if [[ -n "$EVENT_OF_ORG" && "$EVENT_OF_ORG" != "null" ]]; then
+  st=$(call GET "/organizer/events/$EVENT_OF_ORG" "$ORG1")
+  expect "GET /organizer/events/{id}" 200 "$st"
+
+  st=$(call GET "/organizer/events/$EVENT_OF_ORG" "$ORG2")
+  expect_one_of "sự kiện của organizer khác → 403/404" "403 404" "$st"
+else
+  skip "GET /organizer/events/{id}" "organizer1 chưa có sự kiện"
+fi
+
+st=$(call GET "/organizer/events?status=PUBLISHED" "$ORG1")
+expect "lọc status=PUBLISHED" 200 "$st"
+
+st=$(call GET "/organizer/events?status=PENDING_REVIEW" "$ORG1")
+expect "lọc status=PENDING_REVIEW" 200 "$st"
+
+st=$(call GET "/organizer/events?status=KHONG_TON_TAI" "$ORG1")
+expect "status sai → 400" 400 "$st"
+
+st=$(call GET "/organizer/events?size=200" "$ORG1")
+expect "size=200 bị hạ về 50" 200 "$st"
+echo "$(grey "  size=$(jqv '.meta.size') total=$(jqv '.meta.totalItems')")"
+
+st=$(call GET "/organizer/events/999999" "$ORG1")
+expect "sự kiện không tồn tại → 404" 404 "$st"
+
+st=$(call GET "/organizer/events" "$ORG2")
+expect "organizer PENDING → 403" 403 "$st"
+
+# ---------------------------------------------------------------------------
+section "10. FR-O03 — dashboard"
 # ---------------------------------------------------------------------------
 st=$(call GET "/organizer/dashboard?range=30d" "$ORG1")
 expect "GET /organizer/dashboard?range=30d" 200 "$st"
@@ -321,7 +357,7 @@ st=$(call GET "/organizer/dashboard?range=custom&from=2026-01-01&to=2025-01-01" 
 expect "custom đảo ngày → 400" 400 "$st"
 
 # ---------------------------------------------------------------------------
-section "10. FR-A20 — giám sát tích hợp"
+section "11. FR-A20 — giám sát tích hợp"
 # ---------------------------------------------------------------------------
 st=$(call GET "/admin/integrations" "$ADMIN")
 expect "GET /admin/integrations" 200 "$st"
@@ -347,7 +383,7 @@ st=$(call PUT "/admin/integrations/ai/features/RECOMMEND" "$ADMIN" '{"enabled":t
 expect "thiếu lý do → 400" 400 "$st"
 
 # ---------------------------------------------------------------------------
-section "11. FR-A09 — quản lý danh mục"
+section "12. FR-A09 — quản lý danh mục"
 # ---------------------------------------------------------------------------
 st=$(call GET "/admin/categories" "$ADMIN")
 expect "GET /admin/categories" 200 "$st"
@@ -383,7 +419,67 @@ st=$(call GET "/admin/categories" "$U1")
 expect "quản lý danh mục khi không phải Admin → 403" 403 "$st"
 
 # ---------------------------------------------------------------------------
-section "12. Hạ tầng chung"
+section "13. FR-O28 — điều phối phòng & thông báo"
+# ---------------------------------------------------------------------------
+# Chọn sự kiện đầu tiên của organizer1 làm phòng chính.
+st=$(call GET "/organizer/events?status=ALL&page=0&size=1" "$ORG1")
+expect "chọn sự kiện để điều phối" 200 "$st"
+CROWD_EVT=$(jqv '.data[0].id')
+
+if [[ -z "$CROWD_EVT" || "$CROWD_EVT" == "null" ]]; then
+  skip "FR-O28" "organizer1 không có sự kiện nào"
+else
+  st=$(call GET "/organizer/events/$CROWD_EVT/crowd-status" "$ORG1")
+  expect "GET crowd-status" 200 "$st"
+  LEVEL=$(jqv '.data.level')
+  if [[ " NORMAL WATCH CROWDED FULL " == *" $LEVEL "* ]]; then
+    PASS=$((PASS+1)); printf '%s mức cảnh báo hợp lệ %s\n' "$(green '✓')" "$(grey "($LEVEL)")"
+  else
+    FAIL=$((FAIL+1)); FAILED_CASES+=("mức cảnh báo hợp lệ (nhận '$LEVEL')")
+    printf '%s %s\n' "$(red '✗')" "$(red "mức cảnh báo không hợp lệ: $LEVEL")"
+  fi
+
+  ROOM_NAME="Phòng smoke $(date +%H%M%S)"
+  st=$(call POST "/organizer/events/$CROWD_EVT/overflow-rooms" "$ORG1" \
+    "{\"roomName\":\"$ROOM_NAME\",\"capacity\":120,\"note\":\"Tạo bởi smoke test\"}")
+  expect "POST /overflow-rooms" 200 "$st"
+  ROOM=$(jqv '.data.id')
+
+  st=$(call POST "/organizer/events/$CROWD_EVT/overflow-rooms" "$ORG1" \
+    '{"roomName":"Sai sức chứa","capacity":0}')
+  expect "sức chứa 0 → 400" 400 "$st"
+
+  st=$(call GET "/organizer/events/$CROWD_EVT/overflow-rooms" "$ORG1")
+  expect "GET /overflow-rooms" 200 "$st"
+
+  st=$(call POST "/organizer/events/$CROWD_EVT/notifications" "$ORG1" \
+    '{"title":"Điều chuyển phòng","body":"Mời bạn sang phòng dự phòng.","audience":"REGISTERED_NOT_CHECKED_IN","source":"AI"}')
+  expect "POST /notifications (người chưa check-in)" 200 "$st"
+
+  st=$(call POST "/organizer/events/$CROWD_EVT/notifications" "$ORG1" \
+    '{"body":"Thiếu tiêu đề"}')
+  expect "thiếu tiêu đề → 400" 400 "$st"
+
+  st=$(call GET "/organizer/events/$CROWD_EVT/notifications" "$ORG1")
+  expect "GET /notifications (lịch sử)" 200 "$st"
+
+  st=$(call GET "/me/notifications" "$U1")
+  expect "GET /me/notifications (người tham dự)" 200 "$st"
+
+  st=$(call GET "/organizer/events/$CROWD_EVT/crowd-status" "$ORG2")
+  expect "organizer chưa duyệt → 403" 403 "$st"
+
+  st=$(call GET "/organizer/events/999999/crowd-status" "$ORG1")
+  expect "sự kiện không tồn tại → 404" 404 "$st"
+
+  if [[ -n "$ROOM" && "$ROOM" != "null" ]]; then
+    st=$(call DELETE "/organizer/events/$CROWD_EVT/overflow-rooms/$ROOM" "$ORG1")
+    expect "DELETE /overflow-rooms/{id}" 200 "$st"
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+section "14. Hạ tầng chung"
 # ---------------------------------------------------------------------------
 st=$(curl -s -o /tmp/smoke_body.json -w '%{http_code}' -H 'X-Correlation-Id: smoke-fixed-id' "$API/categories")
 expect "X-Correlation-Id được echo lại" 200 "$st"
