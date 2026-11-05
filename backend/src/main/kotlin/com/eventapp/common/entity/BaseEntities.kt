@@ -3,7 +3,6 @@ package com.eventapp.common.entity
 
 import java.time.Instant
 
-// TODO: Base entities
 abstract class BaseEntity(
     var createdAt: Instant? = null,
     var updatedAt: Instant? = null
