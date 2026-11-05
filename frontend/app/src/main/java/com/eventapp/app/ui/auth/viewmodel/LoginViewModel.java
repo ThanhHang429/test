@@ -1,4 +1,4 @@
-package com.eventapp.app.ui.auth;
+package com.eventapp.app.ui.auth.viewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,6 +12,8 @@ import com.eventapp.app.core.session.AuthSession;
 import com.eventapp.app.data.di.ServiceLocator;
 import com.eventapp.app.data.remote.dto.auth.DevAccountDto;
 import com.eventapp.app.data.repository.AuthRepository;
+import com.eventapp.app.ui.mapper.DevAccountMapper;
+import com.eventapp.app.ui.model.DevAccountUiModel;
 import com.google.gson.JsonElement;
 
 import java.util.Collections;
@@ -22,14 +24,14 @@ public class LoginViewModel extends ViewModel {
 
     private final AuthRepository repository = ServiceLocator.get(AuthRepository.class);
 
-    private final MutableLiveData<List<DevAccountDto>> accounts =
+    private final MutableLiveData<List<DevAccountUiModel>> accounts =
             new MutableLiveData<>(Collections.emptyList());
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(true);
     private final MutableLiveData<Boolean> submitting = new MutableLiveData<>(false);
     private final MutableLiveData<ApiException> error = new MutableLiveData<>();
     private final MutableLiveData<AuthSession> loggedIn = new MutableLiveData<>();
 
-    public LiveData<List<DevAccountDto>> getAccounts() {
+    public LiveData<List<DevAccountUiModel>> getAccounts() {
         return accounts;
     }
 
@@ -55,7 +57,7 @@ public class LoginViewModel extends ViewModel {
         repository.loadAccounts(new ApiCallback<List<DevAccountDto>>() {
             @Override
             public void onSuccess(@Nullable List<DevAccountDto> data, @Nullable JsonElement meta) {
-                accounts.setValue(data == null ? Collections.emptyList() : data);
+                accounts.setValue(DevAccountMapper.fromList(data));
             }
 
             @Override
@@ -70,13 +72,13 @@ public class LoginViewModel extends ViewModel {
         });
     }
 
-    public void login(@NonNull DevAccountDto account) {
+    public void login(@NonNull DevAccountUiModel account) {
         if (Boolean.TRUE.equals(submitting.getValue())) {
             return;
         }
         submitting.setValue(true);
         error.setValue(null);
-        repository.login(account, new ApiCallback<AuthSession>() {
+        repository.login(DevAccountMapper.toDto(account), new ApiCallback<AuthSession>() {
             @Override
             public void onSuccess(@Nullable AuthSession data, @Nullable JsonElement meta) {
                 if (data == null) {
