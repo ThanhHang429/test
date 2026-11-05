@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_user_card_20"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/user_reviews_write"
+        android:textAppearance="@style/TextAppearance.EventApp.User.CardTitle" />
+
+    <LinearLayout
+        android:id="@+id/starRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/star1"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:contentDescription="@string/user_reviews_star_1"
+            android:padding="4dp"
+            android:src="@drawable/ic_ds_star" />
+
+        <ImageView
+            android:id="@+id/star2"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:contentDescription="@string/user_reviews_star_2"
+            android:padding="4dp"
+            android:src="@drawable/ic_ds_star" />
+
+        <ImageView
+            android:id="@+id/star3"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:contentDescription="@string/user_reviews_star_3"
+            android:padding="4dp"
+            android:src="@drawable/ic_ds_star" />
+
+        <ImageView
+            android:id="@+id/star4"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:contentDescription="@string/user_reviews_star_4"
+            android:padding="4dp"
+            android:src="@drawable/ic_ds_star" />
+
+        <ImageView
+            android:id="@+id/star5"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:contentDescription="@string/user_reviews_star_5"
+            android:padding="4dp"
+            android:src="@drawable/ic_ds_star" />
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_user_chip"
+        android:gravity="top|start"
+        android:hint="@string/user_reviews_hint"
+        android:inputType="textCapSentences|textMultiLine"
+        android:maxLength="2000"
+        android:minLines="4"
+        android:padding="12dp"
+        android:textColor="@color/user_text"
+        android:textColorHint="@color/user_text_dim"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvCounter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.EventApp.User.Micro" />
+
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/user_danger_text"
+        android:textSize="12sp"
+        android:visibility="gone" />
+</LinearLayout>
