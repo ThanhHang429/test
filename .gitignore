@@ -53,3 +53,7 @@ stitch/
 # ---------- Ghi chú tạm ----------
 P6_*.md
 .freebuff/
+.kilo
+.codebuddy
+.mcp.json
+.codegraph
