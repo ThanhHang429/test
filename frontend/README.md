@@ -67,36 +67,46 @@ Chạy lại sau khi sửa code: chỉ cần `./gradlew :app:installDebug` (Grad
 
 ## 3. Trạng thái hiện tại — đọc trước khi chạy
 
-Toàn bộ **tầng màn hình cũ đã được xoá để dựng lại giao diện từ đầu** (2026-11-04):
+**Thương hiệu:** ETicket. Tên hiển thị nằm trong `strings_*.xml` (`ETICKET`, `ETICKET CONSOLE`,
+`ETICKET ADMIN`); tài khoản seed dùng domain `@eticket.local`.
 
-- Đã xoá: `ui/auth`, `ui/user`, `ui/organizer`, `ui/admin`, `ui/demo`, `ui/common/adapter`,
-  `ui/common/nav`, `ui/common/PlaceholderContent`, `ui/host/AccountFragment`, `ui/host/AccountSheet`,
-  `ui/host/RolePickerActivity`, `ui/common/view/NavBarSpacing`.
-- Đã xoá tài nguyên màn hình: `res/layout` (chỉ còn `view_ds_*`), `res/menu`, `res/navigation`,
-  và 87 drawable không còn tham chiếu.
-- Giữ nguyên: `ui/common/view` (design system `ds_*`), `ui/model`, `ui/mapper`, `data/`, `core/`, `fcm/`.
-- **Luồng chạy hiện tại:** `SplashActivity` → `AuthActivity` (đăng nhập → OTP 2 lớp) → host theo vai trò:
-  `UserHostActivity` (khu người dùng), `OrganizerHostActivity` (khu nhà tổ chức) hoặc
-  `AdminHostActivity` (khu quản trị).
-- **Đăng nhập dùng chung cho cả ba vai trò**, vai trò suy ra từ email trong `LoginFragment`:
-  - Người dùng: `demo@nexus.vn` / `123456`
-  - Nhà tổ chức: `organizer@nexus.vn` / `123456`
-  - Quản trị: `admin@nexus.vn` / `123456`
-  - OTP demo ở build debug: `123456`. Google/Facebook vẫn hiện "Sắp ra mắt".
-- Khu quản trị nằm ở `ui/admin` + `AdminHostActivity`: menu điều hướng bên trái (drawer) với 8 màn
-  (Tổng quan, Kiểm duyệt, Giám sát sự kiện, Tài khoản, Thông báo, Soạn thông báo, Phí nền tảng, Hệ thống),
-  kèm 3 màn chi tiết (hồ sơ duyệt, chi tiết sự kiện, chi tiết tài khoản). Dữ liệu mẫu ở
-  `ui/admin/data/AdminDemo`; chưa gọi API.
-  Quản trị chỉ hưởng phí nền tảng và quản lý danh tính/trạng thái tài khoản — tiền vé, hoàn tiền và
-  công nợ do nhà tổ chức tự xử lý, admin chỉ xem doanh thu (read-only).
-- Khu nhà tổ chức nằm ở `ui/organizer` + `OrganizerHostActivity`: dock 5 tab
-  (Tổng quan, Sự kiện, Check-in, Đơn hàng, Cài đặt), màn chi tiết sự kiện/đơn hàng và form tạo sự kiện
-  bước 1. Dữ liệu mẫu nằm trong `ui/organizer/data/OrgDemo`; chưa gọi API.
-- Luồng xác thực mới nằm ở `ui/auth` với 4 màn: đăng nhập, đăng ký 2 bước, quên mật khẩu, OTP/2FA.
-  Giao diện dùng theme tối riêng `Theme.EventApp.Auth` (navy + glass + gradient Blue→Green).
-  OTP demo ở build debug là `123456`; release sẽ ẩn gợi ý này khi nối API thật.
-- Khu người dùng mới nằm ở `ui/user`: `UserBottomNavView` (dock nổi 5 tab, viên gradient trượt theo tab
-  đang chọn) + 5 fragment tab (Khám phá, Đã lưu, Vé của tôi, Lịch, Tài khoản). Luồng thanh toán vé **chưa** làm.
+**Đăng nhập (tạm thời):** backend chưa có module auth chuẩn, nên màn đăng nhập liệt kê tài khoản
+seed từ `GET /api/v1/dev/accounts` rồi cấp JWT qua `POST /api/v1/dev/token?userId=N`. Bấm một
+tài khoản là vào thẳng host theo vai trò. Chỉ chạy được với backend profile `dev`.
+
+| Tài khoản seed | Vào khu |
+|---|---|
+| `admin@eticket.local` | `AdminHostActivity` |
+| `organizer1@eticket.local` (hồ sơ APPROVED) | `OrganizerHostActivity` |
+| `organizer2@eticket.local` (hồ sơ PENDING) | vào được, nhưng API organizer trả 403 |
+| `user1@eticket.local` … `user3@eticket.local` | `UserHostActivity` |
+
+**Đã nối API thật:**
+
+- Người dùng: Khám phá (tìm kiếm, chip danh mục, lọc miễn phí, cuộn vô hạn), Đã lưu (yêu thích),
+  chi tiết sự kiện + hạng vé, Tài khoản + sở thích.
+- Đánh giá (FR-U20): danh sách + điểm trung bình + phân bố sao + sắp xếp, viết/sửa đánh giá,
+  báo cáo đánh giá, và màn "Đánh giá của tôi".
+- Thông báo: trung tâm thông báo đọc `GET /api/v1/me/notifications` (thông báo organizer gửi).
+- Nhà tổ chức: Tổng quan (FR-O03), danh sách sự kiện (FR-O02), chi tiết sự kiện + hạng vé,
+  điều phối phòng (FR-O28).
+- Quản trị: trạng thái tích hợp AI / PAYMENT / FCM ở màn Hệ thống (FR-A20), quản lý danh mục
+  (FR-A09) với cây 2 cấp, thêm/sửa/ẩn và sắp xếp.
+
+**Điều phối phòng (FR-O28)** — `OrgCrowdActivity`, mở từ nút "Điều phối phòng" ở chi tiết sự kiện:
+mức lấp đầy `checkedIn / capacityLimit` (70% theo dõi, 90% đông, 100% đầy), cảnh báo + gợi ý
+phòng dự phòng, thêm/đóng phòng, soạn thông báo (AI hỗ trợ qua `POST /organizer/ai/announcement`)
+và gửi cho người đã đăng ký nhưng chưa check-in.
+
+**Còn dùng dữ liệu mẫu** — backend chưa có endpoint tương ứng:
+
+- Vé của tôi, lịch: `ui/user/data/DemoContent`.
+- Đơn hàng nhà tổ chức: `ui/organizer/data/OrgDemo`.
+- Quản trị: `ui/admin/data/AdminDemo` (sự kiện, tài khoản, thông báo).
+- Tạo sự kiện, check-in: nút bấm chỉ hiện snackbar.
+
+**Đã bỏ:** màn kiểm duyệt đánh giá của quản trị. Drawer còn 8 màn: Tổng quan, Giám sát sự kiện,
+Danh mục, Tài khoản, Thông báo, Soạn thông báo, Phí nền tảng, Hệ thống.
 
 Bản giao diện cũ vẫn khôi phục được từ tag git `pre-ui-reset`.
 
@@ -148,7 +158,7 @@ Fragment/Activity  →  ViewModel  →  Repository  →  Retrofit Api (remote)
 |---|---|
 | `ui/user/` | 5 tab khu người dùng + adapter + dữ liệu mẫu |
 | `ui/auth/` | 4 màn xác thực + `AuthUi` (validate, strength, snack pill) |
-| `ui/organizer/` | 5 tab khu nhà tổ chức, chi tiết sự kiện/đơn, form tạo sự kiện, `OrgDemo` |
+| `ui/organizer/` | 5 tab khu nhà tổ chức, chi tiết sự kiện/đơn, form tạo sự kiện, `OrgEventMapper` |
 | `ui/common/view/` | Design system dùng chung (`ds_*`), không phụ thuộc feature |
 | `ui/model/` | `*UiModel` dùng chung giữa nhiều feature |
 | `ui/mapper/` | Chuyển DTO → UiModel |

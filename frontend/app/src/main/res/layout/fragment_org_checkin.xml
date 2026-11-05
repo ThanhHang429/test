@@ -75,7 +75,7 @@
                         android:maxLines="1"
                         android:text="Vietnam Tech Expo 2025"
                         android:textColor="@color/org_text"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -85,7 +85,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="15–18/11/2025 · SECC, Quận 7"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <TextView
@@ -99,7 +99,7 @@
                     android:paddingBottom="3dp"
                     android:text="@string/org_live"
                     android:textColor="@color/org_success_text"
-                    android:textSize="9sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -116,7 +116,7 @@
         <FrameLayout
             android:id="@+id/scanPanel"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="336dp"
             android:layout_marginStart="@dimen/org_gutter"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="@dimen/org_gutter"
@@ -155,18 +155,18 @@
                     android:paddingBottom="4dp"
                     android:text="Camera sau · Tự động"
                     android:textColor="@color/org_mint"
-                    android:textSize="9sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <FrameLayout
-                    android:layout_width="132dp"
-                    android:layout_height="132dp"
+                    android:layout_width="156dp"
+                    android:layout_height="156dp"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/bg_org_qr_frame">
 
                     <ImageView
-                        android:layout_width="54dp"
-                        android:layout_height="54dp"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
                         android:layout_gravity="center"
                         android:importantForAccessibility="no"
                         android:src="@drawable/ic_user_qr"
@@ -188,7 +188,7 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:text="@string/org_scan_hint"
                     android:textColor="@color/white"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -198,7 +198,29 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/org_scan_sub"
                     android:textColor="@color/org_text_on_dark_muted"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScanNow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="12dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingStart="26dp"
+                    android:paddingEnd="26dp"
+                    android:text="@string/org_scan_now"
+                    android:textAllCaps="false"
+                    android:textColor="@color/org_primary_deep"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/white"
+                    app:cornerRadius="16dp"
+                    app:icon="@drawable/ic_org_checkin_scan"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconSize="20dp"
+                    app:iconTint="@color/org_primary_deep" />
             </LinearLayout>
         </FrameLayout>
 
@@ -224,7 +246,7 @@
                 android:gravity="center"
                 android:text="@string/org_flash"
                 android:textColor="@color/org_primary_dark"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <Space
@@ -244,7 +266,7 @@
                 android:gravity="center"
                 android:text="@string/org_manual"
                 android:textColor="@color/org_primary_dark"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -263,7 +285,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:text="@string/org_manual"
                 android:textColor="@color/org_text"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -301,7 +323,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="Thử VE-123456 (OK) · VE-654321 (đã dùng) · mã khác (lỗi)"
                 android:textColor="@color/org_text_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- Kết quả -->
@@ -351,7 +373,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:textColor="@color/org_text"
-                        android:textSize="14sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -361,7 +383,7 @@
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/be_vietnam_pro"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -394,7 +416,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/org_checkin_today"
                         android:textColor="@color/org_text"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -408,7 +430,7 @@
                         android:paddingBottom="3dp"
                         android:text="72%"
                         android:textColor="@color/org_primary_dark"
-                        android:textSize="10sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -420,7 +442,7 @@
                     android:fontFeatureSettings="tnum"
                     android:text="@string/org_checkin_total"
                     android:textColor="@color/org_text"
-                    android:textSize="22sp"
+                    android:textSize="23sp"
                     android:textStyle="bold" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -441,7 +463,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/org_remaining"
                     android:textColor="@color/org_text_dim"
-                    android:textSize="11sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -487,7 +509,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="NA"
                             android:textColor="@color/white"
-                            android:textSize="10sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
                     </FrameLayout>
 
@@ -504,7 +526,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="Nguyễn Văn A"
                             android:textColor="@color/org_text"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -514,7 +536,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="VIP All-Access · Cổng A"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <TextView
@@ -523,7 +545,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="10:42"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <ImageView
                         android:layout_width="16dp"
@@ -559,7 +581,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="TB"
                             android:textColor="@color/org_info_text"
-                            android:textSize="10sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
                     </FrameLayout>
 
@@ -576,7 +598,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="Trần Thị B"
                             android:textColor="@color/org_text"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -586,7 +608,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="Standard Entry · Cổng B"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <TextView
@@ -595,7 +617,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="10:38"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <ImageView
                         android:layout_width="16dp"
@@ -631,7 +653,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="LC"
                             android:textColor="@color/org_warning_text"
-                            android:textSize="10sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
                     </FrameLayout>
 
@@ -648,7 +670,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="Lê Hoàng C"
                             android:textColor="@color/org_text"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -658,7 +680,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="VIP All-Access · Cổng A"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <TextView
@@ -667,7 +689,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="10:35"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <ImageView
                         android:layout_width="16dp"

@@ -15,8 +15,8 @@ import com.eventapp.app.core.session.SessionManager;
 import com.eventapp.app.databinding.FragmentOrgSettingsBinding;
 import com.eventapp.app.databinding.ViewOrgSettingRowBinding;
 import com.eventapp.app.ui.auth.AuthActivity;
+import com.eventapp.app.ui.common.AppDialog;
 import com.eventapp.app.ui.common.view.NavContentInset;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 /** Tab Cài đặt: hồ sơ tổ chức, các nhóm thiết lập và đăng xuất. */
@@ -75,18 +75,20 @@ public class OrgSettingsFragment extends Fragment {
     }
 
     private void confirmLogout() {
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.org_logout)
-                .setMessage("Bạn sẽ quay lại màn hình đăng nhập.")
-                .setNegativeButton("Ở lại", null)
-                .setPositiveButton(R.string.org_logout, (dialog, which) -> {
+        AppDialog.confirm(requireContext(),
+                R.drawable.ic_user_logout,
+                getString(R.string.org_logout_confirm_title),
+                getString(R.string.org_logout_confirm_body),
+                getString(R.string.org_logout),
+                getString(R.string.org_stay),
+                AppDialog.Tone.DANGER,
+                () -> {
                     SessionManager.get().clear();
                     Intent intent = new Intent(requireContext(), AuthActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     requireActivity().finish();
-                })
-                .show();
+                });
     }
 
     private void snack(String message) {

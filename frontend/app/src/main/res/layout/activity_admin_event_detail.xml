@@ -42,7 +42,7 @@
             android:fontFamily="@font/plus_jakarta_sans"
             android:text="@string/admin_event_title"
             android:textColor="@color/admin_text"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -57,7 +57,7 @@
             android:paddingBottom="5dp"
             android:text="#EVT-8842"
             android:textColor="@color/admin_text_muted"
-            android:textSize="9sp"
+            android:textSize="11sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -118,7 +118,7 @@
                             android:paddingBottom="4dp"
                             android:text="@string/admin_event_live"
                             android:textColor="#FF8FD9DC"
-                            android:textSize="8sp"
+                            android:textSize="10sp"
                             android:textStyle="bold" />
 
                         <Space
@@ -132,7 +132,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="Cập nhật 2 phút trước"
                             android:textColor="@color/admin_text_on_dark_muted"
-                            android:textSize="9sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <TextView
@@ -143,7 +143,7 @@
                         android:lineSpacingExtra="1dp"
                         android:text="@string/admin_event_name"
                         android:textColor="@color/admin_text_on_dark"
-                        android:textSize="20sp"
+                        android:textSize="22sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -153,7 +153,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_event_org"
                         android:textColor="@color/admin_text_on_dark_muted"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -176,7 +176,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/admin_event_time"
                             android:textColor="@color/admin_text_on_dark_muted"
-                            android:textSize="10.5sp" />
+                            android:textSize="12.5sp" />
 
                         <ImageView
                             android:layout_width="13dp"
@@ -196,7 +196,7 @@
                             android:maxLines="1"
                             android:text="@string/admin_event_place"
                             android:textColor="@color/admin_text_on_dark_muted"
-                            android:textSize="10.5sp" />
+                            android:textSize="12.5sp" />
                     </LinearLayout>
 
                     <View
@@ -223,7 +223,7 @@
                                 android:fontFamily="@font/plus_jakarta_sans"
                                 android:text="@string/admin_event_sold"
                                 android:textColor="@color/admin_text_on_dark"
-                                android:textSize="16sp"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -233,7 +233,7 @@
                                 android:fontFamily="@font/be_vietnam_pro"
                                 android:text="@string/admin_event_sold_label"
                                 android:textColor="#FF8FA3BA"
-                                android:textSize="9sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -248,7 +248,7 @@
                                 android:fontFamily="@font/plus_jakarta_sans"
                                 android:text="@string/admin_event_revenue"
                                 android:textColor="@color/admin_text_on_dark"
-                                android:textSize="16sp"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -258,7 +258,7 @@
                                 android:fontFamily="@font/be_vietnam_pro"
                                 android:text="@string/admin_event_revenue_label"
                                 android:textColor="#FF8FA3BA"
-                                android:textSize="9sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -273,7 +273,7 @@
                                 android:fontFamily="@font/plus_jakarta_sans"
                                 android:text="@string/admin_event_checkin"
                                 android:textColor="@color/admin_text_on_dark"
-                                android:textSize="16sp"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -283,7 +283,7 @@
                                 android:fontFamily="@font/be_vietnam_pro"
                                 android:text="@string/admin_event_checkin_label"
                                 android:textColor="#FF8FA3BA"
-                                android:textSize="9sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -324,7 +324,7 @@
                         android:paddingBottom="3dp"
                         android:text="92%"
                         android:textColor="@color/admin_accent_dark"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -350,7 +350,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="1.840 / 2.000 vé"
                         android:textColor="@color/admin_text_muted"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -358,7 +358,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="Còn 160 vé"
                         android:textColor="@color/admin_text"
-                        android:textSize="11sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -395,7 +395,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_event_risk"
                         android:textColor="@color/admin_warning_text"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -407,7 +407,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_event_risk_1"
                     android:textColor="@color/admin_warning_text"
-                    android:textSize="11.5sp" />
+                    android:textSize="13.5sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -417,7 +417,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_event_risk_2"
                     android:textColor="@color/admin_warning_text"
-                    android:textSize="11.5sp" />
+                    android:textSize="13.5sp" />
             </LinearLayout>
 
             <!-- Hành động -->
@@ -449,7 +449,7 @@
                     android:gravity="center"
                     android:text="@string/admin_event_pause"
                     android:textColor="@color/admin_danger_text"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -464,7 +464,7 @@
                     android:gravity="center"
                     android:text="@string/admin_event_alert"
                     android:textColor="@color/admin_primary"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -474,7 +474,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="Mọi thao tác đều được ghi vào nhật ký kiểm toán."
                     android:textColor="@color/admin_text_faint"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

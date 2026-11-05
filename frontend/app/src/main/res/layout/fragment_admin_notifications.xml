@@ -28,7 +28,7 @@
                 android:letterSpacing="0.14"
                 android:text="@string/admin_noti_kicker"
                 android:textColor="@color/admin_accent_dark"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -58,7 +58,7 @@
                     android:paddingEnd="12dp"
                     android:text="@string/admin_noti_read_all"
                     android:textColor="@color/admin_primary"
-                    android:textSize="11sp"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -76,7 +76,7 @@
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:textColor="@color/admin_accent_dark"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -136,7 +136,7 @@
             android:gravity="center"
             android:text="@string/admin_noti_empty"
             android:textColor="@color/admin_text_dim"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:visibility="gone" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

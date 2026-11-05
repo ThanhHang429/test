@@ -81,17 +81,55 @@
                 android:inputType="text"
                 android:maxLines="1" />
 
-            <ImageButton
-                android:id="@+id/btnFilter"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/bg_user_btn_primary"
-                android:contentDescription="@string/user_cd_filter"
-                android:padding="10dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_user_tune"
-                android:tint="@color/white" />
+            <FrameLayout
+                android:layout_width="44dp"
+                android:layout_height="44dp">
+
+                <ImageButton
+                    android:id="@+id/btnFilter"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_user_btn_primary"
+                    android:contentDescription="@string/user_cd_filter"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_user_tune"
+                    android:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/tvFilterBadge"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/bg_user_badge_count"
+                    android:fontFamily="@font/plus_jakarta_sans"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/filterSummaryScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clipToPadding="false"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/filterSummaryRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/user_gutter"
+                android:paddingEnd="@dimen/user_gutter" />
+        </HorizontalScrollView>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -101,59 +139,12 @@
             android:scrollbars="none">
 
             <LinearLayout
+                android:id="@+id/chipRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/user_gutter"
-                android:paddingEnd="@dimen/user_gutter">
-
-                <TextView
-                    android:id="@+id/chipAll"
-                    style="@style/Widget.EventApp.User.Chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/user_cat_all" />
-
-                <TextView
-                    android:id="@+id/chipMusic"
-                    style="@style/Widget.EventApp.User.Chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/user_cat_music" />
-
-                <TextView
-                    android:id="@+id/chipTech"
-                    style="@style/Widget.EventApp.User.Chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/user_cat_tech" />
-
-                <TextView
-                    android:id="@+id/chipBusiness"
-                    style="@style/Widget.EventApp.User.Chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/user_cat_business" />
-
-                <TextView
-                    android:id="@+id/chipArt"
-                    style="@style/Widget.EventApp.User.Chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/user_cat_art" />
-
-                <TextView
-                    android:id="@+id/chipFree"
-                    style="@style/Widget.EventApp.User.Chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:text="@string/user_cat_free" />
-            </LinearLayout>
+                android:paddingEnd="@dimen/user_gutter" />
         </HorizontalScrollView>
 
         <LinearLayout
@@ -254,6 +245,25 @@
                         android:textAppearance="@style/TextAppearance.EventApp.User.Caption" />
                 </LinearLayout>
             </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="18dp"
+                android:indeterminateTint="@color/user_primary"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:textColor="@color/user_danger_text"
+                android:textSize="13sp"
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEvents"

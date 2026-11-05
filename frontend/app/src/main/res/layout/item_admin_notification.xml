@@ -48,7 +48,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:maxLines="1"
                 android:textColor="@color/admin_text"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <View
@@ -69,7 +69,7 @@
             android:lineSpacingExtra="1dp"
             android:maxLines="2"
             android:textColor="@color/admin_text_muted"
-            android:textSize="11.5sp" />
+            android:textSize="13.5sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,7 +90,7 @@
                 android:paddingEnd="6dp"
                 android:paddingBottom="2dp"
                 android:textColor="@color/admin_neutral_text"
-                android:textSize="8sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -101,7 +101,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/be_vietnam_pro"
                 android:textColor="@color/admin_text_faint"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

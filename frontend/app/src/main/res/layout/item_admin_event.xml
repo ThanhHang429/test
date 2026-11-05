@@ -39,7 +39,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:letterSpacing="0.06"
                 android:textColor="#CCFFFFFF"
-                android:textSize="7sp"
+                android:textSize="9sp"
                 android:textStyle="bold" />
         </FrameLayout>
 
@@ -59,7 +59,7 @@
                 android:lineSpacingExtra="1dp"
                 android:maxLines="2"
                 android:textColor="@color/admin_text"
-                android:textSize="14.5sp"
+                android:textSize="16.5sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -71,7 +71,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:maxLines="1"
                 android:textColor="@color/admin_text_dim"
-                android:textSize="11sp" />
+                android:textSize="13sp" />
         </LinearLayout>
 
         <TextView
@@ -88,7 +88,7 @@
             android:paddingBottom="3dp"
             android:text="@string/admin_events_live"
             android:textColor="@color/admin_success_text"
-            android:textSize="8sp"
+            android:textSize="10sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -106,7 +106,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/be_vietnam_pro"
             android:textColor="@color/admin_text_muted"
-            android:textSize="11sp" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/tvEventCapacityPercent"
@@ -114,7 +114,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/plus_jakarta_sans"
             android:textColor="@color/admin_text"
-            android:textSize="11sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -147,7 +147,7 @@
                 android:letterSpacing="0.06"
                 android:text="@string/admin_events_sold"
                 android:textColor="@color/admin_text_faint"
-                android:textSize="8sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -157,7 +157,7 @@
                 android:layout_marginTop="2dp"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:textColor="@color/admin_text"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -174,7 +174,7 @@
                 android:letterSpacing="0.06"
                 android:text="@string/admin_events_revenue"
                 android:textColor="@color/admin_text_faint"
-                android:textSize="8sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -184,7 +184,7 @@
                 android:layout_marginTop="2dp"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:textColor="@color/admin_text"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -201,7 +201,7 @@
                 android:letterSpacing="0.06"
                 android:text="@string/admin_events_checkin"
                 android:textColor="@color/admin_text_faint"
-                android:textSize="8sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -211,7 +211,7 @@
                 android:layout_marginTop="2dp"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:textColor="@color/admin_text"
-                android:textSize="13sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -236,7 +236,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/be_vietnam_pro"
             android:textColor="@color/admin_warning_text"
-            android:textSize="11sp" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/btnEventDetail"
@@ -254,7 +254,7 @@
             android:paddingEnd="10dp"
             android:text="@string/admin_events_detail"
             android:textColor="@color/admin_primary"
-            android:textSize="11sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

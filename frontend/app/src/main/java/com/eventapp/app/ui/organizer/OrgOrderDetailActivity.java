@@ -11,7 +11,7 @@ import com.eventapp.app.ui.organizer.data.OrgDemo;
 import com.eventapp.app.ui.organizer.model.OrgOrder;
 import com.eventapp.app.ui.organizer.util.OrgFormat;
 import com.eventapp.app.ui.organizer.util.OrgUi;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.eventapp.app.ui.common.AppDialog;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Locale;
@@ -62,14 +62,14 @@ public class OrgOrderDetailActivity extends AppCompatActivity {
     }
 
     private void confirmRefund(OrgOrder order) {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.org_refund_action)
-                .setMessage("Hoàn " + OrgFormat.money(order.amount)
-                        + " cho " + order.buyer + "?")
-                .setNegativeButton("Đóng", null)
-                .setPositiveButton("Xác nhận", (dialog, which) ->
-                        snack("Đã tạo yêu cầu hoàn tiền"))
-                .show();
+        AppDialog.confirm(this,
+                R.drawable.ic_user_wallet,
+                getString(R.string.org_refund_action),
+                "Hoàn " + OrgFormat.money(order.amount) + " cho " + order.buyer + "?",
+                getString(R.string.common_confirm),
+                getString(R.string.common_close),
+                AppDialog.Tone.NEUTRAL,
+                () -> snack("Đã tạo yêu cầu hoàn tiền"));
     }
 
     private static String initials(String name) {

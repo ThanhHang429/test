@@ -2,6 +2,8 @@ package com.eventapp.app.ui.organizer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,25 +16,39 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.eventapp.app.R;
+import com.eventapp.app.data.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.data.remote.dto.organizer.OrganizerEventDtos;
+import com.eventapp.app.data.repository.OrganizerRepository;
 import com.eventapp.app.databinding.FragmentOrgEventsBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.organizer.adapter.OrgEventAdapter;
-import com.eventapp.app.ui.organizer.data.OrgDemo;
 import com.eventapp.app.ui.organizer.model.OrgEvent;
+import com.eventapp.app.ui.organizer.util.OrgEventMapper;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/** Tab Sự kiện: tìm kiếm, lọc trạng thái và mở chi tiết. */
+/** Tab Sự kiện: tải danh sách từ FR-O02, lọc trạng thái và mở chi tiết. */
 public class OrgEventsFragment extends Fragment implements OrgEventAdapter.Listener {
+
+    private static final int PAGE_SIZE = 50;
+    private static final long SEARCH_DEBOUNCE_MS = 280L;
 
     private FragmentOrgEventsBinding binding;
     private OrgEventAdapter adapter;
     private final List<TextView> chips = new ArrayList<>();
+    private final List<OrgEvent> items = new ArrayList<>();
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
     private String filter = OrgEvent.FILTER_ALL;
     private String query = "";
+    private int requestId;
+    private Runnable pendingSearch;
 
     @Nullable
     @Override
@@ -65,7 +81,7 @@ public class OrgEventsFragment extends Fragment implements OrgEventAdapter.Liste
         binding.btnCreateEvent.setOnClickListener(v ->
                 startActivity(new Intent(requireContext(), OrgCreateEventActivity.class)));
         binding.btnFilterEvent.setOnClickListener(v ->
-                Snackbar.make(binding.getRoot(), "Bộ lọc nâng cao đang được hoàn thiện",
+                Snackbar.make(binding.getRoot(), R.string.org_filter_advanced_soon,
                         Snackbar.LENGTH_SHORT).show());
 
         binding.etSearchEvent.addTextChangedListener(new TextWatcher() {
@@ -80,7 +96,7 @@ public class OrgEventsFragment extends Fragment implements OrgEventAdapter.Liste
             @Override
             public void afterTextChanged(Editable s) {
                 query = s == null ? "" : s.toString().trim().toLowerCase(Locale.ROOT);
-                applyFilter();
+                scheduleRender();
             }
         });
 
@@ -94,40 +110,97 @@ public class OrgEventsFragment extends Fragment implements OrgEventAdapter.Liste
         chips.get(2).setSelected(OrgEvent.FILTER_PENDING.equals(value));
         chips.get(3).setSelected(OrgEvent.FILTER_DRAFT.equals(value));
         chips.get(4).setSelected(OrgEvent.FILTER_ENDED.equals(value));
-        applyFilter();
+        load();
     }
 
-    private void applyFilter() {
+    private void load() {
+        if (binding == null) {
+            return;
+        }
+        final int token = ++requestId;
+        binding.progress.setVisibility(View.VISIBLE);
+        binding.tvEventsEmpty.setVisibility(View.GONE);
+
+        ServiceLocator.get(OrganizerRepository.class).events(filter, 0, PAGE_SIZE,
+                new ApiCallback<List<OrganizerEventDtos.Event>>() {
+                    @Override
+                    public void onSuccess(@Nullable List<OrganizerEventDtos.Event> data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        if (binding == null || token != requestId) {
+                            return;
+                        }
+                        binding.progress.setVisibility(View.GONE);
+                        items.clear();
+                        if (data != null) {
+                            for (OrganizerEventDtos.Event dto : data) {
+                                items.add(OrgEventMapper.from(dto));
+                            }
+                        }
+                        render();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException error) {
+                        if (binding == null || token != requestId) {
+                            return;
+                        }
+                        binding.progress.setVisibility(View.GONE);
+                        items.clear();
+                        render();
+                        Snackbar.make(binding.getRoot(), error.getUserMessage(),
+                                Snackbar.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void scheduleRender() {
+        if (pendingSearch != null) {
+            handler.removeCallbacks(pendingSearch);
+        }
+        pendingSearch = this::render;
+        handler.postDelayed(pendingSearch, SEARCH_DEBOUNCE_MS);
+    }
+
+    private void render() {
+        if (binding == null) {
+            return;
+        }
         List<OrgEvent> result = new ArrayList<>();
-        for (OrgEvent event : OrgDemo.events()) {
-            boolean matchFilter = OrgEvent.FILTER_ALL.equals(filter) || filter.equals(event.filter);
-            boolean matchQuery = query.isEmpty()
-                    || event.title.toLowerCase(Locale.ROOT).contains(query)
-                    || event.code.toLowerCase(Locale.ROOT).contains(query)
-                    || event.category.toLowerCase(Locale.ROOT).contains(query);
-            if (matchFilter && matchQuery) {
+        for (OrgEvent event : items) {
+            if (query.isEmpty() || matches(event)) {
                 result.add(event);
             }
         }
         adapter.submit(result);
         binding.tvEventsEmpty.setVisibility(result.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.tvEventsSub.setText(getString(R.string.org_events_count, result.size()));
+    }
+
+    private boolean matches(OrgEvent event) {
+        return event.title.toLowerCase(Locale.ROOT).contains(query)
+                || event.code.toLowerCase(Locale.ROOT).contains(query)
+                || event.city.toLowerCase(Locale.ROOT).contains(query)
+                || event.venueName.toLowerCase(Locale.ROOT).contains(query);
     }
 
     @Override
     public void onOpen(OrgEvent event) {
         Intent intent = new Intent(requireContext(), OrgEventDetailActivity.class);
-        intent.putExtra(OrgEventDetailActivity.EXTRA_EVENT_CODE, event.code);
+        intent.putExtra(OrgEventDetailActivity.EXTRA_EVENT_ID, event.id);
         startActivity(intent);
     }
 
     @Override
     public void onManageTickets(OrgEvent event) {
-        Snackbar.make(binding.getRoot(), "Quản lý vé · " + event.title,
+        Snackbar.make(binding.getRoot(), getString(R.string.org_manage_tickets_soon, event.title),
                 Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDestroyView() {
+        if (pendingSearch != null) {
+            handler.removeCallbacks(pendingSearch);
+        }
         super.onDestroyView();
         binding = null;
     }

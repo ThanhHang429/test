@@ -66,15 +66,15 @@ public class OrgEventAdapter extends RecyclerView.Adapter<OrgEventAdapter.VH> {
         }
 
         void bind(OrgEvent event) {
-            binding.cover.setBackgroundResource(event.coverRes);
-            binding.tvCategory.setText(event.category);
-            binding.tvStatus.setText(event.statusLabel);
-            OrgUi.applyPill(binding.tvStatus, event.tone);
+            binding.cover.setBackgroundResource(event.coverRes());
+            binding.tvCategory.setText(event.code);
+            binding.tvStatus.setText(event.statusLabel());
+            OrgUi.applyPill(binding.tvStatus, event.tone());
             binding.tvTitle.setText(event.title);
-            binding.tvMeta.setText(event.meta);
-            binding.tvLocation.setText(event.location);
-            binding.tvSold.setText(OrgFormat.count(event.sold) + " / "
-                    + OrgFormat.count(event.total) + " vé");
+            binding.tvMeta.setText(OrgFormat.dateRange(event.startAt, event.endAt));
+            binding.tvLocation.setText(OrgFormat.location(event.venueName, event.city));
+            binding.tvSold.setText(OrgFormat.count(event.ticketsSold) + " / "
+                    + OrgFormat.count(event.totalTickets()) + " vé");
             binding.tvRevenue.setText(event.revenue > 0
                     ? OrgFormat.compactMoney(event.revenue) : "—");
             binding.tvPercent.setText(event.percent() + "%");

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_org_surface"
@@ -33,7 +34,7 @@
             android:fontFamily="@font/plus_jakarta_sans"
             android:text="@string/org_create_title"
             android:textColor="@color/org_text"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <TextView
@@ -46,7 +47,7 @@
             android:paddingEnd="10dp"
             android:text="@string/org_save_draft"
             android:textColor="@color/org_primary_dark"
-            android:textSize="12sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -82,7 +83,7 @@
                     android:gravity="center"
                     android:text="1"
                     android:textColor="@color/white"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
                 <View
@@ -101,7 +102,7 @@
                     android:gravity="center"
                     android:text="2"
                     android:textColor="@color/org_primary_dark"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
                 <View
@@ -120,7 +121,7 @@
                     android:gravity="center"
                     android:text="3"
                     android:textColor="@color/org_primary_dark"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -131,7 +132,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/org_create_step"
                 android:textColor="@color/org_text_dim"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
 
             <!-- Form -->
             <com.google.android.material.card.MaterialCardView
@@ -152,7 +153,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/org_create_name"
                         android:textColor="@color/org_text"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatEditText
@@ -173,56 +174,30 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/org_create_category"
                         android:textColor="@color/org_text"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
-                    <LinearLayout
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/categoryChips"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:orientation="horizontal">
+                        app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="8dp"
+                        app:selectionRequired="false"
+                        app:singleLine="false"
+                        app:singleSelection="true" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="34dp"
-                            android:background="@drawable/bg_org_chip_active"
-                            android:fontFamily="@font/plus_jakarta_sans"
-                            android:gravity="center"
-                            android:paddingStart="13dp"
-                            android:paddingEnd="13dp"
-                            android:text="Công nghệ"
-                            android:textColor="@color/white"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="34dp"
-                            android:layout_marginStart="8dp"
-                            android:background="@drawable/bg_org_chip"
-                            android:fontFamily="@font/plus_jakarta_sans"
-                            android:gravity="center"
-                            android:paddingStart="13dp"
-                            android:paddingEnd="13dp"
-                            android:text="Giáo dục"
-                            android:textColor="@color/org_text_muted"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="34dp"
-                            android:layout_marginStart="8dp"
-                            android:background="@drawable/bg_org_chip"
-                            android:fontFamily="@font/plus_jakarta_sans"
-                            android:gravity="center"
-                            android:paddingStart="13dp"
-                            android:paddingEnd="13dp"
-                            android:text="Kinh doanh"
-                            android:textColor="@color/org_text_muted"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvCategoryEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/be_vietnam_pro"
+                        android:text="@string/org_create_category_empty"
+                        android:textColor="@color/org_text_dim"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -231,7 +206,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/org_create_desc"
                         android:textColor="@color/org_text"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatEditText
@@ -252,7 +227,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/org_create_place"
                         android:textColor="@color/org_text"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <androidx.appcompat.widget.AppCompatEditText
@@ -284,7 +259,7 @@
                                 android:fontFamily="@font/plus_jakarta_sans"
                                 android:text="@string/org_create_time"
                                 android:textColor="@color/org_text"
-                                android:textSize="11sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
 
                             <androidx.appcompat.widget.AppCompatEditText
@@ -314,7 +289,7 @@
                                 android:fontFamily="@font/plus_jakarta_sans"
                                 android:text="@string/org_create_capacity"
                                 android:textColor="@color/org_text"
-                                android:textSize="11sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
 
                             <androidx.appcompat.widget.AppCompatEditText
@@ -355,7 +330,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="Bạn có thể lưu nháp và hoàn thiện hạng vé ở bước sau."
                     android:textColor="@color/org_text_muted"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

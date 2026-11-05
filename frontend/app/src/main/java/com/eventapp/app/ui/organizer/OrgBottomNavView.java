@@ -131,18 +131,34 @@ public class OrgBottomNavView extends FrameLayout {
         View tab = tabs.get(index);
         ImageView icon = icons.get(index);
         TextView label = labels.get(index);
-        int color = ContextCompat.getColor(getContext(),
-                active ? R.color.white : R.color.org_text_dim);
 
         tab.setSelected(active);
-        icon.setImageTintList(ColorStateList.valueOf(color));
-        label.setTextColor(color);
+
+        if (index == TAB_CHECKIN) {
+            // Check-in là nút tròn nổi bật: icon luôn trắng trên nền gradient, nhãn giữ màu teal.
+            icon.setImageTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(getContext(), R.color.white)));
+            label.setTextColor(ContextCompat.getColor(getContext(), R.color.org_primary_dark));
+        } else {
+            int color = ContextCompat.getColor(getContext(),
+                    active ? R.color.white : R.color.org_text_dim);
+            icon.setImageTintList(ColorStateList.valueOf(color));
+            label.setTextColor(color);
+        }
 
         float scale = active ? 1.06f : 1f;
         icon.animate().scaleX(scale).scaleY(scale).setDuration(180).start();
     }
 
     private void movePill(int index, boolean animate) {
+        if (index == TAB_CHECKIN) {
+            // Không đặt viên chỉ báo lên nút Check-in vì nút đã có nền riêng.
+            pill.setVisibility(View.INVISIBLE);
+            needsPillPosition = false;
+            return;
+        }
+        pill.setVisibility(View.VISIBLE);
+
         View tab = tabs.get(index);
         int slotWidth = tab.getWidth();
         if (slotWidth <= 0) {

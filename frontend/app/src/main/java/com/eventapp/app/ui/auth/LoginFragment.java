@@ -1,40 +1,36 @@
 package com.eventapp.app.ui.auth;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.eventapp.app.BuildConfig;
 import com.eventapp.app.R;
+import com.eventapp.app.core.session.AuthSession;
+import com.eventapp.app.data.remote.dto.auth.DevAccountDto;
 import com.eventapp.app.databinding.FragmentAuthLoginBinding;
+import com.eventapp.app.databinding.ItemAuthAccountBinding;
+import com.eventapp.app.ui.host.SessionRouter;
 
-/** Đăng nhập: social row + email/mật khẩu + CTA gradient. */
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Đăng nhập bằng tài khoản seed.
+ *
+ * <p>Backend chưa có module xác thực thật, chỉ có {@code GET /dev/accounts} và
+ * {@code POST /dev/token}. Màn này liệt kê tài khoản seed rồi đổi sang JWT để đi đúng chuỗi
+ * xác thực (Bearer token) như bản thật.</p>
+ */
 public class LoginFragment extends Fragment {
 
-    private static final String PREFS = "auth_ui";
-    private static final String KEY_EMAIL = "remembered_email";
-
-    /**
-     * Tài khoản dùng thử cho giai đoạn test giao diện. Hai vai trò dùng chung màn đăng nhập;
-     * vai trò được suy ra từ email để mở đúng khu sau khi xác thực OTP.
-     */
-    private static final String USER_EMAIL = "demo@nexus.vn";
-    private static final String ORGANIZER_EMAIL = "organizer@nexus.vn";
-    private static final String ADMIN_EMAIL = "admin@nexus.vn";
-    private static final String DEMO_PASSWORD = "123456";
-
-    private static final String ROLE_USER = "USER";
-    private static final String ROLE_ORGANIZER = "ORGANIZER";
-    private static final String ROLE_ADMIN = "ADMIN";
-
     private FragmentAuthLoginBinding binding;
+    private LoginViewModel viewModel;
 
     @Nullable
     @Override
@@ -49,103 +45,113 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         binding.topBar.btnBack.setVisibility(View.GONE);
         binding.topBar.tvTopChip.setVisibility(View.GONE);
+        binding.btnRetry.setOnClickListener(v -> viewModel.loadAccounts());
 
-        SharedPreferences prefs = requireContext().getSharedPreferences(PREFS, 0);
-        String remembered = prefs.getString(KEY_EMAIL, "");
-        if (remembered != null && !remembered.isEmpty()) {
-            binding.etEmail.setText(remembered);
-            binding.cbRemember.setChecked(true);
-        }
+        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        observe();
+        viewModel.loadAccounts();
+    }
 
-        AuthUi.bindPasswordToggle(binding.etPassword, binding.btnTogglePassword);
-        AuthUi.clearErrorOnType(binding.etEmail, binding.tvEmailError);
-        AuthUi.clearErrorOnType(binding.etPassword, binding.tvPasswordError);
-
-        binding.btnLogin.setOnClickListener(v -> submit());
-        binding.tvForgot.setOnClickListener(v -> auth().openForgot());
-        binding.tvRegister.setOnClickListener(v -> auth().openRegister());
-        binding.btnGoogle.setOnClickListener(v -> comingSoon());
-        binding.btnFacebook.setOnClickListener(v -> comingSoon());
-
-        if (BuildConfig.DEBUG) {
-            binding.demoCard.setVisibility(View.VISIBLE);
-            binding.btnDemoUser.setOnClickListener(v -> fillDemo(USER_EMAIL));
-            binding.btnDemoOrganizer.setOnClickListener(v -> fillDemo(ORGANIZER_EMAIL));
-            binding.btnDemoAdmin.setOnClickListener(v -> fillDemo(ADMIN_EMAIL));
-        }
-
-        binding.etPassword.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                submit();
-                return true;
+    private void observe() {
+        viewModel.getAccounts().observe(getViewLifecycleOwner(), this::render);
+        viewModel.getLoading().observe(getViewLifecycleOwner(), ignored -> renderBusy());
+        viewModel.getSubmitting().observe(getViewLifecycleOwner(), ignored -> renderBusy());
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error == null) {
+                binding.tvError.setVisibility(View.GONE);
+                return;
             }
-            return false;
+            boolean loadFailed = isEmptyAccounts();
+            binding.tvError.setText(loadFailed
+                    ? getString(R.string.auth_seed_error) + "\n" + error.getUserMessage()
+                    : error.getUserMessage());
+            binding.tvError.setVisibility(View.VISIBLE);
+            binding.btnRetry.setVisibility(loadFailed ? View.VISIBLE : View.GONE);
         });
+        viewModel.getLoggedIn().observe(getViewLifecycleOwner(), this::openHost);
     }
 
-    private void submit() {
-        String email = AuthUi.text(binding.etEmail);
-        String password = binding.etPassword.getText() == null
-                ? "" : binding.etPassword.getText().toString();
+    private void renderBusy() {
+        boolean loading = Boolean.TRUE.equals(viewModel.getLoading().getValue());
+        boolean submitting = Boolean.TRUE.equals(viewModel.getSubmitting().getValue());
+        binding.progress.setVisibility(loading || submitting ? View.VISIBLE : View.GONE);
+        setRowsEnabled(!submitting);
+    }
 
-        boolean valid = true;
-        if (email.isEmpty()) {
-            AuthUi.markError(binding.etEmail, binding.tvEmailError, getString(R.string.auth_err_email_empty));
-            valid = false;
-        } else if (!AuthUi.isValidEmail(email)) {
-            AuthUi.markError(binding.etEmail, binding.tvEmailError, getString(R.string.auth_err_email));
-            valid = false;
+    private boolean isEmptyAccounts() {
+        List<DevAccountDto> accounts = viewModel.getAccounts().getValue();
+        return accounts == null || accounts.isEmpty();
+    }
+
+    private void render(List<DevAccountDto> accounts) {
+        if (binding == null) {
+            return;
         }
-        if (password.isEmpty()) {
-            AuthUi.markError(binding.etPassword, binding.tvPasswordError, getString(R.string.auth_err_password_empty));
-            valid = false;
-        } else if (password.length() < 6) {
-            AuthUi.markError(binding.etPassword, binding.tvPasswordError, getString(R.string.auth_err_password));
-            valid = false;
-        }
-        if (!valid) {
+        binding.accountList.removeAllViews();
+        binding.tvError.setVisibility(View.GONE);
+        binding.btnRetry.setVisibility(View.GONE);
+
+        if (accounts.isEmpty()) {
+            if (!Boolean.TRUE.equals(viewModel.getLoading().getValue())) {
+                binding.tvError.setText(R.string.auth_seed_empty);
+                binding.tvError.setVisibility(View.VISIBLE);
+            }
             return;
         }
 
-        String role;
-        if (USER_EMAIL.equalsIgnoreCase(email) && DEMO_PASSWORD.equals(password)) {
-            role = ROLE_USER;
-        } else if (ORGANIZER_EMAIL.equalsIgnoreCase(email) && DEMO_PASSWORD.equals(password)) {
-            role = ROLE_ORGANIZER;
-        } else if (ADMIN_EMAIL.equalsIgnoreCase(email) && DEMO_PASSWORD.equals(password)) {
-            role = ROLE_ADMIN;
-        } else {
-            AuthUi.markError(binding.etPassword, binding.tvPasswordError,
-                    getString(R.string.auth_err_credentials));
-            AuthUi.shake(binding.btnLogin);
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        for (DevAccountDto account : accounts) {
+            ItemAuthAccountBinding row = ItemAuthAccountBinding.inflate(
+                    inflater, binding.accountList, false);
+            row.tvName.setText(account.fullName == null ? account.email : account.fullName);
+            row.tvEmail.setText(account.email);
+            String role = primaryRole(account.roles);
+            row.tvRole.setText(role);
+            row.ivRoleIcon.setImageResource(iconFor(role));
+            row.getRoot().setOnClickListener(v -> viewModel.login(account));
+            binding.accountList.addView(row.getRoot());
+        }
+        renderBusy();
+    }
+
+    private void openHost(@Nullable AuthSession session) {
+        if (session == null || binding == null) {
             return;
         }
+        viewModel.consumeLoggedIn();
+        SessionRouter.openHost(requireContext(), session);
+        requireActivity().finish();
+    }
 
-        SharedPreferences prefs = requireContext().getSharedPreferences(PREFS, 0);
-        if (binding.cbRemember.isChecked()) {
-            prefs.edit().putString(KEY_EMAIL, email).apply();
-        } else {
-            prefs.edit().remove(KEY_EMAIL).apply();
+    private void setRowsEnabled(boolean enabled) {
+        for (int i = 0; i < binding.accountList.getChildCount(); i++) {
+            View row = binding.accountList.getChildAt(i);
+            row.setEnabled(enabled);
+            row.setAlpha(enabled ? 1f : 0.5f);
         }
-
-        AuthUi.hideKeyboard(binding.getRoot());
-        auth().openOtp(email, OtpFragment.MODE_LOGIN, role);
     }
 
-    private void fillDemo(String email) {
-        binding.etEmail.setText(email);
-        binding.etPassword.setText(DEMO_PASSWORD);
-        binding.cbRemember.setChecked(true);
-        binding.tvEmailError.setVisibility(View.GONE);
-        binding.tvPasswordError.setVisibility(View.GONE);
+    private String primaryRole(@Nullable List<String> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return "USER";
+        }
+        if (roles.contains("ADMIN")) {
+            return "ADMIN";
+        }
+        if (roles.contains("ORGANIZER")) {
+            return "ORGANIZER";
+        }
+        return roles.get(0);
     }
 
-    private void comingSoon() {
-        AuthUi.snack(binding.getRoot(), R.string.auth_soon);
-    }
-
-    private AuthActivity auth() {
-        return (AuthActivity) requireActivity();
+    private int iconFor(String role) {
+        if ("ADMIN".equals(role)) {
+            return R.drawable.ic_user_shield;
+        }
+        if ("ORGANIZER".equals(role)) {
+            return R.drawable.ic_org_building;
+        }
+        return R.drawable.ic_auth_person;
     }
 
     @Override

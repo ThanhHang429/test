@@ -7,6 +7,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -41,4 +42,7 @@ public interface AdminCategoryApi {
     @PUT("admin/categories/order")
     Call<ResponseWrapper.Envelope<List<AdminCategoryDtos.Category>>> reorder(
             @Body AdminCategoryDtos.OrderRequest request);
+
+    @DELETE("admin/categories/{categoryId}")
+    Call<ResponseWrapper.Envelope<Void>> delete(@Path("categoryId") long categoryId);
 }

@@ -58,6 +58,13 @@
             android:name=".ui.user.CheckoutActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.user.EventReviewsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.user.MyReviewsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.user.TicketDetailActivity"
             android:exported="false" />
         <activity
@@ -72,6 +79,11 @@
             android:exported="false"
             android:theme="@style/Theme.EventApp.Organizer" />
         <activity
+            android:name=".ui.organizer.OrgCrowdActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EventApp.Organizer"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ui.organizer.OrgOrderDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.EventApp.Organizer" />
@@ -82,10 +94,6 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.host.AdminHostActivity"
-            android:exported="false"
-            android:theme="@style/Theme.EventApp.Admin" />
-        <activity
-            android:name=".ui.admin.AdminReviewDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.EventApp.Admin" />
         <activity

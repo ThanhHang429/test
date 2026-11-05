@@ -4,19 +4,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.eventapp.app.R;
+import com.eventapp.app.data.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.data.remote.dto.organizer.OrganizerEventDtos;
+import com.eventapp.app.data.repository.OrganizerRepository;
 import com.eventapp.app.databinding.ActivityOrgEventDetailBinding;
 import com.eventapp.app.databinding.ItemOrgTicketTypeBinding;
-import com.eventapp.app.ui.organizer.data.OrgDemo;
 import com.eventapp.app.ui.organizer.model.OrgEvent;
-import com.eventapp.app.ui.organizer.model.OrgTicketType;
-import com.eventapp.app.ui.organizer.model.OrgTone;
+import com.eventapp.app.ui.organizer.util.OrgEventMapper;
 import com.eventapp.app.ui.organizer.util.OrgFormat;
 import com.eventapp.app.ui.organizer.util.OrgUi;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.eventapp.app.ui.common.AppDialog;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -24,9 +28,10 @@ import java.util.List;
 /** Chi tiết sự kiện của nhà tổ chức: tổng quan, hạng vé và hành động vận hành. */
 public class OrgEventDetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_EVENT_CODE = "event_code";
+    public static final String EXTRA_EVENT_ID = "event_id";
 
     private ActivityOrgEventDetailBinding binding;
+    private OrgEvent event;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,93 +39,109 @@ public class OrgEventDetailActivity extends AppCompatActivity {
         binding = ActivityOrgEventDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        OrgEvent event = OrgDemo.findEvent(getIntent().getStringExtra(EXTRA_EVENT_CODE));
-        bind(event);
-
         binding.btnBack.setOnClickListener(v -> finish());
-        binding.btnShareEvent.setOnClickListener(v ->
-                snack("Đã sao chép liên kết sự kiện"));
-        binding.btnBroadcast.setOnClickListener(v ->
-                snack("Soạn thông báo cho " + event.title));
-        binding.btnManageTickets.setOnClickListener(v ->
-                snack("Quản lý hạng vé · " + event.title));
-        binding.btnCancelEvent.setOnClickListener(v -> confirmCancel(event));
+        binding.btnShareEvent.setOnClickListener(v -> snack(getString(R.string.org_copied)));
+        binding.btnBroadcast.setOnClickListener(v -> {
+            if (event != null) {
+                OrgCrowdActivity.start(this, event.id, event.title);
+            }
+        });
+        binding.btnManageTickets.setOnClickListener(v -> {
+            if (event != null) {
+                snack(getString(R.string.org_manage_tickets_soon, event.title));
+            }
+        });
+        binding.btnCancelEvent.setOnClickListener(v -> confirmCancel());
+
+        load(getIntent().getLongExtra(EXTRA_EVENT_ID, 0L));
+    }
+
+    private void load(long eventId) {
+        if (eventId <= 0) {
+            snack(getString(R.string.org_event_not_found));
+            return;
+        }
+        ServiceLocator.get(OrganizerRepository.class).event(eventId,
+                new ApiCallback<OrganizerEventDtos.Event>() {
+                    @Override
+                    public void onSuccess(@Nullable OrganizerEventDtos.Event data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        if (binding == null || data == null) {
+                            return;
+                        }
+                        event = OrgEventMapper.from(data);
+                        bind(event);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException error) {
+                        if (binding != null) {
+                            snack(error.getUserMessage());
+                        }
+                    }
+                });
     }
 
     private void bind(OrgEvent event) {
-        binding.tvDetailCategory.setText(event.category);
-        binding.tvDetailStatus.setText(event.statusLabel);
-        OrgUi.applyPill(binding.tvDetailStatus, event.tone);
+        binding.tvDetailCategory.setText(event.code);
+        binding.tvDetailStatus.setText(event.statusLabel());
+        OrgUi.applyPill(binding.tvDetailStatus, event.tone());
         binding.tvDetailTitle.setText(event.title);
-        binding.tvDetailMeta.setText(event.meta);
-        binding.tvDetailLocation.setText(event.location);
+        binding.tvDetailMeta.setText(OrgFormat.dateRange(event.startAt, event.endAt));
+        binding.tvDetailLocation.setText(OrgFormat.location(event.venueName, event.city));
 
-        binding.tvStatSold.setText(OrgFormat.count(event.sold));
+        binding.tvStatSold.setText(OrgFormat.count(event.ticketsSold));
         binding.tvStatRevenue.setText(event.revenue > 0
                 ? OrgFormat.compactMoney(event.revenue) : "—");
-        binding.tvStatCheckin.setText(OrgFormat.count(event.checkin));
+        binding.tvStatCheckin.setText("—");
 
-        boolean draft = OrgEvent.FILTER_DRAFT.equals(event.filter);
-        boolean pending = OrgEvent.FILTER_PENDING.equals(event.filter);
-        if (draft) {
-            binding.tvReviewStatus.setText("Bản nháp");
-            OrgUi.applyPill(binding.tvReviewStatus, OrgTone.NEUTRAL);
-        } else if (pending) {
-            binding.tvReviewStatus.setText("Chờ duyệt");
-            OrgUi.applyPill(binding.tvReviewStatus, OrgTone.WARNING);
-        } else {
-            binding.tvReviewStatus.setText("Đã duyệt");
-            OrgUi.applyPill(binding.tvReviewStatus, OrgTone.SUCCESS);
-        }
+        binding.tvReviewStatus.setText(event.reviewLabel());
+        OrgUi.applyPill(binding.tvReviewStatus, event.reviewTone());
+        binding.tvLifecycleStatus.setText(event.lifecycleLabel());
+        OrgUi.applyPill(binding.tvLifecycleStatus, event.lifecycleTone());
 
-        if (OrgEvent.FILTER_ON_SALE.equals(event.filter)) {
-            binding.tvLifecycleStatus.setText("Đang bán");
-            OrgUi.applyPill(binding.tvLifecycleStatus, OrgTone.SUCCESS);
-        } else if (OrgEvent.FILTER_ENDED.equals(event.filter)) {
-            binding.tvLifecycleStatus.setText("Đã kết thúc");
-            OrgUi.applyPill(binding.tvLifecycleStatus, OrgTone.NEUTRAL);
-        } else {
-            binding.tvLifecycleStatus.setText("Chưa mở bán");
-            OrgUi.applyPill(binding.tvLifecycleStatus, OrgTone.NEUTRAL);
-        }
-
-        binding.tvCapacity.setText(OrgFormat.count(event.sold) + " / "
-                + OrgFormat.count(event.total) + " vé");
+        binding.tvCapacity.setText(OrgFormat.count(event.ticketsSold) + " / "
+                + OrgFormat.count(event.totalTickets()) + " vé");
         binding.progressCapacity.setProgressCompat(event.percent(), false);
 
-        List<OrgTicketType> types = OrgDemo.ticketTypes(event);
-        binding.tvTicketTypesSub.setText(types.size() + " hạng vé · "
-                + OrgFormat.count(event.total) + " vé phát hành");
+        List<OrgEvent.TicketType> types = event.ticketTypes;
+        binding.tvTicketTypesSub.setText(getString(R.string.org_ticket_types_count,
+                types.size(), OrgFormat.count(event.totalTickets())));
         bindTicketTypes(types);
     }
 
-    private void bindTicketTypes(List<OrgTicketType> types) {
+    private void bindTicketTypes(List<OrgEvent.TicketType> types) {
         binding.ticketTypeContainer.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
         for (int i = 0; i < types.size(); i++) {
-            OrgTicketType type = types.get(i);
+            OrgEvent.TicketType type = types.get(i);
             ItemOrgTicketTypeBinding row = ItemOrgTicketTypeBinding.inflate(
                     inflater, binding.ticketTypeContainer, false);
             row.tvTypeName.setText(type.name);
-            row.tvTypePrice.setText(type.price > 0 ? OrgFormat.money(type.price) : "Miễn phí");
+            row.tvTypePrice.setText(type.price > 0 ? OrgFormat.money(type.price)
+                    : getString(R.string.org_ticket_free));
             row.tvTypeSold.setText(OrgFormat.count(type.sold) + " / "
                     + OrgFormat.count(type.total));
-            row.tvTypeStatus.setText(type.statusLabel);
-            OrgUi.applyPill(row.tvTypeStatus, type.tone);
+            row.tvTypeStatus.setText(type.statusLabel());
+            OrgUi.applyPill(row.tvTypeStatus, type.tone());
             row.progressType.setProgressCompat(type.percent(), false);
             row.divider.setVisibility(i == types.size() - 1 ? View.GONE : View.VISIBLE);
             binding.ticketTypeContainer.addView(row.getRoot());
         }
     }
 
-    private void confirmCancel(OrgEvent event) {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.org_cancel_event)
-                .setMessage("Yêu cầu hủy \"" + event.title + "\" sẽ được gửi tới ban quản trị.")
-                .setNegativeButton("Đóng", null)
-                .setPositiveButton("Gửi yêu cầu", (dialog, which) ->
-                        snack("Đã gửi yêu cầu hủy sự kiện"))
-                .show();
+    private void confirmCancel() {
+        if (event == null) {
+            return;
+        }
+        AppDialog.confirm(this,
+                R.drawable.ic_ds_warning,
+                getString(R.string.org_cancel_event),
+                getString(R.string.org_cancel_confirm, event.title),
+                getString(R.string.org_send_request),
+                getString(R.string.org_close),
+                AppDialog.Tone.DANGER,
+                () -> snack(getString(R.string.org_cancel_sent)));
     }
 
     private void snack(String message) {

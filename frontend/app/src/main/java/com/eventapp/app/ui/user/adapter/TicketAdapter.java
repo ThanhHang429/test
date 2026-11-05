@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.ItemUserTicketBinding;
-import com.eventapp.app.ui.user.model.DemoTicket;
+import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.util.UserFmt;
 
 import java.util.ArrayList;
@@ -22,17 +22,17 @@ import java.util.List;
 public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.Holder> {
 
     public interface Listener {
-        void onOpen(@NonNull DemoTicket ticket);
+        void onOpen(@NonNull TicketUiModel ticket);
     }
 
     private final Listener listener;
-    private final List<DemoTicket> items = new ArrayList<>();
+    private final List<TicketUiModel> items = new ArrayList<>();
 
     public TicketAdapter(@NonNull Listener listener) {
         this.listener = listener;
     }
 
-    public void setItems(List<DemoTicket> data) {
+    public void setItems(List<TicketUiModel> data) {
         items.clear();
         if (data != null) {
             items.addAll(data);
@@ -50,26 +50,26 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.Holder> {
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         ItemUserTicketBinding b = holder.binding;
-        DemoTicket ticket = items.get(position);
+        TicketUiModel ticket = items.get(position);
         Context context = b.getRoot().getContext();
 
-        b.cover.setBackgroundResource(ticket.event.coverRes);
-        b.ivIcon.setImageResource(ticket.event.iconRes);
+        b.cover.setBackgroundResource(ticket.coverRes());
+        b.ivIcon.setImageResource(ticket.iconRes());
         b.tvCode.setText(ticket.code);
-        b.tvDate.setText(UserFmt.dateShort(ticket.event.startAt) + " • "
-                + UserFmt.time(ticket.event.startAt));
-        b.tvTitle.setText(ticket.event.title);
-        b.tvVenue.setText(ticket.event.venue);
-        b.tvType.setText(ticket.typeName + " × " + ticket.quantity);
-        b.tvPrice.setText(UserFmt.money(ticket.total));
+        b.tvDate.setText(UserFmt.dateShort(ticket.startAt) + " • "
+                + UserFmt.time(ticket.startAt));
+        b.tvTitle.setText(ticket.eventTitle);
+        b.tvVenue.setText(ticket.venue);
+        b.tvType.setText(ticket.ticketType + " × " + ticket.quantity);
+        b.tvPrice.setText(UserFmt.money(ticket.totalPrice));
 
         bindStatus(context, b.tvStatus, ticket);
 
-        boolean live = ticket.status == DemoTicket.Status.UPCOMING;
+        boolean live = ticket.status == TicketUiModel.Status.UPCOMING;
         b.btnOpen.setText(live ? R.string.user_view_ticket : R.string.user_view_ticket_detail);
         b.btnOpen.setAlpha(live ? 1f : 0.72f);
 
-        if (ticket.status == DemoTicket.Status.CANCELLED) {
+        if (ticket.status == TicketUiModel.Status.CANCELLED) {
             b.tvPrice.setPaintFlags(b.tvPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             b.tvPrice.setTextColor(ContextCompat.getColor(context, R.color.user_text_dim));
         } else {
@@ -82,7 +82,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.Holder> {
         b.btnOpen.setOnClickListener(open);
     }
 
-    private void bindStatus(Context context, android.widget.TextView view, DemoTicket ticket) {
+    private void bindStatus(Context context, android.widget.TextView view, TicketUiModel ticket) {
         switch (ticket.status) {
             case USED:
                 view.setText(R.string.user_ticket_status_used);
@@ -93,6 +93,11 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.Holder> {
                 view.setText(R.string.user_ticket_status_cancelled);
                 view.setBackgroundResource(R.drawable.bg_user_badge_danger);
                 view.setTextColor(ContextCompat.getColor(context, R.color.user_danger_text));
+                break;
+            case PAST:
+                view.setText(R.string.user_ticket_status_past);
+                view.setBackgroundResource(R.drawable.bg_user_badge_neutral);
+                view.setTextColor(ContextCompat.getColor(context, R.color.user_text_muted));
                 break;
             default:
                 view.setText(R.string.user_ticket_status_valid);

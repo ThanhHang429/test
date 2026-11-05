@@ -16,7 +16,7 @@ import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.host.UserHostActivity;
 import com.eventapp.app.ui.user.adapter.TicketAdapter;
 import com.eventapp.app.ui.user.data.DemoContent;
-import com.eventapp.app.ui.user.model.DemoTicket;
+import com.eventapp.app.ui.model.TicketUiModel;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class TicketsFragment extends Fragment {
 
     private FragmentUserTicketsBinding binding;
     private TicketAdapter adapter;
-    private DemoTicket.Status filter = DemoTicket.Status.UPCOMING;
+    private TicketUiModel.Status filter = TicketUiModel.Status.UPCOMING;
 
     private final Runnable dataObserver = this::reload;
 
@@ -46,9 +46,9 @@ public class TicketsFragment extends Fragment {
         binding.rvTickets.setAdapter(adapter);
 
         binding.chipUpcoming.setSelected(true);
-        binding.chipUpcoming.setOnClickListener(v -> select(DemoTicket.Status.UPCOMING));
-        binding.chipUsed.setOnClickListener(v -> select(DemoTicket.Status.USED));
-        binding.chipCancelled.setOnClickListener(v -> select(DemoTicket.Status.CANCELLED));
+        binding.chipUpcoming.setOnClickListener(v -> select(TicketUiModel.Status.UPCOMING));
+        binding.chipUsed.setOnClickListener(v -> select(TicketUiModel.Status.USED));
+        binding.chipCancelled.setOnClickListener(v -> select(TicketUiModel.Status.CANCELLED));
         binding.btnExplore.setOnClickListener(v -> {
             if (getActivity() instanceof UserHostActivity) {
                 ((UserHostActivity) getActivity()).openTab(UserBottomNavView.TAB_DISCOVERY);
@@ -58,11 +58,11 @@ public class TicketsFragment extends Fragment {
         reload();
     }
 
-    private void select(DemoTicket.Status status) {
+    private void select(TicketUiModel.Status status) {
         filter = status;
-        binding.chipUpcoming.setSelected(status == DemoTicket.Status.UPCOMING);
-        binding.chipUsed.setSelected(status == DemoTicket.Status.USED);
-        binding.chipCancelled.setSelected(status == DemoTicket.Status.CANCELLED);
+        binding.chipUpcoming.setSelected(status == TicketUiModel.Status.UPCOMING);
+        binding.chipUsed.setSelected(status == TicketUiModel.Status.USED);
+        binding.chipCancelled.setSelected(status == TicketUiModel.Status.CANCELLED);
         reload();
     }
 
@@ -72,16 +72,16 @@ public class TicketsFragment extends Fragment {
         }
         DemoContent content = DemoContent.get();
         binding.tvTicketsSub.setText(getString(R.string.user_tickets_sub,
-                content.ticketsByStatusCount(DemoTicket.Status.UPCOMING),
-                content.ticketsByStatusCount(DemoTicket.Status.USED)));
+                content.ticketsByStatusCount(TicketUiModel.Status.UPCOMING),
+                content.ticketsByStatusCount(TicketUiModel.Status.USED)));
         binding.chipUpcoming.setText(getString(R.string.user_filter_upcoming)
-                + " (" + content.ticketsByStatusCount(DemoTicket.Status.UPCOMING) + ")");
+                + " (" + content.ticketsByStatusCount(TicketUiModel.Status.UPCOMING) + ")");
         binding.chipUsed.setText(getString(R.string.user_filter_used)
-                + " (" + content.ticketsByStatusCount(DemoTicket.Status.USED) + ")");
+                + " (" + content.ticketsByStatusCount(TicketUiModel.Status.USED) + ")");
         binding.chipCancelled.setText(getString(R.string.user_filter_cancelled)
-                + " (" + content.ticketsByStatusCount(DemoTicket.Status.CANCELLED) + ")");
+                + " (" + content.ticketsByStatusCount(TicketUiModel.Status.CANCELLED) + ")");
 
-        List<DemoTicket> tickets = content.tickets(filter);
+        List<TicketUiModel> tickets = content.tickets(filter);
         adapter.setItems(tickets);
         boolean empty = tickets.isEmpty();
         binding.emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);

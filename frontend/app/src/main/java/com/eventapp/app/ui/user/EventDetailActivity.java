@@ -7,8 +7,9 @@ import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -20,15 +21,25 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.core.widget.NestedScrollView;
 
 import com.eventapp.app.R;
+import com.eventapp.app.data.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.data.remote.dto.discovery.DiscoveryDtos;
+import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
+import com.eventapp.app.data.repository.EventRepository;
+import com.eventapp.app.data.repository.FavoriteRepository;
 import com.eventapp.app.databinding.ActivityUserEventDetailBinding;
 import com.eventapp.app.databinding.ViewUserTicketTypeBinding;
 import com.eventapp.app.ui.common.view.SnackPill;
-import com.eventapp.app.ui.user.data.DemoContent;
-import com.eventapp.app.ui.user.model.DemoEvent;
+import com.eventapp.app.ui.mapper.EventMapper;
+import com.eventapp.app.ui.model.EventCategoryUi;
+import com.eventapp.app.ui.model.EventUiModel;
+import com.eventapp.app.ui.user.util.StarText;
 import com.eventapp.app.ui.user.util.UserFmt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /** Chi tiết sự kiện + chọn số lượng vé và chuyển sang bước xác nhận đặt vé. */
 public class EventDetailActivity extends AppCompatActivity {
@@ -36,7 +47,8 @@ public class EventDetailActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_ID = "event_id";
 
     private ActivityUserEventDetailBinding binding;
-    private DemoEvent event;
+    private EventUiModel event;
+    private boolean savePending;
     private int[] quantities = new int[0];
     private final List<ViewUserTicketTypeBinding> typeRows = new ArrayList<>();
 
@@ -59,15 +71,19 @@ public class EventDetailActivity extends AppCompatActivity {
         controller.setAppearanceLightStatusBars(false);
         controller.setAppearanceLightNavigationBars(true);
 
-        event = DemoContent.get().event(getIntent().getLongExtra(EXTRA_EVENT_ID, -1L));
-        if (event == null) {
-            finish();
-            return;
-        }
-
         applyInsets();
-        bindEvent();
-        buildTicketTypes();
+
+        binding.btnBack.setOnClickListener(v -> finish());
+        binding.btnShare.setOnClickListener(v -> share());
+        binding.btnSave.setOnClickListener(v -> toggleSave());
+        binding.tvDirections.setOnClickListener(v -> openDirections());
+        binding.btnBook.setOnClickListener(v -> book());
+        binding.cardReviews.setOnClickListener(v -> {
+            if (event != null) {
+                EventReviewsActivity.start(this, event.id, event.title);
+            }
+        });
+        binding.btnBook.setEnabled(false);
 
         binding.scroll.setOnScrollChangeListener(
                 (NestedScrollView.OnScrollChangeListener) (v, x, scrollY, oldX, oldY) -> {
@@ -76,11 +92,37 @@ public class EventDetailActivity extends AppCompatActivity {
                     binding.heroInfo.setVisibility(fade <= 0f ? View.INVISIBLE : View.VISIBLE);
                 });
 
-        binding.btnBack.setOnClickListener(v -> finish());
-        binding.btnShare.setOnClickListener(v -> share());
-        binding.btnSave.setOnClickListener(v -> toggleSave());
-        binding.tvDirections.setOnClickListener(v -> openDirections());
-        binding.btnBook.setOnClickListener(v -> book());
+        load();
+    }
+
+    private void load() {
+        long id = getIntent().getLongExtra(EXTRA_EVENT_ID, -1L);
+        ServiceLocator.get(EventRepository.class).detail(id,
+                new ApiCallback<DiscoveryDtos.EventDetail>() {
+                    @Override
+                    public void onSuccess(@Nullable DiscoveryDtos.EventDetail data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
+                        if (data == null) {
+                            finish();
+                            return;
+                        }
+                        event = EventMapper.fromDetail(data);
+                        bindEvent();
+                        buildTicketTypes();
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException error) {
+                        if (isFinishing() || isDestroyed()) {
+                            return;
+                        }
+                        SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
+                        finish();
+                    }
+                });
     }
 
     private void applyInsets() {
@@ -97,19 +139,29 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     private void bindEvent() {
-        binding.heroCover.setBackgroundResource(event.coverRes);
-        binding.heroIcon.setImageResource(event.iconRes);
-        binding.tvCategory.setText(event.categoryLabel);
-        binding.tvTag.setText(event.tag);
-        binding.tvTag.setVisibility(event.tag.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.heroCover.setBackgroundResource(EventCategoryUi.coverRes(event.category));
+        binding.heroIcon.setImageResource(EventCategoryUi.iconRes(event.category));
+        binding.tvCategory.setText(EventCategoryUi.label(this, event.category));
+        String tag = event.statusLabel == null ? "" : event.statusLabel;
+        binding.tvTag.setText(tag);
+        binding.tvTag.setVisibility(tag.isEmpty() ? View.GONE : View.VISIBLE);
         binding.tvTitle.setText(event.title);
         binding.tvHeroDate.setText(UserFmt.dateTime(event.startAt));
         binding.tvTime.setText(UserFmt.dateLong(event.startAt) + "\n"
                 + UserFmt.time(event.startAt) + " – " + UserFmt.time(event.endAt));
-        binding.tvVenue.setText(event.venue + ", " + event.city);
+        binding.tvVenue.setText(venue());
         binding.tvOrganizer.setText(event.organizer);
         binding.tvDescription.setText(event.description);
+        bindReviewSummary();
         updateSaveIcon();
+    }
+
+    private void bindReviewSummary() {
+        StarText.apply(binding.tvReviewStars, event.rating);
+        binding.tvReviewSummary.setText(event.reviewCount <= 0
+                ? getString(R.string.user_reviews_none)
+                : String.format(Locale.US, "%.1f", event.rating).replace('.', ',')
+                + " · " + getString(R.string.user_reviews_total, event.reviewCount));
     }
 
     private void buildTicketTypes() {
@@ -119,25 +171,24 @@ public class EventDetailActivity extends AppCompatActivity {
 
         for (int i = 0; i < event.ticketTypes.size(); i++) {
             final int index = i;
-            DemoEvent.TicketType type = event.ticketTypes.get(i);
+            EventUiModel.TicketType type = event.ticketTypes.get(i);
             ViewUserTicketTypeBinding row = ViewUserTicketTypeBinding.inflate(
                     getLayoutInflater(), binding.ticketTypeList, false);
             row.tvTypeName.setText(type.name);
-            row.tvPrice.setText(UserFmt.money(type.price));
-            row.tvNote.setText(type.note);
-            row.tvNote.setVisibility(type.note.isEmpty() ? View.GONE : View.VISIBLE);
-            row.tvPopular.setVisibility(type.popular && !type.soldOut() ? View.VISIBLE : View.GONE);
-            row.tvRemaining.setText(type.soldOut()
-                    ? getString(R.string.user_sold_out_short)
-                    : getString(R.string.user_ticket_remaining, type.remaining));
+            row.tvPrice.setText(type.isFree() ? getString(R.string.user_free)
+                    : UserFmt.money(type.price));
+            row.tvNote.setText(type.description);
+            row.tvNote.setVisibility(type.description.isEmpty() ? View.GONE : View.VISIBLE);
+            row.tvPopular.setVisibility(index == 0 && !type.soldOut() ? View.VISIBLE : View.GONE);
+            row.tvRemaining.setText(remainingLabel(type));
 
-            if (type.soldOut()) {
+            if (type.soldOut() || !type.onSale()) {
                 row.getRoot().setAlpha(0.55f);
                 row.btnPlus.setEnabled(false);
                 row.btnMinus.setEnabled(false);
             } else {
                 row.btnPlus.setOnClickListener(v -> {
-                    if (quantities[index] < Math.min(type.remaining, 10)) {
+                    if (quantities[index] < maxQuantity(type)) {
                         quantities[index]++;
                         renderRow(row, type, quantities[index]);
                         updateTotal();
@@ -159,10 +210,28 @@ public class EventDetailActivity extends AppCompatActivity {
         updateTotal();
     }
 
-    private void renderRow(ViewUserTicketTypeBinding row, DemoEvent.TicketType type, int qty) {
+    private String remainingLabel(EventUiModel.TicketType type) {
+        if (type.soldOut()) {
+            return getString(R.string.user_sold_out_short);
+        }
+        if (type.remaining == null) {
+            return "";
+        }
+        return getString(R.string.user_ticket_remaining, type.remaining);
+    }
+
+    private int maxQuantity(EventUiModel.TicketType type) {
+        int limit = type.maxPerUser;
+        if (type.remaining != null) {
+            limit = Math.min(limit, type.remaining);
+        }
+        return Math.max(1, limit);
+    }
+
+    private void renderRow(ViewUserTicketTypeBinding row, EventUiModel.TicketType type, int qty) {
         row.tvQty.setText(String.valueOf(qty));
         boolean canMinus = qty > 0;
-        boolean canPlus = !type.soldOut() && qty < Math.min(type.remaining, 10);
+        boolean canPlus = !type.soldOut() && type.onSale() && qty < maxQuantity(type);
         row.btnMinus.setEnabled(canMinus);
         row.btnMinus.setAlpha(canMinus ? 1f : 0.35f);
         row.btnPlus.setEnabled(canPlus);
@@ -177,10 +246,30 @@ public class EventDetailActivity extends AppCompatActivity {
             count += quantities[i];
         }
         binding.tvTotal.setText(UserFmt.amount(total));
-        boolean soldOut = event.cheapestAvailable() == null;
-        binding.btnBook.setEnabled(!soldOut);
-        binding.btnBook.setText(soldOut ? R.string.user_sold_out_short : R.string.user_book_now);
-        binding.btnBook.setAlpha(soldOut ? 0.5f : (count == 0 ? 0.55f : 1f));
+        boolean blocked = event.disabledReason != null && !event.disabledReason.isEmpty();
+        binding.btnBook.setEnabled(!blocked);
+        binding.btnBook.setText(blocked ? blockedLabel(event.disabledReason)
+                : R.string.user_book_now);
+        binding.btnBook.setAlpha(blocked ? 0.5f : (count == 0 ? 0.55f : 1f));
+    }
+
+    private int blockedLabel(String reason) {
+        switch (reason) {
+            case "SOLD_OUT":
+                return R.string.user_sold_out_short;
+            case "SALES_NOT_STARTED":
+                return R.string.user_sales_not_started;
+            case "SALES_ENDED":
+                return R.string.user_sales_ended;
+            case "EVENT_CANCELLED":
+                return R.string.user_event_cancelled;
+            case "EVENT_COMPLETED":
+                return R.string.user_event_completed;
+            case "ALREADY_REGISTERED":
+                return R.string.user_already_registered;
+            default:
+                return R.string.user_book_now;
+        }
     }
 
     private void book() {
@@ -192,18 +281,62 @@ public class EventDetailActivity extends AppCompatActivity {
             SnackPill.show(binding.getRoot(), getString(R.string.user_select_ticket_first), dp(96));
             return;
         }
-        CheckoutActivity.start(this, event.id, quantities);
+        String[] names = new String[event.ticketTypes.size()];
+        long[] prices = new long[event.ticketTypes.size()];
+        for (int i = 0; i < event.ticketTypes.size(); i++) {
+            names[i] = event.ticketTypes.get(i).name;
+            prices[i] = event.ticketTypes.get(i).price;
+        }
+        CheckoutActivity.start(this, event.id, event.title, venue(), event.city,
+                event.startAt, event.endAt, event.category.ordinal(),
+                names, prices, quantities);
     }
 
     private void toggleSave() {
-        boolean saved = DemoContent.get().toggleSaved(event.id);
+        if (event == null || savePending) {
+            return;
+        }
+        savePending = true;
+        final boolean target = !event.favorite;
+        // Đổi icon ngay để thao tác lưu/bỏ lưu có phản hồi tức thì.
+        event.favorite = target;
         updateSaveIcon();
         SnackPill.show(binding.getRoot(), getString(
-                saved ? R.string.user_saved_toast : R.string.user_unsaved_toast), dp(96));
+                target ? R.string.user_saved_toast : R.string.user_unsaved_toast), dp(96));
+
+        FavoriteRepository repository = ServiceLocator.get(FavoriteRepository.class);
+        ApiCallback<FavoriteDtos.ToggleResult> callback = new ApiCallback<FavoriteDtos.ToggleResult>() {
+            @Override
+            public void onSuccess(@Nullable FavoriteDtos.ToggleResult data,
+                                  @Nullable com.google.gson.JsonElement meta) {
+                savePending = false;
+                if (data == null || event == null) {
+                    return;
+                }
+                event.favorite = data.isFavorite;
+                updateSaveIcon();
+            }
+
+            @Override
+            public void onError(@NonNull ApiException error) {
+                savePending = false;
+                if (event == null) {
+                    return;
+                }
+                event.favorite = !target;
+                updateSaveIcon();
+                SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
+            }
+        };
+        if (target) {
+            repository.add(event.id, callback);
+        } else {
+            repository.remove(event.id, callback);
+        }
     }
 
     private void updateSaveIcon() {
-        boolean saved = DemoContent.get().isSaved(event.id);
+        boolean saved = event != null && event.favorite;
         binding.btnSave.setImageResource(saved
                 ? R.drawable.ic_ds_heart_filled : R.drawable.ic_user_heart);
         binding.btnSave.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this,
@@ -212,18 +345,35 @@ public class EventDetailActivity extends AppCompatActivity {
                 saved ? R.string.user_unsave : R.string.user_save));
     }
 
+    private String venue() {
+        if (event == null) {
+            return "";
+        }
+        if (event.venue == null || event.venue.isEmpty()) {
+            return event.city == null ? "" : event.city;
+        }
+        return event.city == null || event.city.isEmpty()
+                ? event.venue : event.venue + ", " + event.city;
+    }
+
     private void share() {
+        if (event == null) {
+            return;
+        }
         Intent send = new Intent(Intent.ACTION_SEND);
         send.setType("text/plain");
         send.putExtra(Intent.EXTRA_SUBJECT, event.title);
         send.putExtra(Intent.EXTRA_TEXT, event.title + "\n"
-                + UserFmt.dateTime(event.startAt) + "\n" + event.venue);
+                + UserFmt.dateTime(event.startAt) + "\n" + venue());
         startActivity(Intent.createChooser(send, getString(R.string.user_share_chooser)));
     }
 
     private void openDirections() {
+        if (event == null) {
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("geo:0,0?q=" + Uri.encode(event.venue + ", " + event.city)));
+                Uri.parse("geo:0,0?q=" + Uri.encode(venue())));
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException exception) {

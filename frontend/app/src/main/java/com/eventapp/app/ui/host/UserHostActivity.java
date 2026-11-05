@@ -27,6 +27,8 @@ import com.eventapp.app.ui.user.NotificationsActivity;
 import com.eventapp.app.ui.user.SavedFragment;
 import com.eventapp.app.ui.user.TicketsFragment;
 import com.eventapp.app.ui.user.UserBottomNavView;
+import com.eventapp.app.core.session.AuthSession;
+import com.eventapp.app.core.session.SessionManager;
 import com.eventapp.app.ui.user.data.DemoContent;
 
 /**
@@ -65,7 +67,8 @@ public class UserHostActivity extends AppCompatActivity {
                 new Intent(this, NotificationsActivity.class)));
         binding.btnAvatar.setOnClickListener(v ->
                 binding.userBottomNav.selectTab(UserBottomNavView.TAB_ACCOUNT));
-        binding.tvAvatarInitials.setText("TL");
+        AuthSession session = SessionManager.get().getSession();
+        binding.tvAvatarInitials.setText(initials(session == null ? null : session.fullName));
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -168,6 +171,19 @@ public class UserHostActivity extends AppCompatActivity {
             binding.userContent.setPadding(0, barHeight, 0, 0);
             return insets;
         });
+    }
+
+    private static String initials(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return "?";
+        }
+        String[] parts = name.trim().split("\\s+");
+        StringBuilder builder = new StringBuilder();
+        builder.append(Character.toUpperCase(parts[0].charAt(0)));
+        if (parts.length > 1) {
+            builder.append(Character.toUpperCase(parts[parts.length - 1].charAt(0)));
+        }
+        return builder.toString();
     }
 
     private static String tagOf(int index) {

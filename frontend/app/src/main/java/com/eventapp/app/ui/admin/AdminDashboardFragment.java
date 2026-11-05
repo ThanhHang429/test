@@ -33,7 +33,7 @@ public class AdminDashboardFragment extends Fragment {
                 new float[]{5.2f, 6.8f, 5.9f, 8.1f, 7.4f, 9.6f, 8.6f},
                 new float[]{4.6f, 5.2f, 5.5f, 6.9f, 6.4f, 7.8f, 7.2f});
 
-        binding.btnQueueReview.setOnClickListener(v -> open(AdminHostActivity.SCREEN_MODERATION));
+        binding.btnQueueReview.setOnClickListener(v -> open(AdminHostActivity.SCREEN_EVENTS));
         binding.btnQueueReport.setOnClickListener(v -> open(AdminHostActivity.SCREEN_EVENTS));
         binding.btnQueueRefund.setOnClickListener(v -> open(AdminHostActivity.SCREEN_ACCOUNTS));
         binding.btnQueuePayout.setOnClickListener(v -> open(AdminHostActivity.SCREEN_ACCOUNTS));

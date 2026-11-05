@@ -128,7 +128,7 @@
                 android:fontFeatureSettings="tnum"
                 android:text="1.720"
                 android:textColor="@color/org_text"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -138,7 +138,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/org_order_total"
                 android:textColor="@color/org_text_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <View
@@ -161,7 +161,7 @@
                 android:fontFeatureSettings="tnum"
                 android:text="1.462"
                 android:textColor="@color/org_success_text"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -171,7 +171,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/org_order_paid_count"
                 android:textColor="@color/org_text_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <View
@@ -194,7 +194,7 @@
                 android:fontFeatureSettings="tnum"
                 android:text="18"
                 android:textColor="@color/org_warning_text"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -204,7 +204,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/org_order_pending_count"
                 android:textColor="@color/org_text_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <View
@@ -227,7 +227,7 @@
                 android:fontFeatureSettings="tnum"
                 android:text="03"
                 android:textColor="@color/org_danger_text"
-                android:textSize="17sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -237,7 +237,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/org_order_refund_count"
                 android:textColor="@color/org_text_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
 

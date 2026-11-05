@@ -52,6 +52,11 @@ public class EventRepository {
         ApiCallback.enqueue(api.detail(id), callback);
     }
 
+    /** Thành phố đang có sự kiện công khai — nguồn cho chip lọc địa điểm. */
+    public void cities(@NonNull ApiCallback<List<String>> callback) {
+        ApiCallback.enqueue(api.cities(), callback);
+    }
+
     private static String emptyToNull(String value) {
         return value == null || value.trim().isEmpty() ? null : value.trim();
     }

@@ -28,7 +28,7 @@
                 android:letterSpacing="0.14"
                 android:text="GIÁM SÁT TRỰC TIẾP"
                 android:textColor="@color/admin_accent_dark"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView

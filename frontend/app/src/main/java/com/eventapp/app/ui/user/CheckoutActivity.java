@@ -22,17 +22,25 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.eventapp.app.R;
+import com.eventapp.app.core.enums.EventCategory;
 import com.eventapp.app.databinding.ActivityUserCheckoutBinding;
 import com.eventapp.app.ui.host.UserHostActivity;
+import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.data.DemoContent;
-import com.eventapp.app.ui.user.model.DemoEvent;
-import com.eventapp.app.ui.user.model.DemoTicket;
 import com.eventapp.app.ui.user.util.UserFmt;
 
 /** Xác nhận đơn hàng, chọn phương thức thanh toán (mô phỏng) và hiển thị kết quả. */
 public class CheckoutActivity extends AppCompatActivity {
 
     private static final String EXTRA_EVENT_ID = "event_id";
+    private static final String EXTRA_TITLE = "title";
+    private static final String EXTRA_VENUE = "venue";
+    private static final String EXTRA_CITY = "city";
+    private static final String EXTRA_START = "start_at";
+    private static final String EXTRA_END = "end_at";
+    private static final String EXTRA_CATEGORY = "category";
+    private static final String EXTRA_TYPE_NAMES = "type_names";
+    private static final String EXTRA_TYPE_PRICES = "type_prices";
     private static final String EXTRA_QUANTITIES = "quantities";
 
     private static final int METHOD_WALLET = 0;
@@ -40,16 +48,34 @@ public class CheckoutActivity extends AppCompatActivity {
     private static final int METHOD_CARD = 2;
 
     private ActivityUserCheckoutBinding binding;
-    private DemoEvent event;
-    private int[] quantities;
+    private long eventId;
+    private String eventTitle;
+    private String venue;
+    private String city;
+    private long startAt;
+    private long endAt;
+    private EventCategory category = EventCategory.OTHER;
+    private String[] typeNames = new String[0];
+    private long[] typePrices = new long[0];
+    private int[] quantities = new int[0];
     private long total;
     private int quantity;
     private int method = METHOD_VIETQR;
     private String pendingCode;
 
-    public static void start(Context context, long eventId, int[] quantities) {
+    public static void start(Context context, long eventId, String title, String venue, String city,
+                             long startAt, long endAt, int categoryOrdinal,
+                             String[] typeNames, long[] typePrices, int[] quantities) {
         Intent intent = new Intent(context, CheckoutActivity.class);
         intent.putExtra(EXTRA_EVENT_ID, eventId);
+        intent.putExtra(EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_VENUE, venue);
+        intent.putExtra(EXTRA_CITY, city);
+        intent.putExtra(EXTRA_START, startAt);
+        intent.putExtra(EXTRA_END, endAt);
+        intent.putExtra(EXTRA_CATEGORY, categoryOrdinal);
+        intent.putExtra(EXTRA_TYPE_NAMES, typeNames);
+        intent.putExtra(EXTRA_TYPE_PRICES, typePrices);
         intent.putExtra(EXTRA_QUANTITIES, quantities);
         context.startActivity(intent);
     }
@@ -67,14 +93,12 @@ public class CheckoutActivity extends AppCompatActivity {
         controller.setAppearanceLightStatusBars(true);
         controller.setAppearanceLightNavigationBars(true);
 
-        event = DemoContent.get().event(getIntent().getLongExtra(EXTRA_EVENT_ID, -1L));
-        quantities = getIntent().getIntArrayExtra(EXTRA_QUANTITIES);
-        if (event == null || quantities == null || quantities.length != event.ticketTypes.size()) {
+        if (!readExtras()) {
             finish();
             return;
         }
 
-        pendingCode = "NX" + (100000 + (int) (Math.random() * 899999));
+        pendingCode = "ET" + (100000 + (int) (Math.random() * 899999));
         applyInsets();
         bindSummary();
         buildOrderLines();
@@ -93,6 +117,31 @@ public class CheckoutActivity extends AppCompatActivity {
 
         selectMethod(total > 0 ? METHOD_VIETQR : METHOD_WALLET);
         updateCta();
+    }
+
+    private boolean readExtras() {
+        Intent intent = getIntent();
+        eventId = intent.getLongExtra(EXTRA_EVENT_ID, -1L);
+        eventTitle = intent.getStringExtra(EXTRA_TITLE);
+        venue = intent.getStringExtra(EXTRA_VENUE);
+        city = intent.getStringExtra(EXTRA_CITY);
+        startAt = intent.getLongExtra(EXTRA_START, 0L);
+        endAt = intent.getLongExtra(EXTRA_END, 0L);
+        int ordinal = intent.getIntExtra(EXTRA_CATEGORY, EventCategory.OTHER.ordinal());
+        EventCategory[] values = EventCategory.values();
+        category = ordinal >= 0 && ordinal < values.length ? values[ordinal] : EventCategory.OTHER;
+
+        String[] names = intent.getStringArrayExtra(EXTRA_TYPE_NAMES);
+        long[] prices = intent.getLongArrayExtra(EXTRA_TYPE_PRICES);
+        int[] qty = intent.getIntArrayExtra(EXTRA_QUANTITIES);
+        if (eventId <= 0 || names == null || prices == null || qty == null
+                || names.length != prices.length || names.length != qty.length) {
+            return false;
+        }
+        typeNames = names;
+        typePrices = prices;
+        quantities = qty;
+        return true;
     }
 
     private void applyInsets() {
@@ -115,27 +164,28 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void bindSummary() {
-        binding.cover.setBackgroundResource(event.coverRes);
-        binding.ivIcon.setImageResource(event.iconRes);
-        binding.tvEventTitle.setText(event.title);
-        binding.tvEventDate.setText(UserFmt.dateTime(event.startAt));
-        binding.tvEventVenue.setText(event.venue);
+        binding.cover.setBackgroundResource(
+                com.eventapp.app.ui.model.EventCategoryUi.coverRes(category));
+        binding.ivIcon.setImageResource(
+                com.eventapp.app.ui.model.EventCategoryUi.iconRes(category));
+        binding.tvEventTitle.setText(eventTitle);
+        binding.tvEventDate.setText(UserFmt.dateTime(startAt));
+        binding.tvEventVenue.setText(venue);
     }
 
     private void buildOrderLines() {
         binding.orderLines.removeAllViews();
         total = 0L;
         quantity = 0;
-        for (int i = 0; i < event.ticketTypes.size(); i++) {
+        for (int i = 0; i < quantities.length; i++) {
             int qty = quantities[i];
             if (qty <= 0) {
                 continue;
             }
-            DemoEvent.TicketType type = event.ticketTypes.get(i);
-            long lineTotal = type.price * qty;
+            long lineTotal = typePrices[i] * qty;
             total += lineTotal;
             quantity += qty;
-            binding.orderLines.addView(orderLine(type.name + " × " + qty,
+            binding.orderLines.addView(orderLine(typeNames[i] + " × " + qty,
                     UserFmt.amount(lineTotal)));
         }
 
@@ -184,7 +234,7 @@ public class CheckoutActivity extends AppCompatActivity {
         boolean showQr = selected == METHOD_VIETQR && total > 0;
         binding.qrPanel.setVisibility(showQr ? View.VISIBLE : View.GONE);
         if (showQr) {
-            binding.qrCode.setPayload("NEXUS|" + pendingCode + "|" + total);
+            binding.qrCode.setPayload("ETICKET|" + pendingCode + "|" + total);
             binding.tvQrAmount.setText(UserFmt.amount(total));
             binding.tvQrInfo.setText(getString(R.string.user_vietqr_bank) + "\n"
                     + getString(R.string.user_vietqr_account) + " · "
@@ -209,7 +259,17 @@ public class CheckoutActivity extends AppCompatActivity {
             if (isFinishing() || isDestroyed()) {
                 return;
             }
-            DemoTicket ticket = DemoContent.get().purchase(event, typeName(), quantity, total);
+            TicketUiModel ticket = DemoContent.get().purchase(new TicketUiModel.Builder()
+                    .eventId(eventId)
+                    .eventTitle(eventTitle)
+                    .category(category)
+                    .ticketType(typeName())
+                    .venue(venue)
+                    .city(city)
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .quantity(Math.max(1, quantity))
+                    .totalPrice(total));
             showSuccess(ticket);
         }, 900);
     }
@@ -221,14 +281,14 @@ public class CheckoutActivity extends AppCompatActivity {
             if (quantities[i] > 0) {
                 selectedTypes++;
                 if (name.isEmpty()) {
-                    name = event.ticketTypes.get(i).name;
+                    name = typeNames[i];
                 }
             }
         }
         return selectedTypes > 1 ? "Nhiều loại vé" : name;
     }
 
-    private void showSuccess(DemoTicket ticket) {
+    private void showSuccess(TicketUiModel ticket) {
         binding.contentRoot.setVisibility(View.GONE);
         binding.successPanel.setVisibility(View.VISIBLE);
         binding.tvOrderCode.setText(ticket.code);

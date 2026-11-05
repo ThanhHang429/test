@@ -2,7 +2,7 @@
 <!-- Chuỗi giao diện khu Quản trị (dữ liệu mẫu để kiểm thử UI). -->
 <resources>
     <!-- Khung chung -->
-    <string name="admin_brand">NEXUS CONTROL</string>
+    <string name="admin_brand">ETICKET ADMIN</string>
     <string name="admin_role">Quản trị viên</string>
     <string name="admin_scope">Toàn hệ thống</string>
     <string name="admin_cd_logo">Biểu tượng quản trị</string>
@@ -58,34 +58,13 @@
     <string name="admin_audit_title">Nhật ký gần đây</string>
     <string name="admin_audit_all">Xem tất cả</string>
     <string name="admin_audit_1_action">Phê duyệt hồ sơ sự kiện</string>
-    <string name="admin_audit_1_meta">admin@nexus.vn · Vietnam AI Summit</string>
+    <string name="admin_audit_1_meta">admin@eticket.local · Vietnam AI Summit</string>
     <string name="admin_audit_2_action">Tạm giữ lệnh chi</string>
-    <string name="admin_audit_2_meta">moderator@nexus.vn · hồ sơ RV-8842</string>
+    <string name="admin_audit_2_meta">moderator@eticket.local · hồ sơ RV-8842</string>
     <string name="admin_audit_3_action">Đổi cấu hình phí nền tảng</string>
-    <string name="admin_audit_3_meta" formatted="false">root@nexus.vn · 5,0% → 5,2%</string>
+    <string name="admin_audit_3_meta" formatted="false">root@eticket.local · 5,0% → 5,2%</string>
     <string name="admin_audit_4_action">Gửi thông báo toàn hệ thống</string>
-    <string name="admin_audit_4_meta">ops@nexus.vn · Bảo trì 23:00 · 08:12</string>
-
-    <!-- Kiểm duyệt -->
-    <string name="admin_mod_title">Kiểm duyệt nội dung</string>
-    <string name="admin_mod_sub">Hồ sơ sự kiện phải được duyệt trước khi mở bán.</string>
-    <string name="admin_mod_pending">Chờ duyệt</string>
-    <string name="admin_mod_priority">Ưu tiên</string>
-    <string name="admin_mod_sla">Đúng SLA</string>
-    <string name="admin_mod_filter_all">Tất cả · 12</string>
-    <string name="admin_mod_filter_priority">Ưu tiên · 3</string>
-    <string name="admin_mod_filter_warning">Cảnh báo · 4</string>
-    <string name="admin_mod_filter_overdue">Quá hạn · 1</string>
-    <string name="admin_mod_org">Nhà tổ chức</string>
-    <string name="admin_mod_capacity">Sức chứa</string>
-    <string name="admin_mod_price">Khung giá</string>
-    <string name="admin_mod_deadline">Còn lại</string>
-    <string name="admin_mod_approve">Duyệt</string>
-    <string name="admin_mod_reject">Từ chối</string>
-    <string name="admin_mod_review">Xem hồ sơ</string>
-    <string name="admin_mod_priority_pill">ƯU TIÊN</string>
-    <string name="admin_mod_warning_pill">CẢNH BÁO</string>
-    <string name="admin_mod_overdue_pill">QUÁ HẠN</string>
+    <string name="admin_audit_4_meta">ops@eticket.local · Bảo trì 23:00 · 08:12</string>
 
     <!-- Sự kiện -->
     <string name="admin_events_title">Giám sát sự kiện</string>
@@ -163,6 +142,10 @@
     <string name="admin_sys_int_fcm_state">Chậm 1,2s</string>
     <string name="admin_sys_int_ai">Dịch vụ AI</string>
     <string name="admin_sys_int_ai_state">Ổn định</string>
+    <string name="admin_sys_state_healthy">Ổn định</string>
+    <string name="admin_sys_state_degraded">Suy giảm</string>
+    <string name="admin_sys_state_down">Gián đoạn</string>
+    <string name="admin_sys_state_unknown">Chưa có dữ liệu</string>
     <string name="admin_sys_broadcast">Thông báo hệ thống</string>
     <string name="admin_sys_broadcast_desc">Soạn thông báo tới toàn bộ người dùng và nhà tổ chức.</string>
     <string name="admin_sys_broadcast_action">Soạn thông báo</string>
@@ -170,37 +153,6 @@
     <string name="admin_sys_audit">Nhật ký thao tác</string>
     <string name="admin_sys_logout">Đăng xuất khỏi khu quản trị</string>
     <string name="admin_sys_version">ETicket Admin · bản demo giao diện</string>
-
-    <!-- Chi tiết kiểm duyệt -->
-    <string name="admin_review_title">Chi tiết kiểm duyệt</string>
-    <string name="admin_review_id">HỒ SƠ #RV-8842</string>
-    <string name="admin_review_event">Vietnam AI &amp; NextGen Innovation Summit 2025</string>
-    <string name="admin_review_org">NextGen Ventures · MST 0312 884 210</string>
-    <string name="admin_review_priority">ƯU TIÊN CAO</string>
-    <string name="admin_review_time">Thời gian</string>
-    <string name="admin_review_time_value">15/11/2025 · 08:30</string>
-    <string name="admin_review_place">Địa điểm</string>
-    <string name="admin_review_place_value">SECC Hall A2 · TP.HCM</string>
-    <string name="admin_review_capacity">Sức chứa</string>
-    <string name="admin_review_capacity_value">2.500 vé</string>
-    <string name="admin_review_price">Khung giá</string>
-    <string name="admin_review_price_value">250k – 1,8tr</string>
-    <string name="admin_review_legal">Hồ sơ pháp lý</string>
-    <string name="admin_review_legal_1">Giấy phép kinh doanh</string>
-    <string name="admin_review_legal_1_state">Đã xác thực</string>
-    <string name="admin_review_legal_2">Xác thực tổ chức</string>
-    <string name="admin_review_legal_2_state">Đã xác thực</string>
-    <string name="admin_review_legal_3">Bản quyền hình ảnh</string>
-    <string name="admin_review_legal_3_state">Đã xác thực</string>
-    <string name="admin_review_legal_4">Điều khoản hoàn vé</string>
-    <string name="admin_review_legal_4_state">Cần bổ sung</string>
-    <string name="admin_review_risk">Tín hiệu rủi ro</string>
-    <string name="admin_review_risk_1">Giá vé cao hơn 40% so với mặt bằng cùng danh mục.</string>
-    <string name="admin_review_risk_2">Chính sách hoàn vé chưa nêu rõ thời hạn.</string>
-    <string name="admin_review_note">Ghi chú kiểm duyệt</string>
-    <string name="admin_review_note_hint">Nhập lý do hoặc ghi chú cho nhà tổ chức…</string>
-    <string name="admin_review_approved">Đã phê duyệt hồ sơ RV-8842</string>
-    <string name="admin_review_rejected">Đã từ chối hồ sơ RV-8842</string>
 
     <!-- Chi tiết sự kiện -->
     <string name="admin_event_title">Giám sát sự kiện</string>
@@ -227,7 +179,6 @@
 
     <!-- Tiêu đề màn hình trên top bar -->
     <string name="admin_screen_dashboard">Tổng quan</string>
-    <string name="admin_screen_moderation">Kiểm duyệt</string>
     <string name="admin_screen_events">Giám sát sự kiện</string>
     <string name="admin_screen_accounts">Tài khoản</string>
     <string name="admin_screen_notifications">Thông báo</string>
@@ -243,7 +194,10 @@
     <string name="admin_drawer_profile_role">Super Admin · trực ca</string>
     <string name="admin_drawer_on_duty">TRỰC CA</string>
     <string name="admin_drawer_logout">Đăng xuất</string>
-    <string name="admin_drawer_version">Nexus Control · bản demo</string>
+    <string name="admin_logout_confirm_title">Đăng xuất khỏi khu quản trị?</string>
+    <string name="admin_logout_confirm_body">Phiên quản trị sẽ kết thúc ngay. Bạn cần đăng nhập lại để tiếp tục duyệt sự kiện và xử lý danh mục.</string>
+    <string name="admin_stay">Ở lại</string>
+    <string name="admin_drawer_version">ETicket Admin · bản demo</string>
 
     <!-- Quản lý tài khoản -->
     <string name="admin_acc_kicker">QUẢN LÝ TÀI KHOẢN</string>
@@ -350,7 +304,7 @@
     <string name="admin_bc_sent">Đã gửi thông báo tới 1.370 tài khoản</string>
     <string name="admin_bc_empty">Vui lòng nhập tiêu đề và nội dung</string>
     <string name="admin_bc_preview_title">Bảo trì hệ thống 23:00 hôm nay</string>
-    <string name="admin_bc_preview_body">Nexus Control sẽ bảo trì từ 23:00 đến 23:30. Vui lòng hoàn tất giao dịch trước thời gian trên.</string>
+    <string name="admin_bc_preview_body">ETicket sẽ bảo trì từ 23:00 đến 23:30. Vui lòng hoàn tất giao dịch trước thời gian trên.</string>
     <string name="admin_bc_reach">Ước tính người nhận</string>
     <string name="admin_bc_reach_value">1.370 tài khoản</string>
     <string name="admin_bc_reach_user">1.284 tài khoản</string>
@@ -369,4 +323,47 @@
     <string name="admin_sys_role_3_meta">Phí nền tảng &amp; đối soát</string>
     <string name="admin_sys_role_4">Support</string>
     <string name="admin_sys_role_4_meta">Hỗ trợ người dùng</string>
+    <!-- Quản lý danh mục (FR-A09) -->
+    <string name="admin_screen_categories">Danh mục</string>
+    <string name="admin_cat_title">Quản lý danh mục</string>
+    <string name="admin_cat_sub">Cây 2 cấp dùng cho tìm kiếm, sở thích và phân loại sự kiện.</string>
+    <string name="admin_cat_count">%1$d đang dùng · %2$d tổng cộng</string>
+    <string name="admin_cat_add">Thêm danh mục</string>
+    <string name="admin_cat_add_child">Thêm danh mục con</string>
+    <string name="admin_cat_edit">Sửa</string>
+    <string name="admin_cat_hide">Ẩn</string>
+    <string name="admin_cat_unhide">Hiện</string>
+    <string name="admin_cat_save">Lưu</string>
+    <string name="admin_cat_cancel">Huỷ</string>
+    <string name="admin_cat_empty">Chưa có danh mục nào</string>
+    <string name="admin_cat_state_active">ĐANG DÙNG</string>
+    <string name="admin_cat_state_hidden">ĐANG ẨN</string>
+    <string name="admin_cat_meta">%1$s · %2$d sự kiện</string>
+    <string name="admin_cat_field_name">Tên danh mục</string>
+    <string name="admin_cat_field_name_hint">Ví dụ: Âm nhạc</string>
+    <string name="admin_cat_field_code">Mã danh mục</string>
+    <string name="admin_cat_field_code_hint">Ví dụ: MUSIC</string>
+    <string name="admin_cat_field_slug">Slug</string>
+    <string name="admin_cat_field_slug_hint">am-nhac</string>
+    <string name="admin_cat_field_desc">Mô tả</string>
+    <string name="admin_cat_field_desc_hint">Mô tả ngắn (không bắt buộc)</string>
+    <string name="admin_cat_field_parent">Danh mục cha</string>
+    <string name="admin_cat_parent_none">Không (cấp 1)</string>
+    <string name="admin_cat_field_order">Thứ tự</string>
+    <string name="admin_cat_field_order_hint">Số càng nhỏ càng đứng trước</string>
+    <string name="admin_cat_name_required">Vui lòng nhập tên danh mục</string>
+    <string name="admin_cat_code_required">Vui lòng nhập mã danh mục</string>
+    <string name="admin_cat_hide_message">Ẩn \"%1$s\"? Danh mục ẩn sẽ không hiện khi tạo sự kiện mới.</string>
+    <string name="admin_cat_hide_reason_hint">Lý do ẩn danh mục</string>
+    <string name="admin_cat_reason_required">Cần nhập lý do ẩn danh mục</string>
+    <string name="admin_cat_hidden">Đã ẩn danh mục</string>
+    <string name="admin_cat_unhidden">Đã hiện lại danh mục</string>
+    <string name="admin_cat_created">Đã tạo danh mục</string>
+    <string name="admin_cat_updated">Đã cập nhật danh mục</string>
+    <string name="admin_cat_delete">Xoá</string>
+    <string name="admin_cat_delete_title">Xoá danh mục \"%1$s\"?</string>
+    <string name="admin_cat_delete_body">Danh mục sẽ biến mất khỏi bộ lọc của người dùng và form tạo sự kiện. Chỉ xoá được khi danh mục chưa gắn sự kiện nào và không còn danh mục con.</string>
+    <string name="admin_cat_deleted">Đã xoá danh mục</string>
+    <string name="admin_cat_move_up">Đưa lên</string>
+    <string name="admin_cat_move_down">Đưa xuống</string>
 </resources>

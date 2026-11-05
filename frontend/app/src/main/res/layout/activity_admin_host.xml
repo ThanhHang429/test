@@ -55,7 +55,7 @@
                 android:maxLines="1"
                 android:text="@string/admin_screen_dashboard"
                 android:textColor="@color/admin_text"
-                android:textSize="17sp"
+                android:textSize="19sp"
                 android:textStyle="bold" />
 
             <FrameLayout
@@ -102,7 +102,7 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:text="@string/admin_avatar_initials"
                     android:textColor="@color/white"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </FrameLayout>
         </LinearLayout>
@@ -153,7 +153,7 @@
                     android:letterSpacing="0.13"
                     android:text="@string/admin_brand"
                     android:textColor="@color/admin_text_on_dark"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -163,7 +163,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="Admin console · v1.0"
                     android:textColor="@color/admin_drawer_faint"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -190,7 +190,7 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:text="@string/admin_avatar_initials"
                     android:textColor="@color/white"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </FrameLayout>
 
@@ -209,7 +209,7 @@
                     android:maxLines="1"
                     android:text="@string/admin_drawer_profile_name"
                     android:textColor="@color/admin_text_on_dark"
-                    android:textSize="12.5sp"
+                    android:textSize="14.5sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -221,7 +221,7 @@
                     android:maxLines="1"
                     android:text="@string/admin_drawer_profile_role"
                     android:textColor="@color/admin_drawer_muted"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <TextView
@@ -236,7 +236,7 @@
                 android:paddingBottom="3dp"
                 android:text="@string/admin_drawer_on_duty"
                 android:textColor="@color/admin_drawer_badge_text"
-                android:textSize="8sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -289,7 +289,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:text="@string/admin_drawer_logout"
                 android:textColor="@color/admin_drawer_text"
-                android:textSize="13sp" />
+                android:textSize="15sp" />
         </LinearLayout>
 
         <TextView
@@ -300,6 +300,6 @@
             android:paddingBottom="12dp"
             android:text="@string/admin_drawer_version"
             android:textColor="@color/admin_drawer_faint"
-            android:textSize="9sp" />
+            android:textSize="11sp" />
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

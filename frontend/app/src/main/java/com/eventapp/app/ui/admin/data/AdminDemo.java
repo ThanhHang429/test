@@ -4,7 +4,6 @@ import com.eventapp.app.R;
 import com.eventapp.app.ui.admin.model.AdminAccount;
 import com.eventapp.app.ui.admin.model.AdminEventItem;
 import com.eventapp.app.ui.admin.model.AdminNotification;
-import com.eventapp.app.ui.admin.model.AdminReview;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,18 +14,6 @@ import java.util.List;
  * Khi nối backend chỉ cần thay nguồn dữ liệu trong các fragment.
  */
 public final class AdminDemo {
-
-    private static final List<AdminReview> REVIEWS = Arrays.asList(
-            new AdminReview("Vietnam AI & NextGen Innovation Summit 2025", "NextGen Ventures",
-                    "TECH", "2.500 vé", "250k – 1,8tr", "Còn 1h45m",
-                    "Hải Đăng", "HĐ", AdminReview.TONE_PRIORITY, R.drawable.bg_admin_cover_navy),
-            new AdminReview("Indie Sunset Acoustic Fest 2025", "Acoustic Soul Lab",
-                    "MUSIC", "800 vé", "150k – 350k", "Còn 22h",
-                    "Chưa phân công", "—", AdminReview.TONE_WARNING, R.drawable.bg_admin_cover_amber),
-            new AdminReview("Workshop Kỹ Năng Phỏng Vấn Big Tech", "TechCareer Youth Club",
-                    "EDU", "300 vé", "Miễn phí", "Còn 13h",
-                    "Thùy Lê", "TL", AdminReview.TONE_OVERDUE, R.drawable.bg_admin_cover_violet)
-    );
 
     private static final List<AdminEventItem> EVENTS = Arrays.asList(
             new AdminEventItem("Đại Nhạc Hội EDM Neon Sound 2025", "StarLight Entertainment JSC",
@@ -95,10 +82,6 @@ public final class AdminDemo {
     );
 
     private AdminDemo() {
-    }
-
-    public static List<AdminReview> reviews() {
-        return new ArrayList<>(REVIEWS);
     }
 
     public static List<AdminEventItem> events() {

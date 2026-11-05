@@ -32,4 +32,7 @@ public interface EventApi {
 
     @GET("events/{id}")
     Call<ResponseWrapper.Envelope<DiscoveryDtos.EventDetail>> detail(@Path("id") long id);
+
+    @GET("events/cities")
+    Call<ResponseWrapper.Envelope<List<String>>> cities();
 }

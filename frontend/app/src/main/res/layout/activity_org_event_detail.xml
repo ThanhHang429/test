@@ -35,7 +35,7 @@
             android:fontFamily="@font/plus_jakarta_sans"
             android:text="@string/org_event_detail_title"
             android:textColor="@color/org_text"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -98,7 +98,7 @@
                     android:paddingEnd="9dp"
                     android:paddingBottom="4dp"
                     android:textColor="@color/white"
-                    android:textSize="9sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -115,7 +115,7 @@
                     android:paddingEnd="9dp"
                     android:paddingBottom="4dp"
                     android:textColor="@color/org_success_text"
-                    android:textSize="9sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -135,7 +135,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:maxLines="2"
                         android:textColor="@color/white"
-                        android:textSize="21sp"
+                        android:textSize="22sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -150,7 +150,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:maxLines="1"
                         android:textColor="@color/org_text_on_dark_muted"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/tvDetailLocation"
@@ -164,7 +164,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:maxLines="1"
                         android:textColor="@color/org_text_on_dark_muted"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </FrameLayout>
 
@@ -198,7 +198,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:fontFeatureSettings="tnum"
                             android:textColor="@color/org_text"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -208,7 +208,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="Vé đã bán"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <View
@@ -231,7 +231,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:fontFeatureSettings="tnum"
                             android:textColor="@color/org_primary_dark"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -241,7 +241,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_revenue_label"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <View
@@ -264,7 +264,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:fontFeatureSettings="tnum"
                             android:textColor="@color/org_text"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -274,7 +274,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_checkin_count"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -316,7 +316,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_review_status"
                             android:textColor="@color/org_text_muted"
-                            android:textSize="12sp" />
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tvReviewStatus"
@@ -329,7 +329,7 @@
                             android:paddingEnd="9dp"
                             android:paddingBottom="4dp"
                             android:textColor="@color/org_success_text"
-                            android:textSize="10sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -347,7 +347,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_lifecycle_status"
                             android:textColor="@color/org_text_muted"
-                            android:textSize="12sp" />
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tvLifecycleStatus"
@@ -360,7 +360,7 @@
                             android:paddingEnd="9dp"
                             android:paddingBottom="4dp"
                             android:textColor="@color/org_primary_dark"
-                            android:textSize="10sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -384,7 +384,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_capacity"
                             android:textColor="@color/org_text_muted"
-                            android:textSize="12sp" />
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/tvCapacity"
@@ -393,7 +393,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:fontFeatureSettings="tnum"
                             android:textColor="@color/org_text"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -482,9 +482,9 @@
                         android:drawableTint="@color/org_primary_dark"
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:gravity="center"
-                        android:text="@string/org_send_broadcast"
+                        android:text="@string/org_crowd_title"
                         android:textColor="@color/org_primary_dark"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -500,7 +500,7 @@
                         android:gravity="center"
                         android:text="@string/org_cancel_event"
                         android:textColor="@color/org_danger_text"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

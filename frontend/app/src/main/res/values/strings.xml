@@ -37,6 +37,7 @@
     <string name="common_confirm">Xác nhận</string>
     <string name="common_cancel">Hủy</string>
     <string name="common_close">Đóng</string>
+    <string name="dialog_close">Đóng</string>
 
     <string name="account_title">Tài khoản</string>
     <string name="account_subtitle">Phiên đăng nhập thật từ backend. Đóng app sẽ phải đăng nhập lại.</string>

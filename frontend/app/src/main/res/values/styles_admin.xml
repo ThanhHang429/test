@@ -6,7 +6,7 @@
     <style name="TextAppearance.EventApp.Admin.Display" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">27sp</item>
+        <item name="android:textSize">30sp</item>
         <item name="android:textColor">@color/admin_text</item>
         <item name="android:letterSpacing">-0.025</item>
         <item name="android:includeFontPadding">false</item>
@@ -15,7 +15,7 @@
     <style name="TextAppearance.EventApp.Admin.Headline" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">25sp</item>
         <item name="android:textColor">@color/admin_text</item>
         <item name="android:letterSpacing">-0.02</item>
         <item name="android:includeFontPadding">false</item>
@@ -24,7 +24,7 @@
     <style name="TextAppearance.EventApp.Admin.Title" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">21sp</item>
         <item name="android:textColor">@color/admin_text</item>
         <item name="android:letterSpacing">-0.015</item>
         <item name="android:includeFontPadding">false</item>
@@ -33,7 +33,7 @@
     <style name="TextAppearance.EventApp.Admin.CardTitle" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textColor">@color/admin_text</item>
         <item name="android:letterSpacing">-0.01</item>
         <item name="android:includeFontPadding">false</item>
@@ -41,21 +41,21 @@
 
     <style name="TextAppearance.EventApp.Admin.Body" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">@font/be_vietnam_pro</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/admin_text_muted</item>
         <item name="android:lineSpacingExtra">2dp</item>
     </style>
 
     <style name="TextAppearance.EventApp.Admin.Caption" parent="TextAppearance.Material3.BodySmall">
         <item name="android:fontFamily">@font/be_vietnam_pro</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/admin_text_dim</item>
         <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="TextAppearance.EventApp.Admin.Micro" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">11sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/admin_text_dim</item>
         <item name="android:letterSpacing">0.1</item>
@@ -64,7 +64,7 @@
 
     <style name="TextAppearance.EventApp.Admin.Kicker" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/admin_accent_dark</item>
         <item name="android:letterSpacing">0.14</item>
@@ -73,7 +73,7 @@
 
     <style name="TextAppearance.EventApp.Admin.Label" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/admin_text</item>
         <item name="android:letterSpacing">0.01</item>
@@ -83,7 +83,7 @@
     <style name="TextAppearance.EventApp.Admin.Metric" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">31sp</item>
         <item name="android:textColor">@color/admin_text</item>
         <item name="android:letterSpacing">-0.03</item>
         <item name="android:includeFontPadding">false</item>
@@ -92,7 +92,7 @@
     <style name="TextAppearance.EventApp.Admin.MetricDark" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="android:fontFamily">@font/plus_jakarta_sans</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">32sp</item>
+        <item name="android:textSize">34sp</item>
         <item name="android:textColor">@color/admin_text_on_dark</item>
         <item name="android:letterSpacing">-0.03</item>
         <item name="android:includeFontPadding">false</item>

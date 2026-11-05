@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="org_brand">NEXUS CONSOLE</string>
+    <string name="org_brand">ETICKET CONSOLE</string>
     <string name="org_role">Nhà tổ chức</string>
     <string name="org_cd_notifications">Thông báo</string>
     <string name="org_cd_account">Tài khoản nhà tổ chức</string>
@@ -20,10 +20,12 @@
     <string name="org_greeting">Chào buổi sáng,</string>
     <string name="org_greeting_name">Nguyễn Văn A</string>
     <string name="org_greeting_sub">Hôm nay bạn có 2 sự kiện đang mở bán và 18 đơn cần xử lý.</string>
+    <string name="org_greeting_sub_dynamic">%1$d sự kiện đang mở bán · %2$d sự kiện chờ duyệt</string>
+    <string name="org_greeting_fallback">bạn</string>
     <string name="org_verified">Đã xác minh</string>
     <string name="org_tier">Hạng Vàng</string>
     <string name="org_live">ĐANG DIỄN RA</string>
-    <string name="org_revenue_today">Doanh thu hôm nay</string>
+    <string name="org_revenue_today">Doanh thu 30 ngày</string>
     <string name="org_revenue_value">45.000.000 đ</string>
     <string name="org_revenue_trend">+24,5%</string>
     <string name="org_revenue_note">So với hôm qua</string>
@@ -38,9 +40,13 @@
     <string name="org_kpi_checkin">Đã check-in</string>
     <string name="org_kpi_checkin_value">1.240</string>
     <string name="org_kpi_checkin_note">72,1% tổng vé</string>
-    <string name="org_kpi_pending">Đơn chờ xử lý</string>
+    <string name="org_kpi_pending">Sự kiện chờ duyệt</string>
     <string name="org_kpi_pending_value">18</string>
     <string name="org_kpi_pending_note">Cần xác nhận hôm nay</string>
+    <string name="org_kpi_events_note_dynamic">%1$d sự kiện chờ duyệt</string>
+    <string name="org_kpi_tickets_note_dynamic">%1$d đăng ký đã xác nhận</string>
+    <string name="org_kpi_checkin_note_dynamic">%1$d%% tỷ lệ check-in</string>
+    <string name="org_kpi_pending_note_dynamic">Hồ sơ cần bổ sung</string>
     <string name="org_section_live_events">Sự kiện đang diễn ra</string>
     <string name="org_see_all">Xem tất cả</string>
     <string name="org_section_activity">Hoạt động gần đây</string>
@@ -75,6 +81,10 @@
     <string name="org_view_detail">Chi tiết</string>
     <string name="org_manage_tickets">Quản lý vé</string>
     <string name="org_events_empty">Không có sự kiện phù hợp</string>
+    <string name="org_events_count">%1$d sự kiện</string>
+    <string name="org_filter_advanced_soon">Bộ lọc nâng cao đang được hoàn thiện</string>
+    <string name="org_manage_tickets_soon">Quản lý vé · %1$s</string>
+    <string name="org_event_not_found">Không tìm thấy sự kiện</string>
 
     <!-- Chi tiết sự kiện -->
     <string name="org_event_detail_title">Chi tiết sự kiện</string>
@@ -84,8 +94,13 @@
     <string name="org_approved">Đã duyệt</string>
     <string name="org_ticket_types">Hạng vé</string>
     <string name="org_ticket_types_sub">3 hạng vé · 1.900 vé phát hành</string>
-    <string name="org_send_broadcast">Gửi thông báo</string>
+    <string name="org_ticket_types_count">%1$d hạng vé · %2$s vé phát hành</string>
+    <string name="org_ticket_free">Miễn phí</string>
     <string name="org_cancel_event">Yêu cầu hủy sự kiện</string>
+    <string name="org_cancel_confirm">Yêu cầu hủy \"%1$s\" sẽ được gửi tới ban quản trị.</string>
+    <string name="org_cancel_sent">Đã gửi yêu cầu hủy sự kiện</string>
+    <string name="org_send_request">Gửi yêu cầu</string>
+    <string name="org_close">Đóng</string>
     <string name="org_checkin_rate">Tỷ lệ check-in</string>
     <string name="org_capacity">Sức chứa</string>
 
@@ -94,6 +109,8 @@
     <string name="org_checkin_sub">Quét mã QR trên vé để xác thực</string>
     <string name="org_scan_hint">Đưa mã QR vào khung</string>
     <string name="org_scan_sub">Tự động nhận diện trong vòng 2 giây</string>
+    <string name="org_scan_now">Quét mã QR</string>
+    <string name="org_create_category_empty">Chưa có danh mục nào đang dùng. Liên hệ quản trị viên để bật danh mục.</string>
     <string name="org_flash">Đèn</string>
     <string name="org_manual">Nhập mã</string>
     <string name="org_manual_hint">Nhập mã vé, ví dụ VE-123456</string>
@@ -166,7 +183,10 @@
     <string name="org_set_help">Trợ giúp &amp; hỗ trợ</string>
     <string name="org_set_help_sub">Câu hỏi thường gặp, liên hệ</string>
     <string name="org_logout">Đăng xuất</string>
-    <string name="org_version">Nexus Console · v1.0.0</string>
+    <string name="org_logout_confirm_title">Đăng xuất khỏi ETicket Console?</string>
+    <string name="org_logout_confirm_body">Bạn sẽ quay lại màn hình đăng nhập. Các bản nháp sự kiện chưa lưu vẫn được giữ trên thiết bị.</string>
+    <string name="org_stay">Ở lại</string>
+    <string name="org_version">ETicket Console · v1.0.0</string>
     <string name="org_edit">Chỉnh sửa</string>
 
     <!-- Tạo sự kiện -->
@@ -191,4 +211,49 @@
     <string name="org_soon">Tính năng đang được hoàn thiện</string>
     <string name="org_logged_out">Đã đăng xuất</string>
     <string name="org_copied">Đã sao chép</string>
+
+    <!-- Điều phối phòng (FR-O28) -->
+    <string name="org_crowd_title">Điều phối phòng</string>
+    <string name="org_crowd_occupancy">Mức lấp đầy phòng chính</string>
+    <string name="org_crowd_registered">Đã đăng ký</string>
+    <string name="org_crowd_not_checked_in">Chưa check-in</string>
+    <string name="org_crowd_capacity_fmt">Sức chứa %1$s · đã vào %2$s</string>
+    <string name="org_crowd_level_normal">Bình thường</string>
+    <string name="org_crowd_level_watch">Cần theo dõi</string>
+    <string name="org_crowd_level_crowded">Đông</string>
+    <string name="org_crowd_level_full">Đã đầy</string>
+    <string name="org_crowd_rooms">Phòng dự phòng</string>
+    <string name="org_crowd_add_room">Thêm phòng</string>
+    <string name="org_crowd_rooms_empty">Chưa có phòng dự phòng. Thêm phòng để hệ thống gợi ý khi phòng chính đông.</string>
+    <string name="org_crowd_room_capacity">Sức chứa %1$s</string>
+    <string name="org_crowd_room_close">Đóng phòng</string>
+    <string name="org_crowd_room_active">Đang mở</string>
+    <string name="org_crowd_room_closed">Đã đóng</string>
+    <string name="org_crowd_room_close_confirm">Đóng phòng \"%1$s\"? Phòng sẽ không còn được gợi ý cho người tham dự.</string>
+    <string name="org_crowd_room_added">Đã thêm phòng dự phòng</string>
+    <string name="org_crowd_room_closed_toast">Đã đóng phòng dự phòng</string>
+    <string name="org_crowd_room_name">Tên phòng</string>
+    <string name="org_crowd_room_name_hint">Ví dụ: Sảnh B — tầng 2</string>
+    <string name="org_crowd_room_capacity_label">Sức chứa</string>
+    <string name="org_crowd_room_capacity_hint">Số người tối đa</string>
+    <string name="org_crowd_room_note">Ghi chú</string>
+    <string name="org_crowd_room_note_hint">Hướng dẫn di chuyển, lối vào…</string>
+    <string name="org_crowd_room_save">Lưu phòng</string>
+    <string name="org_crowd_notify">Thông báo người chưa check-in</string>
+    <string name="org_crowd_compose_ai">Gợi ý nội dung</string>
+    <string name="org_crowd_notify_title">Tiêu đề</string>
+    <string name="org_crowd_notify_body">Nội dung</string>
+    <string name="org_crowd_send">Gửi thông báo</string>
+    <string name="org_crowd_recipients">%1$d người sẽ nhận thông báo</string>
+    <string name="org_crowd_recipients_empty">Chưa có người đăng ký nào chưa check-in</string>
+    <string name="org_crowd_sent">Đã gửi tới %1$d người</string>
+    <string name="org_crowd_history">Đã gửi</string>
+    <string name="org_crowd_history_empty">Chưa gửi thông báo nào</string>
+    <string name="org_crowd_history_meta">%1$s · %2$d người nhận</string>
+    <string name="org_crowd_ai_filled">Đã điền nội dung gợi ý</string>
+    <string name="org_crowd_ai_failed">Không soạn được nội dung, vui lòng nhập tay</string>
+    <string name="org_crowd_title_required">Nhập tiêu đề thông báo</string>
+    <string name="org_crowd_body_required">Nhập nội dung thông báo</string>
+    <string name="org_crowd_audience">Người nhận: đã đăng ký nhưng chưa check-in</string>
+    <string name="org_crowd_title_fmt">Cập nhật phòng · %1$s</string>
 </resources>

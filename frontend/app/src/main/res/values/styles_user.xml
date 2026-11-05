@@ -208,4 +208,40 @@
         <item name="android:paddingBottom">4dp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
+
+    <!-- ===== Bộ lọc nâng cao ===== -->
+    <style name="TextAppearance.EventApp.User.FilterSection" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.FilterDate" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Chip chọn một trong bộ lọc: nền xám mềm, khi chọn đảo sang màu primary. -->
+    <style name="Widget.EventApp.User.FilterChip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/user_filter_chip_bg</item>
+        <item name="android:textColor">@color/user_filter_chip_text</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipCornerRadius">18dp</item>
+        <item name="chipMinHeight">36dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="checkedIconMargin">0dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="chipStartPadding">16dp</item>
+        <item name="chipEndPadding">16dp</item>
+    </style>
 </resources>

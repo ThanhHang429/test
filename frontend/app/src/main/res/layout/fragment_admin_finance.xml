@@ -28,7 +28,7 @@
                 android:letterSpacing="0.14"
                 android:text="PHÍ NỀN TẢNG"
                 android:textColor="@color/admin_accent_dark"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -87,7 +87,7 @@
                         android:letterSpacing="0.12"
                         android:text="@string/admin_fin_fee_label"
                         android:textColor="#FF8FD9DC"
-                        android:textSize="9sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -102,7 +102,7 @@
                         android:paddingBottom="4dp"
                         android:text="ĐÃ CHỐT 05/11"
                         android:textColor="@color/admin_text_on_dark_muted"
-                        android:textSize="8sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -120,7 +120,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_fin_fee_meta"
                     android:textColor="@color/admin_text_on_dark_muted"
-                    android:textSize="11sp" />
+                    android:textSize="13sp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -147,7 +147,7 @@
                             android:letterSpacing="0.08"
                             android:text="@string/admin_fin_collected"
                             android:textColor="#FF8FA3BA"
-                            android:textSize="9sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -157,7 +157,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/admin_fin_collected_value"
                             android:textColor="@color/admin_text_on_dark"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -181,7 +181,7 @@
                             android:letterSpacing="0.08"
                             android:text="@string/admin_fin_outstanding"
                             android:textColor="#FF8FA3BA"
-                            android:textSize="9sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -191,7 +191,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/admin_fin_outstanding_value"
                             android:textColor="@color/admin_text_on_dark"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -235,7 +235,7 @@
                     android:paddingEnd="10dp"
                     android:text="Chỉnh sửa"
                     android:textColor="@color/admin_text_muted"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -252,7 +252,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_fin_fee_platform"
                     android:textColor="@color/admin_text_muted"
-                    android:textSize="13sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -260,7 +260,7 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:text="@string/admin_fin_fee_platform_value"
                     android:textColor="@color/admin_text"
-                    android:textSize="13sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -291,7 +291,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_fin_fee_cycle"
                     android:textColor="@color/admin_text_muted"
-                    android:textSize="13sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -299,7 +299,7 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:text="@string/admin_fin_fee_cycle_value"
                     android:textColor="@color/admin_text"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -321,7 +321,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_fin_fee_method"
                     android:textColor="@color/admin_text_muted"
-                    android:textSize="13sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -329,7 +329,7 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:text="@string/admin_fin_fee_method_value"
                     android:textColor="@color/admin_text"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -370,7 +370,7 @@
                     android:paddingBottom="3dp"
                     android:text="CHỈ ĐỌC"
                     android:textColor="@color/admin_neutral_text"
-                    android:textSize="8sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -381,7 +381,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:text="@string/admin_fin_gmv_value"
                 android:textColor="@color/admin_text"
-                android:textSize="24sp"
+                android:textSize="26sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -391,7 +391,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/admin_fin_gmv_note"
                 android:textColor="@color/admin_text_dim"
-                android:textSize="11sp" />
+                android:textSize="13sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -418,7 +418,7 @@
                         android:letterSpacing="0.06"
                         android:text="@string/admin_fin_gmv_events"
                         android:textColor="@color/admin_text_faint"
-                        android:textSize="8sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -428,7 +428,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_fin_gmv_events_value"
                         android:textColor="@color/admin_text"
-                        android:textSize="15sp"
+                        android:textSize="17sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -445,7 +445,7 @@
                         android:letterSpacing="0.06"
                         android:text="@string/admin_fin_gmv_orgs"
                         android:textColor="@color/admin_text_faint"
-                        android:textSize="8sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -455,7 +455,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_fin_gmv_orgs_value"
                         android:textColor="@color/admin_text"
-                        android:textSize="15sp"
+                        android:textSize="17sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -499,7 +499,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="NV"
                         android:textColor="@color/admin_primary"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </FrameLayout>
 
@@ -518,7 +518,7 @@
                         android:maxLines="1"
                         android:text="@string/admin_fin_recon_1"
                         android:textColor="@color/admin_text"
-                        android:textSize="12.5sp"
+                        android:textSize="14.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -528,7 +528,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_fin_recon_1_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <TextView
@@ -543,7 +543,7 @@
                     android:paddingBottom="3dp"
                     android:text="@string/admin_fin_recon_paid"
                     android:textColor="@color/admin_success_text"
-                    android:textSize="8sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -570,7 +570,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="SL"
                         android:textColor="@color/admin_accent_dark"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </FrameLayout>
 
@@ -589,7 +589,7 @@
                         android:maxLines="1"
                         android:text="@string/admin_fin_recon_2"
                         android:textColor="@color/admin_text"
-                        android:textSize="12.5sp"
+                        android:textSize="14.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -599,7 +599,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_fin_recon_2_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <TextView
@@ -614,7 +614,7 @@
                     android:paddingBottom="3dp"
                     android:text="@string/admin_fin_recon_paid"
                     android:textColor="@color/admin_success_text"
-                    android:textSize="8sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -641,7 +641,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="CA"
                         android:textColor="@color/admin_violet"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </FrameLayout>
 
@@ -660,7 +660,7 @@
                         android:maxLines="1"
                         android:text="@string/admin_fin_recon_3"
                         android:textColor="@color/admin_text"
-                        android:textSize="12.5sp"
+                        android:textSize="14.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -670,7 +670,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_fin_recon_3_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <TextView
@@ -685,7 +685,7 @@
                     android:paddingBottom="3dp"
                     android:text="@string/admin_fin_recon_pending"
                     android:textColor="@color/admin_warning_text"
-                    android:textSize="8sp"
+                    android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -757,7 +757,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_fin_webhook"
                     android:textColor="@color/admin_text_muted"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -765,7 +765,7 @@
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:text="@string/admin_fin_webhook_value"
                     android:textColor="@color/admin_success_text"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -777,7 +777,7 @@
                 android:lineSpacingExtra="1dp"
                 android:text="@string/admin_fin_note"
                 android:textColor="@color/admin_text_faint"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

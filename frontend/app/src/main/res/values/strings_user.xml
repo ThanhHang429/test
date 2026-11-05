@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="user_brand">NEXUS EVENTS</string>
+    <string name="user_brand">ETICKET</string>
 
     <!-- Tab -->
     <string name="user_city">TP. Hồ Chí Minh</string>
@@ -23,6 +23,37 @@
     <string name="user_cd_search">Tìm kiếm</string>
     <string name="user_cd_filter">Bộ lọc</string>
     <string name="user_filter_title">Lọc theo danh mục</string>
+
+    <!-- Bộ lọc nâng cao -->
+    <string name="user_filter_sheet_title">Bộ lọc sự kiện</string>
+    <string name="user_filter_sheet_sub">Chọn nhanh theo thời gian, giá, địa điểm và danh mục</string>
+    <string name="user_filter_close">Đóng bộ lọc</string>
+    <string name="user_filter_clear">Xoá tất cả</string>
+    <string name="user_filter_apply">Xem kết quả</string>
+    <string name="user_filter_section_sort">Sắp xếp theo</string>
+    <string name="user_filter_section_category">Danh mục</string>
+    <string name="user_filter_section_time">Thời gian</string>
+    <string name="user_filter_section_price">Khoảng giá</string>
+    <string name="user_filter_section_place">Địa điểm</string>
+    <string name="user_filter_sort_relevance">Phù hợp nhất</string>
+    <string name="user_filter_sort_upcoming">Sắp diễn ra</string>
+    <string name="user_filter_sort_newest">Mới nhất</string>
+    <string name="user_filter_sort_price_asc">Giá thấp đến cao</string>
+    <string name="user_filter_sort_price_desc">Giá cao đến thấp</string>
+    <string name="user_filter_sort_popular">Được quan tâm</string>
+    <string name="user_filter_time_today">Hôm nay</string>
+    <string name="user_filter_time_week">Tuần này</string>
+    <string name="user_filter_time_month">Tháng này</string>
+    <string name="user_filter_time_custom">Tự chọn</string>
+    <string name="user_filter_date_from">Từ ngày</string>
+    <string name="user_filter_date_to">Đến ngày</string>
+    <string name="user_filter_price_free">Miễn phí</string>
+    <string name="user_filter_price_under_200">Dưới 200K</string>
+    <string name="user_filter_price_200_500">200K – 500K</string>
+    <string name="user_filter_price_500_1m">500K – 1 triệu</string>
+    <string name="user_filter_price_over_1m">Trên 1 triệu</string>
+    <string name="user_filter_place_all">Toàn quốc</string>
+    <string name="user_filter_remove">Bỏ lọc %1$s</string>
     <string name="user_section_featured">Sự kiện nổi bật</string>
     <string name="user_section_upcoming">Sắp diễn ra</string>
     <string name="user_section_free">Miễn phí tham dự</string>
@@ -68,8 +99,16 @@
     <string name="user_ticket_types_sub">Giá đã bao gồm phí dịch vụ</string>
     <string name="user_quantity">Số lượng</string>
     <string name="user_sold_out_short">Hết vé</string>
+    <string name="user_online">Trực tuyến</string>
+    <string name="user_pref_limit">Chọn tối đa 10 danh mục</string>
+    <string name="user_greeting_fallback">bạn</string>
     <string name="user_total">Tổng cộng</string>
     <string name="user_book_now">Đặt vé ngay</string>
+    <string name="user_sales_not_started">Chưa mở bán</string>
+    <string name="user_sales_ended">Đã kết thúc bán</string>
+    <string name="user_event_cancelled">Sự kiện đã huỷ</string>
+    <string name="user_event_completed">Sự kiện đã kết thúc</string>
+    <string name="user_already_registered">Bạn đã đăng ký</string>
     <string name="user_select_ticket_first">Chọn ít nhất 1 vé</string>
     <string name="user_ticket_remaining">Còn %1$d vé</string>
     <string name="user_event_policy">Vé đã mua không hoàn lại. Vui lòng có mặt trước giờ bắt đầu 30 phút.</string>
@@ -91,9 +130,9 @@
     <string name="user_vietqr_title">Chuyển khoản VietQR</string>
     <string name="user_vietqr_body">Mở ứng dụng ngân hàng và quét mã bên dưới. Đơn hàng được xác nhận tự động sau khi chuyển khoản.</string>
     <string name="user_vietqr_bank">Ngân hàng TMCP Á Châu (ACB)</string>
-    <string name="user_vietqr_account">NGUYEN VAN NEXUS</string>
+    <string name="user_vietqr_account">CONG TY ETICKET</string>
     <string name="user_vietqr_account_no">1903 6868 8888</string>
-    <string name="user_vietqr_content">NEXUS %1$s</string>
+    <string name="user_vietqr_content">ETICKET %1$s</string>
     <string name="user_checkout_success">Đặt vé thành công</string>
     <string name="user_checkout_success_body">Vé điện tử đã được gửi tới email của bạn. Bạn có thể mở mã QR bất cứ lúc nào trong mục Vé của tôi.</string>
     <string name="user_order_code">Mã đơn hàng</string>
@@ -116,6 +155,7 @@
     <string name="user_ticket_status_valid">Hợp lệ · Sẵn sàng check-in</string>
     <string name="user_ticket_status_used">Đã check-in</string>
     <string name="user_ticket_status_cancelled">Đã huỷ</string>
+    <string name="user_ticket_status_past">Đã qua</string>
 
     <!-- Chi tiết vé -->
     <string name="user_ticket_detail">Chi tiết vé</string>
@@ -157,7 +197,7 @@
     <string name="user_account_title">Tài khoản</string>
     <string name="user_account_sub">Quản lý hồ sơ và trải nghiệm của bạn</string>
     <string name="user_profile_name">Trần Hoàng Long</string>
-    <string name="user_profile_email">demo@nexus.vn</string>
+    <string name="user_profile_email">user1@eticket.local</string>
     <string name="user_profile_verified">Đã xác thực</string>
     <string name="user_edit_profile">Chỉnh sửa hồ sơ</string>
     <string name="user_stat_tickets">Vé đã mua</string>
@@ -188,11 +228,11 @@
     <string name="user_logout_action">Đăng xuất</string>
     <string name="user_cancel">Huỷ</string>
     <string name="user_coming_soon_toast">Tính năng đang được hoàn thiện</string>
-    <string name="user_session_secure">Phiên bảo mật · Nexus Events</string>
+    <string name="user_session_secure">Phiên bảo mật · ETicket</string>
 
     <!-- Thông báo -->
     <string name="user_notifications_title">Thông báo</string>
-    <string name="user_notifications_sub">%1$d thông báo chưa đọc</string>
+    <string name="user_notifications_sub_total">%1$d thông báo từ nhà tổ chức</string>
     <string name="user_mark_all_read">Đọc tất cả</string>
     <string name="user_notifications_empty_title">Không có thông báo</string>
     <string name="user_notifications_empty_body">Cập nhật về vé và sự kiện sẽ xuất hiện ở đây.</string>
@@ -202,7 +242,52 @@
 
     <!-- Đăng nhập demo -->
     <string name="auth_demo_account_title">Tài khoản dùng thử</string>
-    <string name="auth_demo_account_value">demo@nexus.vn · 123456</string>
+    <string name="auth_demo_account_value">Tài khoản seed · JWT</string>
     <string name="auth_demo_fill">Điền nhanh</string>
     <string name="auth_err_credentials">Email hoặc mật khẩu không đúng</string>
+    <!-- Đánh giá sự kiện (FR-U20) -->
+    <string name="user_reviews_title">Đánh giá sự kiện</string>
+    <string name="user_close">Đóng</string>
+    <string name="user_send">Gửi</string>
+    <string name="user_reviews_out_of_five">trên 5</string>
+    <string name="user_reviews_total">%1$d đánh giá</string>
+    <string name="user_reviews_mine_title">Đánh giá của bạn</string>
+    <string name="user_reviews_mine_screen">Đánh giá của tôi</string>
+    <string name="user_reviews_mine_hint">Đánh giá có thể chờ duyệt nếu chứa liên kết hoặc số điện thoại.</string>
+    <string name="user_reviews_mine_empty">Bạn chưa viết đánh giá nào</string>
+    <string name="user_reviews_edit">Sửa đánh giá</string>
+    <string name="user_reviews_all">Tất cả đánh giá</string>
+    <string name="user_reviews_sort_newest">Mới nhất</string>
+    <string name="user_reviews_sort_high">Điểm cao</string>
+    <string name="user_reviews_sort_low">Điểm thấp</string>
+    <string name="user_reviews_empty">Chưa có đánh giá nào cho sự kiện này.</string>
+    <string name="user_reviews_none">Chưa có đánh giá</string>
+    <string name="user_reviews_load_more">Xem thêm đánh giá</string>
+    <string name="user_reviews_write">Viết đánh giá</string>
+    <string name="user_reviews_report">Báo cáo</string>
+    <string name="user_reviews_hint">Chia sẻ cảm nhận của bạn về sự kiện…</string>
+    <string name="user_reviews_counter">%1$d/2000</string>
+    <string name="user_reviews_star_1">1 sao</string>
+    <string name="user_reviews_star_2">2 sao</string>
+    <string name="user_reviews_star_3">3 sao</string>
+    <string name="user_reviews_star_4">4 sao</string>
+    <string name="user_reviews_star_5">5 sao</string>
+    <string name="user_reviews_edited">Đã chỉnh sửa</string>
+    <string name="user_reviews_edit_left">Còn %1$d lần sửa</string>
+    <string name="user_reviews_status_visible">ĐÃ ĐĂNG</string>
+    <string name="user_reviews_status_pending">CHỜ DUYỆT</string>
+    <string name="user_reviews_status_hidden">ĐÃ ẨN</string>
+    <string name="user_reviews_report_title">Báo cáo đánh giá</string>
+    <string name="user_reviews_report_spam">Spam / quảng cáo</string>
+    <string name="user_reviews_report_offensive">Nội dung xúc phạm</string>
+    <string name="user_reviews_report_personal">Lộ thông tin cá nhân</string>
+    <string name="user_reviews_report_fake">Đánh giá không thật</string>
+    <string name="user_reviews_report_off_topic">Lạc chủ đề</string>
+    <string name="user_reviews_report_other">Khác</string>
+    <string name="user_reviews_report_sent">Đã gửi báo cáo</string>
+    <string name="user_reviews_saved">Đã lưu đánh giá</string>
+    <string name="user_reviews_rating_required">Vui lòng chọn số sao</string>
+    <string name="user_reviews_not_eligible">Bạn cần tham dự sự kiện để viết đánh giá</string>
+    <string name="user_reviews_meta_editable">Đã sửa %1$d lần · còn %2$d ngày</string>
+    <string name="user_reviews_meta_locked">Đã sửa %1$d lần · hết hạn sửa</string>
 </resources>

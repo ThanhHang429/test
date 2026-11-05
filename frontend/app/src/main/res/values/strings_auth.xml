@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Chuỗi cho luồng xác thực. Giữ tối thiểu: tiêu đề + 1 dòng phụ + placeholder + CTA. -->
 <resources>
-    <string name="auth_brand_name">Event Nexus</string>
-    <string name="auth_brand_wordmark">EVENT NEXUS</string>
+    <string name="auth_brand_name">ETicket</string>
+    <string name="auth_brand_wordmark">ETICKET</string>
     <string name="auth_or">hoặc</string>
+    <string name="auth_seed_title">TÀI KHOẢN SEED</string>
+    <string name="auth_seed_hint">JWT</string>
+    <string name="auth_seed_sub">Chọn một tài khoản để nhận JWT. Chưa có đăng ký, mật khẩu hay OTP.</string>
+    <string name="auth_seed_retry">Thử lại</string>
+    <string name="auth_seed_error">Không tải được /dev/accounts</string>
+    <string name="auth_seed_empty">Chưa có tài khoản seed nào</string>
 
     <!-- Đăng nhập -->
     <string name="auth_login_title">Chào mừng trở lại</string>
@@ -52,12 +58,12 @@
     <string name="auth_confirm_new_hint">Nhập lại mật khẩu</string>
     <string name="auth_demo_hint">Mã demo: 123456</string>
     <string name="auth_demo_user_label">Người dùng</string>
-    <string name="auth_demo_user_value">demo@nexus.vn</string>
+    <string name="auth_demo_user_value">user1@eticket.local</string>
     <string name="auth_demo_org_label">Nhà tổ chức</string>
-    <string name="auth_demo_org_value">organizer@nexus.vn</string>
+    <string name="auth_demo_org_value">organizer1@eticket.local</string>
     <string name="auth_demo_admin_label">Quản trị viên</string>
-    <string name="auth_demo_admin_value">admin@nexus.vn</string>
-    <string name="auth_demo_password">Mật khẩu chung: 123456 · OTP: 123456</string>
+    <string name="auth_demo_admin_value">admin@eticket.local</string>
+    <string name="auth_demo_password">JWT cấp từ /dev/token</string>
     <string name="auth_2fa">2FA</string>
 
     <!-- Lỗi -->
@@ -81,6 +87,6 @@
 
     <!-- Accessibility -->
     <string name="auth_cd_back">Quay lại</string>
-    <string name="auth_cd_logo">Logo Event Nexus</string>
+    <string name="auth_cd_logo">Logo ETicket</string>
     <string name="auth_cd_toggle_password">Hiện hoặc ẩn mật khẩu</string>
 </resources>

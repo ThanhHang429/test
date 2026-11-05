@@ -11,19 +11,28 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.R;
+import com.eventapp.app.core.util.DateTimeUtils;
+import com.eventapp.app.data.remote.dto.notification.NotificationResponse;
 import com.eventapp.app.databinding.ActivityUserNotificationsBinding;
 import com.eventapp.app.ui.user.adapter.NotificationAdapter;
-import com.eventapp.app.ui.user.data.DemoContent;
 import com.eventapp.app.ui.user.model.DemoNotification;
+import com.eventapp.app.ui.user.viewmodel.NotificationsViewModel;
+import com.eventapp.app.ui.common.AppDialog;
+import com.google.android.material.snackbar.Snackbar;
 
-/** Trung tâm thông báo của người dùng. */
+import java.util.ArrayList;
+import java.util.List;
+
+/** Trung tâm thông báo của người dùng — đọc thông báo organizer gửi (FR-O28). */
 public class NotificationsActivity extends AppCompatActivity {
 
     private ActivityUserNotificationsBinding binding;
     private NotificationAdapter adapter;
+    private NotificationsViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,34 +58,62 @@ public class NotificationsActivity extends AppCompatActivity {
             return insets;
         });
 
+        viewModel = new ViewModelProvider(this).get(NotificationsViewModel.class);
+
         adapter = new NotificationAdapter(this::open);
         binding.rvNotifications.setLayoutManager(new LinearLayoutManager(this));
         binding.rvNotifications.setAdapter(adapter);
 
+        // Backend chưa có trạng thái đã đọc nên ẩn hành động này.
+        binding.btnMarkRead.setVisibility(View.GONE);
         binding.btnBack.setOnClickListener(v -> finish());
-        binding.btnMarkRead.setOnClickListener(v -> {
-            DemoContent.get().markAllNotificationsRead();
-            reload();
-        });
 
-        reload();
+        observe();
+        viewModel.reload();
+    }
+
+    private void observe() {
+        viewModel.getItems().observe(this, this::bind);
+        viewModel.getError().observe(this, error -> {
+            if (error == null || binding == null) {
+                return;
+            }
+            viewModel.consumeError();
+            Snackbar.make(binding.getRoot(), error.getUserMessage(),
+                    Snackbar.LENGTH_LONG).show();
+        });
+    }
+
+    private void bind(List<NotificationResponse> data) {
+        List<DemoNotification> items = new ArrayList<>(data.size());
+        for (NotificationResponse item : data) {
+            items.add(new DemoNotification(
+                    String.valueOf(item.id),
+                    item.title == null ? "" : item.title,
+                    item.body == null ? "" : item.body,
+                    DateTimeUtils.toMillis(item.sentAt),
+                    R.drawable.ic_user_bell,
+                    R.color.user_primary_soft,
+                    R.color.user_primary,
+                    false));
+        }
+        adapter.setItems(items);
+        binding.tvSub.setText(getString(R.string.user_notifications_sub_total, items.size()));
+        boolean empty = items.isEmpty();
+        binding.emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
+        binding.rvNotifications.setVisibility(empty ? View.GONE : View.VISIBLE);
     }
 
     private void open(DemoNotification notification) {
-        notification.unread = false;
-        reload();
-    }
-
-    private void reload() {
-        DemoContent content = DemoContent.get();
-        adapter.setItems(content.notifications());
-        binding.tvSub.setText(getString(R.string.user_notifications_sub,
-                content.unreadNotifications()));
-        boolean empty = content.notifications().isEmpty();
-        binding.emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
-        binding.rvNotifications.setVisibility(empty ? View.GONE : View.VISIBLE);
-        binding.btnMarkRead.setVisibility(content.unreadNotifications() > 0
-                ? View.VISIBLE : View.INVISIBLE);
+        AppDialog.confirm(this,
+                R.drawable.ic_user_bell,
+                notification.title,
+                notification.body,
+                getString(R.string.user_close),
+                null,
+                AppDialog.Tone.NEUTRAL,
+                () -> {
+                });
     }
 
     private int dp(int value) {

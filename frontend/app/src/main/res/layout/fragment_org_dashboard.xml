@@ -30,16 +30,18 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/org_greeting"
                 android:textColor="@color/org_text_dim"
-                android:textSize="13sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:id="@+id/tvGreetingName"
                 android:text="@string/org_greeting_name"
                 android:textAppearance="@style/TextAppearance.EventApp.Org.Display" />
 
             <TextView
+                android:id="@+id/tvGreetingSub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -68,7 +70,7 @@
                     android:paddingBottom="6dp"
                     android:text="@string/org_verified"
                     android:textColor="@color/org_primary_dark"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -83,7 +85,7 @@
                     android:paddingBottom="6dp"
                     android:text="@string/org_tier"
                     android:textColor="@color/org_neutral_text"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -126,7 +128,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/org_revenue_today"
                         android:textColor="@color/org_text_on_dark_muted"
-                        android:textSize="12sp" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -140,9 +142,10 @@
                         android:paddingTop="5dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="5dp"
+                        android:id="@+id/tvRevenueTrend"
                         android:text="@string/org_revenue_trend"
                         android:textColor="@color/org_mint"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -154,9 +157,10 @@
                     android:fontFeatureSettings="tnum"
                     android:includeFontPadding="false"
                     android:letterSpacing="-0.03"
+                    android:id="@+id/tvRevenueValue"
                     android:text="@string/org_revenue_value"
                     android:textColor="@color/white"
-                    android:textSize="31sp"
+                    android:textSize="32sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -166,7 +170,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/org_revenue_note"
                     android:textColor="@color/org_text_on_dark_muted"
-                    android:textSize="11sp" />
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -254,7 +258,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_tickets_sold"
                             android:textColor="@color/org_text_on_dark_muted"
-                            android:textSize="11sp" />
+                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -262,9 +266,10 @@
                             android:layout_marginTop="3dp"
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:fontFeatureSettings="tnum"
+                            android:id="@+id/tvTicketsSold"
                             android:text="1.842"
                             android:textColor="@color/white"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -286,7 +291,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_checkin_count"
                             android:textColor="@color/org_text_on_dark_muted"
-                            android:textSize="11sp" />
+                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -294,9 +299,10 @@
                             android:layout_marginTop="3dp"
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:fontFeatureSettings="tnum"
+                            android:id="@+id/tvCheckinCount"
                             android:text="1.240"
                             android:textColor="@color/white"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -312,7 +318,7 @@
                         android:paddingBottom="4dp"
                         android:text="@string/org_live"
                         android:textColor="@color/org_mint"
-                        android:textSize="9sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -364,6 +370,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
+                        android:id="@+id/tvKpiEvents"
                         android:text="@string/org_kpi_events_value"
                         android:textAppearance="@style/TextAppearance.EventApp.Org.KpiValue" />
 
@@ -372,9 +379,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/be_vietnam_pro"
+                        android:id="@+id/tvKpiEventsNote"
                         android:text="@string/org_kpi_events_note"
                         android:textColor="@color/org_warning_text"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -419,6 +427,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
+                        android:id="@+id/tvKpiTickets"
                         android:text="@string/org_kpi_tickets_value"
                         android:textAppearance="@style/TextAppearance.EventApp.Org.KpiValue" />
 
@@ -427,9 +436,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/be_vietnam_pro"
+                        android:id="@+id/tvKpiTicketsNote"
                         android:text="@string/org_kpi_tickets_note"
                         android:textColor="@color/org_success_text"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -479,6 +489,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
+                        android:id="@+id/tvKpiCheckin"
                         android:text="@string/org_kpi_checkin_value"
                         android:textAppearance="@style/TextAppearance.EventApp.Org.KpiValue" />
 
@@ -487,9 +498,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/be_vietnam_pro"
+                        android:id="@+id/tvKpiCheckinNote"
                         android:text="@string/org_kpi_checkin_note"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -534,6 +546,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
+                        android:id="@+id/tvKpiPending"
                         android:text="@string/org_kpi_pending_value"
                         android:textAppearance="@style/TextAppearance.EventApp.Org.KpiValue" />
 
@@ -542,9 +555,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/be_vietnam_pro"
+                        android:id="@+id/tvKpiPendingNote"
                         android:text="@string/org_kpi_pending_note"
                         android:textColor="@color/org_warning_text"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -576,7 +590,7 @@
                 android:paddingEnd="0dp"
                 android:text="@string/org_see_all"
                 android:textColor="@color/org_primary_dark"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -623,9 +637,10 @@
                         android:paddingTop="4dp"
                         android:paddingEnd="9dp"
                         android:paddingBottom="4dp"
+                        android:id="@+id/tvFeaturedCategory"
                         android:text="CÔNG NGHỆ &amp; AI"
                         android:textColor="@color/white"
-                        android:textSize="9sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -640,9 +655,10 @@
                         android:paddingTop="4dp"
                         android:paddingEnd="9dp"
                         android:paddingBottom="4dp"
+                        android:id="@+id/tvFeaturedStatus"
                         android:text="@string/org_status_on_sale"
                         android:textColor="@color/org_success_text"
-                        android:textSize="9sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -652,9 +668,10 @@
                         android:layout_marginStart="14dp"
                         android:layout_marginBottom="12dp"
                         android:fontFamily="@font/plus_jakarta_sans"
+                        android:id="@+id/tvFeaturedTitle"
                         android:text="Vietnam Tech Expo 2025"
                         android:textColor="@color/white"
-                        android:textSize="17sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
                 </FrameLayout>
 
@@ -671,9 +688,10 @@
                         android:drawablePadding="6dp"
                         android:drawableTint="@color/org_text_dim"
                         android:fontFamily="@font/be_vietnam_pro"
+                        android:id="@+id/tvFeaturedMeta"
                         android:text="15–18/11/2025 · SECC, Quận 7"
                         android:textColor="@color/org_text_muted"
-                        android:textSize="12sp" />
+                        android:textSize="13sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -686,9 +704,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/be_vietnam_pro"
+                            android:id="@+id/tvFeaturedSold"
                             android:text="1.720 / 2.000 vé"
                             android:textColor="@color/org_text_muted"
-                            android:textSize="12sp" />
+                            android:textSize="13sp" />
 
                         <Space
                             android:layout_width="0dp"
@@ -699,9 +718,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/plus_jakarta_sans"
+                            android:id="@+id/tvFeaturedPercent"
                             android:text="86%"
                             android:textColor="@color/org_primary_dark"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -749,7 +769,7 @@
                                 android:fontFamily="@font/be_vietnam_pro"
                                 android:text="@string/org_revenue_label"
                                 android:textColor="@color/org_text_dim"
-                                android:textSize="11sp" />
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -757,9 +777,10 @@
                                 android:layout_marginTop="2dp"
                                 android:fontFamily="@font/plus_jakarta_sans"
                                 android:fontFeatureSettings="tnum"
+                                android:id="@+id/tvFeaturedRevenue"
                                 android:text="1,46 tỷ đ"
                                 android:textColor="@color/org_text"
-                                android:textSize="15sp"
+                                android:textSize="16sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
@@ -775,7 +796,7 @@
                                 android:fontFamily="@font/be_vietnam_pro"
                                 android:text="@string/org_checkin_rate"
                                 android:textColor="@color/org_text_dim"
-                                android:textSize="11sp" />
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -783,9 +804,10 @@
                                 android:layout_marginTop="2dp"
                                 android:fontFamily="@font/plus_jakarta_sans"
                                 android:fontFeatureSettings="tnum"
+                                android:id="@+id/tvFeaturedCheckin"
                                 android:text="72,1%"
                                 android:textColor="@color/org_text"
-                                android:textSize="15sp"
+                                android:textSize="16sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
@@ -803,7 +825,7 @@
                             android:paddingEnd="7dp"
                             android:text="@string/org_view_detail"
                             android:textColor="@color/org_primary_dark"
-                            android:textSize="11sp"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -836,9 +858,10 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="9dp"
                 android:paddingBottom="4dp"
+                android:id="@+id/tvTodoCount"
                 android:text="2"
                 android:textColor="@color/org_warning_text"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -887,9 +910,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/plus_jakarta_sans"
+                        android:id="@+id/tvTodo1Title"
                         android:text="@string/org_todo_1"
                         android:textColor="@color/org_text"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -897,9 +921,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/be_vietnam_pro"
+                        android:id="@+id/tvTodo1Sub"
                         android:text="@string/org_todo_1_sub"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -952,9 +977,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/plus_jakarta_sans"
+                        android:id="@+id/tvTodo2Title"
                         android:text="@string/org_todo_2"
                         android:textColor="@color/org_text"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -962,9 +988,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/be_vietnam_pro"
+                        android:id="@+id/tvTodo2Sub"
                         android:text="@string/org_todo_2_sub"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -998,7 +1025,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="Hôm nay"
                 android:textColor="@color/org_text_dim"
-                android:textSize="12sp" />
+                android:textSize="13sp" />
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -1048,7 +1075,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/org_activity_1"
                             android:textColor="@color/org_text"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -1058,7 +1085,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_activity_1_sub"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="11sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <TextView
@@ -1067,7 +1094,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="2 phút"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <View
@@ -1110,7 +1137,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/org_activity_2"
                             android:textColor="@color/org_text"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -1120,7 +1147,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_activity_2_sub"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="11sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <TextView
@@ -1129,7 +1156,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="10 phút"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <View
@@ -1172,7 +1199,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/org_activity_3"
                             android:textColor="@color/org_text"
-                            android:textSize="12sp"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -1182,7 +1209,7 @@
                             android:fontFamily="@font/be_vietnam_pro"
                             android:text="@string/org_activity_3_sub"
                             android:textColor="@color/org_text_dim"
-                            android:textSize="11sp" />
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <TextView
@@ -1191,7 +1218,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="1 giờ"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

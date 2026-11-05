@@ -43,7 +43,7 @@
                 android:paddingEnd="9dp"
                 android:paddingBottom="4dp"
                 android:textColor="@color/white"
-                android:textSize="9sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -60,7 +60,7 @@
                 android:paddingEnd="9dp"
                 android:paddingBottom="4dp"
                 android:textColor="@color/org_success_text"
-                android:textSize="9sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -75,7 +75,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:maxLines="1"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
         </FrameLayout>
 
@@ -96,7 +96,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:maxLines="1"
                 android:textColor="@color/org_text_muted"
-                android:textSize="12sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tvLocation"
@@ -110,7 +110,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:maxLines="1"
                 android:textColor="@color/org_text_dim"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -130,7 +130,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/org_sold_label"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <TextView
                         android:id="@+id/tvSold"
@@ -140,7 +140,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:fontFeatureSettings="tnum"
                         android:textColor="@color/org_text"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -156,7 +156,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/org_revenue_label"
                         android:textColor="@color/org_text_dim"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
 
                     <TextView
                         android:id="@+id/tvRevenue"
@@ -166,7 +166,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:fontFeatureSettings="tnum"
                         android:textColor="@color/org_primary_dark"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -182,7 +182,7 @@
                     android:paddingEnd="8dp"
                     android:paddingBottom="3dp"
                     android:textColor="@color/org_neutral_text"
-                    android:textSize="10sp"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -214,7 +214,7 @@
                     android:gravity="center"
                     android:text="@string/org_view_detail"
                     android:textColor="@color/org_primary_dark"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
                 <Space
@@ -231,7 +231,7 @@
                     android:gravity="center"
                     android:text="@string/org_manage_tickets"
                     android:textColor="@color/white"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

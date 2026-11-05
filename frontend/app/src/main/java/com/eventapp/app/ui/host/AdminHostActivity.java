@@ -27,16 +27,19 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.eventapp.app.R;
+import com.eventapp.app.data.di.ServiceLocator;
+import com.eventapp.app.core.session.SessionManager;
 import com.eventapp.app.databinding.ActivityAdminHostBinding;
 import com.eventapp.app.ui.admin.AdminAccountsFragment;
 import com.eventapp.app.ui.admin.AdminBroadcastFragment;
+import com.eventapp.app.ui.admin.AdminCategoriesFragment;
 import com.eventapp.app.ui.admin.AdminDashboardFragment;
 import com.eventapp.app.ui.admin.AdminEventsFragment;
 import com.eventapp.app.ui.admin.AdminFinanceFragment;
-import com.eventapp.app.ui.admin.AdminModerationFragment;
 import com.eventapp.app.ui.admin.AdminNotificationsFragment;
 import com.eventapp.app.ui.admin.AdminSystemFragment;
 import com.eventapp.app.ui.auth.AuthActivity;
+import com.eventapp.app.ui.common.AppDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +53,8 @@ import java.util.List;
 public class AdminHostActivity extends AppCompatActivity {
 
     public static final int SCREEN_DASHBOARD = 0;
-    public static final int SCREEN_MODERATION = 1;
-    public static final int SCREEN_EVENTS = 2;
+    public static final int SCREEN_EVENTS = 1;
+    public static final int SCREEN_CATEGORIES = 2;
     public static final int SCREEN_ACCOUNTS = 3;
     public static final int SCREEN_NOTIFICATIONS = 4;
     public static final int SCREEN_BROADCAST = 5;
@@ -62,17 +65,18 @@ public class AdminHostActivity extends AppCompatActivity {
     private static final String STATE_SCREEN = "state_admin_screen";
 
     private static final int[] ICONS = {
-            R.drawable.ic_org_dashboard, R.drawable.ic_user_shield, R.drawable.ic_user_calendar,
-            R.drawable.ic_ds_users, R.drawable.ic_user_bell, R.drawable.ic_ds_edit,
+            R.drawable.ic_org_dashboard, R.drawable.ic_user_calendar,
+            R.drawable.ic_admin_category, R.drawable.ic_ds_users,
+            R.drawable.ic_user_bell, R.drawable.ic_ds_edit,
             R.drawable.ic_org_receipt, R.drawable.ic_org_settings
     };
     private static final int[] TITLES = {
-            R.string.admin_screen_dashboard, R.string.admin_screen_moderation,
-            R.string.admin_screen_events, R.string.admin_screen_accounts,
+            R.string.admin_screen_dashboard, R.string.admin_screen_events,
+            R.string.admin_screen_categories, R.string.admin_screen_accounts,
             R.string.admin_screen_notifications, R.string.admin_screen_broadcast,
             R.string.admin_screen_finance, R.string.admin_screen_system
     };
-    private static final int[] BADGES = {0, 12, 0, 5, 3, 0, 0, 0};
+    private static final int[] BADGES = {0, 0, 0, 5, 3, 0, 0, 0};
     private static final int[] SECTIONS = {
             R.string.admin_drawer_section_ops, 0, 0,
             R.string.admin_drawer_section_manage, 0, 0,
@@ -104,7 +108,7 @@ public class AdminHostActivity extends AppCompatActivity {
         binding.btnAdminAvatar.setOnClickListener(v -> binding.adminDrawer.openDrawer(
                 GravityCompat.START));
         binding.btnAdminNotifications.setOnClickListener(v -> selectScreen(SCREEN_NOTIFICATIONS));
-        binding.btnDrawerLogout.setOnClickListener(v -> logout());
+        binding.btnDrawerLogout.setOnClickListener(v -> confirmLogout());
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -247,10 +251,10 @@ public class AdminHostActivity extends AppCompatActivity {
 
     private Fragment createScreen(int screen) {
         switch (screen) {
-            case SCREEN_MODERATION:
-                return new AdminModerationFragment();
             case SCREEN_EVENTS:
                 return new AdminEventsFragment();
+            case SCREEN_CATEGORIES:
+                return new AdminCategoriesFragment();
             case SCREEN_ACCOUNTS:
                 return new AdminAccountsFragment();
             case SCREEN_NOTIFICATIONS:
@@ -267,7 +271,21 @@ public class AdminHostActivity extends AppCompatActivity {
         }
     }
 
+    private void confirmLogout() {
+        binding.adminDrawer.closeDrawers();
+        AppDialog.confirm(this,
+                R.drawable.ic_user_logout,
+                getString(R.string.admin_logout_confirm_title),
+                getString(R.string.admin_logout_confirm_body),
+                getString(R.string.admin_drawer_logout),
+                getString(R.string.admin_stay),
+                AppDialog.Tone.DANGER,
+                this::logout);
+    }
+
     private void logout() {
+        SessionManager.get().clear();
+        ServiceLocator.reset();
         Intent intent = new Intent(this, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

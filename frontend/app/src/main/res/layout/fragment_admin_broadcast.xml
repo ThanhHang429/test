@@ -34,7 +34,7 @@
                     android:letterSpacing="0.14"
                     android:text="@string/admin_bc_kicker"
                     android:textColor="@color/admin_accent_dark"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -118,7 +118,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_bc_reach"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:id="@+id/tvBroadcastReach"
@@ -127,7 +127,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_bc_reach_value"
                         android:textColor="@color/admin_text"
-                        android:textSize="11.5sp"
+                        android:textSize="13.5sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -264,7 +264,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_bc_schedule_time"
                     android:textColor="@color/admin_text_dim"
-                    android:textSize="11sp"
+                    android:textSize="13sp"
                     android:visibility="gone" />
             </LinearLayout>
 
@@ -286,7 +286,7 @@
                     android:letterSpacing="0.12"
                     android:text="@string/admin_bc_preview"
                     android:textColor="@color/admin_text_dim"
-                    android:textSize="9sp"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -325,7 +325,7 @@
                             android:maxLines="1"
                             android:text="@string/admin_bc_preview_title"
                             android:textColor="@color/admin_text"
-                            android:textSize="12.5sp"
+                            android:textSize="14.5sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -338,7 +338,7 @@
                             android:maxLines="2"
                             android:text="@string/admin_bc_preview_body"
                             android:textColor="@color/admin_text_muted"
-                            android:textSize="11sp" />
+                            android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -353,7 +353,7 @@
                 android:lineSpacingExtra="2dp"
                 android:text="@string/admin_bc_note"
                 android:textColor="@color/admin_text_faint"
-                android:textSize="10.5sp" />
+                android:textSize="12.5sp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -392,7 +392,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:text="@string/admin_bc_send"
                 android:textColor="@color/white"
-                android:textSize="12.5sp"
+                android:textSize="14.5sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

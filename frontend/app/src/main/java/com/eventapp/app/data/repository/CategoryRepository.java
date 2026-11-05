@@ -131,6 +131,10 @@ public class CategoryRepository {
                 invalidating(callback));
     }
 
+    public void delete(long id, @NonNull ApiCallback<Void> callback) {
+        ApiCallback.enqueue(adminApi.delete(id), invalidating(callback));
+    }
+
     /** Bỏ cache sau khi ghi thành công để lần đọc sau thấy dữ liệu mới. */
     @NonNull
     private <T> ApiCallback<T> invalidating(@NonNull ApiCallback<T> target) {

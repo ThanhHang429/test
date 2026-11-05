@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,15 +12,21 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.eventapp.app.R;
+import com.eventapp.app.data.di.ServiceLocator;
+import com.eventapp.app.core.network.ApiCallback;
+import com.eventapp.app.core.network.ApiException;
+import com.eventapp.app.core.network.Paged;
+import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
+import com.eventapp.app.data.repository.FavoriteRepository;
 import com.eventapp.app.databinding.FragmentUserCalendarBinding;
 import com.eventapp.app.databinding.ItemUserCalendarEventBinding;
 import com.eventapp.app.databinding.ItemUserDayBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.host.UserHostActivity;
+import com.eventapp.app.ui.mapper.EventMapper;
+import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.data.DemoContent;
-import com.eventapp.app.ui.user.model.DemoEvent;
-import com.eventapp.app.ui.user.model.DemoTicket;
 import com.eventapp.app.ui.user.util.UserFmt;
 
 import java.util.ArrayList;
@@ -38,7 +43,25 @@ public class CalendarFragment extends Fragment {
     private final Map<Long, View> headers = new LinkedHashMap<>();
     private long selectedDayKey = -1L;
 
-    private final Runnable dataObserver = this::build;
+    /** Một dòng lịch: vé đã mua hoặc sự kiện đã lưu. */
+    private static final class CalendarItem {
+        final long eventId;
+        final String title;
+        final String venue;
+        final long startAt;
+        final long endAt;
+        final TicketUiModel ticket;
+
+        CalendarItem(long eventId, String title, String venue, long startAt, long endAt,
+                     @Nullable TicketUiModel ticket) {
+            this.eventId = eventId;
+            this.title = title;
+            this.venue = venue;
+            this.startAt = startAt;
+            this.endAt = endAt;
+            this.ticket = ticket;
+        }
+    }
 
     @Nullable
     @Override
@@ -58,22 +81,74 @@ public class CalendarFragment extends Fragment {
                 ((UserHostActivity) getActivity()).openTab(UserBottomNavView.TAB_DISCOVERY);
             }
         });
-        build();
+        build(upcomingItems());
+        loadSaved();
     }
 
-    private void build() {
+    private void loadSaved() {
+        ServiceLocator.get(FavoriteRepository.class).list("UPCOMING", 0, 50,
+                new ApiCallback<Paged<FavoriteDtos.Item>>() {
+                    @Override
+                    public void onSuccess(@Nullable Paged<FavoriteDtos.Item> data,
+                                          @Nullable com.google.gson.JsonElement meta) {
+                        if (binding == null) {
+                            return;
+                        }
+                        List<CalendarItem> items = upcomingItems();
+                        if (data != null) {
+                            for (FavoriteDtos.Item favorite : data.items) {
+                                if (favorite == null || favorite.event == null) {
+                                    continue;
+                                }
+                                com.eventapp.app.ui.model.EventUiModel event =
+                                        EventMapper.fromCard(favorite.event);
+                                if (containsEvent(items, event.id)) {
+                                    continue;
+                                }
+                                items.add(new CalendarItem(event.id, event.title, venue(event),
+                                        event.startAt, event.endAt, null));
+                            }
+                        }
+                        items.sort((a, b) -> Long.compare(a.startAt, b.startAt));
+                        build(items);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException error) {
+                        // Không có mạng thì vẫn hiển thị vé đã mua.
+                    }
+                });
+    }
+
+    private boolean containsEvent(List<CalendarItem> items, long eventId) {
+        for (CalendarItem item : items) {
+            if (item.eventId == eventId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String venue(com.eventapp.app.ui.model.EventUiModel event) {
+        if (event.venue == null || event.venue.isEmpty()) {
+            return event.city == null ? "" : event.city;
+        }
+        return event.city == null || event.city.isEmpty()
+                ? event.venue : event.venue + ", " + event.city;
+    }
+
+    private void build(List<CalendarItem> items) {
         if (binding == null) {
             return;
         }
-        List<DemoEvent> events = upcomingEvents();
-        binding.tvSub.setText(getString(R.string.user_calendar_sub, events.size()));
-        binding.emptyState.setVisibility(events.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.tvSub.setText(getString(R.string.user_calendar_sub, items.size()));
+        binding.emptyState.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
 
-        buildWeek(events);
-        buildAgenda(events);
+        buildWeek(items);
+        buildAgenda(items);
     }
 
-    private void buildWeek(List<DemoEvent> events) {
+    private void buildWeek(List<CalendarItem> items) {
         binding.weekStrip.removeAllViews();
         dayBindings.clear();
 
@@ -94,7 +169,7 @@ public class CalendarFragment extends Fragment {
                     LayoutInflater.from(requireContext()), binding.weekStrip, false);
             item.tvDay.setText(UserFmt.dayOfWeekShort(time));
             item.tvDate.setText(UserFmt.dayNumber(time));
-            boolean hasEvent = hasEventOn(events, time);
+            boolean hasEvent = hasEventOn(items, time);
             item.dot.setVisibility(hasEvent ? View.VISIBLE : View.INVISIBLE);
 
             boolean today = UserFmt.isToday(time);
@@ -121,7 +196,6 @@ public class CalendarFragment extends Fragment {
         for (ItemUserDayBinding item : dayBindings) {
             item.getRoot().setSelected(false);
         }
-        // Đánh dấu ô vừa chọn bằng cách dò lại theo nội dung ngày.
         for (ItemUserDayBinding item : dayBindings) {
             if (UserFmt.dayNumber(time).contentEquals(item.tvDate.getText())) {
                 item.getRoot().setSelected(true);
@@ -142,19 +216,19 @@ public class CalendarFragment extends Fragment {
         }
     }
 
-    private void buildAgenda(List<DemoEvent> events) {
+    private void buildAgenda(List<CalendarItem> items) {
         binding.agendaList.removeAllViews();
         headers.clear();
         long lastKey = -1L;
 
-        for (DemoEvent event : events) {
-            long key = dayKey(event.startAt);
+        for (CalendarItem item : items) {
+            long key = dayKey(item.startAt);
             if (key != lastKey) {
                 lastKey = key;
                 TextView header = new TextView(requireContext());
-                boolean today = UserFmt.isToday(event.startAt);
+                boolean today = UserFmt.isToday(item.startAt);
                 String prefix = today ? getString(R.string.user_today) + " · " : "";
-                header.setText(prefix + UserFmt.dateLong(event.startAt).toUpperCase());
+                header.setText(prefix + UserFmt.dateLong(item.startAt).toUpperCase());
                 header.setTextAppearance(R.style.TextAppearance_EventApp_User_Label);
                 header.setTextColor(ContextCompat.getColor(requireContext(),
                         today ? R.color.user_primary : R.color.user_text_muted));
@@ -163,69 +237,53 @@ public class CalendarFragment extends Fragment {
                 headers.put(key, header);
             }
 
-            DemoTicket ticket = ticketFor(event.id);
-            ItemUserCalendarEventBinding item = ItemUserCalendarEventBinding.inflate(
+            ItemUserCalendarEventBinding row = ItemUserCalendarEventBinding.inflate(
                     LayoutInflater.from(requireContext()), binding.agendaList, false);
-            item.tvTime.setText(UserFmt.time(event.startAt) + " – " + UserFmt.time(event.endAt));
-            item.tvTitle.setText(event.title);
-            item.tvVenue.setText(event.venue);
+            row.tvTime.setText(UserFmt.time(item.startAt) + " – " + UserFmt.time(item.endAt));
+            row.tvTitle.setText(item.title);
+            row.tvVenue.setText(item.venue);
 
-            if (ticket != null) {
-                item.tvStatus.setText(R.string.user_ticket_status_valid);
-                item.tvStatus.setTextColor(ContextCompat.getColor(requireContext(),
+            if (item.ticket != null) {
+                row.tvStatus.setText(R.string.user_ticket_status_valid);
+                row.tvStatus.setTextColor(ContextCompat.getColor(requireContext(),
                         R.color.user_success_text));
-                item.tvTicketInfo.setText(ticket.typeName + " × " + ticket.quantity
-                        + " · #" + ticket.code);
-                item.tvOpen.setText(R.string.user_open_ticket);
-                item.tvOpen.setOnClickListener(v ->
-                        TicketDetailActivity.start(requireContext(), ticket.code));
+                row.tvTicketInfo.setText(item.ticket.ticketType + " × " + item.ticket.quantity
+                        + " · #" + item.ticket.code);
+                row.tvOpen.setText(R.string.user_open_ticket);
+                row.tvOpen.setOnClickListener(v ->
+                        TicketDetailActivity.start(requireContext(), item.ticket.code));
             } else {
-                item.tvStatus.setText(R.string.user_saved_label);
-                item.tvStatus.setTextColor(ContextCompat.getColor(requireContext(),
+                row.tvStatus.setText(R.string.user_saved_label);
+                row.tvStatus.setTextColor(ContextCompat.getColor(requireContext(),
                         R.color.user_primary));
-                item.tvTicketInfo.setText(R.string.user_reminder);
-                item.tvOpen.setText(R.string.user_detail);
-                item.tvOpen.setOnClickListener(v ->
-                        EventDetailActivity.start(requireContext(), event.id));
+                row.tvTicketInfo.setText(R.string.user_reminder);
+                row.tvOpen.setText(R.string.user_detail);
+                row.tvOpen.setOnClickListener(v ->
+                        EventDetailActivity.start(requireContext(), item.eventId));
             }
 
-            item.getRoot().setOnClickListener(v ->
-                    EventDetailActivity.start(requireContext(), event.id));
-            binding.agendaList.addView(item.getRoot());
+            row.getRoot().setOnClickListener(v ->
+                    EventDetailActivity.start(requireContext(), item.eventId));
+            binding.agendaList.addView(row.getRoot());
         }
     }
 
-    private List<DemoEvent> upcomingEvents() {
+    private List<CalendarItem> upcomingItems() {
         long now = System.currentTimeMillis();
-        Map<Long, DemoEvent> unique = new LinkedHashMap<>();
-        for (DemoTicket ticket : DemoContent.get().tickets()) {
-            if (ticket.status == DemoTicket.Status.UPCOMING && ticket.event.startAt >= now) {
-                unique.put(ticket.event.id, ticket.event);
+        List<CalendarItem> result = new ArrayList<>();
+        for (TicketUiModel ticket : DemoContent.get().tickets()) {
+            if (ticket.status == TicketUiModel.Status.UPCOMING && ticket.startAt >= now) {
+                result.add(new CalendarItem(ticket.eventId, ticket.eventTitle, ticket.venue,
+                        ticket.startAt, ticket.endAt, ticket));
             }
         }
-        for (DemoEvent event : DemoContent.get().savedEvents()) {
-            if (event.startAt >= now) {
-                unique.put(event.id, event);
-            }
-        }
-        List<DemoEvent> result = new ArrayList<>(unique.values());
-        result.sort((a, b) -> Long.compare(a.startAt, b.startAt));
         return result;
     }
 
-    private DemoTicket ticketFor(long eventId) {
-        for (DemoTicket ticket : DemoContent.get().tickets()) {
-            if (ticket.status == DemoTicket.Status.UPCOMING && ticket.event.id == eventId) {
-                return ticket;
-            }
-        }
-        return null;
-    }
-
-    private boolean hasEventOn(List<DemoEvent> events, long day) {
+    private boolean hasEventOn(List<CalendarItem> items, long day) {
         long key = dayKey(day);
-        for (DemoEvent event : events) {
-            if (dayKey(event.startAt) == key) {
+        for (CalendarItem item : items) {
+            if (dayKey(item.startAt) == key) {
                 return true;
             }
         }
@@ -239,21 +297,12 @@ public class CalendarFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        DemoContent.get().addListener(dataObserver);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        build();
-    }
-
-    @Override
-    public void onStop() {
-        DemoContent.get().removeListener(dataObserver);
-        super.onStop();
+        if (binding != null) {
+            build(upcomingItems());
+            loadSaved();
+        }
     }
 
     private int dp(int value) {

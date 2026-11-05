@@ -5,7 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 
 import com.eventapp.app.core.common.AppLogger;
-import com.eventapp.app.core.di.ServiceLocator;
+import com.eventapp.app.data.di.ServiceLocator;
 import com.eventapp.app.core.network.ApiClient;
 
 /**

@@ -1,17 +1,23 @@
 package com.eventapp.app.ui.model;
 
+import androidx.annotation.DrawableRes;
+
 import com.eventapp.app.core.enums.EventCategory;
 
 /**
- * UI model cho danh sách "Vé của tôi" (FR-U14 + FR-U18 gộp chung một màn).
- * Dữ liệu thật sẽ được map từ DTO của backend, adapter không phụ thuộc tên field API.
+ * Model hiển thị cho "Vé của tôi" (FR-U14 + FR-U18).
+ *
+ * <p>Backend chưa mở API đơn hàng/vé nên dữ liệu hiện do {@code DemoContent} sinh ra, nhưng màn
+ * hình chỉ làm việc với model này — khi có API chỉ cần thay nguồn dữ liệu.</p>
  */
 public class TicketUiModel {
 
     public enum Status {
         /** Vé cho sự kiện chưa diễn ra — tab "Sắp diễn ra". */
         UPCOMING,
-        /** Sự kiện đã kết thúc — tab "Đã qua". */
+        /** Vé đã check-in. */
+        USED,
+        /** Sự kiện đã kết thúc nhưng vé chưa dùng — tab "Đã qua". */
         PAST,
         /** Đơn bị huỷ, vé không còn giá trị sử dụng. */
         CANCELLED
@@ -19,6 +25,8 @@ public class TicketUiModel {
 
     public final long id;
     public final long eventId;
+    /** Mã vé in trên QR. */
+    public final String code;
     public final String eventTitle;
     public final String coverUrl;
     public final EventCategory category;
@@ -26,6 +34,7 @@ public class TicketUiModel {
     public final String venue;
     public final String city;
     public final long startAt;
+    public final long endAt;
     public final int quantity;
     public final long totalPrice;
     public final String orderCode;
@@ -34,6 +43,7 @@ public class TicketUiModel {
     private TicketUiModel(Builder builder) {
         id = builder.id;
         eventId = builder.eventId;
+        code = builder.code;
         eventTitle = builder.eventTitle;
         coverUrl = builder.coverUrl;
         category = builder.category;
@@ -41,6 +51,7 @@ public class TicketUiModel {
         venue = builder.venue;
         city = builder.city;
         startAt = builder.startAt;
+        endAt = builder.endAt;
         quantity = builder.quantity;
         totalPrice = builder.totalPrice;
         orderCode = builder.orderCode;
@@ -51,9 +62,20 @@ public class TicketUiModel {
         return status == Status.UPCOMING;
     }
 
+    @DrawableRes
+    public int coverRes() {
+        return EventCategoryUi.coverRes(category);
+    }
+
+    @DrawableRes
+    public int iconRes() {
+        return EventCategoryUi.iconRes(category);
+    }
+
     public static class Builder {
         private long id;
         private long eventId;
+        private String code = "";
         private String eventTitle = "";
         private String coverUrl = "";
         private EventCategory category = EventCategory.OTHER;
@@ -61,6 +83,7 @@ public class TicketUiModel {
         private String venue = "";
         private String city = "";
         private long startAt;
+        private long endAt;
         private int quantity = 1;
         private long totalPrice;
         private String orderCode = "";
@@ -73,6 +96,11 @@ public class TicketUiModel {
 
         public Builder eventId(long eventId) {
             this.eventId = eventId;
+            return this;
+        }
+
+        public Builder code(String code) {
+            this.code = code == null ? "" : code;
             return this;
         }
 
@@ -108,6 +136,11 @@ public class TicketUiModel {
 
         public Builder startAt(long startAt) {
             this.startAt = startAt;
+            return this;
+        }
+
+        public Builder endAt(long endAt) {
+            this.endAt = endAt;
             return this;
         }
 

@@ -6,6 +6,9 @@ import com.eventapp.app.core.network.ApiCallback;
 import com.eventapp.app.data.remote.api.OrganizerApi;
 import com.eventapp.app.data.remote.dto.classification.ClassificationDtos;
 import com.eventapp.app.data.remote.dto.dashboard.DashboardDtos;
+import com.eventapp.app.data.remote.dto.notification.NotificationResponse;
+import com.eventapp.app.data.remote.dto.organizer.CrowdDtos;
+import com.eventapp.app.data.remote.dto.organizer.OrganizerEventDtos;
 import com.eventapp.app.data.remote.dto.organizerai.OrganizerAiDtos;
 
 import java.util.List;
@@ -17,6 +20,16 @@ public class OrganizerRepository {
 
     public OrganizerRepository(@NonNull OrganizerApi api) {
         this.api = api;
+    }
+
+    public void events(@NonNull String status, int page, int size,
+                       @NonNull ApiCallback<List<OrganizerEventDtos.Event>> callback) {
+        ApiCallback.enqueue(api.events(status, page, size), callback);
+    }
+
+    public void event(long eventId,
+                      @NonNull ApiCallback<OrganizerEventDtos.Event> callback) {
+        ApiCallback.enqueue(api.event(eventId), callback);
     }
 
     public void dashboard(@NonNull String range, String from, String to,
@@ -53,5 +66,37 @@ public class OrganizerRepository {
     public void suggestTags(String query, int limit,
                             @NonNull ApiCallback<List<ClassificationDtos.TagSuggestion>> callback) {
         ApiCallback.enqueue(api.suggestTags(query, limit), callback);
+    }
+
+    // ------------------------------------------------------------------ FR-O28
+
+    public void crowdStatus(long eventId,
+                            @NonNull ApiCallback<CrowdDtos.CrowdStatus> callback) {
+        ApiCallback.enqueue(api.crowdStatus(eventId), callback);
+    }
+
+    public void overflowRooms(long eventId,
+                              @NonNull ApiCallback<List<CrowdDtos.OverflowRoom>> callback) {
+        ApiCallback.enqueue(api.overflowRooms(eventId), callback);
+    }
+
+    public void addOverflowRoom(long eventId, @NonNull CrowdDtos.CreateRoomRequest request,
+                                @NonNull ApiCallback<CrowdDtos.OverflowRoom> callback) {
+        ApiCallback.enqueue(api.addOverflowRoom(eventId, request), callback);
+    }
+
+    public void closeOverflowRoom(long eventId, long roomId,
+                                  @NonNull ApiCallback<CrowdDtos.OverflowRoom> callback) {
+        ApiCallback.enqueue(api.closeOverflowRoom(eventId, roomId), callback);
+    }
+
+    public void notifications(long eventId,
+                              @NonNull ApiCallback<List<NotificationResponse>> callback) {
+        ApiCallback.enqueue(api.notifications(eventId), callback);
+    }
+
+    public void sendNotification(long eventId, @NonNull CrowdDtos.SendNotificationRequest request,
+                                 @NonNull ApiCallback<CrowdDtos.SendNotificationResponse> callback) {
+        ApiCallback.enqueue(api.sendNotification(eventId, request), callback);
     }
 }

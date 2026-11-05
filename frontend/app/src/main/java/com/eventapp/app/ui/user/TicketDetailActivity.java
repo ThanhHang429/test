@@ -23,7 +23,7 @@ import com.eventapp.app.R;
 import com.eventapp.app.databinding.ActivityUserTicketDetailBinding;
 import com.eventapp.app.ui.common.view.SnackPill;
 import com.eventapp.app.ui.user.data.DemoContent;
-import com.eventapp.app.ui.user.model.DemoTicket;
+import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.util.UserFmt;
 
 /** Chi tiết vé kèm mã QR động (mô phỏng) dùng để check-in. */
@@ -32,7 +32,7 @@ public class TicketDetailActivity extends AppCompatActivity {
     private static final String EXTRA_CODE = "ticket_code";
 
     private ActivityUserTicketDetailBinding binding;
-    private DemoTicket ticket;
+    private TicketUiModel ticket;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private int seconds = 60;
     private int tick;
@@ -102,18 +102,18 @@ public class TicketDetailActivity extends AppCompatActivity {
     }
 
     private void bindTicket() {
-        binding.cover.setBackgroundResource(ticket.event.coverRes);
-        binding.ivIcon.setImageResource(ticket.event.iconRes);
-        binding.tvDate.setText(UserFmt.dateShort(ticket.event.startAt) + " • "
-                + UserFmt.time(ticket.event.startAt));
-        binding.tvTitle.setText(ticket.event.title);
-        binding.tvVenue.setText(ticket.event.venue);
+        binding.cover.setBackgroundResource(ticket.coverRes());
+        binding.ivIcon.setImageResource(ticket.iconRes());
+        binding.tvDate.setText(UserFmt.dateShort(ticket.startAt) + " • "
+                + UserFmt.time(ticket.startAt));
+        binding.tvTitle.setText(ticket.eventTitle);
+        binding.tvVenue.setText(ticket.venue);
         binding.tvCode.setText(ticket.code);
-        binding.tvType.setText(ticket.typeName);
+        binding.tvType.setText(ticket.ticketType);
         binding.tvQuantity.setText(String.valueOf(ticket.quantity));
-        binding.tvTime.setText(UserFmt.dateLong(ticket.event.startAt) + "\n"
-                + UserFmt.time(ticket.event.startAt) + " – " + UserFmt.time(ticket.event.endAt));
-        binding.tvFullVenue.setText(ticket.event.venue + ", " + ticket.event.city);
+        binding.tvTime.setText(UserFmt.dateLong(ticket.startAt) + "\n"
+                + UserFmt.time(ticket.startAt) + " – " + UserFmt.time(ticket.endAt));
+        binding.tvFullVenue.setText(ticket.venue + ", " + ticket.city);
 
         switch (ticket.status) {
             case USED:
@@ -149,11 +149,11 @@ public class TicketDetailActivity extends AppCompatActivity {
     private void addToCalendar() {
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)
-                .putExtra(CalendarContract.Events.TITLE, ticket.event.title)
+                .putExtra(CalendarContract.Events.TITLE, ticket.eventTitle)
                 .putExtra(CalendarContract.Events.EVENT_LOCATION,
-                        ticket.event.venue + ", " + ticket.event.city)
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, ticket.event.startAt)
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, ticket.event.endAt);
+                        ticket.venue + ", " + ticket.city)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, ticket.startAt)
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, ticket.endAt);
         try {
             startActivity(intent);
             SnackPill.show(binding.getRoot(), getString(R.string.user_added_calendar), dp(96));
@@ -165,16 +165,16 @@ public class TicketDetailActivity extends AppCompatActivity {
     private void share() {
         Intent send = new Intent(Intent.ACTION_SEND);
         send.setType("text/plain");
-        send.putExtra(Intent.EXTRA_SUBJECT, ticket.event.title);
-        send.putExtra(Intent.EXTRA_TEXT, ticket.event.title + "\n"
-                + UserFmt.dateTime(ticket.event.startAt) + "\n" + ticket.event.venue);
+        send.putExtra(Intent.EXTRA_SUBJECT, ticket.eventTitle);
+        send.putExtra(Intent.EXTRA_TEXT, ticket.eventTitle + "\n"
+                + UserFmt.dateTime(ticket.startAt) + "\n" + ticket.venue);
         startActivity(Intent.createChooser(send, getString(R.string.user_share_chooser)));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (ticket != null && ticket.status == DemoTicket.Status.UPCOMING) {
+        if (ticket != null && ticket.status == TicketUiModel.Status.UPCOMING) {
             handler.removeCallbacks(ticker);
             handler.postDelayed(ticker, 1000L);
         }

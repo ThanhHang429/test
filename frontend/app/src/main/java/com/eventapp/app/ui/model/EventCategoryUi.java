@@ -99,7 +99,7 @@ public final class EventCategoryUi {
             case FOOD:
                 return R.drawable.ic_ds_ticket;
             case TECH:
-                return R.drawable.ic_ds_ai_sparkle;
+                return R.drawable.ic_ds_tech;
             case BUSINESS:
                 return R.drawable.ic_ds_chart;
             case EDUCATION:
@@ -109,6 +109,35 @@ public final class EventCategoryUi {
             case OTHER:
             default:
                 return R.drawable.ic_ds_event;
+        }
+    }
+
+    /** Ảnh bìa placeholder khi backend chưa có coverUrl. */
+    @DrawableRes
+    public static int coverRes(EventCategory category) {
+        if (category == null) {
+            return R.drawable.bg_user_cover_indigo;
+        }
+        switch (category) {
+            case MUSIC:
+                return R.drawable.bg_user_cover_indigo;
+            case SPORTS:
+                return R.drawable.bg_user_cover_teal;
+            case ART:
+                return R.drawable.bg_user_cover_coral;
+            case FOOD:
+                return R.drawable.bg_user_cover_amber;
+            case TECH:
+                return R.drawable.bg_user_cover_violet;
+            case BUSINESS:
+                return R.drawable.bg_user_cover_navy;
+            case EDUCATION:
+                return R.drawable.bg_user_cover_sky;
+            case HEALTH:
+                return R.drawable.bg_user_cover_teal;
+            case OTHER:
+            default:
+                return R.drawable.bg_user_cover_indigo;
         }
     }
 

@@ -29,7 +29,7 @@
                 android:fontFamily="@font/be_vietnam_pro"
                 android:text="@string/admin_greeting"
                 android:textColor="@color/admin_text_dim"
-                android:textSize="13sp" />
+                android:textSize="15sp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -77,7 +77,7 @@
                         android:letterSpacing="0.08"
                         android:text="@string/admin_status_online"
                         android:textColor="@color/admin_accent_dark"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -88,7 +88,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="Cập nhật 09:42"
                     android:textColor="@color/admin_text_faint"
-                    android:textSize="11sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -132,7 +132,7 @@
                         android:letterSpacing="0.14"
                         android:text="SỨC KHỎE NỀN TẢNG"
                         android:textColor="#FF8FD9DC"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -147,7 +147,7 @@
                         android:paddingBottom="4dp"
                         android:text="30 NGÀY"
                         android:textColor="@color/admin_text_on_dark_muted"
-                        android:textSize="9sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -158,7 +158,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="@string/admin_uptime_label"
                     android:textColor="@color/admin_text_on_dark_muted"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -192,7 +192,7 @@
                             android:letterSpacing="0.08"
                             android:text="@string/admin_hero_gmv"
                             android:textColor="#FF8FA3BA"
-                            android:textSize="9sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -202,7 +202,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/admin_hero_gmv_value"
                             android:textColor="@color/admin_text_on_dark"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -226,7 +226,7 @@
                             android:letterSpacing="0.08"
                             android:text="@string/admin_hero_orders"
                             android:textColor="#FF8FA3BA"
-                            android:textSize="9sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -236,7 +236,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/admin_hero_orders_value"
                             android:textColor="@color/admin_text_on_dark"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -260,7 +260,7 @@
                             android:letterSpacing="0.08"
                             android:text="@string/admin_hero_approve"
                             android:textColor="#FF8FA3BA"
-                            android:textSize="9sp"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -270,7 +270,7 @@
                             android:fontFamily="@font/plus_jakarta_sans"
                             android:text="@string/admin_hero_approve_value"
                             android:textColor="@color/admin_text_on_dark"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -305,7 +305,7 @@
                 android:paddingBottom="4dp"
                 android:text="4 mục"
                 android:textColor="@color/admin_text_muted"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -366,7 +366,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_queue_review"
                         android:textColor="@color/admin_text"
-                        android:textSize="13.5sp"
+                        android:textSize="15.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -376,7 +376,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_queue_review_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -391,7 +391,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="12"
                         android:textColor="@color/admin_warning_text"
-                        android:textSize="17sp"
+                        android:textSize="19sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -400,7 +400,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_unit_ho_so"
                         android:textColor="@color/admin_text_faint"
-                        android:textSize="9sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -457,7 +457,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_queue_org"
                         android:textColor="@color/admin_text"
-                        android:textSize="13.5sp"
+                        android:textSize="15.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -467,7 +467,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_queue_org_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -482,7 +482,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="5"
                         android:textColor="@color/admin_primary"
-                        android:textSize="17sp"
+                        android:textSize="19sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -491,7 +491,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_unit_ho_so"
                         android:textColor="@color/admin_text_faint"
-                        android:textSize="9sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -548,7 +548,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_queue_report"
                         android:textColor="@color/admin_text"
-                        android:textSize="13.5sp"
+                        android:textSize="15.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -558,7 +558,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_queue_report_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -573,7 +573,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="8"
                         android:textColor="@color/admin_primary"
-                        android:textSize="17sp"
+                        android:textSize="19sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -582,7 +582,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_unit_bao_cao"
                         android:textColor="@color/admin_text_faint"
-                        android:textSize="9sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -639,7 +639,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_queue_flag"
                         android:textColor="@color/admin_text"
-                        android:textSize="13.5sp"
+                        android:textSize="15.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -649,7 +649,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_queue_flag_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -664,7 +664,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="3"
                         android:textColor="@color/admin_danger_text"
-                        android:textSize="17sp"
+                        android:textSize="19sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -673,7 +673,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_unit_tai_khoan"
                         android:textColor="@color/admin_text_faint"
-                        android:textSize="9sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <ImageView
@@ -721,7 +721,7 @@
                     android:paddingBottom="4dp"
                     android:text="+18,2%"
                     android:textColor="@color/admin_success_text"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -732,7 +732,7 @@
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:text="@string/admin_revenue_value"
                 android:textColor="@color/admin_text"
-                android:textSize="24sp"
+                android:textSize="26sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -767,7 +767,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="Tuần này"
                     android:textColor="@color/admin_text_muted"
-                    android:textSize="11sp" />
+                    android:textSize="13sp" />
 
                 <View
                     android:layout_width="7dp"
@@ -782,7 +782,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="Tuần trước"
                     android:textColor="@color/admin_text_dim"
-                    android:textSize="11sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -812,7 +812,7 @@
                 android:paddingEnd="2dp"
                 android:text="@string/admin_audit_all"
                 android:textColor="@color/admin_accent_dark"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -855,7 +855,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_audit_1_action"
                         android:textColor="@color/admin_text"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -865,7 +865,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_audit_1_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <TextView
@@ -874,7 +874,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="09:42"
                     android:textColor="@color/admin_text_faint"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <View
@@ -908,7 +908,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_audit_2_action"
                         android:textColor="@color/admin_text"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -918,7 +918,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_audit_2_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <TextView
@@ -927,7 +927,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="09:15"
                     android:textColor="@color/admin_text_faint"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <View
@@ -961,7 +961,7 @@
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:text="@string/admin_audit_3_action"
                         android:textColor="@color/admin_text"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -971,7 +971,7 @@
                         android:fontFamily="@font/be_vietnam_pro"
                         android:text="@string/admin_audit_3_meta"
                         android:textColor="@color/admin_text_dim"
-                        android:textSize="11sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <TextView
@@ -980,7 +980,7 @@
                     android:fontFamily="@font/be_vietnam_pro"
                     android:text="08:50"
                     android:textColor="@color/admin_text_faint"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

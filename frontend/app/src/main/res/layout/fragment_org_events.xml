@@ -32,6 +32,7 @@
                     android:textAppearance="@style/TextAppearance.EventApp.Org.Headline" />
 
                 <TextView
+                    android:id="@+id/tvEventsSub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
@@ -50,7 +51,7 @@
                 android:paddingStart="14dp"
                 android:paddingEnd="14dp"
                 android:text="@string/org_create_event"
-                android:textSize="12sp" />
+                android:textSize="13sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -161,6 +162,14 @@
             android:padding="32dp"
             android:text="@string/org_events_empty"
             android:textAppearance="@style/TextAppearance.EventApp.Org.Body"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/org_primary"
             android:visibility="gone" />
     </FrameLayout>
 </LinearLayout>

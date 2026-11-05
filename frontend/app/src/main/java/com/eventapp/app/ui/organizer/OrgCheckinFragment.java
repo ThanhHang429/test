@@ -38,10 +38,8 @@ public class OrgCheckinFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         NavContentInset.apply(binding.getRoot());
-        binding.scanPanel.setOnClickListener(v -> {
-            binding.etCode.setText("VE-123456");
-            verify();
-        });
+        binding.scanPanel.setOnClickListener(v -> simulateScan());
+        binding.btnScanNow.setOnClickListener(v -> simulateScan());
         binding.btnConfirmCode.setOnClickListener(v -> verify());
         binding.btnFlash.setOnClickListener(v ->
                 snack("Đèn flash sẽ bật khi nối camera thật"));
@@ -60,6 +58,12 @@ public class OrgCheckinFragment extends Fragment {
             }
             return false;
         });
+    }
+
+    /** Mô phỏng camera đọc được một mã hợp lệ (demo giao diện). */
+    private void simulateScan() {
+        binding.etCode.setText("VE-123456");
+        verify();
     }
 
     private void verify() {

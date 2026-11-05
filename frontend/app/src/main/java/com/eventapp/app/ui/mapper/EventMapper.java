@@ -11,7 +11,7 @@ import com.eventapp.app.ui.model.EventUiModel;
 import java.util.List;
 import java.util.Locale;
 
-/** Chuyển DTO sự kiện của backend sang mô hình UI dùng chung. */
+/** Chuyển DTO sự kiện của backend sang model hiển thị dùng chung. */
 public final class EventMapper {
 
     private EventMapper() {
@@ -24,6 +24,7 @@ public final class EventMapper {
         }
         EventUiModel.Builder builder = new EventUiModel.Builder()
                 .id(dto.id)
+                .code(dto.code)
                 .title(dto.title)
                 .description(dto.shortDescription)
                 .coverUrl(dto.coverUrl)
@@ -33,11 +34,13 @@ public final class EventMapper {
                 .endAt(DateTimeUtils.toMillis(dto.endAt))
                 .online("ONLINE".equalsIgnoreCase(dto.eventFormat))
                 .priceFrom(dto.minPrice == null ? 0L : Math.round(dto.minPrice))
+                .priceTo(dto.maxPrice == null ? 0L : Math.round(dto.maxPrice))
                 .free(dto.isFree)
                 .availability(availability(dto))
+                .statusLabel(dto.statusLabel)
+                .saleStatus(dto.saleStatus)
                 .category(categoryOf(dto.categoryNames, dto.tags))
-                .favorite(dto.isFavorite != null && dto.isFavorite)
-                .aiReason(dto.reason);
+                .favorite(dto.isFavorite != null && dto.isFavorite);
         if (dto.tags != null) {
             for (String tag : dto.tags) {
                 builder.addTag(tag);
@@ -53,6 +56,7 @@ public final class EventMapper {
         }
         EventUiModel.Builder builder = new EventUiModel.Builder()
                 .id(dto.id)
+                .code(dto.code)
                 .title(dto.title)
                 .description(dto.description == null ? dto.shortDescription : dto.description)
                 .coverUrl(dto.coverUrl)
@@ -65,8 +69,12 @@ public final class EventMapper {
                 .priceFrom(dto.minPrice == null ? 0L : Math.round(dto.minPrice))
                 .free(dto.isFree)
                 .availability(detailAvailability(dto))
+                .statusLabel(dto.lifecycleStatus)
                 .category(categoryOf(dto.categoryNames, dto.tags))
-                .favorite(dto.isFavorite);
+                .favorite(dto.isFavorite)
+                .canReview(dto.canReview)
+                .registrationStatus(dto.registrationStatus)
+                .disabledReason(dto.disabledReason);
         if (dto.reviewSummary != null) {
             builder.rating((float) dto.reviewSummary.averageRating)
                     .reviewCount((int) Math.min(Integer.MAX_VALUE, dto.reviewSummary.totalReviews));
@@ -74,6 +82,29 @@ public final class EventMapper {
         if (dto.tags != null) {
             for (String tag : dto.tags) {
                 builder.addTag(tag);
+            }
+        }
+        if (dto.allowedActions != null) {
+            for (String action : dto.allowedActions) {
+                builder.addAction(action);
+            }
+        }
+        if (dto.ticketTypes != null) {
+            for (DiscoveryDtos.TicketType type : dto.ticketTypes) {
+                if (type == null) {
+                    continue;
+                }
+                builder.addTicketType(new EventUiModel.TicketType(
+                        type.id,
+                        type.name,
+                        type.description,
+                        type.kind,
+                        type.price == null ? 0L : Math.round(type.price),
+                        type.currency,
+                        type.saleStatus,
+                        type.remaining,
+                        type.minPerOrder,
+                        type.maxPerUser));
             }
         }
         return builder.build();
@@ -84,8 +115,7 @@ public final class EventMapper {
         if (dto.availabilityUnknown) {
             return EventUiModel.Availability.UNKNOWN;
         }
-        if ("SOLD_OUT".equalsIgnoreCase(dto.saleStatus) || Boolean.FALSE.equals(dto.available)
-                && dto.statusLabel != null && dto.statusLabel.toLowerCase(Locale.ROOT).contains("hết")) {
+        if (Boolean.FALSE.equals(dto.available)) {
             return EventUiModel.Availability.SOLD_OUT;
         }
         return EventUiModel.Availability.AVAILABLE;
@@ -102,7 +132,7 @@ public final class EventMapper {
         return EventUiModel.Availability.AVAILABLE;
     }
 
-    /** Đoán nhóm hiển thị từ tên danh mục backend (danh mục thật có id 9–24). */
+    /** Đoán nhóm hiển thị từ tên danh mục backend. */
     @NonNull
     public static EventCategory categoryOf(@Nullable List<String> names,
                                            @Nullable List<String> tags) {
@@ -113,7 +143,8 @@ public final class EventMapper {
         if (source.contains("thể thao") || source.contains("sport")) {
             return EventCategory.SPORTS;
         }
-        if (source.contains("nghệ thuật") || source.contains("art")) {
+        if (source.contains("nghệ thuật") || source.contains("triển lãm")
+                || source.contains("art")) {
             return EventCategory.ART;
         }
         if (source.contains("ẩm thực") || source.contains("food")) {
@@ -122,14 +153,16 @@ public final class EventMapper {
         if (source.contains("công nghệ") || source.contains("tech")) {
             return EventCategory.TECH;
         }
-        if (source.contains("kinh doanh") || source.contains("doanh nghiệp")
-                || source.contains("business")) {
+        if (source.contains("hội thảo") || source.contains("kinh doanh")
+                || source.contains("doanh nghiệp") || source.contains("business")) {
             return EventCategory.BUSINESS;
         }
-        if (source.contains("giáo dục") || source.contains("education")) {
+        if (source.contains("workshop") || source.contains("giáo dục")
+                || source.contains("education")) {
             return EventCategory.EDUCATION;
         }
-        if (source.contains("sức khỏe") || source.contains("health")) {
+        if (source.contains("cộng đồng") || source.contains("sức khỏe")
+                || source.contains("health")) {
             return EventCategory.HEALTH;
         }
         if (tags != null && !tags.isEmpty()) {
