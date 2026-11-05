@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
@@ -26,7 +27,7 @@ import com.eventapp.app.core.enums.EventCategory;
 import com.eventapp.app.databinding.ActivityUserCheckoutBinding;
 import com.eventapp.app.ui.host.UserHostActivity;
 import com.eventapp.app.ui.model.TicketUiModel;
-import com.eventapp.app.ui.user.data.DemoContent;
+import com.eventapp.app.ui.user.viewmodel.CheckoutViewModel;
 import com.eventapp.app.ui.user.util.UserFmt;
 
 /** Xác nhận đơn hàng, chọn phương thức thanh toán (mô phỏng) và hiển thị kết quả. */
@@ -48,6 +49,7 @@ public class CheckoutActivity extends AppCompatActivity {
     private static final int METHOD_CARD = 2;
 
     private ActivityUserCheckoutBinding binding;
+    private CheckoutViewModel viewModel;
     private long eventId;
     private String eventTitle;
     private String venue;
@@ -87,6 +89,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         binding = ActivityUserCheckoutBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        viewModel = new ViewModelProvider(this).get(CheckoutViewModel.class);
 
         WindowInsetsControllerCompat controller =
                 new WindowInsetsControllerCompat(getWindow(), binding.getRoot());
@@ -259,7 +262,7 @@ public class CheckoutActivity extends AppCompatActivity {
             if (isFinishing() || isDestroyed()) {
                 return;
             }
-            TicketUiModel ticket = DemoContent.get().purchase(new TicketUiModel.Builder()
+            TicketUiModel ticket = viewModel.purchase(new TicketUiModel.Builder()
                     .eventId(eventId)
                     .eventTitle(eventTitle)
                     .category(category)
