@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -55,6 +56,13 @@ class CategoryAdminController(
     @PostMapping("/{categoryId}/unhide")
     fun unhide(@PathVariable categoryId: Long): ApiResponse<AdminCategoryDto> =
         ApiResponse.ok(categoryAdminService.unhide(CurrentUser.requireUserId(), categoryId))
+
+    @Operation(summary = "API-15 — Xoá danh mục (chỉ khi không còn danh mục con và chưa gắn sự kiện)")
+    @DeleteMapping("/{categoryId}")
+    fun delete(@PathVariable categoryId: Long): ApiResponse<Unit> {
+        categoryAdminService.delete(CurrentUser.requireUserId(), categoryId)
+        return ApiResponse.empty()
+    }
 
     @Operation(summary = "API-15 — Sắp xếp lại thứ tự danh mục (kéo-thả)")
     @PutMapping("/order")

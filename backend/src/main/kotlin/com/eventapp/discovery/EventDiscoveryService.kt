@@ -63,6 +63,9 @@ class EventDiscoveryService(
         return buildCards(result.rows, currentUserId) to result.totalItems
     }
 
+    /** Thành phố có sự kiện công khai — dùng cho bộ lọc địa điểm của người dùng. */
+    fun cities(): List<String> = eventSearchRepository.cities()
+
     /** Chuyển các dòng SQL thành thẻ sự kiện, nạp danh mục/nhãn/yêu thích theo lô. */
     fun buildCards(rows: List<EventSearchRepository.Row>, currentUserId: Long?): List<EventCardDto> {
         if (rows.isEmpty()) return emptyList()

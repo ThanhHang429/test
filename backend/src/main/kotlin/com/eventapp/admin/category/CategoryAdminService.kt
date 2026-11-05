@@ -190,6 +190,43 @@ class CategoryAdminService(
         return toDto(saved, emptyMap(), eventCounts())
     }
 
+    /**
+     * Xoá hẳn một danh mục.
+     *
+     * Chỉ xoá được khi danh mục không còn danh mục con và chưa từng gắn với sự kiện nào; trường
+     * hợp đang được dùng thì phải ẩn để giữ dữ liệu lịch sử (BR-020).
+     */
+    @Transactional
+    fun delete(actorUserId: Long, categoryId: Long) {
+        val category = categoryRepository.findById(categoryId).orElse(null)
+            ?: throw NotFoundException(ErrorCode.CATEGORY_NOT_FOUND)
+
+        val children = categoryRepository.countByParentCategoryId(categoryId)
+        if (children > 0) {
+            throw ConflictException(
+                ErrorCode.CONFLICT,
+                "Danh mục còn $children danh mục con, hãy xoá danh mục con trước"
+            )
+        }
+        val used = categoryMapRepository.countByCategoryId(categoryId)
+        if (used > 0) {
+            throw ConflictException(
+                ErrorCode.CONFLICT,
+                "Danh mục đang được $used sự kiện sử dụng, hãy ẩn thay vì xoá"
+            )
+        }
+
+        categoryRepository.delete(category)
+        auditLogWriter.write(
+            actorUserId = actorUserId,
+            actionCode = "CATEGORY_DELETED",
+            entityType = "event_category",
+            entityId = categoryId,
+            oldValues = mapOf("code" to category.categoryCode, "name" to category.categoryName),
+            resultCode = "OK"
+        )
+    }
+
     /** Kéo-thả sắp xếp trong màn Admin: cập nhật hàng loạt `sort_order`. */
     @Transactional
     fun reorder(actorUserId: Long, items: List<CategoryOrderItem>): List<AdminCategoryDto> {

@@ -33,6 +33,9 @@ interface EventCategoryMapRepository : JpaRepository<EventCategoryMap, EventCate
     fun findByIdEventId(eventId: Long): List<EventCategoryMap>
     fun findByIdEventIdIn(eventIds: Collection<Long>): List<EventCategoryMap>
     fun deleteByIdEventId(eventId: Long)
+
+    @Query("select count(m) from EventCategoryMap m where m.id.categoryId = :categoryId")
+    fun countByCategoryId(categoryId: Long): Long
 }
 
 @Repository

@@ -117,6 +117,26 @@ class EventSearchRepository(
         return jdbc.query(sql, params) { rs, _ -> mapRow(rs) }
     }
 
+    /**
+     * Danh sách thành phố đang có sự kiện công khai sắp diễn ra — nguồn cho chip lọc địa điểm
+     * ở màn Khám phá (FR-U04). Chỉ trả về giá trị thực có trong dữ liệu nên bộ lọc luôn khớp.
+     */
+    fun cities(): List<String> {
+        val sql = """
+            SELECT DISTINCT e.city
+            FROM events e
+            WHERE e.deleted_at IS NULL
+              AND e.review_status = 'APPROVED'
+              AND e.lifecycle_status = 'PUBLISHED'
+              AND e.end_at >= UTC_TIMESTAMP(3)
+              AND e.city IS NOT NULL
+              AND TRIM(e.city) <> ''
+            ORDER BY e.city ASC
+            LIMIT 40
+        """.trimIndent()
+        return jdbc.queryForList(sql, MapSqlParameterSource(), String::class.java)
+    }
+
     private fun mapRow(rs: java.sql.ResultSet): Row = Row(
         eventId = rs.getLong("event_id"),
         eventCode = rs.getString("event_code"),

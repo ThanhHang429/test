@@ -92,6 +92,10 @@ class EventController(
         return ApiResponse.ok(items, PageMeta.of(safePage, safeSize, total))
     }
 
+    @Operation(summary = "API-03b — Danh sách thành phố có sự kiện công khai (chip lọc địa điểm)")
+    @GetMapping("/cities")
+    fun cities(): ApiResponse<List<String>> = ApiResponse.ok(service.cities())
+
     @Operation(summary = "API-04 — Chi tiết sự kiện (token tùy chọn để biết yêu thích/đăng ký)")
     @GetMapping("/{id}")
     fun detail(@PathVariable id: Long): ApiResponse<EventDetailDto> =
