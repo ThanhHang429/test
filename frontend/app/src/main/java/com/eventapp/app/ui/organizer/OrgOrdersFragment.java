@@ -12,12 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eventapp.app.databinding.FragmentOrgOrdersBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.organizer.adapter.OrgOrderAdapter;
-import com.eventapp.app.ui.organizer.data.OrgDemo;
+import com.eventapp.app.ui.organizer.viewmodel.OrgOrdersViewModel;
 import com.eventapp.app.ui.organizer.model.OrgOrder;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,6 +33,7 @@ public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Liste
     private OrgOrderAdapter adapter;
     private final List<TextView> chips = new ArrayList<>();
     private String filter = OrgOrder.FILTER_ALL;
+    private OrgOrdersViewModel viewModel;
     private String query = "";
 
     @Nullable
@@ -79,6 +81,7 @@ public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Liste
             }
         });
 
+        viewModel = new ViewModelProvider(this).get(OrgOrdersViewModel.class);
         selectFilter(OrgOrder.FILTER_ALL);
     }
 
@@ -93,7 +96,7 @@ public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Liste
 
     private void applyFilter() {
         List<OrgOrder> result = new ArrayList<>();
-        for (OrgOrder order : OrgDemo.orders()) {
+        for (OrgOrder order : viewModel.orders()) {
             boolean matchFilter = OrgOrder.FILTER_ALL.equals(filter) || filter.equals(order.filter);
             boolean matchQuery = query.isEmpty()
                     || order.code.toLowerCase(Locale.ROOT).contains(query)

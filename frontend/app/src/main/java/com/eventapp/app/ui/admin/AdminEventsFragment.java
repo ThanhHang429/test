@@ -12,11 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentAdminEventsBinding;
 import com.eventapp.app.databinding.ItemAdminEventBinding;
-import com.eventapp.app.ui.admin.data.AdminDemo;
+import com.eventapp.app.ui.admin.viewmodel.AdminEventsViewModel;
 import com.eventapp.app.ui.admin.model.AdminEventItem;
 
 import java.text.DecimalFormat;
@@ -30,6 +31,7 @@ public class AdminEventsFragment extends Fragment {
 
     private FragmentAdminEventsBinding binding;
     private List<AdminEventItem> events;
+    private AdminEventsViewModel viewModel;
     private int filterTone = -1;
     private String query = "";
 
@@ -44,7 +46,8 @@ public class AdminEventsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        events = AdminDemo.events();
+        viewModel = new ViewModelProvider(this).get(AdminEventsViewModel.class);
+        events = viewModel.events();
 
         binding.chipEventAll.setOnClickListener(v -> selectFilter(-1));
         binding.chipEventLive.setOnClickListener(v -> selectFilter(AdminEventItem.TONE_LIVE));

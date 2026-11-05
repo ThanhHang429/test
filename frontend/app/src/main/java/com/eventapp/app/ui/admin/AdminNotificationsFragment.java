@@ -9,11 +9,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentAdminNotificationsBinding;
 import com.eventapp.app.databinding.ItemAdminNotificationBinding;
-import com.eventapp.app.ui.admin.data.AdminDemo;
+import com.eventapp.app.ui.admin.viewmodel.AdminNotificationsViewModel;
 import com.eventapp.app.ui.admin.model.AdminNotification;
 import com.eventapp.app.ui.host.AdminHostActivity;
 import com.google.android.material.snackbar.Snackbar;
@@ -25,6 +26,7 @@ public class AdminNotificationsFragment extends Fragment {
 
     private FragmentAdminNotificationsBinding binding;
     private List<AdminNotification> notifications;
+    private AdminNotificationsViewModel viewModel;
     private int filterType = -1;
 
     @Nullable
@@ -38,7 +40,8 @@ public class AdminNotificationsFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        notifications = AdminDemo.notifications();
+        viewModel = new ViewModelProvider(this).get(AdminNotificationsViewModel.class);
+        notifications = viewModel.notifications();
 
         binding.chipNotiAll.setOnClickListener(v -> selectFilter(-1));
         binding.chipNotiMod.setOnClickListener(v ->

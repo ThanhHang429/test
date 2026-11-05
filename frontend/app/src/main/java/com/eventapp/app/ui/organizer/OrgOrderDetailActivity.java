@@ -4,10 +4,11 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.ActivityOrgOrderDetailBinding;
-import com.eventapp.app.ui.organizer.data.OrgDemo;
+import com.eventapp.app.ui.organizer.viewmodel.OrgOrderDetailViewModel;
 import com.eventapp.app.ui.organizer.model.OrgOrder;
 import com.eventapp.app.ui.organizer.util.OrgFormat;
 import com.eventapp.app.ui.organizer.util.OrgUi;
@@ -22,6 +23,7 @@ public class OrgOrderDetailActivity extends AppCompatActivity {
     public static final String EXTRA_ORDER_CODE = "order_code";
 
     private ActivityOrgOrderDetailBinding binding;
+    private OrgOrderDetailViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,7 +31,8 @@ public class OrgOrderDetailActivity extends AppCompatActivity {
         binding = ActivityOrgOrderDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        OrgOrder order = OrgDemo.findOrder(getIntent().getStringExtra(EXTRA_ORDER_CODE));
+        viewModel = new ViewModelProvider(this).get(OrgOrderDetailViewModel.class);
+        OrgOrder order = viewModel.findOrder(getIntent().getStringExtra(EXTRA_ORDER_CODE));
         bind(order);
 
         binding.btnBack.setOnClickListener(v -> finish());
