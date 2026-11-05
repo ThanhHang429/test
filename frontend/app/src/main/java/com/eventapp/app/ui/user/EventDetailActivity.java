@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -19,21 +18,15 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.core.widget.NestedScrollView;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
-import com.eventapp.app.data.di.ServiceLocator;
-import com.eventapp.app.core.network.ApiCallback;
-import com.eventapp.app.core.network.ApiException;
-import com.eventapp.app.data.remote.dto.discovery.DiscoveryDtos;
-import com.eventapp.app.data.remote.dto.favorite.FavoriteDtos;
-import com.eventapp.app.data.repository.EventRepository;
-import com.eventapp.app.data.repository.FavoriteRepository;
 import com.eventapp.app.databinding.ActivityUserEventDetailBinding;
 import com.eventapp.app.databinding.ViewUserTicketTypeBinding;
 import com.eventapp.app.ui.common.view.SnackPill;
-import com.eventapp.app.ui.mapper.EventMapper;
 import com.eventapp.app.ui.model.EventCategoryUi;
 import com.eventapp.app.ui.model.EventUiModel;
+import com.eventapp.app.ui.user.viewmodel.EventDetailViewModel;
 import com.eventapp.app.ui.user.util.StarText;
 import com.eventapp.app.ui.user.util.UserFmt;
 
@@ -47,8 +40,10 @@ public class EventDetailActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_ID = "event_id";
 
     private ActivityUserEventDetailBinding binding;
+    private EventDetailViewModel viewModel;
     private EventUiModel event;
     private boolean savePending;
+    private boolean saveTarget;
     private int[] quantities = new int[0];
     private final List<ViewUserTicketTypeBinding> typeRows = new ArrayList<>();
 
@@ -85,6 +80,9 @@ public class EventDetailActivity extends AppCompatActivity {
         });
         binding.btnBook.setEnabled(false);
 
+        viewModel = new ViewModelProvider(this).get(EventDetailViewModel.class);
+        observe();
+
         binding.scroll.setOnScrollChangeListener(
                 (NestedScrollView.OnScrollChangeListener) (v, x, scrollY, oldX, oldY) -> {
                     float fade = 1f - Math.min(1f, scrollY / (float) dp(110));
@@ -95,34 +93,47 @@ public class EventDetailActivity extends AppCompatActivity {
         load();
     }
 
-    private void load() {
-        long id = getIntent().getLongExtra(EXTRA_EVENT_ID, -1L);
-        ServiceLocator.get(EventRepository.class).detail(id,
-                new ApiCallback<DiscoveryDtos.EventDetail>() {
-                    @Override
-                    public void onSuccess(@Nullable DiscoveryDtos.EventDetail data,
-                                          @Nullable com.google.gson.JsonElement meta) {
-                        if (isFinishing() || isDestroyed()) {
-                            return;
-                        }
-                        if (data == null) {
-                            finish();
-                            return;
-                        }
-                        event = EventMapper.fromDetail(data);
-                        bindEvent();
-                        buildTicketTypes();
-                    }
+    private void observe() {
+        viewModel.getEvent().observe(this, data -> {
+            if (data == null || isFinishing() || isDestroyed()) {
+                return;
+            }
+            event = data;
+            bindEvent();
+            buildTicketTypes();
+        });
+        viewModel.getLoadError().observe(this, error -> {
+            if (error == null || isFinishing() || isDestroyed()) {
+                return;
+            }
+            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
+            finish();
+        });
+        viewModel.getFavorite().observe(this, saved -> {
+            if (saved == null || event == null) {
+                return;
+            }
+            savePending = false;
+            event.favorite = saved;
+            updateSaveIcon();
+        });
+        viewModel.getFavoriteError().observe(this, error -> {
+            if (error == null) {
+                return;
+            }
+            viewModel.consumeFavoriteError();
+            savePending = false;
+            if (event == null) {
+                return;
+            }
+            event.favorite = !saveTarget;
+            updateSaveIcon();
+            SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
+        });
+    }
 
-                    @Override
-                    public void onError(@NonNull ApiException error) {
-                        if (isFinishing() || isDestroyed()) {
-                            return;
-                        }
-                        SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
-                        finish();
-                    }
-                });
+    private void load() {
+        viewModel.load(getIntent().getLongExtra(EXTRA_EVENT_ID, -1L));
     }
 
     private void applyInsets() {
@@ -297,42 +308,13 @@ public class EventDetailActivity extends AppCompatActivity {
             return;
         }
         savePending = true;
-        final boolean target = !event.favorite;
+        saveTarget = !event.favorite;
         // Đổi icon ngay để thao tác lưu/bỏ lưu có phản hồi tức thì.
-        event.favorite = target;
+        event.favorite = saveTarget;
         updateSaveIcon();
         SnackPill.show(binding.getRoot(), getString(
-                target ? R.string.user_saved_toast : R.string.user_unsaved_toast), dp(96));
-
-        FavoriteRepository repository = ServiceLocator.get(FavoriteRepository.class);
-        ApiCallback<FavoriteDtos.ToggleResult> callback = new ApiCallback<FavoriteDtos.ToggleResult>() {
-            @Override
-            public void onSuccess(@Nullable FavoriteDtos.ToggleResult data,
-                                  @Nullable com.google.gson.JsonElement meta) {
-                savePending = false;
-                if (data == null || event == null) {
-                    return;
-                }
-                event.favorite = data.isFavorite;
-                updateSaveIcon();
-            }
-
-            @Override
-            public void onError(@NonNull ApiException error) {
-                savePending = false;
-                if (event == null) {
-                    return;
-                }
-                event.favorite = !target;
-                updateSaveIcon();
-                SnackPill.show(binding.getRoot(), error.getUserMessage(), dp(96));
-            }
-        };
-        if (target) {
-            repository.add(event.id, callback);
-        } else {
-            repository.remove(event.id, callback);
-        }
+                saveTarget ? R.string.user_saved_toast : R.string.user_unsaved_toast), dp(96));
+        viewModel.toggleFavorite(event.id, saveTarget);
     }
 
     private void updateSaveIcon() {
