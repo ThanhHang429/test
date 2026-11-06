@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/layoutDsAiPill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ds_ai_pill"
+        android:gravity="center_vertical"
+        android:minHeight="24dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/ds_space_8"
+        android:paddingEnd="@dimen/ds_space_8">
+
+        <ImageView
+            android:id="@+id/ivDsAiIcon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_ds_star_filled"
+            app:tint="@color/ds_primary" />
+
+        <TextView
+            android:id="@+id/tvDsAiBadgeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_4"
+            android:includeFontPadding="false"
+            android:text="@string/hc_ai_badge"
+            android:textColor="@color/ds_primary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvDsAiBadgeReason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_4"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+        android:visibility="gone" />
+</merge>

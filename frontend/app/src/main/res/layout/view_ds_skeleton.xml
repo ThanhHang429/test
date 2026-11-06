@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ds_skeleton_height"
+        android:layout_marginBottom="@dimen/ds_space_8"
+        android:background="@drawable/bg_ds_skeleton" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ds_radius_24"
+        android:layout_marginEnd="@dimen/ds_space_48"
+        android:layout_marginBottom="@dimen/ds_space_8"
+        android:background="@drawable/bg_ds_skeleton" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ds_skeleton_height"
+        android:layout_marginEnd="@dimen/ds_space_40"
+        android:background="@drawable/bg_ds_skeleton" />
+</merge>

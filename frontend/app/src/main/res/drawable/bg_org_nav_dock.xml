@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dock kính mờ: nội dung vẫn thấy nhẹ phía sau nhưng icon/nhãn đủ tương phản. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#D9F5FAF6" />
+    <corners android:radius="22dp" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/org_border" />
+</shape>

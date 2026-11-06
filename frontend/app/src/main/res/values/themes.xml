@@ -1,21 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.EventApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Ứng dụng chỉ hỗ trợ giao diện sáng (ETicket light-only). -->
+
+    <!-- ===== Hộp thoại dùng chung =====
+         Một layout, ba sắc thái: overlay chỉ đổi màu nhấn theo khu nên dialog luôn hợp tông. -->
+    <style name="ShapeAppearance.EventApp.Dialog" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="ThemeOverlay.EventApp.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/dialog_surface</item>
+        <item name="colorOnSurface">@color/dialog_text</item>
+        <item name="colorOnSurfaceVariant">@color/dialog_text_muted</item>
+        <item name="colorOutline">@color/dialog_border</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.EventApp.Dialog</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.EventApp.Dialog</item>
+    </style>
+
+    <style name="ThemeOverlay.EventApp.Dialog.User" parent="ThemeOverlay.EventApp.Dialog">
+        <item name="colorPrimary">@color/user_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.EventApp.Dialog.Organizer" parent="ThemeOverlay.EventApp.Dialog">
+        <item name="colorPrimary">@color/org_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.EventApp.Dialog.Admin" parent="ThemeOverlay.EventApp.Dialog">
+        <item name="colorPrimary">@color/admin_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <!-- Khu Nhà tổ chức dùng tông teal theo mockup Stitch organizer: chỉ đổi các attr màu,
+         không đổi cấu trúc theme, để các component dùng ?attr/colorPrimary tự chuyển màu. -->
+    <style name="ThemeOverlay.EventApp.Organizer" parent="">
+        <item name="colorPrimary">@color/org_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/org_primary_soft</item>
+        <item name="colorOnPrimaryContainer">@color/org_primary_deep</item>
+        <item name="colorSecondary">@color/org_primary_container</item>
+        <item name="colorControlActivated">@color/org_primary</item>
+    </style>
+
+    <!-- Theme riêng cho khu Nhà tổ chức: nền mint sáng, primary xanh eucalyptus. -->
+    <style name="Theme.EventApp.Organizer" parent="Theme.EventApp">
+        <item name="colorPrimary">@color/org_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/org_primary_soft</item>
+        <item name="colorOnPrimaryContainer">@color/org_primary_deep</item>
+        <item name="colorSecondary">@color/org_primary_container</item>
+        <item name="colorSurface">@color/org_surface</item>
+        <item name="colorOnSurface">@color/org_text</item>
+        <item name="colorSurfaceContainer">@color/org_surface</item>
+        <item name="colorSurfaceContainerLow">@color/org_surface_alt</item>
+        <item name="colorSurfaceContainerHigh">@color/org_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/org_surface_mint</item>
+        <item name="colorOnSurfaceVariant">@color/org_text_muted</item>
+        <item name="colorOutline">@color/org_border_strong</item>
+        <item name="colorControlActivated">@color/org_primary</item>
+        <item name="android:windowBackground">@color/org_canvas</item>
+        <item name="android:statusBarColor">@color/org_canvas</item>
+        <item name="android:navigationBarColor">@color/org_canvas</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.EventApp.Dialog.Organizer</item>
+    </style>
+
+    <!-- Theme riêng cho khu Quản trị: nền slate lạnh, primary navy mực. -->
+    <style name="Theme.EventApp.Admin" parent="Theme.EventApp">
+        <item name="colorPrimary">@color/admin_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/admin_primary_soft</item>
+        <item name="colorOnPrimaryContainer">@color/admin_primary_dark</item>
+        <item name="colorSecondary">@color/admin_accent</item>
+        <item name="colorSurface">@color/admin_surface</item>
+        <item name="colorOnSurface">@color/admin_text</item>
+        <item name="colorSurfaceContainer">@color/admin_surface</item>
+        <item name="colorSurfaceContainerLow">@color/admin_surface_alt</item>
+        <item name="colorSurfaceContainerHigh">@color/admin_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/admin_surface_slate</item>
+        <item name="colorOnSurfaceVariant">@color/admin_text_muted</item>
+        <item name="colorOutline">@color/admin_border_strong</item>
+        <item name="colorControlActivated">@color/admin_primary</item>
+        <item name="android:windowBackground">@color/admin_canvas</item>
+        <item name="android:statusBarColor">@color/admin_canvas</item>
+        <item name="android:navigationBarColor">@color/admin_canvas</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.EventApp.Dialog.Admin</item>
+    </style>
+
+    <style name="Theme.EventApp" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="colorSurface">@color/brand_surface</item>
+        <item name="colorOnSurface">@color/brand_text_primary</item>
+        <item name="colorOutline">@color/brand_outline</item>
         <item name="android:statusBarColor">@color/brand_primary_dark</item>
         <item name="android:windowBackground">@color/brand_background</item>
+        <!-- targetSdk 37: Android 15+ vẽ edge-to-edge, statusBarColor bị bỏ qua.
+             Nền app là màu sáng nên icon status bar phải là màu tối, nếu không sẽ vô hình. -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.EventApp.Dialog.User</item>
     </style>
 
     <!-- Màn hình khởi động | FR-U01 -->
     <style name="Theme.EventApp.Splash" parent="Theme.EventApp">
         <item name="android:windowBackground">@color/brand_primary</item>
         <item name="android:statusBarColor">@color/brand_primary</item>
+        <!-- Nền splash màu đậm → icon status bar màu sáng -->
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <style name="Theme.EventApp.Dialog" parent="Theme.Material3.DayNight.Dialog.Alert" />
+    <!-- Luồng xác thực: dark navy + glass. Chỉ áp cho AuthActivity, không đổi theme sáng toàn app. -->
+    <style name="Theme.EventApp.Auth" parent="Theme.EventApp">
+        <item name="android:windowBackground">@color/auth_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="colorPrimary">@color/auth_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/auth_mint</item>
+        <item name="colorSurface">@color/auth_bg</item>
+        <item name="colorOnSurface">@color/auth_text</item>
+        <item name="colorOutline">@color/auth_stroke_strong</item>
+        <item name="colorControlActivated">@color/auth_mint</item>
+    </style>
+
+    <!-- Nền trong suốt để card tự bo góc; AppDialog lo phần kích thước và màu nhấn. -->
+    <style name="Theme.EventApp.Dialog" parent="Theme.Material3.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.45</item>
+        <item name="android:windowMinWidthMajor">80%</item>
+        <item name="android:windowMinWidthMinor">80%</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
 
     <style name="Widget.EventApp.Toolbar" parent="Widget.Material3.Toolbar.Surface" />
 

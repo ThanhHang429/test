@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chuỗi cho luồng xác thực. Giữ tối thiểu: tiêu đề + 1 dòng phụ + placeholder + CTA. -->
+<resources>
+    <string name="auth_brand_name">ETicket</string>
+    <string name="auth_brand_wordmark">ETICKET</string>
+    <string name="auth_or">hoặc</string>
+    <string name="auth_seed_title">TÀI KHOẢN SEED</string>
+    <string name="auth_seed_hint">JWT</string>
+    <string name="auth_seed_sub">Chọn một tài khoản để nhận JWT. Chưa có đăng ký, mật khẩu hay OTP.</string>
+    <string name="auth_seed_retry">Thử lại</string>
+    <string name="auth_seed_error">Không tải được /dev/accounts</string>
+    <string name="auth_seed_empty">Chưa có tài khoản seed nào</string>
+
+    <!-- Đăng nhập -->
+    <string name="auth_login_title">Chào mừng trở lại</string>
+    <string name="auth_login_subtitle">Đăng nhập để tiếp tục</string>
+    <string name="auth_email_hint">Email</string>
+    <string name="auth_password_hint">Mật khẩu</string>
+    <string name="auth_remember">Ghi nhớ</string>
+    <string name="auth_forgot">Quên mật khẩu?</string>
+    <string name="auth_login_action">Đăng nhập</string>
+    <string name="auth_no_account">Chưa có tài khoản?</string>
+    <string name="auth_register_link">Đăng ký</string>
+    <string name="auth_social_google">Google</string>
+    <string name="auth_social_facebook">Facebook</string>
+
+    <!-- Đăng ký -->
+    <string name="auth_register_title">Tạo tài khoản</string>
+    <string name="auth_step_personal">Thông tin cá nhân</string>
+    <string name="auth_step_security">Bảo mật</string>
+    <string name="auth_step_counter">%1$d/2</string>
+    <string name="auth_name_hint">Họ và tên</string>
+    <string name="auth_phone_hint">Số điện thoại</string>
+    <string name="auth_confirm_hint">Nhập lại mật khẩu</string>
+    <string name="auth_continue">Tiếp tục</string>
+    <string name="auth_register_action">Tạo tài khoản</string>
+    <string name="auth_terms">Đồng ý Điều khoản</string>
+    <string name="auth_have_account">Đã có tài khoản?</string>
+    <string name="auth_login_link">Đăng nhập</string>
+
+    <!-- Quên mật khẩu -->
+    <string name="auth_forgot_title">Quên mật khẩu?</string>
+    <string name="auth_forgot_subtitle">Nhập email để nhận mã xác minh.</string>
+    <string name="auth_send_code">Gửi mã</string>
+    <string name="auth_back_login">Quay lại đăng nhập</string>
+
+    <!-- OTP / 2FA -->
+    <string name="auth_otp_title">Xác thực 2 lớp</string>
+    <string name="auth_otp_title_verify">Xác thực email</string>
+    <string name="auth_otp_title_reset">Đặt lại mật khẩu</string>
+    <string name="auth_otp_sent_to">Mã 6 số đã gửi tới</string>
+    <string name="auth_otp_reset_subtitle">Nhập mã và mật khẩu mới.</string>
+    <string name="auth_resend">Gửi lại mã</string>
+    <string name="auth_resend_countdown">· %1$ds</string>
+    <string name="auth_verify">Xác thực</string>
+    <string name="auth_reset_action">Đặt lại mật khẩu</string>
+    <string name="auth_new_password_hint">Mật khẩu mới</string>
+    <string name="auth_confirm_new_hint">Nhập lại mật khẩu</string>
+    <string name="auth_demo_hint">Mã demo: 123456</string>
+    <string name="auth_demo_user_label">Người dùng</string>
+    <string name="auth_demo_user_value">user1@eticket.local</string>
+    <string name="auth_demo_org_label">Nhà tổ chức</string>
+    <string name="auth_demo_org_value">organizer1@eticket.local</string>
+    <string name="auth_demo_admin_label">Quản trị viên</string>
+    <string name="auth_demo_admin_value">admin@eticket.local</string>
+    <string name="auth_demo_password">JWT cấp từ /dev/token</string>
+    <string name="auth_2fa">2FA</string>
+
+    <!-- Lỗi -->
+    <string name="auth_err_email">Email không hợp lệ</string>
+    <string name="auth_err_email_empty">Nhập email</string>
+    <string name="auth_err_password">Tối thiểu 6 ký tự</string>
+    <string name="auth_err_password_empty">Nhập mật khẩu</string>
+    <string name="auth_err_password_mismatch">Mật khẩu không khớp</string>
+    <string name="auth_err_name">Nhập họ tên</string>
+    <string name="auth_err_phone">Số điện thoại không hợp lệ</string>
+    <string name="auth_err_terms">Cần đồng ý điều khoản</string>
+    <string name="auth_err_otp">Mã không đúng</string>
+    <string name="auth_err_otp_incomplete">Nhập đủ 6 số</string>
+    <string name="auth_err_generic">Có lỗi xảy ra</string>
+
+    <!-- Phản hồi ngắn -->
+    <string name="auth_soon">Sắp ra mắt</string>
+    <string name="auth_resent">Đã gửi lại mã</string>
+    <string name="auth_reset_success">Đã đặt lại mật khẩu</string>
+    <string name="auth_verifying">Đang xác thực…</string>
+
+    <!-- Accessibility -->
+    <string name="auth_cd_back">Quay lại</string>
+    <string name="auth_cd_logo">Logo ETicket</string>
+    <string name="auth_cd_toggle_password">Hiện hoặc ẩn mật khẩu</string>
+</resources>

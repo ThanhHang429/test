@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Host chứa luồng đăng nhập, đăng ký và quên mật khẩu | FR-U01, FR-U02 -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/authRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_auth_backdrop">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_auth"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <View
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="-120dp"
+        android:layout_marginTop="-150dp"
+        android:background="@drawable/bg_auth_glow_blue" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="-110dp"
+        android:layout_marginBottom="-120dp"
+        android:background="@drawable/bg_auth_glow_green" />
+
+    <FrameLayout
+        android:id="@+id/authContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền tối + 2 quầng sáng radial (blue trên, green dưới) tạo chiều sâu kiểu glass. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:centerColor="#FF081120"
+                android:endColor="#FF05080F"
+                android:startColor="#FF0A1322" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.12"
+                android:centerY="0.04"
+                android:gradientRadius="360dp"
+                android:type="radial"
+                android:startColor="#552F5BFF"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:centerX="0.92"
+                android:centerY="0.96"
+                android:gradientRadius="260dp"
+                android:type="radial"
+                android:startColor="#2A22C55E"
+                android:endColor="#00000000" />
+        </shape>
+    </item>
+</layer-list>

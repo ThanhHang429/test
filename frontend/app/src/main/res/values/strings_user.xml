@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="user_brand">ETICKET</string>
+
+    <!-- Tab -->
+    <string name="user_city">TP. Hồ Chí Minh</string>
+    <string name="user_qr_banner_title">Mã QR động bảo mật</string>
+    <string name="user_qr_banner_body">Ảnh chụp màn hình không được chấp nhận tại cổng soát vé.</string>
+
+    <string name="user_tab_discovery">Khám phá</string>
+    <string name="user_tab_saved">Đã lưu</string>
+    <string name="user_tab_tickets">Vé của tôi</string>
+    <string name="user_tab_calendar">Lịch</string>
+    <string name="user_tab_account">Tài khoản</string>
+
+    <!-- Khám phá -->
+    <string name="user_greeting_morning">Chào buổi sáng, %1$s</string>
+    <string name="user_greeting_afternoon">Chào buổi chiều, %1$s</string>
+    <string name="user_greeting_evening">Chào buổi tối, %1$s</string>
+    <string name="user_discovery_headline">Hôm nay bạn muốn đi đâu?</string>
+    <string name="user_discovery_sub">%1$d sự kiện đang mở bán quanh TP. Hồ Chí Minh</string>
+    <string name="user_search_hint">Tìm sự kiện, nghệ sĩ, địa điểm…</string>
+    <string name="user_cd_search">Tìm kiếm</string>
+    <string name="user_cd_filter">Bộ lọc</string>
+    <string name="user_filter_title">Lọc theo danh mục</string>
+
+    <!-- Bộ lọc nâng cao -->
+    <string name="user_filter_sheet_title">Bộ lọc sự kiện</string>
+    <string name="user_filter_sheet_sub">Chọn nhanh theo thời gian, giá, địa điểm và danh mục</string>
+    <string name="user_filter_close">Đóng bộ lọc</string>
+    <string name="user_filter_clear">Xoá tất cả</string>
+    <string name="user_filter_apply">Xem kết quả</string>
+    <string name="user_filter_section_sort">Sắp xếp theo</string>
+    <string name="user_filter_section_category">Danh mục</string>
+    <string name="user_filter_section_time">Thời gian</string>
+    <string name="user_filter_section_price">Khoảng giá</string>
+    <string name="user_filter_section_place">Địa điểm</string>
+    <string name="user_filter_sort_relevance">Phù hợp nhất</string>
+    <string name="user_filter_sort_upcoming">Sắp diễn ra</string>
+    <string name="user_filter_sort_newest">Mới nhất</string>
+    <string name="user_filter_sort_price_asc">Giá thấp đến cao</string>
+    <string name="user_filter_sort_price_desc">Giá cao đến thấp</string>
+    <string name="user_filter_sort_popular">Được quan tâm</string>
+    <string name="user_filter_time_today">Hôm nay</string>
+    <string name="user_filter_time_week">Tuần này</string>
+    <string name="user_filter_time_month">Tháng này</string>
+    <string name="user_filter_time_custom">Tự chọn</string>
+    <string name="user_filter_date_from">Từ ngày</string>
+    <string name="user_filter_date_to">Đến ngày</string>
+    <string name="user_filter_price_free">Miễn phí</string>
+    <string name="user_filter_price_under_200">Dưới 200K</string>
+    <string name="user_filter_price_200_500">200K – 500K</string>
+    <string name="user_filter_price_500_1m">500K – 1 triệu</string>
+    <string name="user_filter_price_over_1m">Trên 1 triệu</string>
+    <string name="user_filter_place_all">Toàn quốc</string>
+    <string name="user_filter_remove">Bỏ lọc %1$s</string>
+    <string name="user_section_featured">Sự kiện nổi bật</string>
+    <string name="user_section_upcoming">Sắp diễn ra</string>
+    <string name="user_section_free">Miễn phí tham dự</string>
+    <string name="user_section_featured_sub">Được đề xuất cho bạn</string>
+    <string name="user_section_upcoming_sub">Gần bạn nhất</string>
+    <string name="user_see_all">Xem tất cả</string>
+    <string name="user_search_empty_title">Không tìm thấy sự kiện</string>
+    <string name="user_search_empty_body">Thử từ khoá khác hoặc bỏ bộ lọc danh mục.</string>
+    <string name="user_reset_filter">Xoá bộ lọc</string>
+
+    <!-- Danh mục -->
+    <string name="user_cat_all">Tất cả</string>
+    <string name="user_cat_music">Âm nhạc</string>
+    <string name="user_cat_tech">Công nghệ</string>
+    <string name="user_cat_business">Hội thảo</string>
+    <string name="user_cat_art">Nghệ thuật</string>
+    <string name="user_cat_sports">Thể thao</string>
+    <string name="user_cat_free">Miễn phí</string>
+
+    <!-- Thẻ sự kiện -->
+    <string name="user_free">Miễn phí</string>
+    <string name="user_from_price">Từ %1$s</string>
+    <string name="user_remaining">Còn %1$d chỗ</string>
+    <string name="user_sold_out">Hết vé</string>
+    <string name="user_save">Lưu sự kiện</string>
+    <string name="user_unsave">Bỏ lưu</string>
+    <string name="user_saved_toast">Đã lưu sự kiện</string>
+    <string name="user_saved_label">Đã lưu</string>
+    <string name="user_unsaved_toast">Đã bỏ lưu</string>
+    <string name="user_cd_cover">Ảnh bìa sự kiện</string>
+
+    <!-- Chi tiết sự kiện -->
+    <string name="user_event_detail">Chi tiết sự kiện</string>
+    <string name="user_cd_back">Quay lại</string>
+    <string name="user_cd_share">Chia sẻ</string>
+    <string name="user_share_chooser">Chia sẻ sự kiện</string>
+    <string name="user_confirm_register">Xác nhận đăng ký</string>
+    <string name="user_about_event">Giới thiệu sự kiện</string>
+    <string name="user_organizer">Nhà tổ chức</string>
+    <string name="user_venue">Địa điểm</string>
+    <string name="user_directions">Chỉ đường</string>
+    <string name="user_ticket_types">Chọn loại vé</string>
+    <string name="user_ticket_types_sub">Giá đã bao gồm phí dịch vụ</string>
+    <string name="user_quantity">Số lượng</string>
+    <string name="user_sold_out_short">Hết vé</string>
+    <string name="user_online">Trực tuyến</string>
+    <string name="user_pref_limit">Chọn tối đa 10 danh mục</string>
+    <string name="user_greeting_fallback">bạn</string>
+    <string name="user_total">Tổng cộng</string>
+    <string name="user_book_now">Đặt vé ngay</string>
+    <string name="user_sales_not_started">Chưa mở bán</string>
+    <string name="user_sales_ended">Đã kết thúc bán</string>
+    <string name="user_event_cancelled">Sự kiện đã huỷ</string>
+    <string name="user_event_completed">Sự kiện đã kết thúc</string>
+    <string name="user_already_registered">Bạn đã đăng ký</string>
+    <string name="user_select_ticket_first">Chọn ít nhất 1 vé</string>
+    <string name="user_ticket_remaining">Còn %1$d vé</string>
+    <string name="user_event_policy">Vé đã mua không hoàn lại. Vui lòng có mặt trước giờ bắt đầu 30 phút.</string>
+
+    <!-- Đặt vé / thanh toán -->
+    <string name="user_checkout_title">Xác nhận đặt vé</string>
+    <string name="user_order_info">Thông tin đơn hàng</string>
+    <string name="user_payment_method">Phương thức thanh toán</string>
+    <string name="user_pay_wallet">Ví ETicket</string>
+    <string name="user_pay_wallet_sub">Số dư 2.500.000 đ</string>
+    <string name="user_pay_vietqr">Chuyển khoản VietQR</string>
+    <string name="user_pay_vietqr_sub">Quét mã bằng ứng dụng ngân hàng</string>
+    <string name="user_pay_card">Thẻ ngân hàng</string>
+    <string name="user_pay_card_sub">Visa, Mastercard, JCB</string>
+    <string name="user_subtotal">Tạm tính</string>
+    <string name="user_service_fee">Phí dịch vụ</string>
+    <string name="user_total_payment">Tổng thanh toán</string>
+    <string name="user_pay_now">Thanh toán %1$s</string>
+    <string name="user_vietqr_title">Chuyển khoản VietQR</string>
+    <string name="user_vietqr_body">Mở ứng dụng ngân hàng và quét mã bên dưới. Đơn hàng được xác nhận tự động sau khi chuyển khoản.</string>
+    <string name="user_vietqr_bank">Ngân hàng TMCP Á Châu (ACB)</string>
+    <string name="user_vietqr_account">CONG TY ETICKET</string>
+    <string name="user_vietqr_account_no">1903 6868 8888</string>
+    <string name="user_vietqr_content">ETICKET %1$s</string>
+    <string name="user_checkout_success">Đặt vé thành công</string>
+    <string name="user_checkout_success_body">Vé điện tử đã được gửi tới email của bạn. Bạn có thể mở mã QR bất cứ lúc nào trong mục Vé của tôi.</string>
+    <string name="user_order_code">Mã đơn hàng</string>
+    <string name="user_view_ticket">Xem vé &amp; QR</string>
+    <string name="user_view_ticket_detail">Xem chi tiết</string>
+    <string name="user_back_home">Về trang chủ</string>
+    <string name="user_payment_processing">Đang xử lý thanh toán…</string>
+
+    <!-- Vé của tôi -->
+    <string name="user_tickets_title">Vé của tôi</string>
+    <string name="user_tickets_sub">Bạn có %1$d vé sắp diễn ra và %2$d vé đã dùng.</string>
+    <string name="user_filter_upcoming">Sắp diễn ra</string>
+    <string name="user_filter_used">Đã dùng</string>
+    <string name="user_filter_cancelled">Đã huỷ</string>
+    <string name="user_ticket_code">Mã vé</string>
+    <string name="user_view_qr">Xem vé &amp; QR</string>
+    <string name="user_ticket_empty_title">Chưa có vé nào</string>
+    <string name="user_ticket_empty_body">Khám phá sự kiện và đặt vé đầu tiên của bạn.</string>
+    <string name="user_explore_now">Khám phá ngay</string>
+    <string name="user_ticket_status_valid">Hợp lệ · Sẵn sàng check-in</string>
+    <string name="user_ticket_status_used">Đã check-in</string>
+    <string name="user_ticket_status_cancelled">Đã huỷ</string>
+    <string name="user_ticket_status_past">Đã qua</string>
+
+    <!-- Chi tiết vé -->
+    <string name="user_ticket_detail">Chi tiết vé</string>
+    <string name="user_ticket_ready">Sẵn sàng check-in</string>
+    <string name="user_ticket_scan_note">Đưa mã này cho nhân viên soát vé tại cổng. Không chia sẻ hoặc chụp màn hình mã QR.</string>
+    <string name="user_ticket_refresh">Mã tự động làm mới sau %1$ds</string>
+    <string name="user_ticket_used_note">Vé này đã được check-in. Mã QR không còn hiệu lực.</string>
+    <string name="user_ticket_cancelled_note">Vé đã bị huỷ. Vui lòng liên hệ hỗ trợ nếu cần hoàn tiền.</string>
+    <string name="user_popular">Phổ biến</string>
+    <string name="user_ticket_type">Loại vé</string>
+    <string name="user_ticket_quantity">Số lượng</string>
+    <string name="user_ticket_time">Thời gian</string>
+    <string name="user_ticket_venue">Địa điểm</string>
+    <string name="user_add_calendar">Thêm vào lịch</string>
+    <string name="user_share_ticket">Chia sẻ</string>
+    <string name="user_added_calendar">Đã thêm vào lịch</string>
+
+    <!-- Đã lưu -->
+    <string name="user_saved_title">Sự kiện đã lưu</string>
+    <string name="user_saved_sub">%1$d sự kiện trong danh sách của bạn</string>
+    <string name="user_saved_empty_title">Chưa lưu sự kiện nào</string>
+    <string name="user_saved_empty_body">Nhấn biểu tượng trái tim ở một sự kiện để xem lại sau.</string>
+    <string name="user_filter_all">Tất cả</string>
+    <string name="user_filter_ended">Đã kết thúc</string>
+
+    <!-- Lịch -->
+    <string name="user_calendar_title">Lịch của tôi</string>
+    <string name="user_calendar_sub">%1$d sự kiện sắp tới</string>
+    <string name="user_calendar_empty_title">Lịch đang trống</string>
+    <string name="user_calendar_empty_body">Đặt vé hoặc lưu sự kiện để lịch nhắc bạn đúng ngày.</string>
+    <string name="user_today">Hôm nay</string>
+    <string name="user_event_count">%1$d sự kiện</string>
+    <string name="user_open_ticket">Mở vé &amp; QR</string>
+    <string name="user_detail">Chi tiết</string>
+    <string name="user_reminder">Nhắc trước 24 giờ</string>
+    <string name="user_no_events_day">Không có sự kiện trong ngày này</string>
+
+    <!-- Tài khoản -->
+    <string name="user_account_title">Tài khoản</string>
+    <string name="user_account_sub">Quản lý hồ sơ và trải nghiệm của bạn</string>
+    <string name="user_profile_name">Trần Hoàng Long</string>
+    <string name="user_profile_email">user1@eticket.local</string>
+    <string name="user_profile_verified">Đã xác thực</string>
+    <string name="user_edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="user_stat_tickets">Vé đã mua</string>
+    <string name="user_stat_saved">Đã lưu</string>
+    <string name="user_stat_reviews">Đánh giá</string>
+    <string name="user_interests">Sở thích của bạn</string>
+    <string name="user_interests_sub">Gợi ý sự kiện dựa trên lựa chọn này</string>
+    <string name="user_pref_notifications">Kênh thông báo &amp; cảnh báo</string>
+    <string name="user_pref_push">Thông báo đẩy</string>
+    <string name="user_pref_push_sub">Vé, thay đổi sự kiện và ưu đãi</string>
+    <string name="user_pref_reminder">Nhắc lịch sự kiện</string>
+    <string name="user_pref_reminder_sub">Trước 24 giờ và 2 giờ</string>
+    <string name="user_pref_email">Email khuyến mãi</string>
+    <string name="user_pref_email_sub">Tối đa 2 email mỗi tuần</string>
+    <string name="user_settings">Tài khoản &amp; thiết bị</string>
+    <string name="user_settings_security">Bảo mật &amp; đăng nhập</string>
+    <string name="user_settings_security_sub">Mật khẩu, xác thực 2 lớp</string>
+    <string name="user_settings_privacy">Quyền riêng tư &amp; dữ liệu</string>
+    <string name="user_settings_privacy_sub">Ai thấy hoạt động của bạn</string>
+    <string name="user_settings_support">Trung tâm hỗ trợ</string>
+    <string name="user_settings_support_sub">Hotline 1900 6868 · 8:00 – 22:00</string>
+    <string name="user_settings_terms">Điều khoản &amp; chính sách</string>
+    <string name="user_settings_terms_sub">Hoàn tiền, bảo mật, quyền riêng tư</string>
+    <string name="user_version">Phiên bản %1$s</string>
+    <string name="user_logout">Đăng xuất</string>
+    <string name="user_logout_confirm_title">Đăng xuất khỏi ETicket?</string>
+    <string name="user_logout_confirm_body">Bạn sẽ cần đăng nhập lại để xem vé và mã QR.</string>
+    <string name="user_logout_action">Đăng xuất</string>
+    <string name="user_cancel">Huỷ</string>
+    <string name="user_coming_soon_toast">Tính năng đang được hoàn thiện</string>
+    <string name="user_session_secure">Phiên bảo mật · ETicket</string>
+
+    <!-- Thông báo -->
+    <string name="user_notifications_title">Thông báo</string>
+    <string name="user_notifications_sub_total">%1$d thông báo từ nhà tổ chức</string>
+    <string name="user_mark_all_read">Đọc tất cả</string>
+    <string name="user_notifications_empty_title">Không có thông báo</string>
+    <string name="user_notifications_empty_body">Cập nhật về vé và sự kiện sẽ xuất hiện ở đây.</string>
+    <string name="user_notifications_soon">Trung tâm thông báo sẽ có sau.</string>
+    <string name="user_cd_notifications">Thông báo</string>
+    <string name="user_cd_account">Tài khoản</string>
+
+    <!-- Đăng nhập demo -->
+    <string name="auth_demo_account_title">Tài khoản dùng thử</string>
+    <string name="auth_demo_account_value">Tài khoản seed · JWT</string>
+    <string name="auth_demo_fill">Điền nhanh</string>
+    <string name="auth_err_credentials">Email hoặc mật khẩu không đúng</string>
+    <!-- Đánh giá sự kiện (FR-U20) -->
+    <string name="user_reviews_title">Đánh giá sự kiện</string>
+    <string name="user_close">Đóng</string>
+    <string name="user_send">Gửi</string>
+    <string name="user_reviews_out_of_five">trên 5</string>
+    <string name="user_reviews_total">%1$d đánh giá</string>
+    <string name="user_reviews_mine_title">Đánh giá của bạn</string>
+    <string name="user_reviews_mine_screen">Đánh giá của tôi</string>
+    <string name="user_reviews_mine_hint">Đánh giá có thể chờ duyệt nếu chứa liên kết hoặc số điện thoại.</string>
+    <string name="user_reviews_mine_empty">Bạn chưa viết đánh giá nào</string>
+    <string name="user_reviews_edit">Sửa đánh giá</string>
+    <string name="user_reviews_all">Tất cả đánh giá</string>
+    <string name="user_reviews_sort_newest">Mới nhất</string>
+    <string name="user_reviews_sort_high">Điểm cao</string>
+    <string name="user_reviews_sort_low">Điểm thấp</string>
+    <string name="user_reviews_empty">Chưa có đánh giá nào cho sự kiện này.</string>
+    <string name="user_reviews_none">Chưa có đánh giá</string>
+    <string name="user_reviews_load_more">Xem thêm đánh giá</string>
+    <string name="user_reviews_write">Viết đánh giá</string>
+    <string name="user_reviews_report">Báo cáo</string>
+    <string name="user_reviews_hint">Chia sẻ cảm nhận của bạn về sự kiện…</string>
+    <string name="user_reviews_counter">%1$d/2000</string>
+    <string name="user_reviews_star_1">1 sao</string>
+    <string name="user_reviews_star_2">2 sao</string>
+    <string name="user_reviews_star_3">3 sao</string>
+    <string name="user_reviews_star_4">4 sao</string>
+    <string name="user_reviews_star_5">5 sao</string>
+    <string name="user_reviews_edited">Đã chỉnh sửa</string>
+    <string name="user_reviews_edit_left">Còn %1$d lần sửa</string>
+    <string name="user_reviews_status_visible">ĐÃ ĐĂNG</string>
+    <string name="user_reviews_status_pending">CHỜ DUYỆT</string>
+    <string name="user_reviews_status_hidden">ĐÃ ẨN</string>
+    <string name="user_reviews_report_title">Báo cáo đánh giá</string>
+    <string name="user_reviews_report_spam">Spam / quảng cáo</string>
+    <string name="user_reviews_report_offensive">Nội dung xúc phạm</string>
+    <string name="user_reviews_report_personal">Lộ thông tin cá nhân</string>
+    <string name="user_reviews_report_fake">Đánh giá không thật</string>
+    <string name="user_reviews_report_off_topic">Lạc chủ đề</string>
+    <string name="user_reviews_report_other">Khác</string>
+    <string name="user_reviews_report_sent">Đã gửi báo cáo</string>
+    <string name="user_reviews_saved">Đã lưu đánh giá</string>
+    <string name="user_reviews_rating_required">Vui lòng chọn số sao</string>
+    <string name="user_reviews_not_eligible">Bạn cần tham dự sự kiện để viết đánh giá</string>
+    <string name="user_reviews_meta_editable">Đã sửa %1$d lần · còn %2$d ngày</string>
+    <string name="user_reviews_meta_locked">Đã sửa %1$d lần · hết hạn sửa</string>
+</resources>

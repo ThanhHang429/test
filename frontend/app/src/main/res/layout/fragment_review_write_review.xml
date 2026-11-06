@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Màn hình WriteReview: Viết đánh giá và chấm điểm sự kiện đã tham dự | FR-U20 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/brand_background" />

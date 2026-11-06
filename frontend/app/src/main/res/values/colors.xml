@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand -->
-    <color name="brand_primary">#FF1D4ED8</color>
-    <color name="brand_primary_dark">#FF1E3A8A</color>
-    <color name="brand_secondary">#FF0EA5E9</color>
+    <!-- Brand (đồng bộ với palette Stitch: primary #3525CD) -->
+    <color name="brand_primary">#FF3525CD</color>
+    <color name="brand_primary_dark">#FF2A1BA8</color>
+    <color name="brand_secondary">#FF712AE2</color>
     <color name="brand_surface">#FFFFFFFF</color>
-    <color name="brand_background">#FFF8FAFC</color>
-    <color name="brand_outline">#FFE2E8F0</color>
-    <color name="brand_text_primary">#FF0F172A</color>
-    <color name="brand_text_secondary">#FF64748B</color>
+    <color name="brand_background">#FFFAF8FF</color>
+    <color name="brand_outline">#FFC7C4D8</color>
+    <color name="brand_text_primary">#FF131B2E</color>
+    <color name="brand_text_secondary">#FF464555</color>
 
     <!-- Trạng thái (không thay thế trạng thái chính thức từ backend) -->
     <color name="status_pending">#FFF59E0B</color>
@@ -22,4 +22,83 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="transparent">#00000000</color>
+
+    <!-- Dialog dùng chung cho cả 3 khu: nền trắng, chữ mực, đỏ cảnh báo đọc rõ trên nền sáng -->
+    <color name="dialog_surface">#FFFFFFFF</color>
+    <color name="dialog_text">#FF172033</color>
+    <color name="dialog_text_muted">#FF5C6B84</color>
+    <color name="dialog_border">#FFE3E7F2</color>
+    <color name="dialog_danger">#FFB42318</color>
+    <color name="dialog_danger_soft">#FFFEECEC</color>
+    <!-- ===== Design-system palette (nguồn chuẩn cho màn hình mới) ===== -->
+<!-- Brand / action -->
+    <color name="ds_primary">#FF3525CD</color>
+    <color name="ds_primary_dark">#FF2A1BA8</color>
+    <color name="ds_primary_container">#FF4F46E5</color>
+    <color name="ds_primary_soft">#FFE2DFFF</color>
+    <color name="ds_secondary">#FF712AE2</color>
+    <color name="ds_secondary_soft">#FFEADDFF</color>
+    <color name="ds_secondary_container">#FF8A4CFC</color>
+    <color name="ds_on_secondary_container">#FFFFFBFF</color>
+    <color name="ds_cta">#FFFF5722</color>
+    <color name="ds_cta_dark">#FFE64A19</color>
+
+    <!-- Surface / text -->
+    <color name="ds_bg">#FFFAF8FF</color>
+    <color name="ds_surface">#FFFFFFFF</color>
+    <color name="ds_surface_alt">#FFF2F3FF</color>
+    <color name="ds_surface_container_low">#FFF2F3FF</color>
+    <color name="ds_surface_container">#FFEAEDFF</color>
+    <color name="ds_surface_container_high">#FFE2E7FF</color>
+    <color name="ds_text">#FF131B2E</color>
+    <color name="ds_text_muted">#FF464555</color>
+    <color name="ds_outline">#FF777587</color>
+    <color name="ds_outline_variant">#FFC7C4D8</color>
+    <color name="ds_outline_strong">#FF464555</color>
+    <color name="ds_white">#FFFFFFFF</color>
+    <color name="ds_black">#FF000000</color>
+    <color name="ds_transparent">#00000000</color>
+    <color name="ds_scrim">#66000000</color>
+
+    <!-- Semantic -->
+    <color name="ds_success">#FF10B981</color>
+    <color name="ds_success_dark">#FF047857</color>
+    <color name="ds_success_soft">#FFECFDF5</color>
+    <color name="ds_warning">#FFF59E0B</color>
+    <color name="ds_warning_dark">#FFB45309</color>
+    <color name="ds_warning_soft">#FFFFFBEB</color>
+    <color name="ds_danger">#FFBA1A1A</color>
+    <color name="ds_danger_dark">#FF93000A</color>
+    <color name="ds_danger_soft">#FFFFDAD6</color>
+    <color name="ds_info">#FF0EA5E9</color>
+    <color name="ds_info_dark">#FF0369A1</color>
+    <color name="ds_info_soft">#FFF0F9FF</color>
+    <!-- Sắc thái phụ dùng cho badge/ô KPI ở màn Tổng quan quản trị (lấy từ palette Stitch) -->
+    <color name="ds_tertiary_soft">#FFFFDBD1</color>
+    <color name="ds_tertiary_text">#FF862200</color>
+
+    <!-- Role accents -->
+    <color name="ds_organizer">#FF0F766E</color>
+    <color name="ds_organizer_dark">#FF115E59</color>
+    <color name="ds_organizer_container">#FF0D9488</color>
+    <color name="ds_organizer_soft">#FFF0FDFA</color>
+    <color name="ds_organizer_bright">#FF14B8A6</color>
+    <color name="ds_admin_risk">#FFE11D48</color>
+    <color name="ds_admin_medium">#FFF59E0B</color>
+    <color name="ds_admin_low">#FF10B981</color>
+
+    <!-- AI -->
+    <color name="ds_ai_gradient_start">#FF4F46E5</color>
+    <color name="ds_ai_gradient_end">#FF7C3AED</color>
+
+    <!-- Rating / chart / skeleton -->
+    <color name="ds_star">#FFF59E0B</color>
+    <color name="ds_star_empty">#FFCBD5E1</color>
+    <color name="ds_chart_bar">#FF3525CD</color>
+    <color name="ds_chart_bar_alt">#FFC3C0FF</color>
+    <color name="ds_chart_error">#FFBA1A1A</color>
+    <color name="ds_chart_grid">#FFC7C4D8</color>
+    <color name="ds_skeleton">#FFEAEDFF</color>
+    <color name="ds_skeleton_highlight">#FFF2F3FF</color>
+
 </resources>

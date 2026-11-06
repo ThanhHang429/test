@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nền thanh điều hướng dạng dải phẳng: mặt phẳng ds_surface + đường kẻ 1dp phía trên
+     để tách khỏi nội dung cuộn, thay cho bóng đổ của phiên bản pill nổi. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/ds_outline_variant" />
+        </shape>
+    </item>
+
+    <item android:top="@dimen/ds_stroke">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/ds_surface" />
+        </shape>
+    </item>
+
+</layer-list>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvDsMetricLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+            android:textColor="@color/ds_text_muted" />
+
+        <TextView
+            android:id="@+id/tvDsMetricValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Label"
+            android:textColor="@color/ds_primary" />
+    </LinearLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressDsMetric"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ds_progress_height"
+        android:layout_marginTop="@dimen/ds_space_8"
+        android:indeterminate="false"
+        android:max="100"
+        app:indicatorColor="@color/ds_primary"
+        app:trackColor="@color/ds_outline"
+        app:trackCornerRadius="4dp"
+        app:trackThickness="@dimen/ds_progress_height" />
+
+    <TextView
+        android:id="@+id/tvDsMetricCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_4"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+        android:visibility="gone" />
+</merge>

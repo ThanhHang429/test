@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/orgRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_org_surface">
+
+    <FrameLayout
+        android:id="@+id/orgContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/orgTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="top"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="14dp">
+
+        <FrameLayout
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_org_logo_tile">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/org_cd_account"
+                android:src="@drawable/ic_org_logo" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:letterSpacing="0.12"
+                android:text="@string/org_brand"
+                android:textColor="@color/org_text"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/bg_org_dot" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:fontFamily="@font/be_vietnam_pro"
+                    android:text="@string/org_role"
+                    android:textColor="@color/org_text_dim"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp">
+
+            <ImageButton
+                android:id="@+id/btnOrgNotifications"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_org_circle_button"
+                android:contentDescription="@string/org_cd_notifications"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_user_bell"
+                android:tint="@color/org_text" />
+
+            <View
+                android:id="@+id/viewOrgUnreadDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="3dp"
+                android:background="@drawable/bg_org_dot" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/btnOrgAvatar"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_org_avatar"
+            android:clickable="true"
+            android:contentDescription="@string/org_cd_account"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <TextView
+                android:id="@+id/tvOrgAvatarInitials"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Dock kính mờ: nội dung tab chạy xuyên qua; các tab vẫn nhận tap. -->
+    <com.eventapp.app.ui.organizer.OrgBottomNavView
+        android:id="@+id/orgBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_org_nav_dock"
+        android:elevation="10dp"
+        android:outlineProvider="background" />
+</FrameLayout>

@@ -1,0 +1,40 @@
+spring:
+  # Dev: Hibernate tự tạo/cập nhật bảng từ entity (DB Aiven đang trống).
+  jpa:
+    hibernate:
+      # "validate" = chỉ kiểm tra mapping, KHÔNG sửa cấu trúc bảng trên DB dùng chung.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    # Aiven giới hạn số connection -> giữ pool nhỏ khi dev
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+
+app:
+  security:
+    dev-header-enabled: true
+  seed:
+    enabled: true
+    # Bộ dữ liệu demo quy mô lớn (chạy sau DevDataSeeder, idempotent, không sửa dữ liệu cũ).
+    demo-enabled: true
+  ai:
+    # Dev mặc định dùng mock; đặt AI_PROVIDER=gemini|deepseek|openrouter trong .env để gọi model thật.
+    provider: ${AI_PROVIDER:mock}
+  payment:
+    # Dev cho phép bấm "Tôi đã chuyển khoản" để xác nhận, vì chưa nối cổng thanh toán thật.
+    simulated-confirm-enabled: ${PAYMENT_SIMULATED_CONFIRM:true}
+    bank-code: ${PAYMENT_BANK_CODE:VCB}
+    bank-account: ${PAYMENT_BANK_ACCOUNT:0123456789}
+    account-name: ${PAYMENT_ACCOUNT_NAME:ETICKET DEMO}
+  ticketing:
+    payment-window-minutes: ${TICKETING_PAYMENT_WINDOW_MINUTES:15}
+
+logging:
+  level:
+    com.eventapp: debug
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace

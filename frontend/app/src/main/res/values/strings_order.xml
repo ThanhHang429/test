@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chuỗi cho luồng mua vé / đăng ký miễn phí / thanh toán / trạng thái đơn hàng (UI demo). -->
+<resources>
+
+    <!-- ===== Dùng chung ===== -->
+    <string name="hc_order_back">Quay lại</string>
+    <string name="hc_order_step_1">1. Chọn vé</string>
+    <string name="hc_order_step_2">2. Thanh toán</string>
+    <string name="hc_order_step_3">3. Nhận vé</string>
+    <string name="hc_order_missing">Không tìm thấy thông tin đơn hàng.</string>
+    <string name="hc_order_coming_soon">Chức năng đang được hoàn thiện.</string>
+    <string name="hc_order_processing">Đang xử lý…</string>
+
+    <!-- ===== Checkout ===== -->
+    <string name="hc_checkout_title">Thanh toán</string>
+    <string name="hc_checkout_choose_ticket">Chọn loại vé</string>
+    <string name="hc_checkout_choose_ticket_hint">Mỗi đơn hàng chỉ chọn một loại vé.</string>
+    <string name="hc_checkout_ticket_required">Vui lòng chọn loại vé.</string>
+    <string name="hc_checkout_ticket_a11y">%1$s, %2$s, %3$s</string>
+    <string name="hc_checkout_no_tickets">Sự kiện chưa công bố loại vé nào.</string>
+    <string name="hc_checkout_remaining">Còn %1$d vé</string>
+    <string name="hc_checkout_quantity">Số lượng</string>
+    <string name="hc_checkout_quantity_limit">Tối đa %1$d vé mỗi đơn</string>
+    <string name="hc_checkout_decrease">Giảm số lượng</string>
+    <string name="hc_checkout_increase">Tăng số lượng</string>
+    <string name="hc_checkout_buyer_title">Thông tin người nhận vé</string>
+    <string name="hc_checkout_buyer_hint">Vé điện tử và mã QR sẽ được gửi tới thông tin này.</string>
+    <string name="hc_checkout_name">Họ và tên</string>
+    <string name="hc_checkout_email">Email</string>
+    <string name="hc_checkout_phone">Số điện thoại</string>
+    <string name="hc_checkout_name_required">Vui lòng nhập họ và tên</string>
+    <string name="hc_checkout_email_invalid">Email không hợp lệ</string>
+    <string name="hc_checkout_phone_invalid">Số điện thoại không hợp lệ</string>
+    <string name="hc_checkout_payment_method">Phương thức thanh toán</string>
+    <string name="hc_checkout_payment_vietqr">Chuyển khoản VietQR</string>
+    <string name="hc_checkout_payment_vietqr_note">Miễn phí • Xác nhận tự động</string>
+    <string name="hc_checkout_summary">Chi tiết thanh toán</string>
+    <string name="hc_checkout_subtotal">Tạm tính (%1$d vé)</string>
+    <string name="hc_checkout_service_fee">Phí dịch vụ</string>
+    <string name="hc_checkout_fee_free">0 đ</string>
+    <string name="hc_checkout_total">Tổng cộng</string>
+    <string name="hc_checkout_continue">Tiếp tục thanh toán</string>
+    <string name="hc_checkout_terms">Bằng việc tiếp tục, bạn đồng ý với Điều khoản sử dụng và Chính sách hoàn tiền của ETicket.</string>
+
+    <!-- ===== Đăng ký miễn phí ===== -->
+    <string name="hc_freereg_title">Đăng ký vé miễn phí</string>
+    <string name="hc_freereg_hero_title">Sự kiện miễn phí</string>
+    <string name="hc_freereg_hero_message">Bạn không phải trả bất kỳ khoản phí nào. Vé điện tử sẽ được phát hành ngay sau khi xác nhận.</string>
+    <string name="hc_freereg_ticket_name">Vé miễn phí</string>
+    <string name="hc_freereg_ticket_note">Mỗi tài khoản đăng ký tối đa 2 vé.</string>
+    <string name="hc_freereg_attendee_title">Thông tin người tham dự</string>
+    <string name="hc_freereg_attendee_hint">Thông tin này dùng để phát hành vé và liên hệ khi cần thiết.</string>
+    <string name="hc_freereg_quantity">Số vé đăng ký</string>
+    <string name="hc_freereg_quantity_limit">Mỗi tài khoản được đăng ký tối đa %1$d vé.</string>
+    <string name="hc_freereg_terms">Tôi đồng ý với điều khoản của sự kiện và nhận thông báo qua email.</string>
+    <string name="hc_freereg_terms_required">Vui lòng đồng ý với điều khoản để tiếp tục.</string>
+    <string name="hc_freereg_summary">Xác nhận đăng ký</string>
+    <string name="hc_freereg_summary_ticket">%1$d vé miễn phí</string>
+    <string name="hc_freereg_total">Tổng cộng</string>
+    <string name="hc_freereg_free">Miễn phí</string>
+    <string name="hc_freereg_action">Xác nhận đăng ký</string>
+
+    <!-- ===== Thanh toán QR ===== -->
+    <string name="hc_pay_title">Thanh toán đơn hàng</string>
+    <string name="hc_pay_subtitle">Đơn %1$s • Giữ chỗ</string>
+    <string name="hc_pay_hold_title">Vé đang được giữ</string>
+    <string name="hc_pay_hold_message">Hệ thống sẽ tự động giải phóng vé khi hết thời gian.</string>
+    <string name="hc_pay_hold_expired_title">Mã thanh toán đã hết hạn</string>
+    <string name="hc_pay_hold_expired_message">Vui lòng tạo lại mã để tiếp tục thanh toán.</string>
+    <string name="hc_pay_retry">Tạo lại mã QR</string>
+    <string name="hc_pay_order_code">Mã đơn</string>
+    <string name="hc_pay_status_pending">Chờ thanh toán</string>
+    <string name="hc_pay_status_expired">Đã hết hạn</string>
+    <string name="hc_pay_status_success">Đã thanh toán</string>
+    <string name="hc_checkout_form_invalid">Vui lòng kiểm tra lại thông tin đăng ký.</string>
+    <string name="hc_order_missing_event">Không tìm thấy sự kiện: %1$s</string>
+    <string name="hc_pay_ticket_count">x%1$d</string>
+    <string name="hc_pay_payment_title">Chuyển khoản VietQR</string>
+    <string name="hc_pay_payment_instruction">Quét mã bằng ứng dụng ngân hàng hoặc ví điện tử</string>
+    <string name="hc_pay_transfer_info">Thông tin chuyển khoản</string>
+    <string name="hc_pay_qr_desc">Mã QR thanh toán cho đơn %1$s</string>
+    <string name="hc_pay_qr_desc_short">Mã QR thanh toán</string>
+    <string name="hc_pay_copy_account">Sao chép số tài khoản</string>
+    <string name="hc_pay_copy_amount">Sao chép số tiền</string>
+    <string name="hc_pay_copy_content">Sao chép nội dung chuyển khoản</string>
+    <string name="hc_pay_copied_short">Đã sao chép</string>
+    <string name="hc_pay_listening">Đang nghe giao dịch…</string>
+    <string name="hc_pay_auto">Tự động 10–30 giây</string>
+    <string name="hc_pay_bank">Ngân hàng thụ hưởng</string>
+    <string name="hc_pay_bank_value">Techcombank — Ngân hàng TMCP Kỹ Thương</string>
+    <string name="hc_pay_account">Số tài khoản</string>
+    <string name="hc_pay_account_value">1903847291038</string>
+    <string name="hc_pay_holder">Tên người nhận</string>
+    <string name="hc_pay_holder_value">EVENTHUB PLATFORM VIETNAM</string>
+    <string name="hc_pay_amount">Số tiền cần chuyển</string>
+    <string name="hc_pay_content">Nội dung chuyển khoản</string>
+    <string name="hc_pay_content_value">ETK %1$s</string>
+    <string name="hc_pay_copy">Sao chép</string>
+    <string name="hc_pay_copied">Đã sao chép %1$s</string>
+    <string name="hc_pay_note_title">Quy định xử lý vé tự chờ</string>
+    <string name="hc_pay_note_message">Quét và chuyển khoản đúng nội dung để vé được xác nhận tự động. Vé chỉ có hiệu lực sau khi hệ thống nhận được thanh toán.</string>
+    <string name="hc_pay_confirm">Tôi đã chuyển khoản thành công</string>
+    <string name="hc_pay_cancel">Hủy đơn hàng này</string>
+    <string name="hc_pay_cancel_title">Hủy đơn hàng?</string>
+    <string name="hc_pay_cancel_message">Vé đang giữ sẽ được giải phóng và không thể khôi phục.</string>
+    <string name="hc_pay_cancel_keep">Giữ đơn</string>
+    <string name="hc_pay_cancel_confirm">Hủy đơn</string>
+    <string name="hc_pay_cancelled">Đã hủy đơn hàng.</string>
+    <string name="hc_pay_expired_action">Đơn đã hết hạn</string>
+
+    <!-- ===== Trạng thái đơn hàng ===== -->
+    <string name="hc_status_title">Chi tiết đơn hàng</string>
+    <string name="hc_status_paid_title">Thanh toán thành công</string>
+    <string name="hc_status_paid_message">Vé đã được phát hành và sẵn sàng trong mục Vé của tôi.</string>
+    <string name="hc_status_free_title">Đăng ký thành công</string>
+    <string name="hc_status_free_message">Vé miễn phí đã được xác nhận. Xuất trình mã QR khi đến sự kiện.</string>
+    <string name="hc_status_pending_title">Đang chờ thanh toán</string>
+    <string name="hc_status_pending_message">Đơn hàng sẽ được xác nhận sau khi hệ thống nhận được thanh toán.</string>
+    <string name="hc_status_cancelled_title">Đơn hàng đã hủy</string>
+    <string name="hc_status_cancelled_message">Đơn hàng này đã bị hủy. Bạn có thể chọn một sự kiện khác.</string>
+    <string name="hc_status_ticket_label">Vé điện tử</string>
+    <string name="hc_status_ticket_count">%1$s • x%2$d</string>
+    <string name="hc_status_ticket_meta">%1$s • %2$s</string>
+    <string name="hc_status_qr_desc">Mã QR vé điện tử %1$s</string>
+    <string name="hc_status_recipient_value">%1$s\n%2$s • %3$s</string>
+    <string name="hc_status_phone_missing">Chưa cập nhật</string>
+    <string name="hc_status_pending_action">Tiếp tục thanh toán</string>
+    <string name="hc_status_home_action">Về trang chủ</string>
+    <string name="hc_status_chip_paid">Đã thanh toán</string>
+    <string name="hc_status_chip_free">Đã xác nhận</string>
+    <string name="hc_status_chip_pending">Chờ thanh toán</string>
+    <string name="hc_status_chip_cancelled">Đã hủy</string>
+    <string name="hc_status_checkin_note">Xuất trình mã QR này tại cổng check-in để được xác nhận.</string>
+    <string name="hc_status_timeline_title">Trạng thái đơn hàng</string>
+    <string name="hc_status_step_created">Đơn hàng được tạo</string>
+    <string name="hc_status_step_created_note">%1$s</string>
+    <string name="hc_status_step_paid">Thanh toán thành công</string>
+    <string name="hc_status_step_paid_note">Đã nhận thanh toán qua VietQR</string>
+    <string name="hc_status_step_free">Đăng ký được xác nhận</string>
+    <string name="hc_status_step_free_note">Không phát sinh phí</string>
+    <string name="hc_status_step_pending">Chờ thanh toán</string>
+    <string name="hc_status_step_pending_note">Hoàn tất chuyển khoản để nhận vé</string>
+    <string name="hc_status_step_cancelled">Đơn hàng đã hủy</string>
+    <string name="hc_status_step_cancelled_note">Vé đã được giải phóng</string>
+    <string name="hc_status_step_issued">Vé được phát hành</string>
+    <string name="hc_status_step_issued_note">Sẵn sàng trong Vé của tôi</string>
+    <string name="hc_status_order_info">Thông tin đơn hàng</string>
+    <string name="hc_status_order_code">Mã đơn hàng</string>
+    <string name="hc_status_order_created">Thời gian tạo</string>
+    <string name="hc_status_order_method">Phương thức</string>
+    <string name="hc_status_order_recipient">Người nhận vé</string>
+    <string name="hc_status_order_total">Tổng thanh toán</string>
+    <string name="hc_status_order_state">Trạng thái</string>
+    <string name="hc_status_view_tickets">Xem vé của tôi</string>
+    <string name="hc_status_home">Về trang chủ</string>
+    <string name="hc_status_help">Cần hỗ trợ? Liên hệ trung tâm trợ giúp của ETicket.</string>
+
+    <string name="hc_ticket_qr_hint">Mã vé %1$s — đưa mã này cho ban tổ chức khi soát vé.</string>
+    <string name="hc_ticket_qr_failed">Không tải được mã QR, vui lòng thử lại.</string>
+</resources>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tvDsKpiLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+        tools:text="Đăng ký hợp lệ" />
+
+    <TextView
+        android:id="@+id/tvDsKpiValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_4"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.H2"
+        android:textColor="@color/ds_text"
+        tools:text="842" />
+
+    <LinearLayout
+        android:id="@+id/layoutDsKpiFoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_4"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvDsKpiDelta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.LabelSmall"
+            android:visibility="gone"
+            tools:text="+9% kỳ trước" />
+
+        <TextView
+            android:id="@+id/tvDsKpiCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/ds_space_4"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+            android:visibility="gone"
+            tools:text="128 đánh giá" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutDsKpiError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvDsKpiError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ds_space_4"
+            android:textAppearance="@style/TextAppearance.EventApp.Ds.Caption"
+            android:textColor="@color/ds_danger_dark"
+            tools:text="Không tải được" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDsKpiRetry"
+            style="@style/Widget.EventApp.Ds.Button.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="36dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="@dimen/ds_space_8"
+            android:text="@string/hc_retry" />
+    </LinearLayout>
+</merge>

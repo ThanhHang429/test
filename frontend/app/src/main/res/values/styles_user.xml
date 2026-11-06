@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.EventApp.User.Eyebrow" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_primary</item>
+        <item name="android:letterSpacing">0.14</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Display" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:letterSpacing">-0.025</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Headline" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Sub" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/user_text_muted</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.CardTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.CardBody" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/user_text_muted</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/user_text_muted</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Micro" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/user_text_dim</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Label" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text_muted</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Price" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_primary</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Chip" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_primary</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.Brand" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text_muted</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.TopTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.NavLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_nav_inactive</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:includeFontPadding">false</item>
+        <!-- Quầng sáng nhẹ giúp nhãn đọc được khi nội dung chạy xuyên qua dock trong suốt. -->
+        <item name="android:shadowColor">#CCFFFFFF</item>
+        <item name="android:shadowRadius">2</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+    </style>
+
+    <!-- ===== Nút & điều khiển ===== -->
+    <style name="Widget.EventApp.User.Button.Primary" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_user_btn_primary</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:minHeight">@dimen/user_control_height</item>
+        <item name="android:maxHeight">@dimen/user_control_height</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Widget.EventApp.User.Button.Secondary" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_user_btn_secondary</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_primary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">@dimen/user_control_height</item>
+        <item name="android:maxHeight">@dimen/user_control_height</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Widget.EventApp.User.IconButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@drawable/bg_user_icon_circle</item>
+        <item name="android:minWidth">44dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:padding">11dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:tint">@color/user_text</item>
+    </style>
+
+    <style name="Widget.EventApp.User.Chip" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_height">36dp</item>
+        <item name="android:background">@drawable/bg_user_chip_selector</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_chip_text</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="Widget.EventApp.User.Search" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:textColorHint">@color/user_text_dim</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Widget.EventApp.User.Badge" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">9dp</item>
+        <item name="android:paddingEnd">9dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- ===== Bộ lọc nâng cao ===== -->
+    <style name="TextAppearance.EventApp.User.FilterSection" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.EventApp.User.FilterDate" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/user_text</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Chip chọn một trong bộ lọc: nền xám mềm, khi chọn đảo sang màu primary. -->
+    <style name="Widget.EventApp.User.FilterChip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/user_filter_chip_bg</item>
+        <item name="android:textColor">@color/user_filter_chip_text</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipCornerRadius">18dp</item>
+        <item name="chipMinHeight">36dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="checkedIconMargin">0dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="chipStartPadding">16dp</item>
+        <item name="chipEndPadding">16dp</item>
+    </style>
+</resources>

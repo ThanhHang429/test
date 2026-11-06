@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- TODO: Màn hình AiDescription: Gợi ý mô tả sự kiện bằng AI, cần người dùng xác nhận | FR-O06 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/brand_background" />

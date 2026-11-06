@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/ivDsEmptyIcon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_ds_info"
+        app:tint="@color/ds_text_muted"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+
+    <TextView
+        android:id="@+id/tvDsEmptyTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_12"
+        android:gravity="center"
+        android:text="@string/hc_empty_title"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.H3" />
+
+    <TextView
+        android:id="@+id/tvDsEmptyMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_4"
+        android:gravity="center"
+        android:text="@string/hc_empty_default"
+        android:textAppearance="@style/TextAppearance.EventApp.Ds.BodyM"
+        android:textColor="@color/ds_text_muted" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDsEmptyAction"
+        style="@style/Widget.EventApp.Ds.Button.Outlined"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ds_space_16"
+        android:visibility="gone"
+        tools:text="Khám phá"
+        xmlns:tools="http://schemas.android.com/tools" />
+</merge>

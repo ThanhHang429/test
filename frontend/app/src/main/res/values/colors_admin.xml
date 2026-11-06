@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Palette khu Quản trị — "Nexus Control".
+    Nền slate lạnh + thẻ trắng viền hairline, nhận diện navy mực và tín hiệu teal.
+    Cùng cấu trúc với palette User (xanh dương) và Organizer (mint) để ba khu
+    dùng chung một ngôn ngữ thị giác, chỉ khác sắc thái nhận diện.
+-->
+<resources>
+    <!-- Nền / bề mặt -->
+    <color name="admin_canvas">#FFF4F6FA</color>
+    <color name="admin_canvas_top">#FFFAFBFD</color>
+    <color name="admin_surface">#FFFFFFFF</color>
+    <color name="admin_surface_alt">#FFEEF2F8</color>
+    <color name="admin_surface_slate">#FFE6ECF4</color>
+
+    <!-- Chữ -->
+    <color name="admin_text">#FF101B2D</color>
+    <color name="admin_text_muted">#FF4A5A72</color>
+    <color name="admin_text_dim">#FF7C8CA3</color>
+    <color name="admin_text_faint">#FF9AA8BC</color>
+    <color name="admin_text_on_dark">#FFF6F9FD</color>
+    <color name="admin_text_on_dark_muted">#FFA8BACF</color>
+
+    <!-- Thương hiệu -->
+    <color name="admin_primary">#FF16283F</color>
+    <color name="admin_primary_dark">#FF0C1928</color>
+    <color name="admin_primary_mid">#FF1E3A57</color>
+    <color name="admin_primary_soft">#FFE8EEF7</color>
+    <color name="admin_primary_line">#FFC9D6E6</color>
+    <color name="admin_accent">#FF0E7C86</color>
+    <color name="admin_accent_dark">#FF0A5F67</color>
+    <color name="admin_accent_soft">#FFDFF2F2</color>
+    <color name="admin_accent_bright">#FF22D3EE</color>
+
+    <!-- Hero tối -->
+    <color name="admin_hero_start">#FF08131F</color>
+    <color name="admin_hero_mid">#FF102639</color>
+    <color name="admin_hero_end">#FF1B4055</color>
+    <color name="admin_hero_line">#22FFFFFF</color>
+    <color name="admin_hero_glow">#3314B8A6</color>
+
+    <!-- Viền / đường kẻ -->
+    <color name="admin_border">#FFE2E8F2</color>
+    <color name="admin_border_strong">#FFCFD9E7</color>
+    <color name="admin_divider">#FFEDF1F8</color>
+
+    <!-- Trạng thái -->
+    <color name="admin_success">#FF0E9F6E</color>
+    <color name="admin_success_soft">#FFE3F7EF</color>
+    <color name="admin_success_text">#FF046C4E</color>
+    <color name="admin_warning">#FFE8A317</color>
+    <color name="admin_warning_soft">#FFFDF3E1</color>
+    <color name="admin_warning_text">#FF92500B</color>
+    <color name="admin_danger">#FFDC2626</color>
+    <color name="admin_danger_soft">#FFFDEAEA</color>
+    <color name="admin_danger_text">#FF991B1B</color>
+    <color name="admin_info">#FF2563EB</color>
+    <color name="admin_info_soft">#FFE8EFFE</color>
+    <color name="admin_info_text">#FF1D4ED8</color>
+    <color name="admin_neutral_soft">#FFEDF1F7</color>
+    <color name="admin_neutral_text">#FF4A5A72</color>
+
+    <!-- Ô icon mềm -->
+    <color name="admin_tile_teal">#FFE2F4F3</color>
+    <color name="admin_tile_amber">#FFFDF1DD</color>
+    <color name="admin_tile_red">#FFFDEAEA</color>
+    <color name="admin_tile_navy">#FFE8EEF7</color>
+    <color name="admin_tile_violet">#FFF0ECFC</color>
+    <color name="admin_violet">#FF5B4BC4</color>
+
+    <!-- Ảnh bìa sự kiện (gradient theo danh mục) -->
+    <color name="admin_cover_navy_start">#FF0F2338</color>
+    <color name="admin_cover_navy_end">#FF2B4E6E</color>
+    <color name="admin_cover_teal_start">#FF0B3B3E</color>
+    <color name="admin_cover_teal_end">#FF12727A</color>
+    <color name="admin_cover_violet_start">#FF2A1B4D</color>
+    <color name="admin_cover_violet_end">#FF6D4BC4</color>
+    <color name="admin_cover_amber_start">#FF4A2A0B</color>
+    <color name="admin_cover_amber_end">#FFC98A2B</color>
+
+    <!-- Biểu đồ -->
+    <color name="admin_chart_grid">#FFE7EDF6</color>
+    <color name="admin_chart_bar">#FFDCE6F2</color>
+    <color name="admin_chart_bar_active">#FF16283F</color>
+    <color name="admin_chart_bar_accent">#FF0E7C86</color>
+
+    <!-- Khác -->
+    <color name="admin_ripple">#1416283F</color>
+    <color name="admin_white_12">#1FFFFFFF</color>
+    <color name="admin_white_20">#33FFFFFF</color>
+    <color name="admin_white_70">#B3FFFFFF</color>
+    <color name="admin_scrim">#66071019</color>
+
+    <!-- Menu điều hướng bên trái -->
+    <color name="admin_drawer_start">#FF0B1624</color>
+    <color name="admin_drawer_end">#FF152A3F</color>
+    <color name="admin_drawer_selected">#FF1B3147</color>
+    <color name="admin_drawer_line">#1FFFFFFF</color>
+    <color name="admin_drawer_text">#FFE8EFF8</color>
+    <color name="admin_drawer_muted">#FF93A7BF</color>
+    <color name="admin_drawer_faint">#FF64788F</color>
+    <color name="admin_drawer_badge">#FF173B45</color>
+    <color name="admin_drawer_badge_text">#FF7FE3E8</color>
+</resources>

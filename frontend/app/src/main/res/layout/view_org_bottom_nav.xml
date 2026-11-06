@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <View
+        android:id="@+id/navPill"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_org_nav_active"
+        android:outlineProvider="background" />
+
+    <LinearLayout
+        android:id="@+id/navItems"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="6dp">
+
+        <LinearLayout
+            android:id="@+id/tabOrgDashboard"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/org_tab_dashboard"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iconOrgDashboard"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_org_dashboard"
+                android:tint="@color/org_text_dim" />
+
+            <TextView
+                android:id="@+id/labelOrgDashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:singleLine="true"
+                android:shadowColor="#CCFFFFFF"
+                android:shadowRadius="2"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:text="@string/org_tab_dashboard"
+                android:textColor="@color/org_text_dim"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabOrgEvents"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/org_tab_events"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iconOrgEvents"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_user_calendar"
+                android:tint="@color/org_text_dim" />
+
+            <TextView
+                android:id="@+id/labelOrgEvents"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:singleLine="true"
+                android:shadowColor="#CCFFFFFF"
+                android:shadowRadius="2"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:text="@string/org_tab_events"
+                android:textColor="@color/org_text_dim"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabOrgCheckin"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/org_tab_checkin"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/checkinFab"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_org_checkin_fab"
+                android:elevation="4dp">
+
+                <ImageView
+                    android:id="@+id/iconOrgCheckin"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_org_checkin_scan"
+                    android:tint="@color/white" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/labelOrgCheckin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:singleLine="true"
+                android:shadowColor="#CCFFFFFF"
+                android:shadowRadius="2"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:text="@string/org_tab_checkin"
+                android:textColor="@color/org_primary_dark"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabOrgOrders"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/org_tab_orders"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iconOrgOrders"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_org_receipt"
+                android:tint="@color/org_text_dim" />
+
+            <TextView
+                android:id="@+id/labelOrgOrders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:singleLine="true"
+                android:shadowColor="#CCFFFFFF"
+                android:shadowRadius="2"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:text="@string/org_tab_orders"
+                android:textColor="@color/org_text_dim"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabOrgSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/org_tab_settings"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iconOrgSettings"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_org_settings"
+                android:tint="@color/org_text_dim" />
+
+            <TextView
+                android:id="@+id/labelOrgSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:singleLine="true"
+                android:shadowColor="#CCFFFFFF"
+                android:shadowRadius="2"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:text="@string/org_tab_settings"
+                android:textColor="@color/org_text_dim"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</merge>

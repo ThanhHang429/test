@@ -1,16 +1,34 @@
-﻿spring:
+spring:
   application:
     name: event-platform-backend
+
+  # Spring Boot KHÔNG tự đọc file .env. Nạp nó như một file properties
+  # (.env có định dạng KEY=VALUE trùng với .properties nên dùng loader [.properties]).
+  # "optional:" => không lỗi khi thiếu file (prod dùng biến môi trường thật).
+  # Biến môi trường của OS vẫn có độ ưu tiên cao hơn giá trị trong .env.
+  # Lưu ý: file .env phải là UTF-8 KHÔNG có BOM, nếu không key đầu tiên sẽ bị hỏng.
+  config:
+    import:
+      - optional:file:./.env[.properties]
+      - optional:file:../.env[.properties]
+
   profiles:
-    active: 
+    # Chạy local mặc định dùng profile dev; prod đặt SPRING_PROFILES_ACTIVE=prod
+    default: dev
+
   jpa:
     hibernate:
+      # Schema do nhóm quản lý trực tiếp trên MySQL; app KHÔNG tự sửa cấu trúc bảng.
+      # dev/test dùng "validate" để phát hiện sớm lệch mapping (validate không ALTER gì).
       ddl-auto: validate
     open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+        # DATETIME(3) lưu theo UTC (SRS 2.4: lưu UTC, hiển thị UTC+7 ở client)
+        jdbc:
+          time_zone: UTC
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -18,12 +36,82 @@
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
+  datasource:
+    url: "${DB_URL:jdbc:mysql://localhost:3306/event_platform?useSSL=true&requireSSL=true&verifyServerCertificate=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=utf-8}"
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
 
 server:
-  port: 
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+# Cấu hình riêng của ứng dụng
+app:
+  jwt:
+    # Prod BẮT BUỘC set JWT_SECRET thật (>= 32 byte). Giá trị dưới chỉ dùng cho dev.
+    secret: ${JWT_SECRET:dev-insecure-secret-key-change-me-32bytes-min}
+    ttl: ${JWT_TTL:PT24H}
+  security:
+    # Cho phép header X-User-Id thay cho Bearer token. CHỈ bật ở profile dev.
+    dev-header-enabled: ${DEV_HEADER_ENABLED:false}
+  seed:
+    # Tạo dữ liệu mẫu khi bảng users rỗng. CHỈ bật ở profile dev.
+    enabled: ${APP_SEED_ENABLED:false}
+  ai:
+    # mock | gemini | deepseek | openrouter | openai | openai-compatible
+    # mock = provider giả lập tất định (không cần API key), dùng cho dev/test.
+    provider: ${AI_PROVIDER:mock}
+    # Chỉ đặt qua biến môi trường, không commit giá trị thật (CF-NFR-01).
+    api-key: ${AI_API_KEY:}
+    # Bỏ trống để dùng địa chỉ mặc định của từng provider.
+    base-url: ${AI_BASE_URL:}
+    # Bỏ trống để dùng model mặc định của từng provider.
+    model: ${AI_MODEL:}
+    # Timeout kết nối/đọc của HTTP client (SRS 5.1: kết nối 3 giây).
+    connect-timeout-seconds: ${AI_CONNECT_TIMEOUT_SECONDS:3}
+    read-timeout-seconds: ${AI_READ_TIMEOUT_SECONDS:30}
+    # Ngân sách/giới hạn theo tác vụ (SRS 5.1)
+    daily-budget-usd: ${AI_DAILY_BUDGET_USD:2.0}
+    # Timeout cứng cho một lời gọi AI, theo từng tác vụ (SRS 5.1)
+    timeout:
+      recommend-seconds: ${AI_TIMEOUT_RECOMMEND_SECONDS:5}
+      chat-seconds: ${AI_TIMEOUT_CHAT_SECONDS:20}
+      description-seconds: ${AI_TIMEOUT_DESCRIPTION_SECONDS:20}
+      analytics-seconds: ${AI_TIMEOUT_ANALYTICS_SECONDS:20}
+      moderation-seconds: ${AI_TIMEOUT_MODERATION_SECONDS:15}
+    # Đơn giá ước tính để tính chi phí ở màn hình giám sát A20
+    cost-per-1k-tokens: ${AI_COST_PER_1K_TOKENS:0.0005}
+  payment:
+    webhook-secret: ${PAYMENT_WEBHOOK_SECRET:}
+    # Xác nhận thanh toán mô phỏng (không qua cổng thật). CHỈ bật ở dev/test.
+    simulated-confirm-enabled: ${PAYMENT_SIMULATED_CONFIRM:false}
+    # Thông tin nhận chuyển khoản hiển thị ở màn QR.
+    bank-code: ${PAYMENT_BANK_CODE:}
+    bank-account: ${PAYMENT_BANK_ACCOUNT:}
+    account-name: ${PAYMENT_ACCOUNT_NAME:}
+  ticketing:
+    # Thời gian giữ chỗ của một đơn chưa thanh toán (phút).
+    payment-window-minutes: ${TICKETING_PAYMENT_WINDOW_MINUTES:15}
+    # Khoá ký mã QR soát vé; bỏ trống thì dùng app.jwt.secret.
+    qr-secret: ${QR_TOKEN_SECRET:}
+  fcm:
+    credentials-path: ${FCM_CREDENTIALS_PATH:}
 
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+  default-produces-media-type: application/json

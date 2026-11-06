@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nhịp 4/8dp cho khu người dùng -->
+    <dimen name="user_gutter">20dp</dimen>
+    <dimen name="user_gap">12dp</dimen>
+    <dimen name="user_section_gap">24dp</dimen>
+
+    <dimen name="user_radius_card">20dp</dimen>
+    <dimen name="user_radius_control">14dp</dimen>
+    <dimen name="user_radius_pill">999dp</dimen>
+
+    <dimen name="user_control_height">52dp</dimen>
+    <dimen name="user_touch">48dp</dimen>
+    <dimen name="user_top_bar_height">64dp</dimen>
+    <dimen name="user_nav_height">68dp</dimen>
+
+    <dimen name="user_cover_height">168dp</dimen>
+    <dimen name="user_cover_list">104dp</dimen>
+    <dimen name="user_featured_width">300dp</dimen>
+    <dimen name="user_avatar_lg">64dp</dimen>
+</resources>
