@@ -18,11 +18,11 @@
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_org_circle_button"
             android:contentDescription="@string/org_cd_back"
-            android:padding="10dp"
+            android:padding="13dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_auth_back"
             android:tint="@color/org_text" />
@@ -40,11 +40,11 @@
 
         <ImageButton
             android:id="@+id/btnShareEvent"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_org_circle_button"
             android:contentDescription="@string/org_cd_share"
-            android:padding="10dp"
+            android:padding="13dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_user_share"
             android:tint="@color/org_text" />
@@ -407,6 +407,19 @@
                         app:trackCornerRadius="3dp"
                         app:trackStopIndicatorSize="0dp"
                         app:trackThickness="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvFinanceBreakdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_org_card_soft"
+                        android:fontFamily="@font/be_vietnam_pro"
+                        android:lineSpacingExtra="2dp"
+                        android:padding="10dp"
+                        android:textColor="@color/org_text_muted"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -440,6 +453,21 @@
                         android:text="@string/org_ticket_types_sub"
                         android:textAppearance="@style/TextAppearance.EventApp.Org.Caption" />
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddTicketType"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:fontFamily="@font/plus_jakarta_sans"
+                    android:paddingStart="12dp"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="0dp"
+                    android:text="+ Thêm vé"
+                    android:textColor="@color/org_primary_dark"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
@@ -473,15 +501,53 @@
                     android:padding="14dp">
 
                     <TextView
+                        android:id="@+id/btnManageCoupons"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_org_btn_secondary"
+                        android:drawableStart="@drawable/ic_user_ticket"
+                        android:drawablePadding="7dp"
+                        android:drawableTint="@color/org_primary_dark"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="Quản lý mã giảm giá (FR-O18)"
+                        android:textColor="@color/org_primary_dark"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnEventRefunds"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_org_btn_secondary"
+                        android:drawableStart="@drawable/ic_user_wallet"
+                        android:drawablePadding="7dp"
+                        android:drawableTint="@color/org_primary_dark"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="Yêu cầu hoàn tiền sự kiện (FR-O25)"
+                        android:textColor="@color/org_primary_dark"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
                         android:id="@+id/btnBroadcast"
                         android:layout_width="match_parent"
-                        android:layout_height="44dp"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/bg_org_btn_secondary"
                         android:drawableStart="@drawable/ic_user_bell"
                         android:drawablePadding="7dp"
                         android:drawableTint="@color/org_primary_dark"
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
                         android:text="@string/org_crowd_title"
                         android:textColor="@color/org_primary_dark"
                         android:textSize="13sp"
@@ -490,7 +556,7 @@
                     <TextView
                         android:id="@+id/btnCancelEvent"
                         android:layout_width="match_parent"
-                        android:layout_height="44dp"
+                        android:layout_height="48dp"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_org_btn_danger"
                         android:drawableStart="@drawable/ic_ds_warning"
@@ -498,6 +564,8 @@
                         android:drawableTint="@color/org_danger_text"
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
                         android:text="@string/org_cancel_event"
                         android:textColor="@color/org_danger_text"
                         android:textSize="13sp"

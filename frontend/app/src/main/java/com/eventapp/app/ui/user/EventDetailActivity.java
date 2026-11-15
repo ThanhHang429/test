@@ -172,7 +172,7 @@ public class EventDetailActivity extends AppCompatActivity {
         binding.tvReviewSummary.setText(event.reviewCount <= 0
                 ? getString(R.string.user_reviews_none)
                 : String.format(Locale.US, "%.1f", event.rating).replace('.', ',')
-                + " · " + getString(R.string.user_reviews_total, event.reviewCount));
+                  + " · " + getString(R.string.user_reviews_total, event.reviewCount));
     }
 
     private void buildTicketTypes() {
@@ -292,15 +292,17 @@ public class EventDetailActivity extends AppCompatActivity {
             SnackPill.show(binding.getRoot(), getString(R.string.user_select_ticket_first), dp(96));
             return;
         }
+        long[] ticketTypeIds = new long[event.ticketTypes.size()];
         String[] names = new String[event.ticketTypes.size()];
         long[] prices = new long[event.ticketTypes.size()];
         for (int i = 0; i < event.ticketTypes.size(); i++) {
+            ticketTypeIds[i] = event.ticketTypes.get(i).id;
             names[i] = event.ticketTypes.get(i).name;
             prices[i] = event.ticketTypes.get(i).price;
         }
         CheckoutActivity.start(this, event.id, event.title, venue(), event.city,
                 event.startAt, event.endAt, event.category.ordinal(),
-                names, prices, quantities);
+                ticketTypeIds, names, prices, quantities);
     }
 
     private void toggleSave() {

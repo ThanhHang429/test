@@ -80,17 +80,19 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tvFeeLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/plus_jakarta_sans"
                         android:letterSpacing="0.12"
-                        android:text="@string/admin_fin_fee_label"
+                        android:text="PHÍ NỀN TẢNG TOÀN HỆ THỐNG"
                         android:textColor="#FF8FD9DC"
                         android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvFeePeriodPill"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_admin_pill_glass"
@@ -100,25 +102,27 @@
                         android:paddingTop="4dp"
                         android:paddingEnd="9dp"
                         android:paddingBottom="4dp"
-                        android:text="ĐÃ CHỐT 05/11"
+                        android:text="ĐỐI SOÁT THỰC"
                         android:textColor="@color/admin_text_on_dark_muted"
                         android:textSize="10sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tvFeeValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@string/admin_fin_fee_value"
+                    android:text="0 đ"
                     android:textAppearance="@style/TextAppearance.EventApp.Admin.MetricDark" />
 
                 <TextView
+                    android:id="@+id/tvFeeMeta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:fontFamily="@font/be_vietnam_pro"
-                    android:text="@string/admin_fin_fee_meta"
+                    android:text="Đang tải báo cáo tài chính..."
                     android:textColor="@color/admin_text_on_dark_muted"
                     android:textSize="13sp" />
 
@@ -151,11 +155,12 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvCollectedValue"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:fontFamily="@font/plus_jakarta_sans"
-                            android:text="@string/admin_fin_collected_value"
+                            android:text="0 đ"
                             android:textColor="@color/admin_text_on_dark"
                             android:textSize="17sp"
                             android:textStyle="bold" />
@@ -185,11 +190,12 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvOutstandingValue"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
                             android:fontFamily="@font/plus_jakarta_sans"
-                            android:text="@string/admin_fin_outstanding_value"
+                            android:text="0 đ"
                             android:textColor="@color/admin_text_on_dark"
                             android:textSize="17sp"
                             android:textStyle="bold" />
@@ -226,13 +232,15 @@
                     android:textAppearance="@style/TextAppearance.EventApp.Admin.CardTitle" />
 
                 <TextView
+                    android:id="@+id/btnEditFee"
                     android:layout_width="wrap_content"
-                    android:layout_height="34dp"
+                    android:layout_height="48dp"
                     android:background="@drawable/bg_admin_pill_neutral"
                     android:fontFamily="@font/plus_jakarta_sans"
                     android:gravity="center"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
+                    android:minWidth="88dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
                     android:text="Chỉnh sửa"
                     android:textColor="@color/admin_text_muted"
                     android:textSize="12sp"
@@ -255,10 +263,11 @@
                     android:textSize="15sp" />
 
                 <TextView
+                    android:id="@+id/tvPlatformFeeRate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/plus_jakarta_sans"
-                    android:text="@string/admin_fin_fee_platform_value"
+                    android:text="—"
                     android:textColor="@color/admin_text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -294,10 +303,11 @@
                     android:textSize="15sp" />
 
                 <TextView
+                    android:id="@+id/tvFeeCycleValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/plus_jakarta_sans"
-                    android:text="@string/admin_fin_fee_cycle_value"
+                    android:text="—"
                     android:textColor="@color/admin_text"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -324,10 +334,11 @@
                     android:textSize="15sp" />
 
                 <TextView
+                    android:id="@+id/tvFeeMethodValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/plus_jakarta_sans"
-                    android:text="@string/admin_fin_fee_method_value"
+                    android:text="Khấu trừ tự động theo đơn"
                     android:textColor="@color/admin_text"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -375,11 +386,12 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvGmvValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/plus_jakarta_sans"
-                android:text="@string/admin_fin_gmv_value"
+                android:text="0 đ"
                 android:textColor="@color/admin_text"
                 android:textSize="26sp"
                 android:textStyle="bold" />
@@ -389,7 +401,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:fontFamily="@font/be_vietnam_pro"
-                android:text="@string/admin_fin_gmv_note"
+                android:text="Tổng giá trị đơn hàng đã thanh toán ghi nhận trên hệ thống."
                 android:textColor="@color/admin_text_dim"
                 android:textSize="13sp" />
 
@@ -422,11 +434,12 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvGmvEventsValue"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/plus_jakarta_sans"
-                        android:text="@string/admin_fin_gmv_events_value"
+                        android:text="0"
                         android:textColor="@color/admin_text"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -449,11 +462,12 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvGmvOrgsValue"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/plus_jakarta_sans"
-                        android:text="@string/admin_fin_gmv_orgs_value"
+                        android:text="0"
                         android:textColor="@color/admin_text"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -473,7 +487,7 @@
             android:paddingStart="14dp"
             android:paddingTop="14dp"
             android:paddingEnd="14dp"
-            android:paddingBottom="4dp">
+            android:paddingBottom="12dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -482,212 +496,72 @@
                 android:textAppearance="@style/TextAppearance.EventApp.Admin.CardTitle" />
 
             <LinearLayout
+                android:id="@+id/reconContainer"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical" />
 
-                <FrameLayout
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_admin_icon_navy">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/plus_jakarta_sans"
-                        android:text="NV"
-                        android:textColor="@color/admin_primary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/plus_jakarta_sans"
-                        android:maxLines="1"
-                        android:text="@string/admin_fin_recon_1"
-                        android:textColor="@color/admin_text"
-                        android:textSize="14.5sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:fontFamily="@font/be_vietnam_pro"
-                        android:text="@string/admin_fin_recon_1_meta"
-                        android:textColor="@color/admin_text_dim"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_admin_pill_success"
-                    android:fontFamily="@font/plus_jakarta_sans"
-                    android:letterSpacing="0.04"
-                    android:paddingStart="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="3dp"
-                    android:text="@string/admin_fin_recon_paid"
-                    android:textColor="@color/admin_success_text"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <View
+            <TextView
+                android:id="@+id/tvReconEmpty"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/admin_divider" />
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp"
+                android:paddingBottom="8dp"
+                android:fontFamily="@font/be_vietnam_pro"
+                android:text="Chưa có dữ liệu đối soát từ nhà tổ chức."
+                android:textColor="@color/admin_text_dim"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- Quản lý và xử lý hoàn tiền (FR-A12) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/admin_gutter"
+            android:layout_marginTop="@dimen/admin_section_gap"
+            android:layout_marginEnd="@dimen/admin_gutter"
+            android:background="@drawable/bg_admin_card"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <FrameLayout
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_admin_icon_teal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/plus_jakarta_sans"
-                        android:text="SL"
-                        android:textColor="@color/admin_accent_dark"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </FrameLayout>
-
-                <LinearLayout
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/plus_jakarta_sans"
-                        android:maxLines="1"
-                        android:text="@string/admin_fin_recon_2"
-                        android:textColor="@color/admin_text"
-                        android:textSize="14.5sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:fontFamily="@font/be_vietnam_pro"
-                        android:text="@string/admin_fin_recon_2_meta"
-                        android:textColor="@color/admin_text_dim"
-                        android:textSize="12sp" />
-                </LinearLayout>
+                    android:text="Xử lý hoàn tiền (FR-A12)"
+                    android:textAppearance="@style/TextAppearance.EventApp.Admin.CardTitle" />
 
                 <TextView
+                    android:id="@+id/btnOpenRefunds"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_admin_pill_success"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_admin_pill_neutral"
                     android:fontFamily="@font/plus_jakarta_sans"
-                    android:letterSpacing="0.04"
-                    android:paddingStart="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="3dp"
-                    android:text="@string/admin_fin_recon_paid"
-                    android:textColor="@color/admin_success_text"
-                    android:textSize="10sp"
+                    android:gravity="center"
+                    android:minWidth="104dp"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="Xem yêu cầu"
+                    android:textColor="@color/admin_accent_dark"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <View
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/admin_divider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_admin_icon_violet">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/plus_jakarta_sans"
-                        android:text="CA"
-                        android:textColor="@color/admin_violet"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/plus_jakarta_sans"
-                        android:maxLines="1"
-                        android:text="@string/admin_fin_recon_3"
-                        android:textColor="@color/admin_text"
-                        android:textSize="14.5sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:fontFamily="@font/be_vietnam_pro"
-                        android:text="@string/admin_fin_recon_3_meta"
-                        android:textColor="@color/admin_text_dim"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_admin_pill_warning"
-                    android:fontFamily="@font/plus_jakarta_sans"
-                    android:letterSpacing="0.04"
-                    android:paddingStart="8dp"
-                    android:paddingTop="3dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="3dp"
-                    android:text="@string/admin_fin_recon_pending"
-                    android:textColor="@color/admin_warning_text"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/be_vietnam_pro"
+                android:text="Kiểm tra lý do, duyệt hoàn tiền vào Ví ETicket hoặc từ chối theo chính sách."
+                android:textColor="@color/admin_text_muted"
+                android:textSize="13sp" />
         </LinearLayout>
 
         <!-- Tra cứu hoá đơn -->
@@ -760,22 +634,36 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/tvWebhookStatusValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/plus_jakarta_sans"
-                    android:text="@string/admin_fin_webhook_value"
+                    android:text="Đang kiểm tra..."
                     android:textColor="@color/admin_success_text"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/btnViewWebhooks"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_admin_pill_neutral"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:gravity="center"
+                android:text="Xem nhật ký Webhook (FR-A11)"
+                android:textColor="@color/admin_accent_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/be_vietnam_pro"
                 android:lineSpacingExtra="1dp"
-                android:text="@string/admin_fin_note"
+                android:text="Số liệu thống kê trực tiếp từ giao dịch thanh toán, hoàn tiền về Ví ETicket và nhật ký Webhook."
                 android:textColor="@color/admin_text_faint"
                 android:textSize="12sp" />
         </LinearLayout>

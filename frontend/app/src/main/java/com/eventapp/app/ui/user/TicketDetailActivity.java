@@ -7,29 +7,30 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.CalendarContract;
-import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.eventapp.app.R;
 import com.eventapp.app.databinding.ActivityUserTicketDetailBinding;
 import com.eventapp.app.ui.common.view.SnackPill;
-import com.eventapp.app.ui.user.viewmodel.TicketDetailViewModel;
 import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.util.UserFmt;
+import com.eventapp.app.ui.user.viewmodel.TicketDetailViewModel;
 
-/** Chi tiết vé kèm mã QR động (mô phỏng) dùng để check-in. */
+/** Chi tiết vé kèm mã QR check-in thật từ Backend (`qrToken`) khớp với máy quét Ban tổ chức. */
 public class TicketDetailActivity extends AppCompatActivity {
 
+    private static final String EXTRA_TICKET_ID = "ticket_id";
     private static final String EXTRA_CODE = "ticket_code";
 
     private ActivityUserTicketDetailBinding binding;
@@ -42,7 +43,11 @@ public class TicketDetailActivity extends AppCompatActivity {
     private final Runnable ticker = new Runnable() {
         @Override
         public void run() {
-            if (binding == null) {
+            if (binding == null || ticket == null) {
+                return;
+            }
+            // Chỉ xoay vòng mã demo khi không có qrToken thật từ server
+            if (ticket.qrToken != null && !ticket.qrToken.isEmpty()) {
                 return;
             }
             seconds--;
@@ -57,7 +62,12 @@ public class TicketDetailActivity extends AppCompatActivity {
     };
 
     public static void start(Context context, String code) {
+        start(context, -1L, code);
+    }
+
+    public static void start(Context context, long ticketId, @Nullable String code) {
         Intent intent = new Intent(context, TicketDetailActivity.class);
+        intent.putExtra(EXTRA_TICKET_ID, ticketId);
         intent.putExtra(EXTRA_CODE, code);
         context.startActivity(intent);
     }
@@ -75,20 +85,31 @@ public class TicketDetailActivity extends AppCompatActivity {
         controller.setAppearanceLightStatusBars(true);
         controller.setAppearanceLightNavigationBars(true);
 
-        viewModel = new ViewModelProvider(this).get(TicketDetailViewModel.class);
-        ticket = viewModel.ticket(getIntent().getStringExtra(EXTRA_CODE));
-        if (ticket == null) {
-            finish();
-            return;
-        }
-
         applyInsets();
-        bindTicket();
 
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnShare.setOnClickListener(v -> share());
         binding.btnShareEvent.setOnClickListener(v -> share());
         binding.btnCalendar.setOnClickListener(v -> addToCalendar());
+
+        viewModel = new ViewModelProvider(this).get(TicketDetailViewModel.class);
+        viewModel.getTicket().observe(this, data -> {
+            if (data != null) {
+                ticket = data;
+                bindTicket();
+                restartTickerIfNeeded();
+            }
+        });
+        viewModel.getError().observe(this, err -> {
+            if (err != null) {
+                Toast.makeText(this, err, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+
+        long ticketId = getIntent().getLongExtra(EXTRA_TICKET_ID, -1L);
+        String code = getIntent().getStringExtra(EXTRA_CODE);
+        viewModel.load(ticketId, code);
     }
 
     private void applyInsets() {
@@ -105,6 +126,9 @@ public class TicketDetailActivity extends AppCompatActivity {
     }
 
     private void bindTicket() {
+        if (ticket == null) {
+            return;
+        }
         binding.cover.setBackgroundResource(ticket.coverRes());
         binding.ivIcon.setImageResource(ticket.iconRes());
         binding.tvDate.setText(UserFmt.dateShort(ticket.startAt) + " • "
@@ -116,7 +140,10 @@ public class TicketDetailActivity extends AppCompatActivity {
         binding.tvQuantity.setText(String.valueOf(ticket.quantity));
         binding.tvTime.setText(UserFmt.dateLong(ticket.startAt) + "\n"
                 + UserFmt.time(ticket.startAt) + " – " + UserFmt.time(ticket.endAt));
-        binding.tvFullVenue.setText(ticket.venue + ", " + ticket.city);
+        binding.tvFullVenue.setText(ticket.city != null && !ticket.city.isEmpty()
+                ? ticket.venue + ", " + ticket.city : ticket.venue);
+
+        boolean hasServerQr = ticket.qrToken != null && !ticket.qrToken.isEmpty();
 
         switch (ticket.status) {
             case USED:
@@ -125,6 +152,7 @@ public class TicketDetailActivity extends AppCompatActivity {
                 binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.user_text_muted));
                 binding.tvNote.setText(R.string.user_ticket_used_note);
                 binding.tvRefresh.setText(R.string.user_ticket_used_note);
+                binding.qrCode.setPayload(hasServerQr ? ticket.qrToken : ticket.code);
                 binding.qrCode.setAlpha(0.25f);
                 binding.btnCalendar.setEnabled(false);
                 binding.btnCalendar.setAlpha(0.5f);
@@ -135,6 +163,7 @@ public class TicketDetailActivity extends AppCompatActivity {
                 binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.user_danger_text));
                 binding.tvNote.setText(R.string.user_ticket_cancelled_note);
                 binding.tvRefresh.setText(R.string.user_ticket_cancelled_note);
+                binding.qrCode.setPayload(hasServerQr ? ticket.qrToken : ticket.code);
                 binding.qrCode.setAlpha(0.25f);
                 binding.btnCalendar.setEnabled(false);
                 binding.btnCalendar.setAlpha(0.5f);
@@ -143,13 +172,29 @@ public class TicketDetailActivity extends AppCompatActivity {
                 binding.tvStatus.setText(R.string.user_ticket_ready);
                 binding.tvStatus.setBackgroundResource(R.drawable.bg_user_badge_success);
                 binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.user_success_text));
-                binding.tvRefresh.setText(getString(R.string.user_ticket_refresh, seconds));
-                binding.qrCode.setPayload(ticket.code + "#0");
+                binding.qrCode.setAlpha(1.0f);
+                if (hasServerQr) {
+                    binding.tvRefresh.setText("Mã QR xác thực check-in (Đồng bộ hệ thống)");
+                    binding.qrCode.setPayload(ticket.qrToken);
+                } else {
+                    binding.tvRefresh.setText(getString(R.string.user_ticket_refresh, seconds));
+                    binding.qrCode.setPayload(ticket.code + "#0");
+                }
                 break;
         }
     }
 
+    private void restartTickerIfNeeded() {
+        handler.removeCallbacks(ticker);
+        if (ticket != null
+                && ticket.status == TicketUiModel.Status.UPCOMING
+                && (ticket.qrToken == null || ticket.qrToken.isEmpty())) {
+            handler.postDelayed(ticker, 1000L);
+        }
+    }
+
     private void addToCalendar() {
+        if (ticket == null) return;
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.Events.TITLE, ticket.eventTitle)
@@ -166,6 +211,7 @@ public class TicketDetailActivity extends AppCompatActivity {
     }
 
     private void share() {
+        if (ticket == null) return;
         Intent send = new Intent(Intent.ACTION_SEND);
         send.setType("text/plain");
         send.putExtra(Intent.EXTRA_SUBJECT, ticket.eventTitle);
@@ -177,10 +223,7 @@ public class TicketDetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (ticket != null && ticket.status == TicketUiModel.Status.UPCOMING) {
-            handler.removeCallbacks(ticker);
-            handler.postDelayed(ticker, 1000L);
-        }
+        restartTickerIfNeeded();
     }
 
     @Override

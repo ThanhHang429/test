@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_top">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Thanh kéo -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_sheet_handle" />
+
+        <TextView
+            android:id="@+id/tvCardDialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/be_vietnam_pro_bold"
+            android:gravity="center"
+            android:text="Thanh toán Thẻ Quốc Tế"
+            android:textColor="@color/user_text"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:gravity="center"
+            android:text="Chọn thẻ đã lưu hoặc thêm thẻ thanh toán mới"
+            android:textColor="@color/user_text_muted"
+            android:textSize="12sp" />
+
+        <!-- Danh sách thẻ đã lưu -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/plus_jakarta_sans_medium"
+            android:text="Thẻ thanh toán của bạn"
+            android:textColor="@color/user_text"
+            android:textSize="13sp" />
+
+        <RadioGroup
+            android:id="@+id/rgCardSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <!-- Thẻ 1: Visa -->
+            <RadioButton
+                android:id="@+id/rbCardVisa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:paddingVertical="8dp"
+                android:text="💳 Visa Debit  •••• •••• •••• 4242  (12/28)"
+                android:textColor="@color/user_text"
+                android:textSize="14sp" />
+
+            <!-- Thẻ 2: Mastercard -->
+            <RadioButton
+                android:id="@+id/rbCardMastercard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:paddingVertical="8dp"
+                android:text="💳 Mastercard  •••• •••• •••• 8888  (10/27)"
+                android:textColor="@color/user_text"
+                android:textSize="14sp" />
+
+            <!-- Tùy chọn: Thêm thẻ mới -->
+            <RadioButton
+                android:id="@+id/rbNewCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:paddingVertical="8dp"
+                android:text="➕ Thêm thẻ quốc tế khác..."
+                android:textColor="@color/user_primary"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <!-- Khung nhập thẻ mới (hiện lên khi chọn rbNewCard) -->
+        <LinearLayout
+            android:id="@+id/layoutNewCardFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_auth_input"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_medium"
+                android:text="Số thẻ tín dụng / ghi nợ"
+                android:textColor="@color/user_text"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/etCardNumber"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_user_card_16"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:hint="Nhập 16 số trên thẻ"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:maxLength="19"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/user_text"
+                android:textSize="14sp" />
+
+            <!-- Hàng Hạn dùng & CVV -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_medium"
+                        android:text="Hạn dùng (MM/YY)"
+                        android:textColor="@color/user_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/etExpiry"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/bg_user_card_16"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:gravity="center"
+                        android:hint="MM/YY"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:maxLength="5"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:textColor="@color/user_text"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_medium"
+                        android:text="Mã bảo mật CVV"
+                        android:textColor="@color/user_text"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/etCvv"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/bg_user_card_16"
+                        android:fontFamily="@font/plus_jakarta_sans"
+                        android:gravity="center"
+                        android:hint="CVV"
+                        android:importantForAutofill="no"
+                        android:inputType="numberPassword"
+                        android:maxLength="4"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:textColor="@color/user_text"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="14dp"
+            android:visibility="gone" />
+
+        <!-- Nút Thanh toán -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitCard"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="18dp"
+            android:backgroundTint="@color/user_primary"
+            android:fontFamily="@font/be_vietnam_pro_bold"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:cornerRadius="12dp"
+            tools:text="Thanh toán 300.000 đ" />
+
+    </LinearLayout>
+</ScrollView>

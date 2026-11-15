@@ -19,15 +19,16 @@
             android:textAppearance="@style/TextAppearance.EventApp.Org.Headline" />
 
         <TextView
+            android:id="@+id/tvOrdersSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:text="@string/org_orders_sub"
+            android:text="Theo dõi đơn vé từ các sự kiện bạn tổ chức"
             android:textAppearance="@style/TextAppearance.EventApp.Org.Caption" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="52dp"
             android:layout_marginTop="14dp"
             android:background="@drawable/bg_org_search"
             android:gravity="center_vertical"
@@ -56,11 +57,11 @@
 
             <ImageButton
                 android:id="@+id/btnFilterOrder"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_org_btn_primary"
                 android:contentDescription="@string/org_cd_filter"
-                android:padding="9dp"
+                android:padding="13dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_user_tune"
                 android:tint="@color/white" />
@@ -122,11 +123,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvStatTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:fontFeatureSettings="tnum"
-                android:text="1.720"
+                android:text="0"
                 android:textColor="@color/org_text"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -155,11 +157,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvStatPaid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:fontFeatureSettings="tnum"
-                android:text="1.462"
+                android:text="0"
                 android:textColor="@color/org_success_text"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -188,11 +191,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvStatPending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:fontFeatureSettings="tnum"
-                android:text="18"
+                android:text="0"
                 android:textColor="@color/org_warning_text"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -221,11 +225,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvStatRefund"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans"
                 android:fontFeatureSettings="tnum"
-                android:text="03"
+                android:text="0"
                 android:textColor="@color/org_danger_text"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -264,8 +269,15 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="32dp"
-            android:text="@string/org_events_empty"
+            android:text="Chưa có đơn hàng nào phù hợp"
             android:textAppearance="@style/TextAppearance.EventApp.Org.Body"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progressOrders"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
             android:visibility="gone" />
     </FrameLayout>
 </LinearLayout>

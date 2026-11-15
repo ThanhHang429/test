@@ -8,6 +8,8 @@ public final class OrgOrder {
     public static final String FILTER_PENDING = "PENDING";
     public static final String FILTER_REFUND = "REFUND";
 
+    public final long orderId;
+    public final String rawStatus;
     public final String code;
     public final long amount;
     public final String filter;
@@ -23,6 +25,14 @@ public final class OrgOrder {
     public OrgOrder(String code, long amount, String filter, String statusLabel, int tone,
                     String buyer, String event, String ticketType, String time, String payment,
                     String contact) {
+        this(0L, filter, code, amount, filter, statusLabel, tone, buyer, event, ticketType, time, payment, contact);
+    }
+
+    public OrgOrder(long orderId, String rawStatus, String code, long amount, String filter,
+                    String statusLabel, int tone, String buyer, String event, String ticketType,
+                    String time, String payment, String contact) {
+        this.orderId = orderId;
+        this.rawStatus = rawStatus;
         this.code = code;
         this.amount = amount;
         this.filter = filter;

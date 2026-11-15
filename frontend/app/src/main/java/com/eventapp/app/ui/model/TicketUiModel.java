@@ -5,10 +5,8 @@ import androidx.annotation.DrawableRes;
 import com.eventapp.app.core.enums.EventCategory;
 
 /**
- * Model hiển thị cho "Vé của tôi" (FR-U14 + FR-U18).
- *
- * <p>Backend chưa mở API đơn hàng/vé nên dữ liệu hiện do {@code DemoContent} sinh ra, nhưng màn
- * hình chỉ làm việc với model này — khi có API chỉ cần thay nguồn dữ liệu.</p>
+ * Model hiển thị cho "Vé của tôi" (FR-U12, FR-U14, FR-U18).
+ * Đồng bộ trực tiếp từ API `/api/v1/tickets` (có fallback mẫu khi offline).
  */
 public class TicketUiModel {
 
@@ -25,8 +23,10 @@ public class TicketUiModel {
 
     public final long id;
     public final long eventId;
-    /** Mã vé in trên QR. */
+    /** Mã vé hiển thị trên màn hình (ví dụ TKT261114...). */
     public final String code;
+    /** Chuỗi QR thật từ Backend (`TicketingCodes.qrTokenFor`) dùng để máy quét Check-in. */
+    public final String qrToken;
     public final String eventTitle;
     public final String coverUrl;
     public final EventCategory category;
@@ -44,6 +44,7 @@ public class TicketUiModel {
         id = builder.id;
         eventId = builder.eventId;
         code = builder.code;
+        qrToken = builder.qrToken;
         eventTitle = builder.eventTitle;
         coverUrl = builder.coverUrl;
         category = builder.category;
@@ -76,6 +77,7 @@ public class TicketUiModel {
         private long id;
         private long eventId;
         private String code = "";
+        private String qrToken = "";
         private String eventTitle = "";
         private String coverUrl = "";
         private EventCategory category = EventCategory.OTHER;
@@ -101,6 +103,11 @@ public class TicketUiModel {
 
         public Builder code(String code) {
             this.code = code == null ? "" : code;
+            return this;
+        }
+
+        public Builder qrToken(String qrToken) {
+            this.qrToken = qrToken == null ? "" : qrToken;
             return this;
         }
 

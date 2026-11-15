@@ -2,7 +2,7 @@ package com.eventapp.app.data.remote.dto.payment;
 
 import java.math.BigDecimal;
 
-/** DTO thanh toán — khớp `PaymentDto` của backend. */
+/** DTO thanh toán — khớp `PaymentDto` của backend (có bổ sung trường thực tế tương thích ngược). */
 public final class PaymentDtos {
 
     private PaymentDtos() {
@@ -38,5 +38,10 @@ public final class PaymentDtos {
         public String expiresAt;
         public String initiatedAt;
         public String verifiedAt;
+
+        // 3 trường nullable bổ sung chuẩn Production (tương thích ngược với backend cũ)
+        public String accountName;
+        public String providerTransactionId;
+        public String failureMessage;
     }
 }

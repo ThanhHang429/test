@@ -23,7 +23,7 @@ android {
     buildTypes {
         debug {
             // Cleartext chỉ được phép ở debug: 10.0.2.2 = máy host từ emulator
-            buildConfigField "String", "BASE_URL", "\"http://10.0.2.2:8080/api/v1/\""
+            buildConfigField "String", "BASE_URL", "\"http://localhost:8080/api/v1/\""
         }
         release {
             minifyEnabled false

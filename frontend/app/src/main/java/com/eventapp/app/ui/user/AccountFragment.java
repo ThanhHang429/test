@@ -72,6 +72,8 @@ public class AccountFragment extends Fragment {
                 prefs.edit().putBoolean(KEY_EMAIL, checked).apply());
 
         binding.btnEditProfile.setOnClickListener(v -> comingSoon());
+        binding.rowWallet.setOnClickListener(v -> WalletActivity.start(requireContext()));
+        binding.rowOrders.setOnClickListener(v -> UserOrdersActivity.start(requireContext()));
         binding.rowSecurity.setOnClickListener(v -> comingSoon());
         binding.rowPrivacy.setOnClickListener(v -> comingSoon());
         binding.rowSupport.setOnClickListener(v -> comingSoon());
@@ -79,7 +81,7 @@ public class AccountFragment extends Fragment {
         binding.btnLogout.setOnClickListener(v -> confirmLogout());
 
         binding.colReviews.setOnClickListener(v -> MyReviewsActivity.start(requireContext()));
-        binding.tvStatTickets.setText(String.valueOf(viewModel.purchasedCount()));
+        binding.tvStatTickets.setText("0");
 
         observe();
         viewModel.load();
@@ -88,6 +90,11 @@ public class AccountFragment extends Fragment {
     private void observe() {
         viewModel.getCategories().observe(getViewLifecycleOwner(), data -> buildChips());
         viewModel.getSelectedCategories().observe(getViewLifecycleOwner(), data -> buildChips());
+        viewModel.getTicketCount().observe(getViewLifecycleOwner(), count -> {
+            if (binding != null) {
+                binding.tvStatTickets.setText(String.valueOf(count == null ? 0 : count));
+            }
+        });
         viewModel.getSavedCount().observe(getViewLifecycleOwner(), count -> {
             if (binding != null) {
                 binding.tvStatSaved.setText(String.valueOf(count == null ? 0L : count));

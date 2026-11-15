@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_top"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Thanh kéo -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_sheet_handle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/be_vietnam_pro_bold"
+        android:gravity="center"
+        android:text="Xác thực thanh toán Ví ETicket"
+        android:textColor="@color/user_text"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/be_vietnam_pro_bold"
+        android:gravity="center"
+        android:textColor="@color/user_primary"
+        android:textSize="24sp"
+        tools:text="300.000 đ" />
+
+    <TextView
+        android:id="@+id/tvBalance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/plus_jakarta_sans"
+        android:gravity="center"
+        android:textColor="@color/user_text_muted"
+        android:textSize="12sp"
+        tools:text="Số dư ví hiện tại: 500.000 đ" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/plus_jakarta_sans_medium"
+        android:text="Mật khẩu Ví (PIN 6 số)"
+        android:textColor="@color/user_text"
+        android:textSize="13sp" />
+
+    <EditText
+        android:id="@+id/etPin"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_auth_input"
+        android:fontFamily="@font/be_vietnam_pro_bold"
+        android:gravity="center"
+        android:hint="••••••"
+        android:inputType="numberPassword"
+        android:letterSpacing="0.2"
+        android:maxLength="6"
+        android:textColor="@color/user_text"
+        android:textSize="18sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirmPay"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/user_primary"
+        android:fontFamily="@font/be_vietnam_pro_bold"
+        android:text="Xác nhận trừ tiền ví"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:cornerRadius="12dp" />
+
+</LinearLayout>

@@ -79,6 +79,7 @@ public class CalendarFragment extends Fragment {
         });
         viewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
         viewModel.getSavedEvents().observe(getViewLifecycleOwner(), data -> renderAll());
+        viewModel.getTickets().observe(getViewLifecycleOwner(), data -> renderAll());
         build(upcomingItems());
         viewModel.loadSaved();
     }
@@ -233,7 +234,7 @@ public class CalendarFragment extends Fragment {
                         + " · #" + item.ticket.code);
                 row.tvOpen.setText(R.string.user_open_ticket);
                 row.tvOpen.setOnClickListener(v ->
-                        TicketDetailActivity.start(requireContext(), item.ticket.code));
+                        TicketDetailActivity.start(requireContext(), item.ticket.id, item.ticket.code));
             } else {
                 row.tvStatus.setText(R.string.user_saved_label);
                 row.tvStatus.setTextColor(ContextCompat.getColor(requireContext(),

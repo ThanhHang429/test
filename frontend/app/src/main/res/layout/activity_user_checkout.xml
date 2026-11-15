@@ -214,6 +214,31 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/layoutDiscountRow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Giảm giá voucher"
+                            android:textAppearance="@style/TextAppearance.EventApp.User.Caption" />
+
+                        <TextView
+                            android:id="@+id/tvDiscountAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:textColor="@color/user_danger"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -234,6 +259,67 @@
                             android:textAppearance="@style/TextAppearance.EventApp.User.Price"
                             android:textSize="17sp" />
                     </LinearLayout>
+                </LinearLayout>
+
+                <!-- Khối nhập Voucher / Mã giảm giá (FR-O18) -->
+                <LinearLayout
+                    android:id="@+id/cardCoupon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_user_card"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mã ưu đãi / Giảm giá (FR-O18)"
+                        android:textAppearance="@style/TextAppearance.EventApp.User.CardTitle"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/etCouponCode"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_user_input"
+                            android:hint="Nhập mã ưu đãi / voucher"
+                            android:imeOptions="actionDone"
+                            android:inputType="textCapCharacters"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/btnApplyCoupon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_user_pill_primary"
+                            android:fontFamily="@font/plus_jakarta_sans"
+                            android:gravity="center"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:text="Áp dụng"
+                            android:textColor="@android:color/white"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvCouponMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -290,10 +376,11 @@
                                 android:textSize="14sp" />
 
                             <TextView
+                                android:id="@+id/tvWalletSubtitle"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="@string/user_pay_wallet_sub"
+                                android:text="Đang kiểm tra số dư..."
                                 android:textAppearance="@style/TextAppearance.EventApp.User.Micro" />
                         </LinearLayout>
 

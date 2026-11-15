@@ -18,20 +18,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.eventapp.app.databinding.FragmentOrgOrdersBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.organizer.adapter.OrgOrderAdapter;
-import com.eventapp.app.ui.organizer.viewmodel.OrgOrdersViewModel;
 import com.eventapp.app.ui.organizer.model.OrgOrder;
+import com.eventapp.app.ui.organizer.util.OrgFormat;
+import com.eventapp.app.ui.organizer.viewmodel.OrgOrdersViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/** Tab Đơn hàng: lọc trạng thái, tìm kiếm và mở chi tiết đơn. */
+/** Tab Đơn hàng: lọc trạng thái, tìm kiếm và mở chi tiết đơn thật từ Backend (FR-O17). */
 public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Listener {
 
     private FragmentOrgOrdersBinding binding;
     private OrgOrderAdapter adapter;
     private final List<TextView> chips = new ArrayList<>();
+    private final List<OrgOrder> loadedOrders = new ArrayList<>();
     private String filter = OrgOrder.FILTER_ALL;
     private OrgOrdersViewModel viewModel;
     private String query = "";
@@ -52,6 +54,7 @@ public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Liste
         binding.rvOrders.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvOrders.setAdapter(adapter);
 
+        chips.clear();
         chips.add(binding.chipOrderAll);
         chips.add(binding.chipOrderPaid);
         chips.add(binding.chipOrderPending);
@@ -61,9 +64,7 @@ public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Liste
         binding.chipOrderPaid.setOnClickListener(v -> selectFilter(OrgOrder.FILTER_PAID));
         binding.chipOrderPending.setOnClickListener(v -> selectFilter(OrgOrder.FILTER_PENDING));
         binding.chipOrderRefund.setOnClickListener(v -> selectFilter(OrgOrder.FILTER_REFUND));
-        binding.btnFilterOrder.setOnClickListener(v ->
-                Snackbar.make(binding.getRoot(), "Bộ lọc nâng cao đang được hoàn thiện",
-                        Snackbar.LENGTH_SHORT).show());
+        binding.btnFilterOrder.setOnClickListener(v -> viewModel.loadOrders(null, null));
 
         binding.etSearchOrder.addTextChangedListener(new TextWatcher() {
             @Override
@@ -82,7 +83,47 @@ public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Liste
         });
 
         viewModel = new ViewModelProvider(this).get(OrgOrdersViewModel.class);
+        observeViewModel();
         selectFilter(OrgOrder.FILTER_ALL);
+        viewModel.loadOrders(null, null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (viewModel != null) {
+            viewModel.loadOrders(null, null);
+        }
+    }
+
+    private void observeViewModel() {
+        viewModel.getOrders().observe(getViewLifecycleOwner(), data -> {
+            loadedOrders.clear();
+            if (data != null) {
+                loadedOrders.addAll(data);
+            }
+            applyFilter();
+        });
+
+        viewModel.getStats().observe(getViewLifecycleOwner(), stats -> {
+            if (binding == null || stats == null) return;
+            binding.tvStatTotal.setText(OrgFormat.count(stats.total));
+            binding.tvStatPaid.setText(OrgFormat.count(stats.paid));
+            binding.tvStatPending.setText(OrgFormat.count(stats.pending));
+            binding.tvStatRefund.setText(OrgFormat.count(stats.refund));
+            binding.tvOrdersSubtitle.setText(OrgFormat.count(stats.total) + " đơn hàng từ các sự kiện bạn tổ chức");
+        });
+
+        viewModel.getLoading().observe(getViewLifecycleOwner(), loading -> {
+            if (binding == null) return;
+            binding.progressOrders.setVisibility(Boolean.TRUE.equals(loading) ? View.VISIBLE : View.GONE);
+        });
+
+        viewModel.getError().observe(getViewLifecycleOwner(), err -> {
+            if (err == null || binding == null) return;
+            viewModel.consumeError();
+            Snackbar.make(binding.getRoot(), err, Snackbar.LENGTH_LONG).show();
+        });
     }
 
     private void selectFilter(String value) {
@@ -95,8 +136,9 @@ public class OrgOrdersFragment extends Fragment implements OrgOrderAdapter.Liste
     }
 
     private void applyFilter() {
+        if (binding == null) return;
         List<OrgOrder> result = new ArrayList<>();
-        for (OrgOrder order : viewModel.orders()) {
+        for (OrgOrder order : loadedOrders) {
             boolean matchFilter = OrgOrder.FILTER_ALL.equals(filter) || filter.equals(order.filter);
             boolean matchQuery = query.isEmpty()
                     || order.code.toLowerCase(Locale.ROOT).contains(query)

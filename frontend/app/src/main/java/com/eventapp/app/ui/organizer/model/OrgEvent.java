@@ -58,15 +58,19 @@ public final class OrgEvent {
                 ticketTypes == null ? new ArrayList<>() : new ArrayList<>(ticketTypes));
     }
 
-    public int totalTickets() {
-        if (capacityLimit != null && capacityLimit > 0) {
-            return capacityLimit;
-        }
+    public int totalIssuedTickets() {
         int total = 0;
         for (TicketType type : ticketTypes) {
             total += type.total;
         }
         return total;
+    }
+
+    public int totalTickets() {
+        if (capacityLimit != null && capacityLimit > 0) {
+            return capacityLimit;
+        }
+        return totalIssuedTickets();
     }
 
     public int percent() {
@@ -169,7 +173,7 @@ public final class OrgEvent {
             R.drawable.bg_org_cover_amber
     };
 
-    /** Một hạng vé kèm tồn kho. */
+    /** Một hạng vé kèm tồn kho & thời gian mở bán. */
     public static final class TicketType {
         public final long id;
         public final String name;
@@ -179,9 +183,11 @@ public final class OrgEvent {
         public final int total;
         public final Integer remaining;
         public final String status;
+        public final String saleStartAt;
+        public final String saleEndAt;
 
         public TicketType(long id, String name, String kind, long price, int sold, int total,
-                          Integer remaining, String status) {
+                          Integer remaining, String status, String saleStartAt, String saleEndAt) {
             this.id = id;
             this.name = name == null ? "" : name;
             this.kind = kind == null ? "" : kind;
@@ -190,6 +196,8 @@ public final class OrgEvent {
             this.total = total;
             this.remaining = remaining;
             this.status = status == null ? "" : status;
+            this.saleStartAt = saleStartAt;
+            this.saleEndAt = saleEndAt;
         }
 
         public int percent() {

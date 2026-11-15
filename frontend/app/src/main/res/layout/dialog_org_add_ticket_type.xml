@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_top"
+    android:paddingStart="20dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="28dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvTicketDialogTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/plus_jakarta_sans"
+                android:text="Thêm loại vé mới"
+                android:textColor="@color/org_text"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/btnCloseDialog"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Đóng"
+                android:padding="4dp"
+                android:src="@drawable/ic_user_close"
+                app:tint="@color/org_text_muted" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Thiết lập tên hạng vé, giá bán và số lượng phát hành cho sự kiện."
+            android:textColor="@color/org_text_dim"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/org_border" />
+
+        <!-- Tên loại vé -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Tên loại vé *"
+            android:textColor="@color/org_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etTicketName"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_org_input"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:hint="Ví dụ: Vé VIP, Vé Standard, Early Bird..."
+            android:inputType="textCapWords"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/org_text"
+            android:textColorHint="@color/org_text_dim"
+            android:textSize="14sp" />
+
+        <!-- Giá vé (VNĐ) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Giá vé (VNĐ) *"
+            android:textColor="@color/org_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etTicketPrice"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_org_input"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:hint="0 nếu là vé miễn phí"
+            android:inputType="number"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/org_text"
+            android:textColorHint="@color/org_text_dim"
+            android:textSize="14sp" />
+
+        <!-- Số lượng phát hành -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Tổng số lượng vé phát hành *"
+            android:textColor="@color/org_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etTotalQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_org_input"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:hint="Ví dụ: 100"
+            android:inputType="number"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/org_text"
+            android:textColorHint="@color/org_text_dim"
+            android:textSize="14sp" />
+
+        <!-- Giới hạn mua mỗi người -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Số vé tối đa mỗi khách mua"
+            android:textColor="@color/org_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etMaxPerUser"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_org_input"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:hint="Mặc định: 5"
+            android:inputType="number"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/org_text"
+            android:textColorHint="@color/org_text_dim"
+            android:textSize="14sp" />
+
+        <!-- Mô tả quyền lợi -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Mô tả quyền lợi (tùy chọn)"
+            android:textColor="@color/org_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etTicketDesc"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_org_input"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:gravity="top"
+            android:hint="Ví dụ: Tặng kèm nước uống, check-in lối ưu tiên..."
+            android:inputType="textMultiLine"
+            android:padding="12dp"
+            android:textColor="@color/org_text"
+            android:textColorHint="@color/org_text_dim"
+            android:textSize="13sp" />
+
+        <!-- Thời gian mở bán & đóng bán (FR-O12) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Thời gian mở bán (tuỳ chọn, bỏ trống = mở bán ngay)"
+            android:textColor="@color/org_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etSaleStartAt"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_org_input"
+            android:clickable="true"
+            android:focusable="false"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:hint="Chọn ngày giờ mở bán"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/org_text"
+            android:textColorHint="@color/org_text_dim"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="Thời gian đóng bán (tuỳ chọn)"
+            android:textColor="@color/org_text"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etSaleEndAt"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_org_input"
+            android:clickable="true"
+            android:focusable="false"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:hint="Chọn ngày giờ đóng bán"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/org_text"
+            android:textColorHint="@color/org_text_dim"
+            android:textSize="14sp" />
+
+        <!-- Button Tạo / Lưu vé -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitTicketType"
+            style="@style/Widget.EventApp.Org.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/org_control_height"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:text="Tạo loại vé"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- Button Xoá loại vé (chỉ hiện khi sửa) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDeleteTicketType"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/org_control_height"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/plus_jakarta_sans"
+            android:text="Xoá loại vé này"
+            android:textColor="@color/org_danger_text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:strokeColor="@color/org_danger_text" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

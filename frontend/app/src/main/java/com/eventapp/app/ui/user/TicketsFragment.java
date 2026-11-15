@@ -15,21 +15,19 @@ import com.eventapp.app.R;
 import com.eventapp.app.databinding.FragmentUserTicketsBinding;
 import com.eventapp.app.ui.common.view.NavContentInset;
 import com.eventapp.app.ui.host.UserHostActivity;
+import com.eventapp.app.ui.model.TicketUiModel;
 import com.eventapp.app.ui.user.adapter.TicketAdapter;
 import com.eventapp.app.ui.user.viewmodel.TicketsViewModel;
-import com.eventapp.app.ui.model.TicketUiModel;
 
 import java.util.List;
 
-/** Tab Vé của tôi: lọc theo trạng thái và mở chi tiết vé kèm mã QR. */
+/** Tab Vé của tôi: đồng bộ vé thật từ Backend, lọc theo trạng thái và mở chi tiết vé kèm QR check-in. */
 public class TicketsFragment extends Fragment {
 
     private FragmentUserTicketsBinding binding;
     private TicketAdapter adapter;
     private TicketUiModel.Status filter = TicketUiModel.Status.UPCOMING;
     private TicketsViewModel viewModel;
-
-    private final Runnable dataObserver = this::reload;
 
     @Nullable
     @Override
@@ -43,7 +41,7 @@ public class TicketsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         NavContentInset.apply(binding.getRoot());
         adapter = new TicketAdapter(ticket ->
-                TicketDetailActivity.start(requireContext(), ticket.code));
+                TicketDetailActivity.start(requireContext(), ticket.id, ticket.code));
         binding.rvTickets.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvTickets.setAdapter(adapter);
 
@@ -58,8 +56,9 @@ public class TicketsFragment extends Fragment {
         });
 
         viewModel = new ViewModelProvider(this).get(TicketsViewModel.class);
+        viewModel.getTickets().observe(getViewLifecycleOwner(), tickets -> reload());
 
-        reload();
+        viewModel.loadTickets();
     }
 
     private void select(TicketUiModel.Status status) {
@@ -71,7 +70,7 @@ public class TicketsFragment extends Fragment {
     }
 
     private void reload() {
-        if (binding == null) {
+        if (binding == null || viewModel == null) {
             return;
         }
         binding.tvTicketsSub.setText(getString(R.string.user_tickets_sub,
@@ -92,21 +91,11 @@ public class TicketsFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        viewModel.addListener(dataObserver);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        reload();
-    }
-
-    @Override
-    public void onStop() {
-        viewModel.removeListener(dataObserver);
-        super.onStop();
+        if (viewModel != null) {
+            viewModel.loadTickets();
+        }
     }
 
     @Override

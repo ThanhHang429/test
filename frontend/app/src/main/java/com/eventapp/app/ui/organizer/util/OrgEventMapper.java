@@ -38,7 +38,9 @@ public final class OrgEventMapper {
                         type.quantitySold,
                         total,
                         type.remaining,
-                        type.status));
+                        type.status,
+                        type.saleStartAt,
+                        type.saleEndAt));
             }
         }
         return new OrgEvent(

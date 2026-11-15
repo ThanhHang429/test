@@ -28,6 +28,8 @@ public final class OrderDtos {
         public List<CreateItem> items = new ArrayList<>();
         public String customerNote;
         public String idempotencyKey;
+        public Long couponId;
+        public String couponCode;
     }
 
     public static class Item {
@@ -37,6 +39,23 @@ public final class OrderDtos {
         public int quantity;
         public BigDecimal unitPrice;
         public BigDecimal lineTotal;
+    }
+
+    public static class PaymentAttempt {
+        public long paymentId;
+        public String paymentReference;
+        public String providerCode;
+        public String method;
+        public BigDecimal amount;
+        public String currency;
+        /** INITIATED | PENDING | SUCCESS | FAILED | REVERSED */
+        public String status;
+        public String failureCode;
+        public String failureMessage;
+        public String verificationSource;
+        public String initiatedAt;
+        public String verifiedAt;
+        public String failedAt;
     }
 
     public static class Order {
@@ -60,7 +79,14 @@ public final class OrderDtos {
         public String paidAt;
         public String createdAt;
         public String customerNote;
+        public String buyerName;
+        public String buyerEmail;
+        public String paymentMethod;
+        /** Trạng thái giao dịch thanh toán tách biệt với trạng thái đơn hàng (FR-U16) */
+        public String paymentStatus;
+        public String ticketSummary;
         public List<Item> items = new ArrayList<>();
+        public List<PaymentAttempt> payments = new ArrayList<>();
         public int ticketsIssued;
     }
 }

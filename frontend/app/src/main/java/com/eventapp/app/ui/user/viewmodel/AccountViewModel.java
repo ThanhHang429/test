@@ -17,10 +17,11 @@ import com.eventapp.app.data.remote.dto.review.ReviewDtos;
 import com.eventapp.app.data.repository.CategoryRepository;
 import com.eventapp.app.data.repository.FavoriteRepository;
 import com.eventapp.app.data.repository.ReviewRepository;
+import com.eventapp.app.data.repository.TicketRepository;
 import com.eventapp.app.data.repository.UserRepository;
 import com.eventapp.app.ui.mapper.CategoryMapper;
 import com.eventapp.app.ui.model.CategoryNodeUiModel;
-import com.eventapp.app.ui.user.data.DemoContent;
+import com.eventapp.app.ui.model.TicketUiModel;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class AccountViewModel extends ViewModel {
     private final FavoriteRepository favoriteRepository =
             ServiceLocator.get(FavoriteRepository.class);
     private final ReviewRepository reviewRepository = ServiceLocator.get(ReviewRepository.class);
+    private final TicketRepository ticketRepository = ServiceLocator.get(TicketRepository.class);
 
     private final MutableLiveData<List<CategoryNodeUiModel>> categories =
             new MutableLiveData<>(new ArrayList<>());
@@ -44,6 +46,7 @@ public class AccountViewModel extends ViewModel {
             new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Long> savedCount = new MutableLiveData<>(0L);
     private final MutableLiveData<Long> reviewCount = new MutableLiveData<>(0L);
+    private final MutableLiveData<Integer> ticketCount = new MutableLiveData<>(0);
     private final MutableLiveData<ApiException> error = new MutableLiveData<>();
 
     private PreferenceDtos.Preference preference;
@@ -64,12 +67,12 @@ public class AccountViewModel extends ViewModel {
         return reviewCount;
     }
 
-    public LiveData<ApiException> getError() {
-        return error;
+    public LiveData<Integer> getTicketCount() {
+        return ticketCount;
     }
 
-    public int purchasedCount() {
-        return DemoContent.get().purchasedCount();
+    public LiveData<ApiException> getError() {
+        return error;
     }
 
     public void load() {
@@ -162,6 +165,28 @@ public class AccountViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NonNull ApiException exception) {
+                    }
+                });
+
+        ticketRepository.getMyTickets("ALL", 0, 50,
+                new ApiCallback<List<TicketUiModel>>() {
+                    @Override
+                    public void onSuccess(@Nullable List<TicketUiModel> data,
+                                          @Nullable JsonElement meta) {
+                        int active = 0;
+                        if (data != null) {
+                            for (TicketUiModel ticket : data) {
+                                if (ticket.status != TicketUiModel.Status.CANCELLED) {
+                                    active += Math.max(1, ticket.quantity);
+                                }
+                            }
+                        }
+                        ticketCount.setValue(active);
+                    }
+
+                    @Override
+                    public void onError(@NonNull ApiException exception) {
+                        ticketCount.setValue(ticketRepository.getCachedTickets().size());
                     }
                 });
     }

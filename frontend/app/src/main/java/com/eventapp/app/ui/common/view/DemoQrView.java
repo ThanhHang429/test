@@ -1,144 +1,75 @@
 package com.eventapp.app.ui.common.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.net.Uri;
 import android.util.AttributeSet;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.AppCompatImageView;
 
-import com.eventapp.app.R;
+import com.bumptech.glide.Glide;
 
 /**
- * Mã QR minh họa cho luồng thanh toán/soát vé demo.
- *
- * <p>Pattern được sinh ổn định từ {@link #setPayload(String)} nên không cần ảnh bitmap và không
- * đại diện cho một mã thanh toán thật. Khi nối cổng thanh toán, thay view này bằng ảnh QR do
- * backend trả về.</p>
+ * Hiển thị mã VietQR thật 100%, quét được bằng tất cả các ứng dụng ngân hàng.
  */
-public class DemoQrView extends View {
+public class DemoQrView extends AppCompatImageView {
 
-    private static final int MODULES = 29;
-    private static final int FINDER = 7;
-
-    private final Paint modulePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint quietPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint badgePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint checkPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Path checkPath = new Path();
-
-    private String payload = "";
-    private int moduleColor;
-    private int accentColor;
-    private int quietColor;
-
-    public DemoQrView(Context context) {
-        this(context, null);
+    public DemoQrView(@NonNull Context context) {
+        super(context);
+        init();
     }
 
-    public DemoQrView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
+    public DemoQrView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init();
     }
 
-    public DemoQrView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public DemoQrView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        moduleColor = ContextCompat.getColor(context, R.color.ds_text);
-        accentColor = ContextCompat.getColor(context, R.color.ds_primary);
-        quietColor = Color.WHITE;
-        checkPaint.setStyle(Paint.Style.STROKE);
-        checkPaint.setStrokeCap(Paint.Cap.ROUND);
-        checkPaint.setStrokeJoin(Paint.Join.ROUND);
+        init();
+    }
+
+    private void init() {
+        setScaleType(ScaleType.FIT_CENTER);
     }
 
     public void setPayload(@Nullable String value) {
-        payload = value == null ? "" : value;
-        invalidate();
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int desired = Math.round(220 * getResources().getDisplayMetrics().density);
-        int width = resolveSize(desired, widthMeasureSpec);
-        int height = resolveSize(desired, heightMeasureSpec);
-        int size = Math.min(width, height);
-        setMeasuredDimension(size, size);
-    }
-
-    @Override
-    protected void onDraw(@NonNull Canvas canvas) {
-        super.onDraw(canvas);
-        int width = getWidth();
-        int height = getHeight();
-        int quietZone = Math.max(4, Math.min(width, height) / 18);
-        int available = Math.min(width, height) - quietZone * 2;
-        int cell = Math.max(1, available / MODULES);
-        int qrSize = cell * MODULES;
-        int left = (width - qrSize) / 2;
-        int top = (height - qrSize) / 2;
-
-        modulePaint.setColor(moduleColor);
-        quietPaint.setColor(quietColor);
-        int seed = payload.hashCode();
-
-        for (int y = 0; y < MODULES; y++) {
-            for (int x = 0; x < MODULES; x++) {
-                if (inFinder(x, y)) {
-                    continue;
-                }
-                int hash = seed ^ (x * 73856093) ^ (y * 19349663);
-                if (((hash >>> 4) & 1) == 0) {
-                    continue;
-                }
-                canvas.drawRect(left + x * cell, top + y * cell,
-                        left + (x + 1) * cell, top + (y + 1) * cell, modulePaint);
-            }
+        if (value == null || value.trim().isEmpty()) {
+            setImageDrawable(null);
+            return;
         }
 
-        drawFinder(canvas, left, top, 0, 0, cell);
-        drawFinder(canvas, left, top, MODULES - FINDER, 0, cell);
-        drawFinder(canvas, left, top, 0, MODULES - FINDER, cell);
-        drawCenterBadge(canvas, left, top, qrSize, cell);
-    }
+        // Nếu payload chứa ký tự pipe '|' (thường dùng cho thanh toán ngân hàng: ETICKET|Mã|Số tiền)
+        // thì mới tạo ảnh VietQR ngân hàng.
+        if (value.contains("|")) {
+            String amount = "";
+            String content = "ETICKET";
+            String[] parts = value.split("\\|");
+            if (parts.length >= 3) {
+                content = parts[1];
+                amount = parts[2];
+            } else if (parts.length >= 2) {
+                content = parts[1];
+            }
 
-    private void drawFinder(Canvas canvas, int left, int top, int x, int y, int cell) {
-        modulePaint.setColor(moduleColor);
-        canvas.drawRect(left + x * cell, top + y * cell,
-                left + (x + FINDER) * cell, top + (y + FINDER) * cell, modulePaint);
-        quietPaint.setColor(quietColor);
-        canvas.drawRect(left + (x + 1) * cell, top + (y + 1) * cell,
-                left + (x + FINDER - 1) * cell, top + (y + FINDER - 1) * cell, quietPaint);
-        modulePaint.setColor(moduleColor);
-        canvas.drawRect(left + (x + 2) * cell, top + (y + 2) * cell,
-                left + (x + FINDER - 2) * cell, top + (y + FINDER - 2) * cell, modulePaint);
-    }
+            String qrUrl = "https://img.vietqr.io/image/ACB-190368688888-compact2.png"
+                    + "?amount=" + amount
+                    + "&addInfo=" + Uri.encode(content)
+                    + "&accountName=" + Uri.encode("CONG TY ETICKET");
 
-    private void drawCenterBadge(Canvas canvas, int left, int top, int qrSize, int cell) {
-        int centerX = left + qrSize / 2;
-        int centerY = top + qrSize / 2;
+            Glide.with(this)
+                    .load(qrUrl)
+                    .into(this);
+        } else {
+            // Đây là MÃ VÉ CHECK-IN (ví dụ: ET-5411-7078#0).
+            // Dùng dịch vụ tạo mã QR tiêu chuẩn quốc tế, nét căng, đen trắng, không dính logo ngân hàng.
+            String qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&format=png&data="
+                    + Uri.encode(value);
 
-        quietPaint.setColor(quietColor);
-        canvas.drawCircle(centerX, centerY, cell * 7.2f, quietPaint);
-
-        badgePaint.setColor(accentColor);
-        canvas.drawCircle(centerX, centerY, cell * 5.4f, badgePaint);
-
-        checkPath.reset();
-        checkPath.moveTo(centerX - cell * 2.3f, centerY);
-        checkPath.lineTo(centerX - cell * 0.6f, centerY + cell * 1.7f);
-        checkPath.lineTo(centerX + cell * 2.4f, centerY - cell * 1.5f);
-        checkPaint.setStrokeWidth(Math.max(2f, cell * 0.7f));
-        checkPaint.setColor(quietColor);
-        canvas.drawPath(checkPath, checkPaint);
-    }
-
-    private boolean inFinder(int x, int y) {
-        return x < FINDER && y < FINDER
-                || x >= MODULES - FINDER && y < FINDER
-                || x < FINDER && y >= MODULES - FINDER;
+            Glide.with(this)
+                    .load(qrUrl)
+                    .into(this);
+        }
     }
 }

@@ -12,9 +12,13 @@ import com.eventapp.app.data.remote.api.IntegrationApi;
 import com.eventapp.app.data.remote.api.ModerationApi;
 import com.eventapp.app.data.remote.api.NotificationApi;
 import com.eventapp.app.data.remote.api.OrganizerApi;
+import com.eventapp.app.data.remote.api.OrderApi;
 import com.eventapp.app.data.remote.api.PreferenceApi;
 import com.eventapp.app.data.remote.api.RecommendationApi;
 import com.eventapp.app.data.remote.api.ReviewApi;
+import com.eventapp.app.data.remote.api.TicketTypeApi;
+import com.eventapp.app.data.remote.api.WalletApi;
+import com.eventapp.app.data.repository.OrderRepository;
 import com.eventapp.app.data.repository.AiRepository;
 import com.eventapp.app.data.repository.AuthRepository;
 import com.eventapp.app.data.repository.CategoryRepository;
@@ -24,7 +28,9 @@ import com.eventapp.app.data.repository.NotificationRepository;
 import com.eventapp.app.data.repository.OrganizerRepository;
 import com.eventapp.app.data.repository.ReviewRepository;
 import com.eventapp.app.data.repository.SystemConfigRepository;
+import com.eventapp.app.data.repository.TicketTypeRepository;
 import com.eventapp.app.data.repository.UserRepository;
+import com.eventapp.app.data.repository.WalletRepository;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,6 +108,33 @@ public final class ServiceLocator {
         }
         if (type == SystemConfigRepository.class) {
             return new SystemConfigRepository(ApiClient.create(IntegrationApi.class));
+        }
+        if (type == WalletRepository.class) {
+            return new WalletRepository(ApiClient.create(WalletApi.class));
+        }
+        if (type == TicketTypeRepository.class) {
+            return new TicketTypeRepository(ApiClient.create(TicketTypeApi.class));
+        }
+        if (type == com.eventapp.app.data.repository.TicketRepository.class) {
+            return new com.eventapp.app.data.repository.TicketRepository(
+                    ApiClient.create(com.eventapp.app.data.remote.api.TicketApi.class));
+        }
+        if (type == OrderRepository.class) {
+            return new OrderRepository(
+                    ApiClient.create(OrderApi.class),
+                    ApiClient.create(com.eventapp.app.data.remote.api.PaymentApi.class));
+        }
+        if (type == com.eventapp.app.data.repository.PromotionRepository.class) {
+            return new com.eventapp.app.data.repository.PromotionRepository(
+                    ApiClient.create(com.eventapp.app.data.remote.api.PromotionApi.class));
+        }
+        if (type == com.eventapp.app.data.repository.RefundRepository.class) {
+            return new com.eventapp.app.data.repository.RefundRepository(
+                    ApiClient.create(com.eventapp.app.data.remote.api.RefundApi.class));
+        }
+        if (type == com.eventapp.app.data.repository.FinanceRepository.class) {
+            return new com.eventapp.app.data.repository.FinanceRepository(
+                    ApiClient.create(com.eventapp.app.data.remote.api.ReportApi.class));
         }
         throw new IllegalStateException("Repository chưa được đăng ký: " + type.getName());
     }
