@@ -14,6 +14,7 @@ interface EventRepository : JpaRepository<Event, Long> {
     fun findByEventCode(eventCode: String): Event?
     fun countByOrganizerProfileId(organizerProfileId: Long): Long
     fun findByOrganizerProfileIdOrderByStartAtDesc(organizerProfileId: Long): List<Event>
+    fun findByCreatedByUserIdAndDeletedAtIsNullOrderByStartAtDesc(createdByUserId: Long): List<Event>
 }
 
 @Repository
