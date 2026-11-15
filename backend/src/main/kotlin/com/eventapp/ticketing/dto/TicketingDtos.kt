@@ -15,7 +15,9 @@ data class CreateOrderRequest(
     val items: List<CreateOrderItemRequest> = emptyList(),
     val customerNote: String? = null,
     /** Client gửi lại cùng khoá khi retry để không tạo đơn trùng. */
-    val idempotencyKey: String? = null
+    val idempotencyKey: String? = null,
+    val couponId: Long? = null,
+    val couponCode: String? = null
 )
 
 data class OrderItemDto(
@@ -26,7 +28,21 @@ data class OrderItemDto(
     val unitPrice: BigDecimal,
     val lineTotal: BigDecimal
 )
-
+data class OrderPaymentSummaryDto(
+    val paymentId: Long,
+    val paymentReference: String,
+    val providerCode: String,
+    val method: String,
+    val amount: BigDecimal,
+    val currency: String,
+    val status: String,
+    val failureCode: String?,
+    val failureMessage: String?,
+    val verificationSource: String?,
+    val initiatedAt: Instant?,
+    val verifiedAt: Instant?,
+    val failedAt: Instant?
+)
 data class OrderDto(
     val orderId: Long,
     val orderCode: String,
@@ -48,8 +64,14 @@ data class OrderDto(
     val paidAt: Instant?,
     val createdAt: Instant?,
     val customerNote: String?,
+    val buyerName: String? = null,
+    val buyerEmail: String? = null,
+    val paymentMethod: String? = null,
+    val paymentStatus: String? = null,
+    val ticketSummary: String? = null,
     val items: List<OrderItemDto>,
     /** Số vé đã phát hành cho đơn này (đơn miễn phí phát hành ngay). */
+    val payments: List<OrderPaymentSummaryDto> = emptyList(),
     val ticketsIssued: Int
 )
 
@@ -78,7 +100,11 @@ data class PaymentDto(
     val bankAccount: String?,
     val expiresAt: Instant?,
     val initiatedAt: Instant?,
-    val verifiedAt: Instant?
+    val verifiedAt: Instant?,
+    // 3 trường bổ sung chuẩn app thật (hiển thị tên chủ TK nhận, mã giao dịch ngân hàng, lý do lỗi)
+    val accountName: String? = null,
+    val providerTransactionId: String? = null,
+    val failureMessage: String? = null
 )
 
 // ---------- Vé ----------

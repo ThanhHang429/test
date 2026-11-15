@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 @Repository
 interface RegistrationRepository : JpaRepository<Registration, Long> {
@@ -78,6 +79,14 @@ interface OrderRepository : JpaRepository<Order, Long> {
     /** Chống tạo trùng khi client retry cùng một yêu cầu đặt vé. */
     fun findFirstByUserIdAndIdempotencyKey(userId: Long, idempotencyKey: String): Order?
 
+    // =Tìm đơn theo orderCode để Webhook ngân hàng đối soát nội dung chuyển khoản
+    fun findByOrderCode(orderCode: String): Order?
+
+    // Quét các đơn PENDING_PAYMENT quá hạn giữ chỗ trong OrderExpiryScheduler
+    fun findByStatusAndPaymentDueAtBefore(status: OrderStatus, dueBefore: Instant): List<Order>
+    fun findByEventIdInOrderByCreatedAtDesc(eventIds: Collection<Long>): List<Order>
+    fun findByOrderCodeContainingIgnoreCaseOrderByCreatedAtDesc(orderCode: String): List<Order>
+    fun findTop50ByOrderByCreatedAtDesc(): List<Order>
     @Query("select coalesce(sum(o.totalAmount), 0) from Order o where o.eventId = :eventId and o.status = :status")
     fun sumTotalByEventAndStatus(eventId: Long, status: OrderStatus): java.math.BigDecimal
 
@@ -95,6 +104,9 @@ interface OrderItemRepository : JpaRepository<OrderItem, Long> {
 interface PaymentRepository : JpaRepository<Payment, Long> {
     fun findByOrderId(orderId: Long): List<Payment>
     fun findFirstByOrderIdAndStatusIn(orderId: Long, statuses: Collection<PaymentStatus>): Payment?
+
+    // [MỚI] Lấy giao dịch mới nhất của đơn hàng khi Webhook đổ về
+    fun findFirstByOrderIdOrderByPaymentIdDesc(orderId: Long): Payment?
 
     @Query(
         """

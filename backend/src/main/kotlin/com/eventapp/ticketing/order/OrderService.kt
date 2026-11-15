@@ -13,20 +13,23 @@ import com.eventapp.event.repository.TicketTypeRepository
 import com.eventapp.ticketing.EventBriefLoader
 import com.eventapp.ticketing.TicketIssuer
 import com.eventapp.ticketing.TicketingCodes
+import com.eventapp.ticketing.TicketingIdentitySupport
 import com.eventapp.ticketing.TicketingRules
 import com.eventapp.ticketing.dto.CreateOrderRequest
 import com.eventapp.ticketing.dto.OrderDto
 import com.eventapp.ticketing.dto.OrderItemDto
+import com.eventapp.ticketing.dto.OrderPaymentSummaryDto
+import com.eventapp.ticketing.entity.CouponRedemption
 import com.eventapp.ticketing.entity.Order
 import com.eventapp.ticketing.entity.OrderItem
-import com.eventapp.ticketing.repository.OrderItemRepository
-import com.eventapp.ticketing.repository.OrderRepository
-import com.eventapp.ticketing.repository.TicketRepository
+import com.eventapp.ticketing.promotion.PromotionService
+import com.eventapp.ticketing.repository.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -46,6 +49,12 @@ class OrderService(
     private val eventRepository: EventRepository,
     private val ticketTypeRepository: TicketTypeRepository,
     private val ticketRepository: TicketRepository,
+    private val paymentRepository: PaymentRepository,
+    private val couponRepository: CouponRepository,
+    private val couponRedemptionRepository: CouponRedemptionRepository,
+    private val platformSettingRepository: PlatformSettingRepository,
+    private val promotionService: PromotionService,
+    private val identitySupport: TicketingIdentitySupport,
     private val codes: TicketingCodes,
     private val issuer: TicketIssuer,
     private val briefs: EventBriefLoader,
@@ -109,23 +118,66 @@ class OrderService(
         }
 
         val ordered = types.sortedBy { it.price }
+        val subtotal = ordered.sumOf { it.price * BigDecimal(requested[it.ticketTypeId]!!) }
+
+        // Tính giảm giá theo mã khuyến mãi nếu có (FR-O18)
+        val rawCode = request.couponCode?.trim()?.takeIf { it.isNotEmpty() }
+            ?: request.couponId?.let { id -> couponRepository.findById(id).orElse(null)?.couponCode }
+        val appliedCoupon = rawCode?.let {
+            promotionService.validateAndGetCoupon(userId, it, event.eventId!!, subtotal, now)
+        }
+        val discountAmount = appliedCoupon?.let { promotionService.computeDiscount(it, subtotal) }
+            ?: BigDecimal.ZERO
+
+        if (appliedCoupon != null) {
+            val updatedRows = couponRepository.incrementUsageIfAvailable(appliedCoupon.couponId!!)
+            if (updatedRows == 0) {
+                throw ConflictException(ErrorCode.CONFLICT, "Mã giảm giá đã hết lượt sử dụng")
+            }
+        }
+
+        // Tính phí nền tảng từ bảng platform_settings đang có hiệu lực (FR-A16) trên phần tiền sau giảm
+        val afterDiscount = subtotal.subtract(discountAmount).max(BigDecimal.ZERO)
+        val feeRate = (platformSettingRepository
+            .findFirstBySettingKeyAndEffectiveFromLessThanEqualOrderByEffectiveFromDescVersionNoDesc(
+                "PLATFORM_FEE_RATE", now
+            ) ?: platformSettingRepository.findFirstBySettingKeyOrderByVersionNoDesc("PLATFORM_FEE_RATE"))
+            ?.settingValue?.trim()?.removeSurrounding("\"")?.toBigDecimalOrNull()
+            ?: BigDecimal("5.00")
+        val platformFeeAmount = if (afterDiscount > BigDecimal.ZERO && feeRate > BigDecimal.ZERO) {
+            afterDiscount.multiply(feeRate).divide(BigDecimal("100"), 0, RoundingMode.HALF_UP)
+        } else {
+            BigDecimal.ZERO
+        }
+        val totalAmount = afterDiscount.add(platformFeeAmount)
+
         val order = orderRepository.save(
             Order(
                 orderCode = codes.newOrderCode(now),
                 userId = userId,
                 eventId = event.eventId!!,
+                couponId = appliedCoupon?.couponId,
                 status = OrderStatus.PENDING_PAYMENT,
                 currency = ordered.first().currency.trim(),
-                subtotalAmount = ordered.sumOf { it.price * BigDecimal(requested[it.ticketTypeId]!!) },
-                discountAmount = BigDecimal.ZERO,
-                platformFeeAmount = BigDecimal.ZERO,
-                totalAmount = ordered.sumOf { it.price * BigDecimal(requested[it.ticketTypeId]!!) },
+                subtotalAmount = subtotal,
+                discountAmount = discountAmount,
+                platformFeeAmount = platformFeeAmount,
+                totalAmount = totalAmount,
                 idempotencyKey = key ?: codes.newOrderCode(now),
                 paymentDueAt = now.plus(paymentWindowMinutes, ChronoUnit.MINUTES),
                 customerNote = request.customerNote?.trim()?.takeIf { it.isNotEmpty() }
             )
         )
-
+        if (appliedCoupon != null && discountAmount > BigDecimal.ZERO) {
+            couponRedemptionRepository.save(
+                CouponRedemption(
+                    couponId = appliedCoupon.couponId!!,
+                    userId = userId,
+                    orderId = order.orderId!!,
+                    discountAmount = discountAmount
+                )
+            )
+        }
         val items = ordered.map { type ->
             val quantity = requested[type.ticketTypeId]!!
             type.quantityReserved += quantity
@@ -157,7 +209,7 @@ class OrderService(
         val byTypeId = types.associateBy { it.ticketTypeId }
         for (item in items) {
             val type = byTypeId[item.ticketTypeId] ?: ticketTypeRepository.findById(item.ticketTypeId).orElse(null)
-                ?: continue
+            ?: continue
             type.quantityReserved = (type.quantityReserved - item.quantity).coerceAtLeast(0)
             type.quantitySold += item.quantity
             issuer.issue(
@@ -216,6 +268,46 @@ class OrderService(
         return toDtos(orders) to result.totalElements
     }
 
+    /** FR-O17: Danh sách đơn hàng thuộc các sự kiện do Organizer tạo. */
+    @Transactional
+    fun listForOrganizer(organizerUserId: Long, status: String?, query: String?): List<OrderDto> {
+        val myEventIds = eventRepository
+            .findByCreatedByUserIdAndDeletedAtIsNullOrderByStartAtDesc(organizerUserId)
+            .mapNotNull { it.eventId }
+        if (myEventIds.isEmpty()) return emptyList()
+
+        val all = orderRepository.findByEventIdInOrderByCreatedAtDesc(myEventIds)
+        all.forEach { expireIfDue(it) }
+
+        val normalizedStatus = status?.trim()?.uppercase()?.takeIf { it.isNotEmpty() && it != "ALL" }
+        val q = query?.trim()?.lowercase()?.takeIf { it.isNotEmpty() }
+
+        val dtos = toDtos(all)
+        return dtos.filter { dto ->
+            val matchStatus = normalizedStatus == null || dto.status.equals(normalizedStatus, ignoreCase = true)
+            val matchQuery = q == null ||
+                    dto.orderCode.lowercase().contains(q) ||
+                    dto.eventTitle.lowercase().contains(q) ||
+                    (dto.buyerName?.lowercase()?.contains(q) == true) ||
+                    (dto.buyerEmail?.lowercase()?.contains(q) == true)
+            matchStatus && matchQuery
+        }
+    }
+
+    /** FR-O17: Chi tiết đơn hàng theo mã đơn cho Organizer sở hữu sự kiện. */
+    @Transactional
+    fun getForOrganizerByCode(organizerUserId: Long, orderCode: String): OrderDto {
+        val order = orderRepository.findByOrderCode(orderCode.trim())
+            ?: throw NotFoundException(message = "Không tìm thấy đơn hàng $orderCode")
+        val event = eventRepository.findById(order.eventId).orElse(null)
+            ?: throw NotFoundException(message = "Không tìm thấy sự kiện")
+        if (event.createdByUserId != organizerUserId && !identitySupport.isAdmin()) {
+            throw ForbiddenException(ErrorCode.FORBIDDEN, "Đơn hàng không thuộc sự kiện của bạn")
+        }
+        expireIfDue(order)
+        return toDto(order)
+    }
+
     /** Đơn quá hạn giữ chỗ: trả tồn kho và đánh dấu EXPIRED ngay khi có người đọc. */
     @Transactional
     fun expireIfDue(order: Order, now: Instant = Instant.now()) {
@@ -246,10 +338,18 @@ class OrderService(
             .groupBy { it.orderItemId }
             .mapValues { it.value.size }
         val briefsById = briefs.load(orders.map { it.eventId }.distinct())
-
+        val usersById = identitySupport.loadUsers(orders.map { it.userId }.distinct())
+        val paymentsByOrderId = ids.associateWith { oid ->
+            paymentRepository.findByOrderId(oid).sortedByDescending { it.paymentId ?: 0L }
+        }
         return orders.map { order ->
             val brief = briefsById[order.eventId]
+            val user = usersById[order.userId]
             val orderItems = items[order.orderId] ?: emptyList()
+            val orderPayments = paymentsByOrderId[order.orderId] ?: emptyList()
+            val payment = orderPayments.firstOrNull()
+            val summary = orderItems.joinToString(", ") { "${it.quantity}x ${it.ticketNameSnapshot}" }
+                .ifBlank { null }
             OrderDto(
                 orderId = order.orderId!!,
                 orderCode = order.orderCode,
@@ -270,6 +370,11 @@ class OrderService(
                 paidAt = order.paidAt,
                 createdAt = order.createdAt,
                 customerNote = order.customerNote,
+                buyerName = user?.fullName,
+                buyerEmail = user?.email,
+                paymentMethod = payment?.paymentMethod?.name ?: if (order.status == OrderStatus.PAID) "WALLET" else null,
+                paymentStatus = payment?.status?.name ?: if (order.status == OrderStatus.PAID) "SUCCESS" else null,
+                ticketSummary = summary,
                 items = orderItems.map { item ->
                     OrderItemDto(
                         orderItemId = item.orderItemId!!,
@@ -278,6 +383,23 @@ class OrderService(
                         quantity = item.quantity.toInt(),
                         unitPrice = item.unitPrice,
                         lineTotal = item.lineTotal
+                    )
+                },
+                payments = orderPayments.map { p ->
+                    OrderPaymentSummaryDto(
+                        paymentId = p.paymentId!!,
+                        paymentReference = p.paymentReference,
+                        providerCode = p.providerCode,
+                        method = p.paymentMethod.name,
+                        amount = p.amount,
+                        currency = p.currency.trim(),
+                        status = p.status.name,
+                        failureCode = p.failureCode,
+                        failureMessage = p.failureMessage,
+                        verificationSource = p.verificationSource?.name,
+                        initiatedAt = p.initiatedAt,
+                        verifiedAt = p.verifiedAt,
+                        failedAt = p.failedAt
                     )
                 },
                 ticketsIssued = orderItems.sumOf { issued[it.orderItemId] ?: 0 }
